@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Image/TreeIco/Folder.png</file>
+        <file>Image/TreeIco/Project.png</file>
+        <file>Image/TreeIco/BMP.png</file>
+        <file>Image/TreeIco/Image.svg</file>
+        <file>Image/TreeIco/CombiImage.svg</file>
+        <file>Image/TreeIco/Setting.svg</file>
+        <file>Image/Toolbar/OpenProject.svg</file>
+    </qresource>
+</RCC>

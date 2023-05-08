@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>874</width>
-    <height>518</height>
+    <width>994</width>
+    <height>567</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,22 +18,7 @@
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <widget class="QWidget" name="page_3">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QPushButton" name="pushButton">
-          <property name="text">
-           <string>PushButton</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButton_2">
-          <property name="text">
-           <string>PushButton</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <layout class="QHBoxLayout" name="horizontalLayout"/>
       </widget>
       <widget class="QWidget" name="page_4"/>
      </widget>
@@ -45,8 +30,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>874</width>
-     <height>22</height>
+     <width>994</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>
@@ -68,7 +53,7 @@
     <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
    </property>
    <property name="windowTitle">
-    <string>项目管理器</string>
+    <string>项目资源管理器</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -95,27 +80,122 @@
      </property>
      <item>
       <widget class="QLineEdit" name="lineEditSerch">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
        <property name="dragEnabled">
         <bool>false</bool>
        </property>
        <property name="placeholderText">
         <string>搜索</string>
        </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
-      <widget class="QTreeWidget" name="treeWidgetProject">
-       <column>
-        <property name="text">
-         <string notr="true">1</string>
-        </property>
-       </column>
+      <widget class="QTreeView" name="treeViewProject">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::ClickFocus</enum>
+       </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::EditKeyPressed</set>
+       </property>
+       <property name="dragEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::DragOnly</enum>
+       </property>
+       <property name="alternatingRowColors">
+        <bool>false</bool>
+       </property>
+       <property name="animated">
+        <bool>true</bool>
+       </property>
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
       </widget>
      </item>
     </layout>
    </widget>
   </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>32</width>
+     <height>32</height>
+    </size>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonIconOnly</enum>
+   </property>
+   <property name="floatable">
+    <bool>true</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actOpenProject"/>
+   <addaction name="actNew"/>
+   <addaction name="actNewProject"/>
+  </widget>
+  <action name="actOpenProject">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/Toolbar/OpenProject.svg</normaloff>:/Image/Toolbar/OpenProject.svg</iconset>
+   </property>
+   <property name="text">
+    <string>打开项目</string>
+   </property>
+   <property name="priority">
+    <enum>QAction::NormalPriority</enum>
+   </property>
+  </action>
+  <action name="actNew">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/TreeIco/Project.png</normaloff>:/Image/TreeIco/Project.png</iconset>
+   </property>
+   <property name="text">
+    <string>新建</string>
+   </property>
+   <property name="toolTip">
+    <string>新建...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::TextHeuristicRole</enum>
+   </property>
+  </action>
+  <action name="actNewProject">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/TreeIco/Image.svg</normaloff>:/Image/TreeIco/Image.svg</iconset>
+   </property>
+   <property name="text">
+    <string>新建工程</string>
+   </property>
+  </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="Img.qrc"/>
+ </resources>
  <connections/>
 </ui>
