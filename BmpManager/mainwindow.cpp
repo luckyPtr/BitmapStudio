@@ -30,13 +30,17 @@ void MainWindow::init()
 void MainWindow::on_actOpenProject_triggered()
 {
     QString aFile = QFileDialog::getOpenFileName(this, "数据库", "", tr("SQLite(*.db)"));
-    pm.openProject(aFile);
-    pm.initModel();
+    if(!aFile.isEmpty())
+    {
+        pm.openProject(aFile);
+        pm.initModel();
+    }
 }
 
 
 void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
 {
-    qDebug() << "Clicked" << index.data(Qt::UserRole+2) << "row:" << index.row() << "col:" << index.column();
+    qDebug() << "Clicked" << index.data(ProjectMng::RoleId) << " Project:" << pm.getIndexProject(index);
+    qDebug() << pm.getIndexDatabase(index).databaseName();
 }
 
