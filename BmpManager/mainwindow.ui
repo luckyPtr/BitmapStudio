@@ -31,7 +31,7 @@
      <x>0</x>
      <y>0</y>
      <width>994</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>
@@ -120,6 +120,9 @@
        <property name="animated">
         <bool>true</bool>
        </property>
+       <property name="expandsOnDoubleClick">
+        <bool>false</bool>
+       </property>
        <attribute name="headerVisible">
         <bool>false</bool>
        </attribute>
@@ -156,6 +159,7 @@
    <addaction name="actOpenProject"/>
    <addaction name="actNew"/>
    <addaction name="actNewProject"/>
+   <addaction name="actNewFolder"/>
   </widget>
   <action name="actOpenProject">
    <property name="icon">
@@ -191,6 +195,11 @@
    </property>
    <property name="text">
     <string>新建工程</string>
+   </property>
+  </action>
+  <action name="actNewFolder">
+   <property name="text">
+    <string>新建文件夹</string>
    </property>
   </action>
  </widget>

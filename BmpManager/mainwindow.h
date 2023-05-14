@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QtSql>
 #include <QStandardItem>
+#include <QVector>
 #include <projectmng.h>
 
 
@@ -19,10 +20,16 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    QVector<QModelIndex> expandNode;
+    void saveExpand(QModelIndex root);
+    void restoreExpand();
+
 private slots:
     void on_actOpenProject_triggered();
 
     void on_treeViewProject_clicked(const QModelIndex &index);
+
+    void on_actNewFolder_triggered();
 
 private:
     Ui::MainWindow *ui;
