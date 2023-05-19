@@ -2,6 +2,9 @@
 #include "ui_mainwindow.h"
 #include <QFileDialog>
 #include <QMessageBox>
+#include <treemodel.h>
+#include <treeitem.h>
+#include <rawdata.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -48,7 +51,43 @@ void MainWindow::init()
 {
    //https://blog.csdn.net/wzz953200463/article/details/123643823
 
-    pm.blindTreeView(ui->treeViewProject);
+    //pm.blindTreeView(ui->treeViewProject);
+    QStringList headers;
+    TreeModel* model = new TreeModel(headers, ui->treeViewProject);
+    TreeItem* root = model->root();
+    TreeItem* province = new TreeItem();
+    province->setType(TreeItem::PROJECT);
+    root->addChild(province);
+
+    TreeItem *itemSettings = new TreeItem();
+    itemSettings->setType(TreeItem::CLASS_SETTINGS);
+    province->addChild(itemSettings);
+
+    TreeItem *itemImage = new TreeItem();
+    itemImage->setType(TreeItem::CLASS_IMAGE);
+    province->addChild(itemImage);
+
+    TreeItem *itemComImage = new TreeItem();
+    itemComImage->setType(TreeItem::CLASS_COMIMAGE);
+    province->addChild(itemComImage);
+
+    ui->treeViewProject->setModel(model);
+
+//    foreach (auto pro, proList)
+//    {
+//        TreeItem* province = new TreeItem(root);
+//        province->setPtr(pro); // 保存数据指针
+//        province->setType(TreeItem::PROVINCE); // 设置节点类型为PROVINCE
+//        root->addChild(province);
+
+//        foreach (auto per, pro->people)
+//        {
+//            TreeItem* person = new TreeItem(province);
+//            person->setPtr(per);    // 保存数据指针
+//            person->setType(TreeItem::PERSON);  // 设置节点类型为PERSON
+//            province->addChild(person);
+//        }
+//    }
 }
 
 
@@ -74,16 +113,23 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
 
 void MainWindow::on_actNewFolder_triggered()
 {
-    pm.createFolder(ui->treeViewProject->currentIndex());
+    QModelIndex curIndex = ui->treeViewProject->currentIndex();
+    pm.createFolder(curIndex);
+    ui->treeViewProject->expand(curIndex);
     pm.initModel();
-//    getExpandNode(pm.model()->invisibleRootItem()->index());
+}
 
-//    ui->treeViewProject->setUpdatesEnabled(false);
-//    //pm.createFolder(ui->treeViewProject->currentIndex());
-//    pm.initModel();
-//    restoreExpand();
-//    qDebug() << "expand-----" << expandNode.size();
-//    ui->treeViewProject->setUpdatesEnabled(true);
+#include <projectdata.h>
 
+void MainWindow::on_actRename_triggered()
+{
+    RawData rd("C:\\Users\\Naive\\Desktop\\1\\a.db");
+    QImage img(":/Image/TreeIco/Project.png");
+    QPixmap pixmap(64, 64);
+
+    //pixmap.transformed()
+    rd.createBmp(5, "New File", 128, 64);
+    qDebug() << img.depth();
+    qDebug() << pixmap.depth();
 }
 

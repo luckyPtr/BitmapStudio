@@ -5,6 +5,7 @@ void ProjectMng::addSonToModel(QSqlDatabase db, QString table, int pid, QStandar
 {
     QString qreryString= QString("SELECT id,name,type FROM %1 where pid=%2 ").arg(table).arg(pid);
     QSqlQuery query(qreryString, db);
+
     while (query.next())
     {
         int id = query.value(0).toInt();
@@ -136,6 +137,8 @@ void ProjectMng::openProject(QString pro)
 {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", QFileInfo(pro).baseName());
     db.setDatabaseName(pro);
+//   db.exec("PRAGMA synchronous = OFF");
+//    db.exec("PRAGMA journal_mode = MEMORY");
     if(db.open())
     {
         proList << db;
@@ -145,16 +148,14 @@ void ProjectMng::openProject(QString pro)
 // 根据数据库初始化model
 void ProjectMng::initModel()
 {
-    QElapsedTimer timer; //定义对象
-
+    // TODO: 一次读取数据库，提高速度
 
     treeView->setUpdatesEnabled(false);
     saveExpand();
     proModel->clear();
-    timer.start();  //开始计时
     for(int i = 0; i < proList.size(); i++)
     {
-        QStandardItem *parent = new QStandardItem(QIcon(":/Image/TreeIco/Project.png"), QFileInfo(proList[i].databaseName()).baseName());
+        QStandardItem *parent = new QStandardItem(QIcon(":/Image/TreeIco/Project.svg"), QFileInfo(proList[i].databaseName()).baseName());
         parent->setDragEnabled(false);
         parent->setDropEnabled(false);
         parent->setData(QVariant(0), RoleId);
@@ -163,10 +164,9 @@ void ProjectMng::initModel()
         addSonToModel(proList[i], "tbl_img", 0, parent);
         addSonToModel(proList[i], "tbl_comimg", 0, parent);
     }
-    qDebug() << "运行时间:" << timer.elapsed() << "ms";
+
     restoreExpand();
     treeView->setUpdatesEnabled(true);
-
 
 }
 
@@ -203,10 +203,6 @@ void ProjectMng::createFolder(QModelIndex index)
         if(type == QString::fromUtf8("FILE"))
         {
             id = pid;
-        }
-        else    // 如果是文件夹里新建文件夹，新建后自动展开
-        {
-            treeView->expand(index.parent());
         }
 
         query.prepare("INSERT INTO tbl_img (name,type,pid) VALUES(:name,:type,:pid)");

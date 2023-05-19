@@ -7,5 +7,7 @@
         <file>Image/TreeIco/CombiImage.svg</file>
         <file>Image/TreeIco/Setting.svg</file>
         <file>Image/Toolbar/OpenProject.svg</file>
+        <file>Image/TreeIco/Project.svg</file>
+        <file>Image/ico.svg</file>
     </qresource>
 </RCC>

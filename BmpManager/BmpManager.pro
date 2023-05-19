@@ -11,11 +11,19 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    projectmng.cpp
+    projectdata.cpp \
+    projectmng.cpp \
+    rawdata.cpp \
+    treeitem.cpp \
+    treemodel.cpp
 
 HEADERS += \
     mainwindow.h \
-    projectmng.h
+    projectdata.h \
+    projectmng.h \
+    rawdata.h \
+    treeitem.h \
+    treemodel.h
 
 FORMS += \
     mainwindow.ui
@@ -30,6 +38,7 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
+RC_ICONS = yaya256.ico
 # 解决MSVC编译中文乱码问题
 msvc{
     QMAKE_CFLAGS += /utf-8

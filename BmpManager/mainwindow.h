@@ -31,6 +31,8 @@ private slots:
 
     void on_actNewFolder_triggered();
 
+    void on_actRename_triggered();
+
 private:
     Ui::MainWindow *ui;
 
