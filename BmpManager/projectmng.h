@@ -16,7 +16,7 @@ class ProjectMng : public QWidget
 {
     Q_OBJECT
 private:
-    QVector<RawData> projList;
+    QList<RawData> projList;
     TreeModel *theModel;
     QTreeView *treeView;
 

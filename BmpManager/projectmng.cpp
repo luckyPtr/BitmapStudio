@@ -20,41 +20,6 @@ void ProjectMng::addImgNode(RawData *rd, const quint16 pid, TreeItem *parent)
     }
 }
 
-//void ProjectMng::addSonToModel(QSqlDatabase db, QString table, int pid, QStandardItem *parent)
-//{
-//    QString qreryString= QString("SELECT id,name,type FROM %1 where pid=%2 ").arg(table).arg(pid);
-//    QSqlQuery query(qreryString, db);
-
-//    while (query.next())
-//    {
-//        int id = query.value(0).toInt();
-//        QString name = query.value(1).toString();
-//        QString type = query.value(2).toString();
-//        QStandardItem* item =new QStandardItem(name);
-//        item->setData(QVariant(id), RoleId);
-//        // 设置图标
-//        if(type == QString::fromLocal8Bit("CLASS"))
-//        {
-//            if(id == 10000)
-//                item->setIcon(QIcon(":/Image/TreeIco/Image.svg"));
-//            else if(id == 20000)
-//                item->setIcon(QIcon(":/Image/TreeIco/CombiImage.svg"));
-//        }
-//        else if(type == QString::fromLocal8Bit("FOLDER"))
-//        {
-//            item->setData(QVariant(NodeFolder), RoleNodeType);
-//            item->setIcon(QIcon(":/Image/TreeIco/Folder.png"));
-//        }
-//        else if(type == QString::fromLocal8Bit("FILE"))
-//        {
-//            item->setData(QVariant(NodeFile), RoleNodeType);
-//            item->setIcon(QIcon(":/Image/TreeIco/BMP.png"));
-//        }
-//        parent->appendRow(item);
-//        addSonToModel(db, table, id, item);
-//    }
-//}
-
 void ProjectMng::getExpandNode(QModelIndex root)
 {
     TreeItem *item = theModel->itemFromIndex(root);
@@ -91,6 +56,7 @@ void ProjectMng::saveExpand()
     {
         QModelIndex root = theModel->index(i, 0, treeView->rootIndex());
         TreeItem *item = theModel->itemFromIndex(root);
+        //projList[i].expand.clear();
         item->getRawData()->clearExpandNode();
         getExpandNode(root);
     }
@@ -98,6 +64,8 @@ void ProjectMng::saveExpand()
 
 void ProjectMng::restoreExpand()
 {
+    qDebug() << theModel->rowCount(treeView->rootIndex());
+
     for(int i = 0; i < theModel->rowCount(treeView->rootIndex()); i++)
     {
         QModelIndex root = theModel->index(i, 0, treeView->rootIndex());
@@ -116,7 +84,6 @@ ProjectMng::ProjectMng(QWidget *parent)
 
 void ProjectMng::openProject(QString pro)
 {
-    //RawData rd(pro);
     projList << pro;        // 惊，还可以这样？？？
 }
 

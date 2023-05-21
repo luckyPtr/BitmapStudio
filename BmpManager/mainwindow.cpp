@@ -21,32 +21,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::saveExpand(QModelIndex root)
-{
 
-    for(int i = 0; i < pm.model()->rowCount(root); i++)
-    {
-        QModelIndex index = pm.model()->index(i, 0, root);
-        if(ui->treeViewProject->isExpanded(index))
-        {
-
-        }
-        saveExpand(index);
-    }
-}
-
-void MainWindow::restoreExpand()
-{
-    for(QModelIndex index : expandNode)
-    {
-        if(index.isValid())
-        {
-            //ui->treeViewProject->expand(index);
-        }
-        qDebug() << index;
-    }
-    expandNode.clear();
-}
 
 
 
@@ -60,7 +35,7 @@ void MainWindow::init()
 
 void MainWindow::on_actOpenProject_triggered()
 {
-    QString aFile = QFileDialog::getOpenFileName(this, "数据库", "", tr("SQLite(*.db)"));
+    QString aFile = QFileDialog::getOpenFileName(this, tr("打开工程"), "", tr("BmpManager工程(*.db)"));
     if(!aFile.isEmpty())
     {
         pm.openProject(aFile);
@@ -89,5 +64,16 @@ void MainWindow::on_actNewFolder_triggered()
 void MainWindow::on_actRename_triggered()
 {
     pm.initModel();
+}
+
+
+void MainWindow::on_actNewProject_triggered()
+{
+    QString aFile = QFileDialog::getSaveFileName(this, tr("保存工程"), "Untiled", tr("BmpManager工程(*.db)"));
+    if(!aFile.isEmpty())
+    {
+        pm.openProject(aFile);
+        //pm.initModel();
+    }
 }
 

@@ -118,6 +118,8 @@ public:
 
     void setRawData(RawData *rd) {rawData = rd;}
     RawData *getRawData() {return rawData;}
+
+
 };
 
 #endif // TREEITEM_H

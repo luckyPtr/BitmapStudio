@@ -76,6 +76,8 @@ RawData::RawData(const QString path)
 RawData::~RawData()
 {
     //db.close();
+    expand.clear();
+    qDebug() << "~RawData:" << project;
 }
 
 void RawData::createFolder(quint16 id, QString name)

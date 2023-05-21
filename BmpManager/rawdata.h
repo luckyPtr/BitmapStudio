@@ -44,13 +44,15 @@ private:
     quint8 depth;           // 项目图片深度
     QMap<quint16, BmImg> imgMap;
     QMap<quint16, BmComImg> comImgMap;
-    QVector<quint16> expand;
+
 
     void initDatabase();
     void load();    // 加载数据库数据
 public:
     RawData(const QString path);
     ~RawData();
+
+    QVector<quint16> expand;
 
     QString getProject() const {return project;}
     QMap<quint16, BmImg> getImgMap() const {return imgMap;}
@@ -61,6 +63,8 @@ public:
     void addExpandNode(quint16 id) { expand << id; };
     bool isExpandNode(quint16 id) { return expand.contains(id); }
     void clearExpandNode() { expand.clear(); }
+
+    void test() {qDebug()<<"Test";}
 };
 
 #endif // RAWDATA_H

@@ -18,6 +18,7 @@ TreeItem *TreeModel::itemFromIndex(const QModelIndex &index) const
 {
     if (index.isValid())
     {
+
         TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
         return item;
     }

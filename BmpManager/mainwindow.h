@@ -20,9 +20,6 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    QVector<QModelIndex> expandNode;
-    void saveExpand(QModelIndex root);
-    void restoreExpand();
 
 private slots:
     void on_actOpenProject_triggered();
@@ -32,6 +29,8 @@ private slots:
     void on_actNewFolder_triggered();
 
     void on_actRename_triggered();
+
+    void on_actNewProject_triggered();
 
 private:
     Ui::MainWindow *ui;
