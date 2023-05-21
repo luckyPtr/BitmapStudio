@@ -75,24 +75,27 @@ RawData::RawData(const QString path)
 
 RawData::~RawData()
 {
-    db.close();
+    //db.close();
 }
 
 void RawData::createFolder(quint16 id, QString name)
 {
     QSqlQuery query(db);
-
     query.prepare("SELECT pid, folder FROM tbl_img WHERE id=?");
     query.bindValue(0, id);
     query.exec();
-    if(query.first())
-    {
-        quint16 pid = query.value("pid").toUInt();
-        bool isFolder = query.value("folder").toBool();
 
-        if(!isFolder)
+    if(query.first() || id == 0)
+    {
+        if(id)
         {
-            id = pid;
+            quint16 pid = query.value("pid").toUInt();
+            bool isFolder = query.value("folder").toBool();
+
+            if(!isFolder)
+            {
+                id = pid;
+            }
         }
 
         query.prepare("INSERT INTO tbl_img (name,folder,pid) VALUES(:name,:folder,:pid)");
@@ -100,18 +103,12 @@ void RawData::createFolder(quint16 id, QString name)
         query.bindValue(":folder", true);
         query.bindValue(":pid", id);
         query.exec();
-
         BmImg bi;
         bi.id = query.lastInsertId().toUInt();
         bi.pid = id;
         bi.isFolder = true;
         bi.name = name;
         imgMap.insert(bi.id, bi);
-    }
-
-    foreach(auto bi, imgMap)
-    {
-        qDebug() << bi.id << bi.name;
     }
 }
 
@@ -126,6 +123,7 @@ void RawData::createBmp(quint16 id, QString name, const QImage &img)
     query.prepare("SELECT pid, folder FROM tbl_img WHERE id=?");
     query.bindValue(0, id);
     query.exec();
+
     if(query.first())
     {
         quint16 pid = query.value("pid").toUInt();
@@ -142,6 +140,7 @@ void RawData::createBmp(quint16 id, QString name, const QImage &img)
         query.bindValue(":pid", id);
         query.bindValue(":data", byteArray);
         query.exec();
+
 
         BmImg bi;
         bi.id = query.lastInsertId().toUInt();

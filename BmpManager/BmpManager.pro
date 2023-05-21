@@ -11,7 +11,6 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    projectdata.cpp \
     projectmng.cpp \
     rawdata.cpp \
     treeitem.cpp \
@@ -19,7 +18,6 @@ SOURCES += \
 
 HEADERS += \
     mainwindow.h \
-    projectdata.h \
     projectmng.h \
     rawdata.h \
     treeitem.h \

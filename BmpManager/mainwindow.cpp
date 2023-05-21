@@ -5,6 +5,8 @@
 #include <treemodel.h>
 #include <treeitem.h>
 #include <rawdata.h>
+#include <QDialog>
+#include <QInputDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -47,47 +49,10 @@ void MainWindow::restoreExpand()
 }
 
 
+
 void MainWindow::init()
 {
-   //https://blog.csdn.net/wzz953200463/article/details/123643823
-
-    //pm.blindTreeView(ui->treeViewProject);
-    QStringList headers;
-    TreeModel* model = new TreeModel(headers, ui->treeViewProject);
-    TreeItem* root = model->root();
-    TreeItem* province = new TreeItem();
-    province->setType(TreeItem::PROJECT);
-    root->addChild(province);
-
-    TreeItem *itemSettings = new TreeItem();
-    itemSettings->setType(TreeItem::CLASS_SETTINGS);
-    province->addChild(itemSettings);
-
-    TreeItem *itemImage = new TreeItem();
-    itemImage->setType(TreeItem::CLASS_IMAGE);
-    province->addChild(itemImage);
-
-    TreeItem *itemComImage = new TreeItem();
-    itemComImage->setType(TreeItem::CLASS_COMIMAGE);
-    province->addChild(itemComImage);
-
-    ui->treeViewProject->setModel(model);
-
-//    foreach (auto pro, proList)
-//    {
-//        TreeItem* province = new TreeItem(root);
-//        province->setPtr(pro); // 保存数据指针
-//        province->setType(TreeItem::PROVINCE); // 设置节点类型为PROVINCE
-//        root->addChild(province);
-
-//        foreach (auto per, pro->people)
-//        {
-//            TreeItem* person = new TreeItem(province);
-//            person->setPtr(per);    // 保存数据指针
-//            person->setType(TreeItem::PERSON);  // 设置节点类型为PERSON
-//            province->addChild(person);
-//        }
-//    }
+    pm.blindTreeView(ui->treeViewProject);
 }
 
 
@@ -106,8 +71,10 @@ void MainWindow::on_actOpenProject_triggered()
 
 void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
 {
-    qDebug() << "Clicked" << index.data(ProjectMng::RoleId);
     qDebug() << ui->treeViewProject->isExpanded(index);
+
+    TreeItem *item = pm.model()->itemFromIndex(index);
+    qDebug() <<item->getID();
 }
 
 
@@ -119,17 +86,8 @@ void MainWindow::on_actNewFolder_triggered()
     pm.initModel();
 }
 
-#include <projectdata.h>
-
 void MainWindow::on_actRename_triggered()
 {
-    RawData rd("C:\\Users\\Naive\\Desktop\\1\\a.db");
-    QImage img(":/Image/TreeIco/Project.png");
-    QPixmap pixmap(64, 64);
-
-    //pixmap.transformed()
-    rd.createBmp(5, "New File", 128, 64);
-    qDebug() << img.depth();
-    qDebug() << pixmap.depth();
+    pm.initModel();
 }
 

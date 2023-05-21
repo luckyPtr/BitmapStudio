@@ -1,11 +1,12 @@
 #include "treemodel.h"
 #include "TreeItem.h"
 
-TreeModel::TreeModel(const QStringList& headers, QObject *parent)
+TreeModel::TreeModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
-    _headers = headers;
+    //_headers = headers;
     _rootItem = new TreeItem();
+
 }
 
 TreeModel::~TreeModel()
@@ -52,11 +53,20 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
     {
         return item->data(index.column());
     }
-    if(role == Qt::DecorationRole)
+    else if(role == Qt::DecorationRole)
     {
         if(index.column() == 0)
         return item->icon();
     }
+    else if(role == RoleID)
+    {
+        return item->getID();
+    }
+    else if(role == RoleProjPath)
+    {
+        return item->getProject();
+    }
+
     return QVariant();
 }
 
@@ -102,4 +112,12 @@ int TreeModel::rowCount(const QModelIndex &parent) const
 int TreeModel::columnCount(const QModelIndex &parent) const
 {
     return 1; //_headers.size();
+}
+
+void TreeModel::clear()
+{
+    if(_rootItem)
+    {
+        _rootItem->removeChildren();
+    }
 }

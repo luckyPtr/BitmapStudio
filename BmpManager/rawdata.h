@@ -16,6 +16,7 @@ struct BmImg
     quint16 wide;
     quint16 height;
     QImage file;
+    bool isExpand;
     BmImg() {}
 };
 
@@ -29,6 +30,7 @@ struct BmComImg
     quint16 wide;
     quint16 height;
     QString data;
+    bool isExpand;
     BmComImg() {}
 };
 
@@ -42,6 +44,7 @@ private:
     quint8 depth;           // 项目图片深度
     QMap<quint16, BmImg> imgMap;
     QMap<quint16, BmComImg> comImgMap;
+    QVector<quint16> expand;
 
     void initDatabase();
     void load();    // 加载数据库数据
@@ -49,9 +52,15 @@ public:
     RawData(const QString path);
     ~RawData();
 
+    QString getProject() const {return project;}
+    QMap<quint16, BmImg> getImgMap() const {return imgMap;}
     void createFolder(quint16 id, QString name = "Untitled");
     void createBmp(quint16 id, QString name, const QImage &img);
     void createBmp(quint16 id, QString name, quint16 wide, quint16 height);
+
+    void addExpandNode(quint16 id) { expand << id; };
+    bool isExpandNode(quint16 id) { return expand.contains(id); }
+    void clearExpandNode() { expand.clear(); }
 };
 
 #endif // RAWDATA_H

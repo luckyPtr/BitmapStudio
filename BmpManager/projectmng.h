@@ -7,40 +7,34 @@
 #include <QTreeView>
 #include <QVector>
 #include <QSet>
+#include <rawdata.h>
+#include <treemodel.h>
+#include <treeitem.h>
 
 
 class ProjectMng : public QWidget
 {
     Q_OBJECT
 private:
-    QVector<QSqlDatabase> proList;  // 项目列表
-    QStandardItemModel *proModel;
+    QVector<RawData> projList;
+    TreeModel *theModel;
     QTreeView *treeView;
 
-    void addSonToModel(QSqlDatabase db, QString table, int pid, QStandardItem *parent);
-    void getExpandNode(QModelIndex root, QVector<int> &expandNode);      // 保存展开的节点
-    void setExpandNode(QModelIndex root, QVector<int> &expandNode);   // 恢复展开的节点
+    void addImgNode(RawData *rd, const quint16 pid, TreeItem *parent);
+    void getExpandNode(QModelIndex root);      // 保存展开的节点
+    void setExpandNode(QModelIndex root);   // 恢复展开的节点
     void saveExpand();
     void restoreExpand();
-    QString getTblName(int id);
+
 public:
     explicit ProjectMng(QWidget *parent = nullptr);
     void openProject(QString pro);
     void initModel();   // 根据数据库重新初始化模型
-    QStandardItemModel* model() { return proModel; }
+    TreeModel* model() { return theModel; }
     void blindTreeView(QTreeView *treeView);
-    QSqlDatabase getIndexDatabase(QModelIndex index);
     QString getIndexProject(QModelIndex index);
     void createFolder(QModelIndex index); // 新建文件夹
     void createBMP(QModelIndex &index);
-
-    enum
-    {
-        RoleId = Qt::UserRole + 1,    // treeView节点名称
-        RoleProject,
-        RoleNodeType,                   // 节点类型 DIR FILE
-        RoleStatus,                     // 节点状态 正常 隐藏 错误 未保存 名称重复
-    };
 
     enum NodeType
     {

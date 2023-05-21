@@ -17,6 +17,7 @@ TreeItem::~TreeItem()
 // 在本节点下添加子节点
 void TreeItem::addChild(TreeItem *item)
 {
+
     item->setParent(this);
     item->setRow(_children.size());
     _children.append(item);
@@ -36,7 +37,7 @@ QVariant TreeItem::data(int column) const
     {
         if(column == Qt::DisplayRole)
         {
-            return QString("项目");// config.project;
+            return QFileInfo(rawData->getProject()).baseName();
         }
     }
     else if(_type == CLASS_SETTINGS)
@@ -56,17 +57,17 @@ QVariant TreeItem::data(int column) const
     }
     else if(_type == FOLDER)
     {
-//        if(column == RoleDisplay)
-//        {
-//            return image.name;
-//        }
+        if(column == RoleDisplay)
+        {
+            return rawData->getImgMap()[id].name;
+        }
     }
     else if(_type == FILE)
     {
-//        if(column == RoleDisplay)
-//        {
-//            return image.name;
-//        }
+        if(column == RoleDisplay)
+        {
+            return rawData->getImgMap()[id].name;
+        }
 //        else
 //        {
 //            return QVariant::fromValue(image);
@@ -87,12 +88,13 @@ QIcon TreeItem::icon() const
         return QIcon(":/Image/TreeIco/Image.svg");
     case CLASS_COMIMAGE:
         return QIcon(":/Image/TreeIco/CombiImage.svg");
+    case FOLDER:
+        return QIcon(":/Image/TreeIco/Folder.svg");
+    case FILE:
+        return QIcon(":/Image/TreeIco/ImageFile.svg");
     default:
         return QIcon();
     }
 }
 
-//BmImg *TreeItem::bmImg() const
-//{
 
-//}

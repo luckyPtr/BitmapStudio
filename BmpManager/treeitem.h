@@ -69,14 +69,16 @@ public:
         RoleData,
     };
 
+
 private:
     QList<TreeItem*> _children;   // 子节点
     TreeItem *_parent;          // 父节点
     Type _type;      // 此节点保存的数据类型
     void* _ptr;     // 存储数据的指针
     int _row;       // 此item位于父节点中第几个
-    bool isIngnore;
     quint16 id;
+    QString project;
+    RawData *rawData;
 
 public:
 
@@ -94,7 +96,13 @@ public:
 
     QVariant data(int column) const;
     QIcon icon() const;
-    BmImg *bmImg() const;
+    //BmImg *bmImg() const;
+
+    void setID(quint16 id) {this->id = id; }
+    qint16 getID() const { return id; }
+
+    void setProject(QString path) {project = path;}
+    QString getProject() const {return project;}
 
     //设置、获取节点存的数据指针
     void setPtr(void* p) { _ptr = p; }
@@ -107,6 +115,9 @@ public:
 
     Type getType() const { return _type; }
     void setType(const Type &value) { _type = value; }
+
+    void setRawData(RawData *rd) {rawData = rd;}
+    RawData *getRawData() {return rawData;}
 };
 
 #endif // TREEITEM_H

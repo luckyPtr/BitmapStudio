@@ -9,7 +9,7 @@ class TreeModel : public QAbstractItemModel
 {
     Q_OBJECT
 public:
-    explicit TreeModel(const QStringList& headers, QObject *parent = nullptr);
+    explicit TreeModel(QObject *parent = nullptr);
     ~TreeModel() override;
 
     TreeItem *root();
@@ -21,7 +21,16 @@ public:
     int rowCount(const QModelIndex &parent) const override;
     int columnCount(const QModelIndex &parent) const override;
 
-private:
+    void clear();
+    void beginReset() {beginResetModel();}
+    void endReset() {endResetModel();}
+    enum
+    {
+        RoleID = Qt::UserRole+1,
+        RoleProjPath,
+    };
+
+
     TreeItem *itemFromIndex(const QModelIndex &index) const;
 
 private:
