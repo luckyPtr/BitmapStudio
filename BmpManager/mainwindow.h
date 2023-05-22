@@ -32,6 +32,8 @@ private slots:
 
     void on_actNewProject_triggered();
 
+    void on_actNewImg_triggered();
+
 private:
     Ui::MainWindow *ui;
 

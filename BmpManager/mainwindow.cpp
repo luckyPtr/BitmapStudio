@@ -7,6 +7,7 @@
 #include <rawdata.h>
 #include <QDialog>
 #include <QInputDialog>
+#include <dialognewimgfile.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -73,7 +74,23 @@ void MainWindow::on_actNewProject_triggered()
     if(!aFile.isEmpty())
     {
         pm.openProject(aFile);
-        //pm.initModel();
+        pm.initModel();
     }
+}
+
+
+void MainWindow::on_actNewImg_triggered()
+{
+    DialogNewImgFile *dlgNewImg = new DialogNewImgFile(this);
+    Qt::WindowFlags flags = dlgNewImg->windowFlags();
+    dlgNewImg->setWindowFlags(flags | Qt::MSWindowsFixedSizeDialogHint);
+    int ret = dlgNewImg->exec();
+    if(ret == QDialog::Accepted)
+    {
+        qDebug() << "Width:" << dlgNewImg->width();
+        qDebug() << "Height:" << dlgNewImg->height();
+        qDebug() << "Name:" << dlgNewImg->imgFileName();
+    }
+    delete dlgNewImg;
 }
 

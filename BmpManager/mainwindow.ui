@@ -172,6 +172,7 @@
    <addaction name="actNew"/>
    <addaction name="actNewProject"/>
    <addaction name="actNewFolder"/>
+   <addaction name="actNewImg"/>
    <addaction name="actRename"/>
   </widget>
   <action name="actOpenProject">
@@ -188,7 +189,7 @@
   </action>
   <action name="actNew">
    <property name="icon">
-    <iconset resource="Img.qrc">
+    <iconset>
      <normaloff>:/Image/TreeIco/Project.png</normaloff>:/Image/TreeIco/Project.png</iconset>
    </property>
    <property name="text">
@@ -218,6 +219,18 @@
   <action name="actRename">
    <property name="text">
     <string>重命名</string>
+   </property>
+  </action>
+  <action name="actNewImg">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/TreeIco/ImageFile.svg</normaloff>:/Image/TreeIco/ImageFile.svg</iconset>
+   </property>
+   <property name="text">
+    <string>新建图片</string>
+   </property>
+   <property name="toolTip">
+    <string>新建图片</string>
    </property>
   </action>
  </widget>

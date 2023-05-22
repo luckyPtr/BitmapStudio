@@ -56,7 +56,6 @@ void ProjectMng::saveExpand()
     {
         QModelIndex root = theModel->index(i, 0, treeView->rootIndex());
         TreeItem *item = theModel->itemFromIndex(root);
-        //projList[i].expand.clear();
         item->getRawData()->clearExpandNode();
         getExpandNode(root);
     }
@@ -84,6 +83,8 @@ ProjectMng::ProjectMng(QWidget *parent)
 
 void ProjectMng::openProject(QString pro)
 {
+    // proList的类型从QVector更换为QList，打开三个工程崩溃的问题就没有出现
+    // 但是可能并没有真正解决问题，可参考 https://zhidao.baidu.com/question/367115219524964612.html
     projList << pro;        // 惊，还可以这样？？？
 }
 
