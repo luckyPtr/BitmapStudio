@@ -13,6 +13,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     projectmng.cpp \
+    qunitspinbox.cpp \
     rawdata.cpp \
     treeitem.cpp \
     treemodel.cpp
@@ -21,6 +22,7 @@ HEADERS += \
     dialognewimgfile.h \
     mainwindow.h \
     projectmng.h \
+    qunitspinbox.h \
     rawdata.h \
     treeitem.h \
     treemodel.h
@@ -39,7 +41,7 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-RC_ICONS = yaya256.ico
+RC_ICONS = yaya.ico
 # 解决MSVC编译中文乱码问题
 msvc{
     QMAKE_CFLAGS += /utf-8
