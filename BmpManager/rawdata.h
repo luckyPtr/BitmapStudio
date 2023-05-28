@@ -56,6 +56,7 @@ public:
 
     QString getProject() const {return project;}
     QMap<quint16, BmImg> getImgMap() const {return imgMap;}
+    BmImg getImgInfo(quint16 id) const { return imgMap[id]; }
     void createFolder(quint16 id, QString name = "Untitled");
     void createBmp(quint16 id, QString name, const QImage &img);
     void createBmp(quint16 id, QString name, quint16 wide, quint16 height);

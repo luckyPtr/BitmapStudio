@@ -149,6 +149,13 @@ void ProjectMng::createFolder(QModelIndex index)
     }
 }
 
+void ProjectMng::createImage(QModelIndex &index, QString name, quint16 width, quint16 height)
+{
+    TreeItem *item = theModel->itemFromIndex(index);
+    RawData *rd = item->getRawData();
+    rd->createBmp(item->getID(), name, width, height);
+}
+
 
 
 

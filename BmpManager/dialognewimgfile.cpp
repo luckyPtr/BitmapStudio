@@ -7,11 +7,6 @@ DialogNewImgFile::DialogNewImgFile(QWidget *parent) :
     ui(new Ui::DialogNewImgFile)
 {
     ui->setupUi(this);
-
-    ui->btnOK->setEnabled(false);
-    connect(ui->spinBoxWidth, SIGNAL(valueChanged(int)), this, SLOT(on_inputUpdate()));
-    connect(ui->spinBoxHeight, SIGNAL(valueChanged(int)), this, SLOT(on_inputUpdate()));
-    connect(ui->lineEditImgFileName, SIGNAL(textChanged(QString)), this, SLOT(on_inputUpdate()));
 }
 
 DialogNewImgFile::~DialogNewImgFile()
@@ -60,11 +55,8 @@ void DialogNewImgFile::on_lineEditImgFileName_textChanged(const QString &arg1)
     {
         ui->lineEditImgFileName->setStyleSheet("color:black");
     }
+    ui->btnOK->setEnabled(checkImgFileName());
 }
 
-void DialogNewImgFile::on_inputUpdate()
-{
-    bool isDisable = ui->lineEditImgFileName->text().isEmpty() || ui->spinBoxWidth->value() == 0 || ui->spinBoxHeight == 0;
-    ui->btnOK->setEnabled(!isDisable);
-}
+
 

@@ -14,6 +14,9 @@
    <string>新建图片</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>9</number>
+   </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
@@ -38,6 +41,9 @@
            <family>Arial</family>
            <pointsize>11</pointsize>
           </font>
+         </property>
+         <property name="minimum">
+          <number>1</number>
          </property>
          <property name="maximum">
           <number>2048</number>
@@ -71,6 +77,12 @@
            <family>Arial</family>
            <pointsize>11</pointsize>
           </font>
+         </property>
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::UpDownArrows</enum>
+         </property>
+         <property name="minimum">
+          <number>1</number>
          </property>
          <property name="maximum">
           <number>2048</number>

@@ -7,6 +7,7 @@
 #include <rawdata.h>
 #include <QDialog>
 #include <QInputDialog>
+#include <QPainter>
 #include <dialognewimgfile.h>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -51,6 +52,14 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
 
     TreeItem *item = pm.model()->itemFromIndex(index);
     qDebug() <<item->getID();
+
+
+    BmImg bi = item->getRawData()->getImgInfo(item->getID());
+    QImage img = bi.file;
+    QImage resultImg = img.scaled(ui->labelPewview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    ui->labelPewview->setPixmap(QPixmap::fromImage(resultImg));
+    ui->labelPewview->setAlignment(Qt::AlignCenter);
+    ui->labelPewview->show();
 }
 
 
@@ -90,6 +99,9 @@ void MainWindow::on_actNewImg_triggered()
         qDebug() << "Width:" << dlgNewImg->width();
         qDebug() << "Height:" << dlgNewImg->height();
         qDebug() << "Name:" << dlgNewImg->imgFileName();
+        QModelIndex curIndex = ui->treeViewProject->currentIndex();
+        pm.createImage(curIndex, dlgNewImg->imgFileName(), dlgNewImg->width(), dlgNewImg->height());
+        pm.initModel();
     }
     delete dlgNewImg;
 }

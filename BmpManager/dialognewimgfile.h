@@ -21,7 +21,6 @@ public:
     void setExistFile(QVector<QString> files);
 private slots:
     void on_lineEditImgFileName_textChanged(const QString &arg1);
-    void on_inputUpdate();
 
 private:
     Ui::DialogNewImgFile *ui;

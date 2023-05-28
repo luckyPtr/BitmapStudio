@@ -34,7 +34,7 @@ public:
     void blindTreeView(QTreeView *treeView);
     QString getIndexProject(QModelIndex index);
     void createFolder(QModelIndex index); // 新建文件夹
-    void createBMP(QModelIndex &index);
+    void createImage(QModelIndex &index, QString name, quint16 width, quint16 height);
 
     enum NodeType
     {
