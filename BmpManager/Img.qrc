@@ -8,5 +8,6 @@
         <file>Image/ico.svg</file>
         <file>Image/TreeIco/Folder.svg</file>
         <file>Image/TreeIco/ImageFile.svg</file>
+        <file>Image/TreeIco/Search.svg</file>
     </qresource>
 </RCC>
