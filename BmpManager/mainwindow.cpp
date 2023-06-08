@@ -9,6 +9,7 @@
 #include <QInputDialog>
 #include <QPainter>
 #include <dialognewimgfile.h>
+#include <dialogimportimg.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -113,4 +114,21 @@ void MainWindow::on_splitter_splitterMoved(int pos, int index)
     ui->labelPreview->setPixmap(QPixmap::fromImage(resultImg));
 }
 
+
+
+void MainWindow::on_actImportImg_triggered()
+{
+    QString aFile = QFileDialog::getOpenFileName(this, tr("导入图片"), "", tr("图片(*.jpg *.png *.bmp);;JPEG(*.jpg *.jpeg);;PNG(*.png);;BMP(*.bmp)"));
+    if(!aFile.isEmpty())
+    {
+        QImage img(aFile);
+        DialogImportImg *dlgImportImg = new DialogImportImg(img, this);
+        int ret = dlgImportImg->exec();
+        if(ret == QDialog::Accepted)
+        {
+
+        }
+        delete dlgImportImg;
+    }
+}
 

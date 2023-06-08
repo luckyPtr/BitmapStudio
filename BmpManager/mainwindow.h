@@ -36,6 +36,8 @@ private slots:
 
     void on_splitter_splitterMoved(int pos, int index);
 
+    void on_actImportImg_triggered();
+
 private:
     Ui::MainWindow *ui;
 

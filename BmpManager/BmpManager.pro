@@ -9,6 +9,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    dialogimportimg.cpp \
     dialognewimgfile.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -19,6 +20,7 @@ SOURCES += \
     treemodel.cpp
 
 HEADERS += \
+    dialogimportimg.h \
     dialognewimgfile.h \
     mainwindow.h \
     projectmng.h \
@@ -28,6 +30,7 @@ HEADERS += \
     treemodel.h
 
 FORMS += \
+    dialogimportimg.ui \
     dialognewimgfile.ui \
     mainwindow.ui
 

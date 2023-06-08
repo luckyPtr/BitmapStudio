@@ -212,6 +212,7 @@
    <addaction name="actNewFolder"/>
    <addaction name="actNewImg"/>
    <addaction name="actRename"/>
+   <addaction name="actImportImg"/>
   </widget>
   <action name="actOpenProject">
    <property name="icon">
@@ -269,6 +270,11 @@
    </property>
    <property name="toolTip">
     <string>新建图片</string>
+   </property>
+  </action>
+  <action name="actImportImg">
+   <property name="text">
+    <string>导入图片</string>
    </property>
   </action>
  </widget>
