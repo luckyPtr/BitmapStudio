@@ -3,6 +3,8 @@
 #include <QDialog>
 #include <QDebug>
 #include <QTimer>
+#include <QRegExp>
+#include <QRegExpValidator>
 
 DialogImportImg::DialogImportImg(QImage &img, QWidget *parent) :
     QDialog(parent),
@@ -10,6 +12,11 @@ DialogImportImg::DialogImportImg(QImage &img, QWidget *parent) :
 {
     ui->setupUi(this);
     rawImg = img;
+
+    // 限制图片名称输入格式同C语言变量命名规则
+    QRegExp regx("^[a-zA-Z_][a-zA-Z0-9_]+$");
+    QValidator *validator = new QRegExpValidator(regx, ui->lineEditName);
+    ui->lineEditName->setValidator(validator);
 
     // 这里直接显示的话图片大小不对，延迟一段时间后显示没有这个问题，奇怪
     QTimer::singleShot(1, this, [=]{
@@ -22,6 +29,18 @@ DialogImportImg::~DialogImportImg()
 {
     delete ui;
 }
+
+void DialogImportImg::setImgName(QString name)
+{
+    ui->lineEditName->setText(name);
+}
+
+QString DialogImportImg::getImgName()
+{
+    return ui->lineEditName->text();
+}
+
+
 
 void DialogImportImg::imgTransform()
 {

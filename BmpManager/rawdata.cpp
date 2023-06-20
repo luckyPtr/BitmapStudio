@@ -163,4 +163,18 @@ void RawData::createBmp(quint16 id, QString name, quint16 wide, quint16 height)
     createBmp(id, name, image);
 }
 
+void RawData::rename(quint16 id, QString name)
+{
+    QSqlQuery query(db);
+    query.prepare("UPDATE tbl_img SET name=:name WHERE id=:id");
+    query.bindValue(":name", name);
+    query.bindValue(":id", id);
+    query.exec();
+
+    if(imgMap.contains(id))
+    {
+        imgMap[id].name = name;
+    }
+}
+
 

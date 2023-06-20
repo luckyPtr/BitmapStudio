@@ -7,6 +7,11 @@ DialogNewImgFile::DialogNewImgFile(QWidget *parent) :
     ui(new Ui::DialogNewImgFile)
 {
     ui->setupUi(this);
+
+    // 限制图片名称输入格式同C语言变量命名规则
+    QRegExp regx("^[a-zA-Z_][a-zA-Z0-9_]+$");
+    QValidator *validator = new QRegExpValidator(regx, ui->lineEditImgFileName);
+    ui->lineEditImgFileName->setValidator(validator);
 }
 
 DialogNewImgFile::~DialogNewImgFile()

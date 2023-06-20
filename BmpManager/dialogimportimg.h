@@ -23,6 +23,8 @@ public:
 
     void setRawImg(QImage &img) {rawImg = img;}
     QImage getMonoImg() {return monoImg;}
+    void setImgName(QString name);
+    QString getImgName();
     void imgTransform();
     void displayImg();
 private slots:

@@ -35,6 +35,8 @@ public:
     QString getIndexProject(QModelIndex index);
     void createFolder(QModelIndex index); // 新建文件夹
     void createImage(QModelIndex &index, QString name, quint16 width, quint16 height);
+    void createImage(QModelIndex &index, QString name, QImage &img);
+    void rename(QModelIndex &index, QString name);
 
     enum NodeType
     {

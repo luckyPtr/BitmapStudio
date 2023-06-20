@@ -156,6 +156,20 @@ void ProjectMng::createImage(QModelIndex &index, QString name, quint16 width, qu
     rd->createBmp(item->getID(), name, width, height);
 }
 
+void ProjectMng::createImage(QModelIndex &index, QString name, QImage &img)
+{
+    TreeItem *item = theModel->itemFromIndex(index);
+    RawData *rd = item->getRawData();
+    rd->createBmp(item->getID(), name, img);
+}
+
+void ProjectMng::rename(QModelIndex &index, QString name)
+{
+    TreeItem *item = theModel->itemFromIndex(index);
+    RawData *rd = item->getRawData();
+    rd->rename(item->getID(), name);
+}
+
 
 
 

@@ -60,6 +60,7 @@ public:
     void createFolder(quint16 id, QString name = "Untitled");
     void createBmp(quint16 id, QString name, const QImage &img);
     void createBmp(quint16 id, QString name, quint16 wide, quint16 height);
+    void rename(quint16 id, QString name);
 
     void addExpandNode(quint16 id) { expand << id; };
     bool isExpandNode(quint16 id) { return expand.contains(id); }

@@ -8,6 +8,7 @@
 #include <QDialog>
 #include <QInputDialog>
 #include <QPainter>
+#include <QToolButton>
 #include <dialognewimgfile.h>
 #include <dialogimportimg.h>
 
@@ -31,6 +32,15 @@ MainWindow::~MainWindow()
 void MainWindow::init()
 {
     pm.blindTreeView(ui->treeViewProject);
+
+//    QToolButton *toolBtn = new QToolButton(this);
+//    toolBtn->setDefaultAction(ui->actNewImg);
+//    toolBtn->setPopupMode(QToolButton::MenuButtonPopup);
+//    QMenu *menu = new QMenu(this);
+//    menu->addAction(ui->actNewImg);
+//    menu->addAction(ui->actImportImg);
+//    toolBtn->setMenu(menu);
+//    ui->toolBar->addWidget(toolBtn);
 }
 
 
@@ -69,7 +79,13 @@ void MainWindow::on_actNewFolder_triggered()
 
 void MainWindow::on_actRename_triggered()
 {
-    pm.initModel();
+    QString name = QInputDialog::getText(this, tr("重命名"), tr("名称"));
+    if(!name.isEmpty())
+    {
+        QModelIndex curIndex = ui->treeViewProject->currentIndex();
+        pm.rename(curIndex, name);
+        pm.initModel();
+    }
 }
 
 
@@ -92,9 +108,6 @@ void MainWindow::on_actNewImg_triggered()
     int ret = dlgNewImg->exec();
     if(ret == QDialog::Accepted)
     {
-        qDebug() << "Width:" << dlgNewImg->width();
-        qDebug() << "Height:" << dlgNewImg->height();
-        qDebug() << "Name:" << dlgNewImg->imgFileName();
         QModelIndex curIndex = ui->treeViewProject->currentIndex();
         pm.createImage(curIndex, dlgNewImg->imgFileName(), dlgNewImg->width(), dlgNewImg->height());
         pm.initModel();
@@ -107,11 +120,14 @@ void MainWindow::on_splitter_splitterMoved(int pos, int index)
 {
     ui->labelPreview->clear();
     QModelIndex curIndex = ui->treeViewProject->currentIndex();
-    TreeItem *item = pm.model()->itemFromIndex(curIndex);
-    BmImg bi = item->getRawData()->getImgInfo(item->getID());
-    QImage img = bi.file;
-    QImage resultImg = img.scaled(ui->labelPreview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    ui->labelPreview->setPixmap(QPixmap::fromImage(resultImg));
+    if(curIndex.isValid())
+    {
+        TreeItem *item = pm.model()->itemFromIndex(curIndex);
+        BmImg bi = item->getRawData()->getImgInfo(item->getID());
+        QImage img = bi.file;
+        QImage resultImg = img.scaled(ui->labelPreview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        ui->labelPreview->setPixmap(QPixmap::fromImage(resultImg));
+    }
 }
 
 
@@ -123,10 +139,14 @@ void MainWindow::on_actImportImg_triggered()
     {
         QImage img(aFile);
         DialogImportImg *dlgImportImg = new DialogImportImg(img, this);
+        dlgImportImg->setImgName(QFileInfo(aFile).baseName());
         int ret = dlgImportImg->exec();
         if(ret == QDialog::Accepted)
         {
-
+            QModelIndex curIndex = ui->treeViewProject->currentIndex();
+            QImage img = dlgImportImg->getMonoImg();
+            pm.createImage(curIndex, dlgImportImg->getImgName(), img);
+            pm.initModel();
         }
         delete dlgImportImg;
     }

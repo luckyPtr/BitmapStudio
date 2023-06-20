@@ -30,7 +30,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="page_3">
      <layout class="QHBoxLayout" name="horizontalLayout"/>
@@ -210,9 +210,10 @@
    <addaction name="actNew"/>
    <addaction name="actNewProject"/>
    <addaction name="actNewFolder"/>
+   <addaction name="separator"/>
    <addaction name="actNewImg"/>
-   <addaction name="actRename"/>
    <addaction name="actImportImg"/>
+   <addaction name="actRename"/>
   </widget>
   <action name="actOpenProject">
    <property name="icon">
@@ -259,11 +260,14 @@
    <property name="text">
     <string>重命名</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::AboutQtRole</enum>
+   </property>
   </action>
   <action name="actNewImg">
    <property name="icon">
     <iconset resource="Img.qrc">
-     <normaloff>:/Image/TreeIco/ImageFile.svg</normaloff>:/Image/TreeIco/ImageFile.svg</iconset>
+     <normaloff>:/Image/Toolbar/NewImage.svg</normaloff>:/Image/Toolbar/NewImage.svg</iconset>
    </property>
    <property name="text">
     <string>新建图片</string>
@@ -273,6 +277,10 @@
    </property>
   </action>
   <action name="actImportImg">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/Toolbar/ImportFromImage.svg</normaloff>:/Image/Toolbar/ImportFromImage.svg</iconset>
+   </property>
    <property name="text">
     <string>导入图片</string>
    </property>
