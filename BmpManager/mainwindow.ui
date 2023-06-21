@@ -214,6 +214,8 @@
    <addaction name="actNewImg"/>
    <addaction name="actImportImg"/>
    <addaction name="actRename"/>
+   <addaction name="actDelete"/>
+   <addaction name="actTest"/>
   </widget>
   <action name="actOpenProject">
    <property name="icon">
@@ -283,6 +285,20 @@
    </property>
    <property name="text">
     <string>导入图片</string>
+   </property>
+  </action>
+  <action name="actDelete">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/Toolbar/Delete.svg</normaloff>:/Image/Toolbar/Delete.svg</iconset>
+   </property>
+   <property name="text">
+    <string>删除</string>
+   </property>
+  </action>
+  <action name="actTest">
+   <property name="text">
+    <string>测试</string>
    </property>
   </action>
  </widget>

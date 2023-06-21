@@ -88,6 +88,12 @@ void ProjectMng::openProject(QString pro)
     projList << pro;        // 惊，还可以这样？？？
 }
 
+void ProjectMng::closeProjcet(QModelIndex &index)
+{
+    //projList.removeAt(index.row());
+    projList.clear();
+}
+
 // 根据数据库初始化model
 void ProjectMng::initModel()
 {
@@ -168,6 +174,14 @@ void ProjectMng::rename(QModelIndex &index, QString name)
     TreeItem *item = theModel->itemFromIndex(index);
     RawData *rd = item->getRawData();
     rd->rename(item->getID(), name);
+}
+
+void ProjectMng::remove(QModelIndex &index)
+{
+    TreeItem *item = theModel->itemFromIndex(index);
+    RawData *rd = item->getRawData();
+    rd->remove(item->getID());
+    rd->load();
 }
 
 

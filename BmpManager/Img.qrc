@@ -12,5 +12,6 @@
         <file>Image/Toolbar/ImportFormArray.svg</file>
         <file>Image/Toolbar/ImportFromImage.svg</file>
         <file>Image/Toolbar/NewImage.svg</file>
+        <file>Image/Toolbar/Delete.svg</file>
     </qresource>
 </RCC>

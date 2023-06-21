@@ -152,3 +152,30 @@ void MainWindow::on_actImportImg_triggered()
     }
 }
 
+
+void MainWindow::on_actDelete_triggered()
+{
+    QModelIndex curIndex = ui->treeViewProject->currentIndex();
+    if(curIndex.isValid())
+    {
+        TreeItem *item = pm.model()->itemFromIndex(curIndex);
+        if(item->getType() == TreeItem::PROJECT)
+        {
+            pm.closeProjcet(curIndex);
+            pm.initModel();
+        }
+        else
+        {
+            pm.remove(curIndex);
+            pm.initModel();
+        }
+    }
+}
+
+
+void MainWindow::on_actTest_triggered()
+{
+    QModelIndex curIndex = ui->treeViewProject->currentIndex();
+    qDebug() << curIndex.row();
+}
+

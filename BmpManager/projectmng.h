@@ -16,7 +16,7 @@ class ProjectMng : public QWidget
 {
     Q_OBJECT
 private:
-    QList<RawData> projList;
+    QVector<RawData> projList;
     TreeModel *theModel;
     QTreeView *treeView;
 
@@ -29,6 +29,7 @@ private:
 public:
     explicit ProjectMng(QWidget *parent = nullptr);
     void openProject(QString pro);
+    void closeProjcet(QModelIndex &index);
     void initModel();   // 根据数据库重新初始化模型
     TreeModel* model() { return theModel; }
     void blindTreeView(QTreeView *treeView);
@@ -37,6 +38,7 @@ public:
     void createImage(QModelIndex &index, QString name, quint16 width, quint16 height);
     void createImage(QModelIndex &index, QString name, QImage &img);
     void rename(QModelIndex &index, QString name);
+    void remove(QModelIndex &index);
 
     enum NodeType
     {

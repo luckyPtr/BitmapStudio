@@ -55,6 +55,7 @@ void RawData::load()
 
 RawData::RawData(const QString path)
 {
+    return;
     project = path;
     QFileInfo file(path);
     bool isFile = file.isFile();
@@ -75,7 +76,7 @@ RawData::RawData(const QString path)
 
 RawData::~RawData()
 {
-    //db.close();
+    db.close();
     expand.clear();
     qDebug() << "~RawData:" << project;
 }
@@ -174,6 +175,25 @@ void RawData::rename(quint16 id, QString name)
     if(imgMap.contains(id))
     {
         imgMap[id].name = name;
+    }
+}
+
+void RawData::remove(quint16 id)
+{
+    // 删除对应id
+    QSqlQuery query(db);
+    query.prepare("DELETE FROM tbl_img WHERE id=:id");
+    query.bindValue(":id", id);
+    query.exec();
+
+    // 递归删除该id下面的子项
+    query.prepare("SELECT id FROM tbl_img WHERE pid=:pid");
+    query.bindValue(":pid", id);
+    query.exec();
+    while (query.next())
+    {
+        quint16 childId = query.value("id").toInt();
+        remove(childId);
     }
 }
 

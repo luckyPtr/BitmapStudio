@@ -47,7 +47,7 @@ private:
 
 
     void initDatabase();
-    void load();    // 加载数据库数据
+
 public:
     RawData(const QString path);
     ~RawData();
@@ -57,10 +57,12 @@ public:
     QString getProject() const {return project;}
     QMap<quint16, BmImg> getImgMap() const {return imgMap;}
     BmImg getImgInfo(quint16 id) const { return imgMap[id]; }
+    void load();    // 加载数据库数据
     void createFolder(quint16 id, QString name = "Untitled");
     void createBmp(quint16 id, QString name, const QImage &img);
     void createBmp(quint16 id, QString name, quint16 wide, quint16 height);
     void rename(quint16 id, QString name);
+    void remove(quint16 id);
 
     void addExpandNode(quint16 id) { expand << id; };
     bool isExpandNode(quint16 id) { return expand.contains(id); }

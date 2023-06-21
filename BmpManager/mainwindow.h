@@ -38,6 +38,10 @@ private slots:
 
     void on_actImportImg_triggered();
 
+    void on_actDelete_triggered();
+
+    void on_actTest_triggered();
+
 private:
     Ui::MainWindow *ui;
 
