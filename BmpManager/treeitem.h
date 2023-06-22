@@ -87,6 +87,7 @@ public:
 
     void addChild(TreeItem *item);
     void removeChildren();
+    void removeChild(int row);
 
     TreeItem *child(int row) { return _children.value(row); }
     TreeItem *parent() { return _parent; }
@@ -101,8 +102,8 @@ public:
     void setID(quint16 id) {this->id = id; }
     qint16 getID() const { return id; }
 
-    void setProject(QString path) {project = path;}
-    QString getProject() const {return project;}
+ //   void setProject(QString path) {project = path;}
+ //   QString getProject() const {return project;}
 
     //设置、获取节点存的数据指针
     void setPtr(void* p) { _ptr = p; }

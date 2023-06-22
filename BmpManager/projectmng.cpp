@@ -11,7 +11,7 @@ void ProjectMng::addImgNode(RawData *rd, const quint16 pid, TreeItem *parent)
         {
             TreeItem *item = new TreeItem();
             item->setID(bi.id);
-            item->setProject(rd->getProject());
+//            item->setProject(rd->getProject());
             item->setType(bi.isFolder ? TreeItem::FOLDER : TreeItem::FILE);
             item->setRawData(rd);
             parent->addChild(item);
@@ -89,17 +89,15 @@ void ProjectMng::openProject(QString pro)
 }
 
 void ProjectMng::closeProjcet(QModelIndex &index)
-{
-    //projList.removeAt(index.row());
-    projList.clear();
+{  
+    projList.removeAt(index.row());
+    theModel->removeRow(index);      // 删除model中的项目，否则后面保存TreeView中展开项的时候会崩溃
 }
 
 // 根据数据库初始化model
 void ProjectMng::initModel()
 {
     // TODO: 一次读取数据库，提高速度
-    QElapsedTimer timer;
-    timer.start();
     saveExpand();
     theModel->beginReset(); // 需要使用beginReset和endReset通知treeview刷新
     theModel->clear();
@@ -108,6 +106,7 @@ void ProjectMng::initModel()
         TreeItem *proItem = new TreeItem();
         proItem->setType(TreeItem::PROJECT);
         proItem->setRawData(&projList[i]);
+//        proItem->setProject(projList[i].getProject());
         proItem->setID(-1);
         theModel->root()->addChild(proItem);
 
@@ -132,14 +131,24 @@ void ProjectMng::initModel()
     }
     theModel->endReset();
     restoreExpand();
-
-    qDebug() << "耗时" << timer.elapsed();
 }
 
 void ProjectMng::blindTreeView(QTreeView *treeView)
 {
     this->treeView = treeView;
     treeView->setModel(theModel);
+}
+
+bool ProjectMng::contain(QString project)
+{
+    foreach(auto i, projList)
+    {
+        if(project == i.getProject())
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 

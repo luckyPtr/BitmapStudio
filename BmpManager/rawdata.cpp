@@ -55,7 +55,7 @@ void RawData::load()
 
 RawData::RawData(const QString path)
 {
-    return;
+    qDebug() << "RawData:" << project;
     project = path;
     QFileInfo file(path);
     bool isFile = file.isFile();
@@ -76,7 +76,7 @@ RawData::RawData(const QString path)
 
 RawData::~RawData()
 {
-    db.close();
+//    db.close();
     expand.clear();
     qDebug() << "~RawData:" << project;
 }

@@ -30,6 +30,12 @@ void TreeItem::removeChildren()
     _children.clear();
 }
 
+void TreeItem::removeChild(int row)
+{
+    delete _children[row];
+    _children.removeAt(row);
+}
+
 // 获取本节点第column列的数据
 QVariant TreeItem::data(int column) const
 {

@@ -65,7 +65,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
     }
     else if(role == RoleProjPath)
     {
-        return item->getProject();
+        return item->getRawData()->getProject();
     }
 
     return QVariant();
@@ -112,6 +112,7 @@ int TreeModel::rowCount(const QModelIndex &parent) const
 // 返回索引parent下有多少列
 int TreeModel::columnCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent)
     return 1; //_headers.size();
 }
 
@@ -122,3 +123,9 @@ void TreeModel::clear()
         _rootItem->removeChildren();
     }
 }
+
+void TreeModel::removeRow(const QModelIndex &index)
+{
+    itemFromIndex(index.parent())->removeChild(index.row());
+}
+

@@ -176,6 +176,6 @@ void MainWindow::on_actDelete_triggered()
 void MainWindow::on_actTest_triggered()
 {
     QModelIndex curIndex = ui->treeViewProject->currentIndex();
-    qDebug() << curIndex.row();
+    pm.closeProjcet(curIndex);
 }
 

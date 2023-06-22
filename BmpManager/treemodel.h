@@ -22,6 +22,7 @@ public:
     int columnCount(const QModelIndex &parent) const override;
 
     void clear();
+    void removeRow(const QModelIndex &index);
     void beginReset() {beginResetModel();}
     void endReset() {endResetModel();}
     enum
