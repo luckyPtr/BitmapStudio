@@ -3,7 +3,7 @@
 #include <QGraphicsRectItem>
 #include <QDebug>
 #include "qgraphicsitemruler.h"
-
+#include <global.h>
 #include <QScrollBar>
 
 FormPixelEditor::FormPixelEditor(QWidget *parent) :

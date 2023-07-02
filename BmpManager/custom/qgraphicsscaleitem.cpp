@@ -1,9 +1,11 @@
 #include "qgraphicsscaleitem.h"
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
-#include <QGraphicsView>
+//#include <QGraphicsView>
+#include "qwgraphicsview.h"
 #include <QDebug>
 #include "global.h"
+#include <QScrollBar>
 
 void QGraphicsScaleItem::drawScale(QPainter *painter)
 {
@@ -37,58 +39,51 @@ void QGraphicsScaleItem::drawScale(QPainter *painter)
     for(int i = 0, x = 0; x < width; i++)
     {
         x = Global::scaleWidth + Global::scaleOffset + i * Global::pixelSize;
-        // 每10像素绘制长刻度线和数值
-        if(i % 10 == 0)
-        {
-            QLine line(x, 0, x, Global::scaleWidth);
-            painter->drawLine(line);
-            QFont font(QStringLiteral("微软雅黑"), 8);
-            painter->setFont(font);
-
-            painter->drawText(x + 2, Global::scaleWidth / 2 + 2, QString::number(i));
-        }
-        else
-        {
-            QLine line(x, Global::scaleWidth - 4, x, Global::scaleWidth);
-            painter->drawLine(line);
-        }
+        QLine line(x, i % 10 == 0 ? 0 : Global::scaleWidth - 4, x, Global::scaleWidth);
+        painter->drawLine(line);
     }
     // 垂直刻度线
     for(int i = 0, y = 0; y < height; i++)
     {
         y = Global::scaleWidth + Global::scaleOffset + i * Global::pixelSize;
-        // 每10像素绘制长刻度线和数值
-        if(i % 10 == 0)
-        {
-            QLine line(0, y, Global::scaleWidth, y);
-            painter->drawLine(line);
-        }
-        else
-        {
-            QLine line(Global::scaleWidth - 4, y, Global::scaleWidth, y);
-            painter->drawLine(line);
-        }
+        QLine line(i % 10 == 0 ? 0 : Global::scaleWidth - 4, y, Global::scaleWidth, y);
+        painter->drawLine(line);
     }
 
+    // 绘制刻度线数字
+    QFont font(QStringLiteral("微软雅黑"), 8);
+    painter->setFont(font);
+    pen.setColor(QColor(0x334b6a));
+    painter->setPen(pen);
+
+    for(int i = 0, x = 0; x < width; i+=10)
+    {
+        x = Global::scaleWidth + Global::scaleOffset + i * Global::pixelSize;
+        // 每10像素绘制长刻度线和数值
+        painter->drawText(x + 2, Global::scaleWidth / 2 + 2, QString::number(i));
+    }
     painter->save();
     painter->rotate(90);
-    for(int i = 0, y = 0; y < height; i++)
+    for(int i = 0, y = 0; y < height; i+=10)
     {
         y = Global::scaleWidth + Global::scaleOffset + i * Global::pixelSize;
-        if(i % 10 == 0)
-        {
-            painter->drawText(y + 2, Global::scaleWidth / 2 - 10, QString::number(i));
-        }
+        painter->drawText(y + 2, Global::scaleWidth / 2 - 10, QString::number(i));
     }
-
-
     painter->restore();
+
+    // 绘制当前刻度
+    pen.setColor(Qt::red);
+    painter->setPen(pen);
+    QLine lineHorizontalScale(qMax((int)mousePos.x(), Global::scaleWidth), 0, qMax((int)mousePos.x(), Global::scaleWidth), Global::scaleWidth);
+    QLine lineVerticalScale(0, qMax((int)mousePos.y(), Global::scaleWidth), Global::scaleWidth, qMax((int)mousePos.y(), Global::scaleWidth));
+    painter->drawLine(lineHorizontalScale);
+    painter->drawLine(lineVerticalScale);
 }
 
 QGraphicsScaleItem::QGraphicsScaleItem(QWidget *parent)
 {
-    view = static_cast<QGraphicsView*>(parent);
-
+    view = static_cast<QWGraphicsView*>(parent);
+    connect(view, SIGNAL(mouseMovePoint(QPoint)), this, SLOT(mouseMove(QPoint)));
 }
 
 QRectF QGraphicsScaleItem::boundingRect() const
@@ -106,7 +101,6 @@ void QGraphicsScaleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem
     {
 
     }
-    qDebug() << "paint scale";
 }
 
 QPainterPath QGraphicsScaleItem::shape() const
@@ -126,4 +120,13 @@ QPainterPath QGraphicsScaleItem::shape() const
 
 
     return path;
+}
+
+void QGraphicsScaleItem::mouseMove(QPoint point)
+{
+    // 将坐标映射到sense原点相对位置
+    mousePos = point;
+    mousePos.setX(mousePos.x() + view->horizontalScrollBar()->value());
+    mousePos.setY(mousePos.y() + view->verticalScrollBar()->value());
+    this->update();
 }
