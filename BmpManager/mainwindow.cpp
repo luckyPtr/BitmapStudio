@@ -11,6 +11,8 @@
 #include <QToolButton>
 #include <dialognewimgfile.h>
 #include <dialogimportimg.h>
+#include <formpixeleditor.h>
+#include <formcomimgeditor.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -40,8 +42,9 @@ void MainWindow::init()
 //    menu->addAction(ui->actNewImg);
 //    menu->addAction(ui->actImportImg);
 //    toolBtn->setMenu(menu);
-//    ui->toolBar->addWidget(toolBtn);
+    //    ui->toolBar->addWidget(toolBtn);
 }
+
 
 
 
@@ -118,6 +121,8 @@ void MainWindow::on_actNewImg_triggered()
 
 void MainWindow::on_splitter_splitterMoved(int pos, int index)
 {
+    Q_UNUSED(pos)
+    Q_UNUSED(index)
     ui->labelPreview->clear();
     QModelIndex curIndex = ui->treeViewProject->currentIndex();
     if(curIndex.isValid())
@@ -175,7 +180,13 @@ void MainWindow::on_actDelete_triggered()
 
 void MainWindow::on_actTest_triggered()
 {
-    QModelIndex curIndex = ui->treeViewProject->currentIndex();
-    pm.closeProjcet(curIndex);
+    if(ui->stackedWidget->currentIndex() == 0)
+    {
+        ui->stackedWidget->setCurrentIndex(1);
+    }
+    else
+    {
+        ui->stackedWidget->setCurrentIndex(0);
+    }
 }
 

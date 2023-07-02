@@ -46,7 +46,8 @@ private:
     Ui::MainWindow *ui;
 
     ProjectMng pm;
+    QWidget *formPixelEditor;
+    QWidget *formComImgEditor;
     void init();
-
 };
 #endif // MAINWINDOW_H

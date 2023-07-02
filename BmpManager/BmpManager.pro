@@ -11,10 +11,15 @@ CONFIG += c++17
 SOURCES += \
     dialogimportimg.cpp \
     dialognewimgfile.cpp \
+    formcomimgeditor.cpp \
+    formpixeleditor.cpp \
+    global.cpp \
     main.cpp \
     mainwindow.cpp \
     projectmng.cpp \
+    qgraphicsitemruler.cpp \
     qunitspinbox.cpp \
+    qwgraphicsview.cpp \
     rawdata.cpp \
     treeitem.cpp \
     treemodel.cpp
@@ -22,9 +27,14 @@ SOURCES += \
 HEADERS += \
     dialogimportimg.h \
     dialognewimgfile.h \
+    formcomimgeditor.h \
+    formpixeleditor.h \
+    global.h \
     mainwindow.h \
     projectmng.h \
+    qgraphicsitemruler.h \
     qunitspinbox.h \
+    qwgraphicsview.h \
     rawdata.h \
     treeitem.h \
     treemodel.h
@@ -32,6 +42,8 @@ HEADERS += \
 FORMS += \
     dialogimportimg.ui \
     dialognewimgfile.ui \
+    formcomimgeditor.ui \
+    formpixeleditor.ui \
     mainwindow.ui
 
 TRANSLATIONS += \
@@ -50,6 +62,8 @@ msvc{
     QMAKE_CFLAGS += /utf-8
     QMAKE_CXXFLAGS += /utf-8
 }
+
+include(./custom/custom.pri)
 
 RESOURCES += \
     Img.qrc

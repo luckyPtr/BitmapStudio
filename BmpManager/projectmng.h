@@ -33,8 +33,6 @@ public:
     void initModel();   // 根据数据库重新初始化模型
     TreeModel* model() { return theModel; }
     void blindTreeView(QTreeView *treeView);
-    QString getIndexProject(QModelIndex index);
-    bool contain(QString project);
     void createFolder(QModelIndex index); // 新建文件夹
     void createImage(QModelIndex &index, QString name, quint16 width, quint16 height);
     void createImage(QModelIndex &index, QString name, QImage &img);

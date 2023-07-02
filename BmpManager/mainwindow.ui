@@ -20,23 +20,17 @@
    </size>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QStackedWidget" name="stackedWidget">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>9</y>
-      <width>18</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="currentIndex">
-     <number>0</number>
-    </property>
-    <widget class="QWidget" name="page_3">
-     <layout class="QHBoxLayout" name="horizontalLayout"/>
-    </widget>
-    <widget class="QWidget" name="page_4"/>
-   </widget>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <widget class="QStackedWidget" name="stackedWidget">
+      <property name="currentIndex">
+       <number>1</number>
+      </property>
+      <widget class="FormComImgEditor" name="pagePixelEditor"/>
+      <widget class="FormPixelEditor" name="pageComImgEditor"/>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -302,6 +296,20 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>FormPixelEditor</class>
+   <extends>QWidget</extends>
+   <header location="global">formpixeleditor.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FormComImgEditor</class>
+   <extends>QWidget</extends>
+   <header location="global">formcomimgeditor.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="Img.qrc"/>
  </resources>

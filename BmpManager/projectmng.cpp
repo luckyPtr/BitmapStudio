@@ -78,7 +78,6 @@ ProjectMng::ProjectMng(QWidget *parent)
     : QWidget{parent}
 {
     theModel = new TreeModel(this);
-
 }
 
 void ProjectMng::openProject(QString pro)
@@ -89,7 +88,7 @@ void ProjectMng::openProject(QString pro)
 }
 
 void ProjectMng::closeProjcet(QModelIndex &index)
-{  
+{
     projList.removeAt(index.row());
     theModel->removeRow(index);      // 删除model中的项目，否则后面保存TreeView中展开项的时候会崩溃
 }
@@ -139,17 +138,7 @@ void ProjectMng::blindTreeView(QTreeView *treeView)
     treeView->setModel(theModel);
 }
 
-bool ProjectMng::contain(QString project)
-{
-    foreach(auto i, projList)
-    {
-        if(project == i.getProject())
-        {
-            return true;
-        }
-    }
-    return false;
-}
+
 
 
 void ProjectMng::createFolder(QModelIndex index)
