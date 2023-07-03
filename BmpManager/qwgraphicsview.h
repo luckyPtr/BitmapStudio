@@ -10,13 +10,15 @@ class QWGraphicsView : public QGraphicsView
 protected:
     void mouseMoveEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
     void resizeEvent(QResizeEvent *event);
     void paintEvent(QPaintEvent *event);
 public:
     QWGraphicsView(QWidget *parent = nullptr);
 signals:
     void mouseMovePoint(QPoint point);
-    void mouseClicked(QPoint point);
+    void mousePress(QPoint point);
+    void mouseRelease(QPoint point);
     void resized();
     void paint();
 };

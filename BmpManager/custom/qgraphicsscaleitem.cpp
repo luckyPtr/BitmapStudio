@@ -1,7 +1,6 @@
 #include "qgraphicsscaleitem.h"
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
-//#include <QGraphicsView>
 #include "qwgraphicsview.h"
 #include <QDebug>
 #include "global.h"
@@ -9,7 +8,7 @@
 
 void QGraphicsScaleItem::drawScale(QPainter *painter)
 {
-    // 绘制轮廓喝背景
+    // 绘制轮廓和背景
     QPen pen;
     pen.setWidth(1);
     pen.setColor(QColor(142, 156, 175));
@@ -95,12 +94,16 @@ QRectF QGraphicsScaleItem::boundingRect() const
 
 void QGraphicsScaleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    Q_UNUSED(option)
+    Q_UNUSED(widget)
+
     drawScale(painter);
 
     if (option->state & QStyle::State_Selected)
     {
 
     }
+    qDebug() << "Paint scale";
 }
 
 QPainterPath QGraphicsScaleItem::shape() const
@@ -109,15 +112,15 @@ QPainterPath QGraphicsScaleItem::shape() const
     int height = qMax(view->height(), (int)view->scene()->height());
     QPainterPath path;
 
-    QVector<QPointF> points;
-    points.append(QPointF(0, 0));
-    points.append(QPointF(width, 0));
-    points.append(QPointF(width, Global::scaleWidth));
-    points.append(QPointF(Global::scaleWidth, Global::scaleWidth));
-    points.append(QPointF(Global::scaleWidth, height));
-    points.append(QPointF(0, height));
+    QVector<QPointF> points = {
+        QPointF(0, 0),
+        QPointF(width, 0),
+        QPointF(width, Global::scaleWidth),
+        QPointF(Global::scaleWidth, Global::scaleWidth),
+        QPointF(Global::scaleWidth, height),
+        QPointF(0, height)
+    };
     path.addPolygon(QPolygonF(points));
-
 
     return path;
 }

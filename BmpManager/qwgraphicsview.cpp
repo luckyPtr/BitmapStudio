@@ -13,8 +13,16 @@ void QWGraphicsView::mouseMoveEvent(QMouseEvent *event)
 
 void QWGraphicsView::mousePressEvent(QMouseEvent *event)
 {
-    qDebug() << "mouse clicked!";
+    qDebug() << "mouse Pressed!";
+    emit mousePress(event->pos());
     QGraphicsView::mousePressEvent(event);
+}
+
+void QWGraphicsView::mouseReleaseEvent(QMouseEvent *event)
+{
+    qDebug() << "mouse Release!";
+    emit mouseRelease(event->pos());
+    QGraphicsView::mouseReleaseEvent(event);
 }
 
 void QWGraphicsView::resizeEvent(QResizeEvent *event)
@@ -31,5 +39,6 @@ void QWGraphicsView::paintEvent(QPaintEvent *event)
 
 QWGraphicsView::QWGraphicsView(QWidget *parent)
 {
+    Q_UNUSED(parent)
     setMouseTracking(true);    // 只有打开鼠标追踪功能，鼠标移动才能触发mouseMoveEvent
 }

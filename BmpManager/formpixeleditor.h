@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QGraphicsScene>
 #include "custom/qgraphicsscaleitem.h"
+#include "custom/qgraphicscanvasitem.h"
 
 namespace Ui {
 class FormPixelEditor;
@@ -20,14 +21,13 @@ public:
 private:
     Ui::FormPixelEditor *ui;
 
+    QImage *image;      // 编辑的图片
     QGraphicsScene *scene;
-    QGraphicsItemGroup *rulerGroup; // 标尺图形图元组
-    int pixelSize;      // 像素大小，单位像素
-    const int rulerWith = 30;   // 标尺宽度
     QGraphicsScaleItem *scaleItem;
+    QGraphicsCanvasItem *scanvasItem;
 
-    void drawRuler();
     void initScrollerPos();   // 初始化滚轮位置为左上角
+
 public slots:
     void paintView();
 };

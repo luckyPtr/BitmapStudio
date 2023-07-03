@@ -2,9 +2,10 @@
 #include "ui_formpixeleditor.h"
 #include <QGraphicsRectItem>
 #include <QDebug>
-#include "qgraphicsitemruler.h"
 #include <global.h>
 #include <QScrollBar>
+
+
 
 FormPixelEditor::FormPixelEditor(QWidget *parent) :
     QWidget(parent),
@@ -12,15 +13,49 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    image = new QImage("C:\\Users\\Naive\\Desktop\\1\\AMQ图标\\大-日期.bmp");
+    qDebug() << image->size();
+
     ui->graphicsView->setCursor(Qt::BitmapCursor);
-    QRectF rect(0, 0, 800, 600);
+    QRectF rect(0, 0, image->width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image->height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset);
     scene = new QGraphicsScene(rect);
     ui->graphicsView->setScene(scene);
 
     scaleItem = new QGraphicsScaleItem(ui->graphicsView);
     scaleItem->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
 
+    scanvasItem = new QGraphicsCanvasItem(ui->graphicsView);
+    scanvasItem->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
+    scanvasItem->setImage(*image);
+
     scene->addItem(scaleItem);
+    scene->addItem(scanvasItem);
+    QBrush brush;
+    brush.setColor(0xcbd4e4);
+    brush.setStyle(Qt::SolidPattern);
+    scene->setBackgroundBrush(brush);
+
+//    QPen pen;
+//    brush.setColor(QColor(180, 180, 180, 60));
+//    pen.setColor(QColor(180, 180, 180, 60));
+//    QGraphicsRectItem *rectSItem = new QGraphicsRectItem;
+//    rectSItem->setRect(QRect(26, 26, 620, 420));
+//    rectSItem->setBrush(brush);
+//    rectSItem->setPen(pen);
+//    scene->addItem(rectSItem);
+
+//    QGraphicsRectItem *rectItem = new QGraphicsRectItem;
+//    QRectF rect1(20, 20, 620, 420);
+//    brush.setColor(Qt::white);
+//    rectItem->setBrush(brush);
+
+//    pen.setColor(Qt::white);
+//    rectItem->setPen(pen);
+//    rectItem->setRect(rect1);
+//    scene->addItem(rectItem);
+
+
+
 
     connect(ui->graphicsView, SIGNAL(paint()), this, SLOT(paintView()));
 }
@@ -30,56 +65,7 @@ FormPixelEditor::~FormPixelEditor()
     delete ui;
 }
 
-void FormPixelEditor::drawRuler()
-{
-    QGraphicsItemRuler *itemRuler = new QGraphicsItemRuler();
-    itemRuler->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
-    scene->addItem(itemRuler);
-    itemRuler->setPos(200, 100);
 
-    QGraphicsLineItem *line = new QGraphicsLineItem(0, 0, 200, 100);
-    line->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
-    scene->addItem(line);
-
-
-//    QGraphicsLineItem *rulerLineX = new QGraphicsLineItem(16, 16, this->width(), 16);
-//    QGraphicsLineItem *rulerLineY = new QGraphicsLineItem(16, 16, 16, this->height());
-//    QPen pen(Qt::gray);
-//    pen.setWidth(1);
-//    pen.setJoinStyle(Qt::RoundJoin);
-//    rulerLineX->setPen(pen);
-//    rulerLineY->setPen(pen);
-//    scene->addItem(rulerLineX);
-//    scene->addItem(rulerLineY);
-
-//    for(int i = 18; i < this->width(); i += 6)
-//    {
-//        QGraphicsLineItem *line = new QGraphicsLineItem();
-//        if((i - 18) % 60 == 0)
-//            line->setLine(i, 0, i, 16);
-//        else
-//            line->setLine(i, 12, i, 16);
-//        line->setPen(pen);
-//        scene->addItem(line);
-//    }
-
-//    int a = 0;
-//    QBrush brush(Qt::gray);
-
-//    pen.setBrush(brush);
-//    for(int x = 18; x < width(); x += 10)
-//    {
-//        for(int y = 18; y < height(); y += 10)
-//        {
-//            QGraphicsRectItem *item = new QGraphicsRectItem();
-//            item->setRect(x, y, 8, 8);
-//            item->setPen(pen);
-//            scene->addItem(item);
-//            a++;
-//        }
-//    }
-    //    qDebug() << "item cnt = " << a;
-}
 
 void FormPixelEditor::initScrollerPos()
 {
@@ -97,8 +83,6 @@ void FormPixelEditor::initScrollerPos()
 void FormPixelEditor::paintView()
 {
     initScrollerPos();
-//    scene->clear();
-//    drawRuler();
 }
 
 
