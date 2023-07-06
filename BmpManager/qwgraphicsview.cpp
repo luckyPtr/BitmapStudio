@@ -37,6 +37,12 @@ void QWGraphicsView::paintEvent(QPaintEvent *event)
     QGraphicsView::paintEvent(event);
 }
 
+void QWGraphicsView::wheelEvent(QWheelEvent *event)
+{
+    qDebug() << "wheel";
+    QGraphicsView::wheelEvent(event);
+}
+
 QWGraphicsView::QWGraphicsView(QWidget *parent)
 {
     Q_UNUSED(parent)

@@ -16,7 +16,7 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
     image = new QImage("C:\\Users\\Naive\\Desktop\\1\\AMQ图标\\大-日期.bmp");
     qDebug() << image->size();
 
-    ui->graphicsView->setCursor(Qt::BitmapCursor);
+
     QRectF rect(0, 0, image->width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image->height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset);
     scene = new QGraphicsScene(rect);
     ui->graphicsView->setScene(scene);
@@ -34,6 +34,8 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
     brush.setColor(0xcbd4e4);
     brush.setStyle(Qt::SolidPattern);
     scene->setBackgroundBrush(brush);
+    ui->graphicsView->setRubberBandSelectionMode(Qt::ContainsItemBoundingRect);
+
 
 //    QPen pen;
 //    brush.setColor(QColor(180, 180, 180, 60));

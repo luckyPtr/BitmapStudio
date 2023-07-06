@@ -13,6 +13,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event);
     void resizeEvent(QResizeEvent *event);
     void paintEvent(QPaintEvent *event);
+    void wheelEvent(QWheelEvent *);
 public:
     QWGraphicsView(QWidget *parent = nullptr);
 signals:
