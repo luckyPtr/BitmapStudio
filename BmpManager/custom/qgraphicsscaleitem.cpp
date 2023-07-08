@@ -8,8 +8,6 @@
 
 void QGraphicsScaleItem::drawScale(QPainter *painter)
 {
-    int horizontalBarVal = view->horizontalScrollBar()->value();
-    int verticalBarC = view->verticalScrollBar()->value();
     // 绘制轮廓和背景
     QPen pen;
     pen.setWidth(1);
@@ -105,7 +103,6 @@ void QGraphicsScaleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem
     {
 
     }
-    qDebug() << "Paint scale" << view->horizontalScrollBar()->value();
 }
 
 QPainterPath QGraphicsScaleItem::shape() const

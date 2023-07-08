@@ -19,6 +19,8 @@ public:
 signals:
     void mouseMovePoint(QPoint point);
     void mousePress(QPoint point);
+    void mousePressMiddle(QPoint point);
+    void mousePressRight(QPoint point);
     void mouseRelease(QPoint point);
     void resized();
     void paint();

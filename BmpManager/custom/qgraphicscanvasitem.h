@@ -4,27 +4,36 @@
 #include <QGraphicsItem>
 #include <QObject>
 
-enum ResizeStep
-{
-    ResizeNull,
-    ResizeVer,
-    ResizeHor,
-    ResizeFDiag,
-};
+
 
 class QGraphicsCanvasItem : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 private:
+    enum Action
+    {
+        ActionNull,
+        ActionResizeVer,
+        ActionResizeHor,
+        ActionResizeFDiag,
+        ActionMove,
+    };
+
     QGraphicsView *view;
     QImage image;
+    QImage imagePreview;
     QPoint startPoint;  // 左上角其实位置坐标
     QPoint currentPoint;
+    QPoint currentPixel;    // 当前鼠标所在的坐标（图片像素）
+    QPoint moveStartPixel;  // 开始移动画布的坐标(像素)
+    QPoint pointToPixel(QPoint point);  // 坐标转换为画布上的像素坐标
     bool isResezeMode;  // 是否为重新设置画布大小的模式
     bool isInSizeVerArea(QPoint point); // 是否处于垂直调整画布大小的区域内
     bool isInSizeHorArea(QPoint point); // 是否处于水平调整画布大小的区域内
     bool isInSizeFDiagArea(QPoint point);
-    quint8 ResizeStep = ResizeNull;  // 调整画布大小的步骤 0-初始状态 1-按下
+    quint8 ResizeStep = ActionNull;  // 调整画布大小的步骤 0-初始状态 1-按下
+    void resizeImage(QImage &img, int width, int heighy);
+    void moveImage(QImage &img,  int OffsetX, int OffsetY);
 public:
     QGraphicsCanvasItem(QWidget *parent = nullptr);
     QRectF boundingRect() const Q_DECL_OVERRIDE;
@@ -37,7 +46,9 @@ public slots:
     void on_ResizeMouseMove(QPoint point);
     void on_ResizeMousePress(QPoint point);
     void on_ResizeMouseRelease(QPoint point);
-
+    void on_MoveMouseMove(QPoint point);
+    void on_MoveMousePress(QPoint point);
+    void on_MoveMouseRelease(QPoint point);
 };
 
 #endif // QGRAPHICSCANVASITEM_H

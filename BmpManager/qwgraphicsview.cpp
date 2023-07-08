@@ -13,14 +13,18 @@ void QWGraphicsView::mouseMoveEvent(QMouseEvent *event)
 
 void QWGraphicsView::mousePressEvent(QMouseEvent *event)
 {
-    qDebug() << "mouse Pressed!";
-    emit mousePress(event->pos());
+    if(event->button() == Qt::LeftButton)
+        emit mousePress(event->pos());
+    else if(event->button() == Qt::MiddleButton)
+        emit mousePressMiddle(event->pos());
+    else if(event->button() == Qt::RightButton)
+        emit mousePressRight(event->pos());
+
     QGraphicsView::mousePressEvent(event);
 }
 
 void QWGraphicsView::mouseReleaseEvent(QMouseEvent *event)
 {
-    qDebug() << "mouse Release!";
     emit mouseRelease(event->pos());
     QGraphicsView::mouseReleaseEvent(event);
 }
@@ -39,7 +43,6 @@ void QWGraphicsView::paintEvent(QPaintEvent *event)
 
 void QWGraphicsView::wheelEvent(QWheelEvent *event)
 {
-    qDebug() << "wheel";
     QGraphicsView::wheelEvent(event);
 }
 
