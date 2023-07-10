@@ -4,7 +4,7 @@
 #include <QDebug>
 #include <global.h>
 #include <QScrollBar>
-
+#include "custom/qcustommenu.h"
 
 
 FormPixelEditor::FormPixelEditor(QWidget *parent) :
@@ -12,9 +12,9 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
     ui(new Ui::FormPixelEditor)
 {
     ui->setupUi(this);
+    initAction();
 
     image = new QImage("C:\\Users\\Naive\\Desktop\\1\\AMQ图标\\大-日期.bmp");
-
 
     QRectF rect(0, 0, image->width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image->height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset);
     scene = new QGraphicsScene(rect);
@@ -59,7 +59,8 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
 
 
 
-    connect(ui->graphicsView, SIGNAL(paint()), this, SLOT(paintView()));
+    connect(ui->graphicsView, SIGNAL(paint()), this, SLOT(paintView()));    // todo Lambda
+    connect(this, SIGNAL(imgReserve()), scanvasItem, SLOT(on_Reserve()));
 }
 
 FormPixelEditor::~FormPixelEditor()
@@ -82,6 +83,29 @@ void FormPixelEditor::initScrollerPos()
     }
 }
 
+void FormPixelEditor::initAction()
+{
+    ui->toolBtnRotateFlip->setIcon(QIcon(":/Image/PixelEditor/FlipHorizontal.svg"));
+    QCustomMenu *menu = new QCustomMenu(this);
+    menu->addAction(ui->actFlipHorizontal);
+    menu->addAction(ui->actFlipVerital);
+    menu->addAction(ui->actRotateLeft);
+    menu->addAction(ui->actRotateRight);
+    ui->toolBtnRotateFlip->setMenu(menu);
+
+    ui->toolBtnMove->setIcon(QIcon(":/Image/PixelEditor/Move.svg"));
+    QCustomMenu *menuMove = new QCustomMenu(this);
+    menuMove->addAction(ui->actMoveUp);
+    menuMove->addAction(ui->actMoveDown);
+    menuMove->addAction(ui->actMoveLeft);
+    menuMove->addAction(ui->actMoveRight);
+    menuMove->setToolTip("移动");
+    ui->toolBtnMove->setMenu(menuMove);
+
+    ui->toolBtnReserve->setDefaultAction(ui->actReserve);
+
+}
+
 void FormPixelEditor::paintView()
 {
     initScrollerPos();
@@ -90,4 +114,34 @@ void FormPixelEditor::paintView()
 
 
 
+
+
+void FormPixelEditor::on_actFlipHorizontal_triggered()
+{
+    qDebug() << "水平翻转";
+}
+
+
+void FormPixelEditor::on_actFlipVerital_triggered()
+{
+    qDebug() << "垂直翻转";
+}
+
+
+void FormPixelEditor::on_actRotateLeft_triggered()
+{
+    qDebug() << "向左旋转";
+}
+
+
+void FormPixelEditor::on_actRotateRight_triggered()
+{
+    qDebug() << "向右旋转👉";
+}
+
+
+void FormPixelEditor::on_actReserve_triggered()
+{
+    emit imgReserve();
+}
 

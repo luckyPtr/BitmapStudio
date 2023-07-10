@@ -20,10 +20,16 @@
    <property name="topMargin">
     <number>0</number>
    </property>
+   <property name="rightMargin">
+    <number>4</number>
+   </property>
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <property name="spacing">
+   <property name="horizontalSpacing">
+    <number>4</number>
+   </property>
+   <property name="verticalSpacing">
     <number>0</number>
    </property>
    <item row="0" column="0">
@@ -34,16 +40,194 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QFrame" name="frame">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-    </widget>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QToolButton" name="toolBtnMove">
+       <property name="contextMenuPolicy">
+        <enum>Qt::DefaultContextMenu</enum>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::MenuButtonPopup</enum>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item alignment="Qt::AlignHCenter">
+      <widget class="QToolButton" name="toolBtnRotateFlip">
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="autoRepeat">
+        <bool>false</bool>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::MenuButtonPopup</enum>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonIconOnly</enum>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+       <property name="arrowType">
+        <enum>Qt::NoArrow</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="toolBtnReserve">
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
   </layout>
+  <action name="actFlipHorizontal">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/FlipHorizontal.svg</normaloff>:/Image/PixelEditor/FlipHorizontal.svg</iconset>
+   </property>
+   <property name="text">
+    <string>水平翻转</string>
+   </property>
+   <property name="toolTip">
+    <string>水平翻转图片或选定内容</string>
+   </property>
+  </action>
+  <action name="actFlipVerital">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/FlipVertical.svg</normaloff>:/Image/PixelEditor/FlipVertical.svg</iconset>
+   </property>
+   <property name="text">
+    <string>垂直翻转</string>
+   </property>
+   <property name="toolTip">
+    <string>垂直翻转</string>
+   </property>
+  </action>
+  <action name="actRotateLeft">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/RotateLeft.svg</normaloff>:/Image/PixelEditor/RotateLeft.svg</iconset>
+   </property>
+   <property name="text">
+    <string>向左旋转</string>
+   </property>
+   <property name="toolTip">
+    <string>向左旋转</string>
+   </property>
+  </action>
+  <action name="actRotateRight">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/RotateRight.svg</normaloff>:/Image/PixelEditor/RotateRight.svg</iconset>
+   </property>
+   <property name="text">
+    <string>向右旋转</string>
+   </property>
+   <property name="toolTip">
+    <string>向右旋转</string>
+   </property>
+  </action>
+  <action name="actMoveUp">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/MoveUp.svg</normaloff>:/Image/PixelEditor/MoveUp.svg</iconset>
+   </property>
+   <property name="text">
+    <string>上移</string>
+   </property>
+  </action>
+  <action name="actMoveDown">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/MoveDown.svg</normaloff>:/Image/PixelEditor/MoveDown.svg</iconset>
+   </property>
+   <property name="text">
+    <string>下移</string>
+   </property>
+  </action>
+  <action name="actMoveLeft">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/MoveLeft.svg</normaloff>:/Image/PixelEditor/MoveLeft.svg</iconset>
+   </property>
+   <property name="text">
+    <string>左移</string>
+   </property>
+  </action>
+  <action name="actMoveRight">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/MoveRight.svg</normaloff>:/Image/PixelEditor/MoveRight.svg</iconset>
+   </property>
+   <property name="text">
+    <string>右移</string>
+   </property>
+  </action>
+  <action name="actMove">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/Move.svg</normaloff>:/Image/PixelEditor/Move.svg</iconset>
+   </property>
+   <property name="text">
+    <string>移动</string>
+   </property>
+  </action>
+  <action name="actReserve">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/Reverse.svg</normaloff>:/Image/PixelEditor/Reverse.svg</iconset>
+   </property>
+   <property name="text">
+    <string>反色</string>
+   </property>
+   <property name="toolTip">
+    <string>反色</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -52,6 +236,8 @@
    <header location="global">qwgraphicsview.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="Img.qrc"/>
+ </resources>
  <connections/>
 </ui>

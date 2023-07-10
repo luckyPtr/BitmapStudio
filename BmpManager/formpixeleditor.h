@@ -27,9 +27,18 @@ private:
     QGraphicsCanvasItem *scanvasItem;
 
     void initScrollerPos();   // 初始化滚轮位置为左上角
-
+    void initAction();
 public slots:
     void paintView();
+private slots:
+    void on_actFlipHorizontal_triggered();
+    void on_actFlipVerital_triggered();
+    void on_actRotateLeft_triggered();
+    void on_actRotateRight_triggered();
+    void on_actReserve_triggered();
+
+signals:
+    void imgReserve();
 };
 
 #endif // FORMPIXELEDITOR_H

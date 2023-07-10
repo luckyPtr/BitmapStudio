@@ -13,5 +13,15 @@
         <file>Image/Toolbar/ImportFromImage.svg</file>
         <file>Image/Toolbar/NewImage.svg</file>
         <file>Image/Toolbar/Delete.svg</file>
+        <file>Image/PixelEditor/RotateLeft.svg</file>
+        <file>Image/PixelEditor/RotateRight.svg</file>
+        <file>Image/PixelEditor/FlipVertical.svg</file>
+        <file>Image/PixelEditor/FlipHorizontal.svg</file>
+        <file>Image/PixelEditor/Move.svg</file>
+        <file>Image/PixelEditor/MoveDown.svg</file>
+        <file>Image/PixelEditor/MoveLeft.svg</file>
+        <file>Image/PixelEditor/MoveRight.svg</file>
+        <file>Image/PixelEditor/MoveUp.svg</file>
+        <file>Image/PixelEditor/Reverse.svg</file>
     </qresource>
 </RCC>
