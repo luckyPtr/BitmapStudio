@@ -23,5 +23,7 @@
         <file>Image/PixelEditor/MoveRight.svg</file>
         <file>Image/PixelEditor/MoveUp.svg</file>
         <file>Image/PixelEditor/Reverse.svg</file>
+        <file>Image/PixelEditor/Center.svg</file>
+        <file>Image/PixelEditor/Resize.svg</file>
     </qresource>
 </RCC>

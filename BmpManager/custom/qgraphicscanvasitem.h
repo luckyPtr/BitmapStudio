@@ -33,6 +33,8 @@ private:
     quint8 action = ActionNull;  // 调整画布大小的步骤 0-初始状态 1-按下
     void resizeImage(QImage &img, int width, int heighy);
     void moveImage(QImage &img,  int OffsetX, int OffsetY);
+    void reserveImage(QImage &img);
+
 public:
     QGraphicsCanvasItem(QWidget *parent = nullptr);
     QRectF boundingRect() const Q_DECL_OVERRIDE;
@@ -48,7 +50,9 @@ public slots:
     void on_MoveMouseMove(QPoint point);
     void on_MoveMousePress(QPoint point);
     void on_MoveMouseRelease(QPoint point);
-    void on_Reserve();
+    void on_Reserve();  // 反色
+    void on_Center();   // 居中
+//    void on_AutoResize();
 };
 
 #endif // QGRAPHICSCANVASITEM_H

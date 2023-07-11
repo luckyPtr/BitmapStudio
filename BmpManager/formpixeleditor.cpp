@@ -61,6 +61,7 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
 
     connect(ui->graphicsView, SIGNAL(paint()), this, SLOT(paintView()));    // todo Lambda
     connect(this, SIGNAL(imgReserve()), scanvasItem, SLOT(on_Reserve()));
+    connect(ui->actCenter, SIGNAL(triggered()), scanvasItem, SLOT(on_Center()));
 }
 
 FormPixelEditor::~FormPixelEditor()
@@ -103,6 +104,8 @@ void FormPixelEditor::initAction()
     ui->toolBtnMove->setMenu(menuMove);
 
     ui->toolBtnReserve->setDefaultAction(ui->actReserve);
+    ui->toolBtnCenter->setDefaultAction(ui->actCenter);
+
 
 }
 

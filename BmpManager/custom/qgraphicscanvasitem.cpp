@@ -47,7 +47,7 @@ void QGraphicsCanvasItem::resizeImage(QImage &img, int width, int heighy)
 
 void QGraphicsCanvasItem::moveImage(QImage &img, int OffsetX, int OffsetY)
 {
-    QImage newImg(img.width(), img.height(), QImage::Format_RGB888);
+    QImage newImg(img.size(), QImage::Format_RGB888);
 
     auto isContainPoint([=](QPoint point){
         return (point.x() >= 0 && point.x() < img.width() && point.y() >= 0 && point.y() < img.height());
@@ -62,6 +62,21 @@ void QGraphicsCanvasItem::moveImage(QImage &img, int OffsetX, int OffsetY)
             {
                 newImg.setPixelColor(point, img.pixelColor(x, y));
             }
+        }
+    }
+    img = newImg;
+}
+
+void QGraphicsCanvasItem::reserveImage(QImage &img)
+{
+    QImage newImg(img.size(), QImage::Format_RGB888);
+    for(int x = 0; x < img.width(); x++)
+    {
+        for(int y = 0; y < img.height(); y++)
+        {
+            QColor color = image.pixelColor(x, y);
+            color.setRgb(0xff - color.red(), 0xff - color.green(), 0xff - color.blue());
+            newImg.setPixelColor(x, y, color);
         }
     }
     img = newImg;
@@ -190,7 +205,8 @@ void QGraphicsCanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
 
 void QGraphicsCanvasItem::setImage(QImage &image)
 {
-    this->image = image;
+    // 虽然是单色的，转为为RGB888，像素处理的时候方便一点
+    this->image = image.convertToFormat(QImage::Format_RGB888);
 }
 
 QImage QGraphicsCanvasItem::getImage()
@@ -298,18 +314,74 @@ void QGraphicsCanvasItem::on_MoveMouseRelease(QPoint point)
 
 void QGraphicsCanvasItem::on_Reserve()
 {
-    QImage newImg(image.width(), image.height(), QImage::Format_RGB888);
-    for(int x = 0; x < image.width(); x++)
-    {
-        for(int y = 0; y < image.height(); y++)
+    reserveImage(image);
+    update();
+}
+
+void QGraphicsCanvasItem::on_Center()
+{
+    int offsetUp = 0, offsetDown = 0, offsetLeft = 0, offsetRight = 0;  // 图片离画布边缘的距离
+
+    auto isEmptyRow = ([=](int row){
+        for(int i = 0; i < image.width(); i++)
         {
-            QColor color = image.pixelColor(x, y);
-            color.setRed(255 - color.red());
-            color.setGreen(255 - color.green());
-            color.setBlue(255 - color.blue());
-            newImg.setPixelColor(x, y, color);
+            if(qGray(image.pixelColor(i, row).rgb()) < 128)
+                return false;
+        }
+        return true;
+    });
+
+    auto isEmptyCol = ([=](int col){
+        for(int i = 0; i < image.height(); i++)
+        {
+
+            if(qGray(image.pixelColor(col, i).rgb()) < 128)
+                return false;
+        }
+        return true;
+    });
+
+    for(int i = 0; i < image.height(); i++)
+    {
+        if(!isEmptyRow(i))
+        {
+            offsetUp = i;
+            break;
+        }
+        // 全部为空，则直接退出
+        if(i == image.height() - 1)
+        {
+            return;
         }
     }
-    image = newImg;
+
+    for(int i = 0; i < image.height(); i++)
+    {
+        if(!isEmptyRow(image.height() - 1 -i))
+        {
+            offsetDown = i;
+            break;
+        }
+    }
+
+    for(int i = 0; i < image.width(); i++)
+    {
+        if(!isEmptyCol(i))
+        {
+            offsetLeft = i;
+            break;
+        }
+    }
+
+    for(int i = 0; i < image.width(); i++)
+    {
+        if(!isEmptyCol(image.width() - 1 - i))
+        {
+            offsetRight = i;
+            break;
+        }
+    }
+
+    moveImage(image, (offsetLeft + offsetRight) / 2 - offsetLeft, (offsetUp + offsetDown) / 2 - offsetUp);
     update();
 }
