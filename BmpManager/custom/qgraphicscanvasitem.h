@@ -34,7 +34,11 @@ private:
     void resizeImage(QImage &img, int width, int heighy);
     void moveImage(QImage &img,  int OffsetX, int OffsetY);
     void reserveImage(QImage &img);
-
+    void flipHor(QImage &img);
+    void flipVer(QImage &img);
+    void rotateLeft(QImage &img);
+    void rotateRight(QImage &img);
+    void getMargin(int &up, int &down, int &left, int &right);  // 获取四周的距离
 public:
     QGraphicsCanvasItem(QWidget *parent = nullptr);
     QRectF boundingRect() const Q_DECL_OVERRIDE;
@@ -52,7 +56,15 @@ public slots:
     void on_MoveMouseRelease(QPoint point);
     void on_Reserve();  // 反色
     void on_Center();   // 居中
-//    void on_AutoResize();
+    void on_AutoResize();   // 自动裁剪
+    void on_MoveUp();
+    void on_MoveDown();
+    void on_MoveLeft();
+    void on_MoveRight();
+    void on_FlipHor();
+    void on_FlipVer();
+    void on_RotateLeft();
+    void on_RotateRight();
 };
 
 #endif // QGRAPHICSCANVASITEM_H

@@ -124,6 +124,22 @@
       </widget>
      </item>
      <item>
+      <widget class="QToolButton" name="toolBtnAutoResize">
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -244,7 +260,7 @@
     <string>反色</string>
    </property>
   </action>
-  <action name="actResize">
+  <action name="actAutoResize">
    <property name="icon">
     <iconset resource="Img.qrc">
      <normaloff>:/Image/PixelEditor/Resize.svg</normaloff>:/Image/PixelEditor/Resize.svg</iconset>

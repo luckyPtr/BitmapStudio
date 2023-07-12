@@ -60,8 +60,17 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
 
 
     connect(ui->graphicsView, SIGNAL(paint()), this, SLOT(paintView()));    // todo Lambda
-    connect(this, SIGNAL(imgReserve()), scanvasItem, SLOT(on_Reserve()));
+    connect(ui->actReserve, SIGNAL(triggered()), scanvasItem, SLOT(on_Reserve()));
     connect(ui->actCenter, SIGNAL(triggered()), scanvasItem, SLOT(on_Center()));
+    connect(ui->actAutoResize, SIGNAL(triggered()), scanvasItem, SLOT(on_AutoResize()));
+    connect(ui->actMoveUp, SIGNAL(triggered()), scanvasItem, SLOT(on_MoveUp()));
+    connect(ui->actMoveDown, SIGNAL(triggered()), scanvasItem, SLOT(on_MoveDown()));
+    connect(ui->actMoveLeft, SIGNAL(triggered()), scanvasItem, SLOT(on_MoveLeft()));
+    connect(ui->actMoveRight, SIGNAL(triggered()), scanvasItem, SLOT(on_MoveRight()));
+    connect(ui->actFlipHorizontal, SIGNAL(triggered()), scanvasItem, SLOT(on_FlipHor()));
+    connect(ui->actFlipVerital, SIGNAL(triggered()), scanvasItem, SLOT(on_FlipVer()));
+    connect(ui->actRotateLeft, SIGNAL(triggered()), scanvasItem, SLOT(on_RotateLeft()));
+    connect(ui->actRotateRight, SIGNAL(triggered()), scanvasItem, SLOT(on_RotateRight()));
 }
 
 FormPixelEditor::~FormPixelEditor()
@@ -105,7 +114,7 @@ void FormPixelEditor::initAction()
 
     ui->toolBtnReserve->setDefaultAction(ui->actReserve);
     ui->toolBtnCenter->setDefaultAction(ui->actCenter);
-
+    ui->toolBtnAutoResize->setDefaultAction(ui->actAutoResize);
 
 }
 
@@ -119,32 +128,7 @@ void FormPixelEditor::paintView()
 
 
 
-void FormPixelEditor::on_actFlipHorizontal_triggered()
-{
-    qDebug() << "水平翻转";
-}
 
 
-void FormPixelEditor::on_actFlipVerital_triggered()
-{
-    qDebug() << "垂直翻转";
-}
 
-
-void FormPixelEditor::on_actRotateLeft_triggered()
-{
-    qDebug() << "向左旋转";
-}
-
-
-void FormPixelEditor::on_actRotateRight_triggered()
-{
-    qDebug() << "向右旋转👉";
-}
-
-
-void FormPixelEditor::on_actReserve_triggered()
-{
-    emit imgReserve();
-}
 

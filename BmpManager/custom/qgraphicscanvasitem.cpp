@@ -82,6 +82,121 @@ void QGraphicsCanvasItem::reserveImage(QImage &img)
     img = newImg;
 }
 
+void QGraphicsCanvasItem::flipHor(QImage &img)
+{
+    QImage newImg(img.size(), QImage::Format_RGB888);
+    for(int x = 0; x < img.width(); x++)
+    {
+        for(int y = 0; y < img.height(); y++)
+        {
+            newImg.setPixelColor(img.width() - 1 - x, y, img.pixelColor(x, y));
+        }
+    }
+    img = newImg;
+}
+
+void QGraphicsCanvasItem::flipVer(QImage &img)
+{
+    QImage newImg(img.size(), QImage::Format_RGB888);
+    for(int x = 0; x < img.width(); x++)
+    {
+        for(int y = 0; y < img.height(); y++)
+        {
+            newImg.setPixelColor(x, img.height() - 1 - y, img.pixelColor(x, y));
+        }
+    }
+    img = newImg;
+}
+
+void QGraphicsCanvasItem::rotateLeft(QImage &img)
+{
+    QImage newImg(img.height(), img.width(), QImage::Format_RGB888);
+    for(int x = 0; x < img.width(); x++)
+    {
+        for(int y = 0; y < img.height(); y++)
+        {
+            newImg.setPixelColor(y, img.width() - 1 - x, img.pixelColor(x, y));
+        }
+    }
+    img = newImg;
+}
+
+void QGraphicsCanvasItem::rotateRight(QImage &img)
+{
+    QImage newImg(img.height(), img.width(), QImage::Format_RGB888);
+    for(int x = 0; x < img.width(); x++)
+    {
+        for(int y = 0; y < img.height(); y++)
+        {
+            newImg.setPixelColor(img.height() - 1 - y, x, img.pixelColor(x, y));
+        }
+    }
+    img = newImg;
+}
+
+void QGraphicsCanvasItem::getMargin(int &up, int &down, int &left, int &right)
+{
+    auto isEmptyRow = ([=](int row){
+        for(int i = 0; i < image.width(); i++)
+        {
+            if(qGray(image.pixelColor(i, row).rgb()) < 128)
+                return false;
+        }
+        return true;
+    });
+
+    auto isEmptyCol = ([=](int col){
+        for(int i = 0; i < image.height(); i++)
+        {
+
+            if(qGray(image.pixelColor(col, i).rgb()) < 128)
+                return false;
+        }
+        return true;
+    });
+
+    for(int i = 0; i < image.height(); i++)
+    {
+        if(!isEmptyRow(i))
+        {
+            up = i;
+            break;
+        }
+        // 全部为空，则直接退出
+        if(i == image.height() - 1)
+        {
+            return;
+        }
+    }
+
+    for(int i = 0; i < image.height(); i++)
+    {
+        if(!isEmptyRow(image.height() - 1 -i))
+        {
+            down = i;
+            break;
+        }
+    }
+
+    for(int i = 0; i < image.width(); i++)
+    {
+        if(!isEmptyCol(i))
+        {
+            left = i;
+            break;
+        }
+    }
+
+    for(int i = 0; i < image.width(); i++)
+    {
+        if(!isEmptyCol(image.width() - 1 - i))
+        {
+            right = i;
+            break;
+        }
+    }
+}
+
 QGraphicsCanvasItem::QGraphicsCanvasItem(QWidget *parent)
 {
     view = static_cast<QWGraphicsView*>(parent);
@@ -315,73 +430,73 @@ void QGraphicsCanvasItem::on_MoveMouseRelease(QPoint point)
 void QGraphicsCanvasItem::on_Reserve()
 {
     reserveImage(image);
-    update();
+    view->viewport()->update();
 }
 
 void QGraphicsCanvasItem::on_Center()
 {
-    int offsetUp = 0, offsetDown = 0, offsetLeft = 0, offsetRight = 0;  // 图片离画布边缘的距离
+    int upMargin, downMargin, leftMargin, rightMargin;  // 图片离画布边缘的距离
+    getMargin(upMargin, downMargin, leftMargin, rightMargin);
+    moveImage(image, (leftMargin + rightMargin) / 2 - leftMargin, (upMargin + downMargin) / 2 - upMargin);
+    view->viewport()->update();
+}
 
-    auto isEmptyRow = ([=](int row){
-        for(int i = 0; i < image.width(); i++)
-        {
-            if(qGray(image.pixelColor(i, row).rgb()) < 128)
-                return false;
-        }
-        return true;
-    });
+void QGraphicsCanvasItem::on_AutoResize()
+{
+    int upMargin, downMargin, leftMargin, rightMargin;  // 图片离画布边缘的距离
+    getMargin(upMargin, downMargin, leftMargin, rightMargin);
+    moveImage(image, -leftMargin, -upMargin);   // 图形移到左上角
+    resizeImage(image, image.width() - leftMargin - rightMargin, image.height() - upMargin - downMargin);
+    view->scene()->setSceneRect(QRectF(0, 0, image.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
+    view->viewport()->update();
+}
 
-    auto isEmptyCol = ([=](int col){
-        for(int i = 0; i < image.height(); i++)
-        {
+void QGraphicsCanvasItem::on_MoveUp()
+{
+    moveImage(image, 0, -1);
+    view->viewport()->update();
+}
 
-            if(qGray(image.pixelColor(col, i).rgb()) < 128)
-                return false;
-        }
-        return true;
-    });
+void QGraphicsCanvasItem::on_MoveDown()
+{
+    moveImage(image, 0, 1);
+    view->viewport()->update();
+}
 
-    for(int i = 0; i < image.height(); i++)
-    {
-        if(!isEmptyRow(i))
-        {
-            offsetUp = i;
-            break;
-        }
-        // 全部为空，则直接退出
-        if(i == image.height() - 1)
-        {
-            return;
-        }
-    }
+void QGraphicsCanvasItem::on_MoveLeft()
+{
+    moveImage(image, -1, 0);
+    view->viewport()->update();
+}
 
-    for(int i = 0; i < image.height(); i++)
-    {
-        if(!isEmptyRow(image.height() - 1 -i))
-        {
-            offsetDown = i;
-            break;
-        }
-    }
+void QGraphicsCanvasItem::on_MoveRight()
+{
+    moveImage(image, 1, 0);
+    view->viewport()->update();
+}
 
-    for(int i = 0; i < image.width(); i++)
-    {
-        if(!isEmptyCol(i))
-        {
-            offsetLeft = i;
-            break;
-        }
-    }
+void QGraphicsCanvasItem::on_FlipHor()
+{
+    flipHor(image);
+    view->viewport()->update();
+}
 
-    for(int i = 0; i < image.width(); i++)
-    {
-        if(!isEmptyCol(image.width() - 1 - i))
-        {
-            offsetRight = i;
-            break;
-        }
-    }
+void QGraphicsCanvasItem::on_FlipVer()
+{
+    flipVer(image);
+    view->viewport()->update();
+}
 
-    moveImage(image, (offsetLeft + offsetRight) / 2 - offsetLeft, (offsetUp + offsetDown) / 2 - offsetUp);
-    update();
+void QGraphicsCanvasItem::on_RotateLeft()
+{
+    rotateLeft(image);
+    view->scene()->setSceneRect(QRectF(0, 0, image.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
+    view->viewport()->update();
+}
+
+void QGraphicsCanvasItem::on_RotateRight()
+{
+    rotateRight(image);
+    view->scene()->setSceneRect(QRectF(0, 0, image.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
+    view->viewport()->update();
 }
