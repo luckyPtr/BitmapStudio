@@ -34,6 +34,9 @@ private slots:
 
 
 
+    void on_actSelect_triggered();
+    void on_actEdit_triggered();
+    void on_actMeasure_triggered();
 };
 
 #endif // FORMPIXELEDITOR_H

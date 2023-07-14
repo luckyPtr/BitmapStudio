@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QPen>
 #include <QImage>
+#include <QtConcurrent/QtConcurrent>
 
 QPoint QGraphicsCanvasItem::pointToPixel(QPoint point)
 {
@@ -26,6 +27,12 @@ bool QGraphicsCanvasItem::isInSizeHorArea(QPoint point)
 bool QGraphicsCanvasItem::isInSizeFDiagArea(QPoint point)
 {
     QRect rect(startPoint.x() + image.width() * Global::pixelSize, startPoint.y() + image.height() * Global::pixelSize, 12, 12);
+    return rect.contains(point);
+}
+
+bool QGraphicsCanvasItem::isInImgArea(QPoint point)
+{
+    QRectF rect(startPoint.x(), startPoint.y(), image.width() * Global::pixelSize, image.height() * Global::pixelSize);
     return rect.contains(point);
 }
 
@@ -197,6 +204,22 @@ void QGraphicsCanvasItem::getMargin(int &up, int &down, int &left, int &right)
     }
 }
 
+void QGraphicsCanvasItem::drawPoint(QImage &img, int x, int y, bool dot)
+{
+    if(x < img.width() && y < img.height())
+    {
+        img.setPixelColor(x, y, QColor(dot ? Qt::black : Qt::white));
+    }
+}
+
+void QGraphicsCanvasItem::drawPoint(QImage &img, QPoint point, bool dot)
+{
+    if(point.x() < img.width() && point.y() < img.height())
+    {
+        img.setPixelColor(point, QColor(dot ? Qt::black : Qt::white));
+    }
+}
+
 QGraphicsCanvasItem::QGraphicsCanvasItem(QWidget *parent)
 {
     view = static_cast<QWGraphicsView*>(parent);
@@ -204,13 +227,13 @@ QGraphicsCanvasItem::QGraphicsCanvasItem(QWidget *parent)
     startPoint.setX(Global::scaleWidth + Global::scaleOffset);
     startPoint.setY(Global::scaleWidth + Global::scaleOffset);
     action = ActionNull;
+    mode = SelectMode;
 
-    connect(view, SIGNAL(mouseMovePoint(QPoint)), this, SLOT(on_ResizeMouseMove(QPoint)));
-    connect(view, SIGNAL(mousePress(QPoint)), this, SLOT(on_ResizeMousePress(QPoint)));
-    connect(view, SIGNAL(mouseRelease(QPoint)), this, SLOT(on_ResizeMouseRelease(QPoint)));
-    connect(view, SIGNAL(mouseMovePoint(QPoint)), this, SLOT(on_MoveMouseMove(QPoint)));
-    connect(view, SIGNAL(mousePressMiddle(QPoint)), this, SLOT(on_MoveMousePress(QPoint)));
-    connect(view, SIGNAL(mouseRelease(QPoint)), this, SLOT(on_MoveMouseRelease(QPoint)));
+    connect(view, SIGNAL(mousePress(QPoint)), this, SLOT(on_MousePressLeft(QPoint)));
+    connect(view, SIGNAL(mousePressMiddle(QPoint)), this, SLOT(on_MousePressMiddle(QPoint)));
+    connect(view, SIGNAL(mousePressRight(QPoint)), this, SLOT(on_MousePressRight(QPoint)));
+    connect(view, SIGNAL(mouseMovePoint(QPoint)), this, SLOT(on_MouseMove(QPoint)));
+    connect(view, SIGNAL(mouseRelease(QPoint)), this, SLOT(on_MouseRelease(QPoint)));
 }
 
 QRectF QGraphicsCanvasItem::boundingRect() const
@@ -230,12 +253,19 @@ void QGraphicsCanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
 {
     Q_UNUSED(option)
     Q_UNUSED(widget)
+
+    QFutureWatcher<void> watcher;
+    QFuture<void> future1 = QtConcurrent::run([&](){
+
+
+
     // 绘制像素
     QImage imageShow = image;
     if(action == ActionMove)   // 如果是移动画布，对图片位置进行移动
     {
         moveImage(imageShow, currentPixel.x() - moveStartPixel.x(), currentPixel.y() - moveStartPixel.y());
     }
+
     for(int x = 0; x < imageShow.width(); x++)
     {
         for(int y = 0; y < imageShow.height(); y++)
@@ -246,7 +276,8 @@ void QGraphicsCanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
             painter->fillRect(rect, grayscale < 128 ? 0x9ce0ef : 0x495028);
         }
     }
-
+    });
+QFuture<void> future2 = QtConcurrent::run([&](){
     // 绘制网格
     QPen pen(0x303030);
     painter->setPen(pen);
@@ -316,6 +347,12 @@ void QGraphicsCanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
             painter->drawRect(QRect(startPoint, calibrate(point)));
         }
     }
+    });
+
+    watcher.setFuture(future1);
+watcher.setFuture(future2);
+    future1.waitForFinished();
+future2.waitForFinished();
 }
 
 void QGraphicsCanvasItem::setImage(QImage &image)
@@ -329,7 +366,12 @@ QImage QGraphicsCanvasItem::getImage()
     return image;
 }
 
-void QGraphicsCanvasItem::on_ResizeMouseMove(QPoint point)
+void QGraphicsCanvasItem::setMode(quint8 mode)
+{
+    this->mode = mode;
+}
+
+void QGraphicsCanvasItem::on_MouseMove(QPoint point)
 {
     if(action == ActionNull)
     {
@@ -348,14 +390,28 @@ void QGraphicsCanvasItem::on_ResizeMouseMove(QPoint point)
         }
         view->setCursor(cursor);
     }
-    currentPoint = point;
+    else if(action == ActionWrite)
+    {
+        static QPoint pointLast;
+        QPoint pixelPoint = pointToPixel(point);
+        if(pointLast != pixelPoint)
+        {
+            pointLast = pixelPoint;
+            drawPoint(image, pointToPixel(point), true);
+        }
 
+        //view->viewport()->update();
+    }
+
+
+    currentPoint = point;
     currentPixel.setX((currentPoint.x() - startPoint.x()) / Global::pixelSize);
     currentPixel.setY((currentPoint.y() - startPoint.y()) / Global::pixelSize);
 }
 
-void QGraphicsCanvasItem::on_ResizeMousePress(QPoint point)
+void QGraphicsCanvasItem::on_MousePressLeft(QPoint point)
 {
+
     if(action == ActionNull)
     {
         if(isInSizeFDiagArea(point))
@@ -370,46 +426,21 @@ void QGraphicsCanvasItem::on_ResizeMousePress(QPoint point)
         {
             action = ActionResizeHor;
         }
-    }
-}
-
-void QGraphicsCanvasItem::on_ResizeMouseRelease(QPoint point)
-{
-    if(action != ActionNull)
-    {
-        if(action == ActionResizeFDiag)
-        {
-            resizeImage(image, currentPixel.x(), currentPixel.y());
-        }
-        else if(action == ActionResizeVer)
-        {
-            resizeImage(image, image.width(), currentPixel.y());
-        }
-        else if(action == ActionResizeHor)
-        {
-            resizeImage(image, currentPixel.x(), image.height());
-        }
         else
         {
-            return;
+            if(mode == EditMode)
+            {
+                action = ActionWrite;
+                drawPoint(image, pointToPixel(point), true);
+                view->viewport()->update();
+            }
         }
-        action = ActionNull;
-        view->setCursor(Qt::ArrowCursor);
-        view->scene()->setSceneRect(QRectF(0, 0, image.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
     }
-    view->viewport()->update();
 }
 
-void QGraphicsCanvasItem::on_MoveMouseMove(QPoint point)
+void QGraphicsCanvasItem::on_MousePressMiddle(QPoint point)
 {
-
-}
-
-void QGraphicsCanvasItem::on_MoveMousePress(QPoint point)
-{
-    QRectF rect(startPoint.x(), startPoint.y(), image.width() * Global::pixelSize, image.height() * Global::pixelSize);
-
-    if(rect.contains(point))
+    if(isInImgArea(point))
     {
         action = ActionMove;
         moveStartPixel = pointToPixel(point);
@@ -417,15 +448,41 @@ void QGraphicsCanvasItem::on_MoveMousePress(QPoint point)
     }
 }
 
-void QGraphicsCanvasItem::on_MoveMouseRelease(QPoint point)
+void QGraphicsCanvasItem::on_MousePressRight(QPoint point)
 {
-    if(action == ActionMove)
-    {
-        action = ActionNull;
-        view->setCursor(Qt::ArrowCursor);
-        moveImage(image, currentPixel.x() - moveStartPixel.x(), currentPixel.y() - moveStartPixel.y());
-    }
+
 }
+
+void QGraphicsCanvasItem::on_MouseRelease(QPoint point)
+{
+    if(action != ActionNull)
+    {
+        if(action == ActionResizeFDiag)
+        {
+            resizeImage(image, currentPixel.x(), currentPixel.y());
+            view->scene()->setSceneRect(QRectF(0, 0, image.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
+        }
+        else if(action == ActionResizeVer)
+        {
+            resizeImage(image, image.width(), currentPixel.y());
+            view->scene()->setSceneRect(QRectF(0, 0, image.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
+        }
+        else if(action == ActionResizeHor)
+        {
+            resizeImage(image, currentPixel.x(), image.height());
+            view->scene()->setSceneRect(QRectF(0, 0, image.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
+        }
+        else if(action == ActionMove)
+        {
+            moveImage(image, currentPixel.x() - moveStartPixel.x(), currentPixel.y() - moveStartPixel.y());
+        }
+        view->setCursor(Qt::ArrowCursor);
+        action = ActionNull;
+    }
+    view->viewport()->update();
+}
+
+
 
 void QGraphicsCanvasItem::on_Reserve()
 {

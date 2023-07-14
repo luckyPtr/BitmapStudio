@@ -25,5 +25,8 @@
         <file>Image/PixelEditor/Reverse.svg</file>
         <file>Image/PixelEditor/Center.svg</file>
         <file>Image/PixelEditor/Resize.svg</file>
+        <file>Image/PixelEditor/Edit.svg</file>
+        <file>Image/PixelEditor/Measure.svg</file>
+        <file>Image/PixelEditor/Select.svg</file>
     </qresource>
 </RCC>

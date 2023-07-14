@@ -17,7 +17,12 @@ private:
         ActionResizeHor,
         ActionResizeFDiag,
         ActionMove,
+        ActionWrite,
+        ActionErase,
+        ActionMeasure,
     };
+
+
 
     QGraphicsView *view;
     QImage image;
@@ -30,7 +35,9 @@ private:
     bool isInSizeVerArea(QPoint point); // 是否处于垂直调整画布大小的区域内
     bool isInSizeHorArea(QPoint point); // 是否处于水平调整画布大小的区域内
     bool isInSizeFDiagArea(QPoint point);
+    bool isInImgArea(QPoint point);     // 是否在图片的区域内
     quint8 action = ActionNull;  // 调整画布大小的步骤 0-初始状态 1-按下
+    quint8 mode;
     void resizeImage(QImage &img, int width, int heighy);
     void moveImage(QImage &img,  int OffsetX, int OffsetY);
     void reserveImage(QImage &img);
@@ -39,21 +46,30 @@ private:
     void rotateLeft(QImage &img);
     void rotateRight(QImage &img);
     void getMargin(int &up, int &down, int &left, int &right);  // 获取四周的距离
+    void drawPoint(QImage &img, int x, int y, bool dot);
+    void drawPoint(QImage &img, QPoint point, bool dot);
 public:
+    enum Mode
+    {
+        SelectMode,
+        EditMode,
+        MeasureMode,
+    };
+
     QGraphicsCanvasItem(QWidget *parent = nullptr);
     QRectF boundingRect() const Q_DECL_OVERRIDE;
     QPainterPath shape() const Q_DECL_OVERRIDE;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) Q_DECL_OVERRIDE;
     void setImage(QImage &image);
     QImage getImage();
+    void setMode(quint8 mode);
 
 public slots:
-    void on_ResizeMouseMove(QPoint point);
-    void on_ResizeMousePress(QPoint point);
-    void on_ResizeMouseRelease(QPoint point);
-    void on_MoveMouseMove(QPoint point);
-    void on_MoveMousePress(QPoint point);
-    void on_MoveMouseRelease(QPoint point);
+    void on_MouseMove(QPoint point);
+    void on_MousePressLeft(QPoint point);
+    void on_MousePressMiddle(QPoint point);
+    void on_MousePressRight(QPoint point);
+    void on_MouseRelease(QPoint point);
     void on_Reserve();  // 反色
     void on_Center();   // 居中
     void on_AutoResize();   // 自动裁剪

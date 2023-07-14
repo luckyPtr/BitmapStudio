@@ -37,7 +37,9 @@ void QWGraphicsView::resizeEvent(QResizeEvent *event)
 
 void QWGraphicsView::paintEvent(QPaintEvent *event)
 {
-    emit paint();
+    static int a;
+    qDebug() << "Paint" << a++;
+    //emit paint();
     QGraphicsView::paintEvent(event);
 }
 

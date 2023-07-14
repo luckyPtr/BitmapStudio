@@ -6,6 +6,7 @@
 #include "global.h"
 #include <QScrollBar>
 
+
 void QGraphicsScaleItem::drawScale(QPainter *painter)
 {
     // 绘制轮廓和背景

@@ -37,27 +37,6 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
     ui->graphicsView->setRubberBandSelectionMode(Qt::ContainsItemBoundingRect);
 
 
-//    QPen pen;
-//    brush.setColor(QColor(180, 180, 180, 60));
-//    pen.setColor(QColor(180, 180, 180, 60));
-//    QGraphicsRectItem *rectSItem = new QGraphicsRectItem;
-//    rectSItem->setRect(QRect(26, 26, 620, 420));
-//    rectSItem->setBrush(brush);
-//    rectSItem->setPen(pen);
-//    scene->addItem(rectSItem);
-
-//    QGraphicsRectItem *rectItem = new QGraphicsRectItem;
-//    QRectF rect1(20, 20, 620, 420);
-//    brush.setColor(Qt::white);
-//    rectItem->setBrush(brush);
-
-//    pen.setColor(Qt::white);
-//    rectItem->setPen(pen);
-//    rectItem->setRect(rect1);
-//    scene->addItem(rectItem);
-
-
-
 
     connect(ui->graphicsView, SIGNAL(paint()), this, SLOT(paintView()));    // todo Lambda
     connect(ui->actReserve, SIGNAL(triggered()), scanvasItem, SLOT(on_Reserve()));
@@ -71,6 +50,7 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
     connect(ui->actFlipVerital, SIGNAL(triggered()), scanvasItem, SLOT(on_FlipVer()));
     connect(ui->actRotateLeft, SIGNAL(triggered()), scanvasItem, SLOT(on_RotateLeft()));
     connect(ui->actRotateRight, SIGNAL(triggered()), scanvasItem, SLOT(on_RotateRight()));
+
 }
 
 FormPixelEditor::~FormPixelEditor()
@@ -115,7 +95,9 @@ void FormPixelEditor::initAction()
     ui->toolBtnReserve->setDefaultAction(ui->actReserve);
     ui->toolBtnCenter->setDefaultAction(ui->actCenter);
     ui->toolBtnAutoResize->setDefaultAction(ui->actAutoResize);
-
+    ui->toolBntSelect->setDefaultAction(ui->actSelect);
+    ui->toolBntEdit->setDefaultAction(ui->actEdit);
+    ui->toolBntMeasure->setDefaultAction(ui->actMeasure);
 }
 
 void FormPixelEditor::paintView()
@@ -126,9 +108,29 @@ void FormPixelEditor::paintView()
 
 
 
+void FormPixelEditor::on_actSelect_triggered()
+{
+    ui->actSelect->setChecked(true);
+    ui->actEdit->setChecked(false);
+    ui->actMeasure->setChecked(false);
+    scanvasItem->setMode(QGraphicsCanvasItem::SelectMode);
+}
 
 
+void FormPixelEditor::on_actEdit_triggered()
+{
+    ui->actSelect->setChecked(false);
+    ui->actEdit->setChecked(true);
+    ui->actMeasure->setChecked(false);
+    scanvasItem->setMode(QGraphicsCanvasItem::EditMode);
+}
 
 
-
+void FormPixelEditor::on_actMeasure_triggered()
+{
+    ui->actSelect->setChecked(false);
+    ui->actEdit->setChecked(false);
+    ui->actMeasure->setChecked(true);
+    scanvasItem->setMode(QGraphicsCanvasItem::MeasureMode);
+}
 
