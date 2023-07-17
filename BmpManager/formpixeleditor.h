@@ -30,6 +30,7 @@ private:
     void initAction();
 public slots:
     void paintView();
+    void on_LoadImage(QImage &image);
 private slots:
 
 

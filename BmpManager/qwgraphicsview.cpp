@@ -5,7 +5,7 @@
 
 void QWGraphicsView::mouseMoveEvent(QMouseEvent *event)
 {
-//    qDebug() << "mouse move" << event->pos();
+    qDebug() << "mouse move" << event->pos();
     QPoint point = event->pos();
     emit mouseMovePoint(point);
     QGraphicsView::mouseMoveEvent(event);
@@ -37,8 +37,6 @@ void QWGraphicsView::resizeEvent(QResizeEvent *event)
 
 void QWGraphicsView::paintEvent(QPaintEvent *event)
 {
-    static int a;
-    qDebug() << "Paint" << a++;
     //emit paint();
     QGraphicsView::paintEvent(event);
 }

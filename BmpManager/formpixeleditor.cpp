@@ -51,6 +51,8 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
     connect(ui->actRotateLeft, SIGNAL(triggered()), scanvasItem, SLOT(on_RotateLeft()));
     connect(ui->actRotateRight, SIGNAL(triggered()), scanvasItem, SLOT(on_RotateRight()));
 
+
+    //connect(parent->parent(), SIGNAL(selectItem(QImage&)), this, SLOT(on_LoadImage(QImage&)));
 }
 
 FormPixelEditor::~FormPixelEditor()
@@ -103,6 +105,11 @@ void FormPixelEditor::initAction()
 void FormPixelEditor::paintView()
 {
     initScrollerPos();
+}
+
+void FormPixelEditor::on_LoadImage(QImage &image)
+{
+    scanvasItem->setImage(image);
 }
 
 

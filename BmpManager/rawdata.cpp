@@ -197,4 +197,27 @@ void RawData::remove(quint16 id)
     }
 }
 
+QImage RawData::getImage(quint16 id)
+{
+    if(imgMap.contains(id))
+    {
+        return imgMap[id].file;
+    }
+    return QImage();
+}
+
+void RawData::setImage(quint16 id, QImage image)
+{
+    QByteArray byteArray = QByteArray();
+    QBuffer buffer(&byteArray);
+    buffer.open(QIODevice::WriteOnly);
+    image.save(&buffer, "png");
+
+    QSqlQuery query(db);
+    query.prepare("UPDATE tbl_img SET data=:data WHERE id=:id");
+    query.bindValue(":data", byteArray);
+    query.bindValue(":id", id);
+    query.exec();
+}
+
 

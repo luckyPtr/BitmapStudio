@@ -182,7 +182,16 @@ void ProjectMng::remove(QModelIndex &index)
     rd->load();
 }
 
+QImage ProjectMng::getImage(QModelIndex index)
+{
+    TreeItem *item = theModel->itemFromIndex(index);
+    RawData *rd = item->getRawData();
+    return rd->getImage(item->getID());
+}
 
-
-
-
+void ProjectMng::setImage(QModelIndex index, QImage &image)
+{
+    TreeItem *item = theModel->itemFromIndex(index);
+    RawData *rd = item->getRawData();
+    rd->setImage(item->getID(), image);
+}

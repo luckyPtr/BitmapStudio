@@ -38,6 +38,8 @@ public:
     void createImage(QModelIndex &index, QString name, QImage &img);
     void rename(QModelIndex &index, QString name);
     void remove(QModelIndex &index);
+    QImage getImage(QModelIndex index);
+    void setImage(QModelIndex index, QImage &image);
 
     enum NodeType
     {

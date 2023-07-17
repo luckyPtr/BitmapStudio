@@ -254,10 +254,6 @@ void QGraphicsCanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
-    QFutureWatcher<void> watcher;
-    QFuture<void> future1 = QtConcurrent::run([&](){
-
-
 
     // 绘制像素
     QImage imageShow = image;
@@ -276,8 +272,7 @@ void QGraphicsCanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
             painter->fillRect(rect, grayscale < 128 ? 0x9ce0ef : 0x495028);
         }
     }
-    });
-QFuture<void> future2 = QtConcurrent::run([&](){
+
     // 绘制网格
     QPen pen(0x303030);
     painter->setPen(pen);
@@ -347,18 +342,14 @@ QFuture<void> future2 = QtConcurrent::run([&](){
             painter->drawRect(QRect(startPoint, calibrate(point)));
         }
     }
-    });
 
-    watcher.setFuture(future1);
-watcher.setFuture(future2);
-    future1.waitForFinished();
-future2.waitForFinished();
 }
 
 void QGraphicsCanvasItem::setImage(QImage &image)
 {
     // 虽然是单色的，转为为RGB888，像素处理的时候方便一点
     this->image = image.convertToFormat(QImage::Format_RGB888);
+    view->viewport()->update();
 }
 
 QImage QGraphicsCanvasItem::getImage()
@@ -399,8 +390,11 @@ void QGraphicsCanvasItem::on_MouseMove(QPoint point)
             pointLast = pixelPoint;
             drawPoint(image, pointToPixel(point), true);
         }
-
         //view->viewport()->update();
+    }
+    else if(action == ActionErase)
+    {
+        drawPoint(image, pointToPixel(point), false);
     }
 
 
@@ -450,7 +444,12 @@ void QGraphicsCanvasItem::on_MousePressMiddle(QPoint point)
 
 void QGraphicsCanvasItem::on_MousePressRight(QPoint point)
 {
-
+    if(mode == EditMode)
+    {
+        action = ActionErase;
+        drawPoint(image, pointToPixel(point), false);
+        view->viewport()->update();
+    }
 }
 
 void QGraphicsCanvasItem::on_MouseRelease(QPoint point)

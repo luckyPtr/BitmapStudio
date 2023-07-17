@@ -35,14 +35,8 @@ void MainWindow::init()
 {
     pm.blindTreeView(ui->treeViewProject);
 
-//    QToolButton *toolBtn = new QToolButton(this);
-//    toolBtn->setDefaultAction(ui->actNewImg);
-//    toolBtn->setPopupMode(QToolButton::MenuButtonPopup);
-//    QMenu *menu = new QMenu(this);
-//    menu->addAction(ui->actNewImg);
-//    menu->addAction(ui->actImportImg);
-//    toolBtn->setMenu(menu);
-    //    ui->toolBar->addWidget(toolBtn);
+
+    connect(this, SIGNAL(selectItem(QImage&)), ui->stackedWidget->widget(1), SLOT(on_LoadImage(QImage&)));
 }
 
 
@@ -69,6 +63,9 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
     ui->labelPreview->setPixmap(QPixmap::fromImage(resultImg));
     ui->labelPreview->setAlignment(Qt::AlignCenter);
     ui->labelPreview->show();
+
+    emit selectItem(img);
+    qDebug() << "emit selectItem";
 }
 
 
@@ -188,5 +185,10 @@ void MainWindow::on_actTest_triggered()
     {
         ui->stackedWidget->setCurrentIndex(0);
     }
+}
+
+void MainWindow::on_SaveImage(QImage &image)
+{
+    pm.setImage(editedIndex, image);
 }
 

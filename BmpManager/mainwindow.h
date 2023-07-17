@@ -42,6 +42,8 @@ private slots:
 
     void on_actTest_triggered();
 
+    void on_SaveImage(QImage &image);
+
 private:
     Ui::MainWindow *ui;
 
@@ -49,5 +51,10 @@ private:
     QWidget *formPixelEditor;
     QWidget *formComImgEditor;
     void init();
+
+    QModelIndex editedIndex;
+
+signals:
+    void selectItem(QImage &Image);
 };
 #endif // MAINWINDOW_H
