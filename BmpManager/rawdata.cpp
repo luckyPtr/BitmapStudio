@@ -208,16 +208,23 @@ QImage RawData::getImage(quint16 id)
 
 void RawData::setImage(quint16 id, QImage image)
 {
-    QByteArray byteArray = QByteArray();
-    QBuffer buffer(&byteArray);
-    buffer.open(QIODevice::WriteOnly);
-    image.save(&buffer, "png");
+    if(imgMap.contains(id))
+    {
+        imgMap[id].file = image;
 
-    QSqlQuery query(db);
-    query.prepare("UPDATE tbl_img SET data=:data WHERE id=:id");
-    query.bindValue(":data", byteArray);
-    query.bindValue(":id", id);
-    query.exec();
+        QByteArray byteArray = QByteArray();
+        QBuffer buffer(&byteArray);
+        buffer.open(QIODevice::WriteOnly);
+        image.save(&buffer, "png");
+
+        QSqlQuery query(db);
+        query.prepare("UPDATE tbl_img SET data=:data WHERE id=:id");
+        query.bindValue(":data", byteArray);
+        query.bindValue(":id", id);
+        query.exec();
+
+        buffer.close();
+    }
 }
 
 

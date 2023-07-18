@@ -14,6 +14,7 @@
 #include <formpixeleditor.h>
 #include <formcomimgeditor.h>
 
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -37,6 +38,7 @@ void MainWindow::init()
 
 
     connect(this, SIGNAL(selectItem(QImage&)), ui->stackedWidget->widget(1), SLOT(on_LoadImage(QImage&)));
+    connect(ui->stackedWidget->widget(1), SIGNAL(saveImage(QImage)), this, SLOT(on_SaveImage(QImage)));
 }
 
 
@@ -64,8 +66,8 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
     ui->labelPreview->setAlignment(Qt::AlignCenter);
     ui->labelPreview->show();
 
+    editedIndex = index;
     emit selectItem(img);
-    qDebug() << "emit selectItem";
 }
 
 
@@ -187,8 +189,9 @@ void MainWindow::on_actTest_triggered()
     }
 }
 
-void MainWindow::on_SaveImage(QImage &image)
+void MainWindow::on_SaveImage(QImage image)
 {
+    qDebug() << "Save image" << editedIndex;
     pm.setImage(editedIndex, image);
 }
 

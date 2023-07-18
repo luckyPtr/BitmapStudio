@@ -39,6 +39,7 @@ bool QGraphicsCanvasItem::isInImgArea(QPoint point)
 void QGraphicsCanvasItem::resizeImage(QImage &img, int width, int heighy)
 {
     QImage newImage(width, heighy, QImage::Format_RGB888);
+    newImage.fill(Qt::white);
 
     for(int x = 0; x < img.width() && x < newImage.width(); x++)
     {
@@ -55,6 +56,7 @@ void QGraphicsCanvasItem::resizeImage(QImage &img, int width, int heighy)
 void QGraphicsCanvasItem::moveImage(QImage &img, int OffsetX, int OffsetY)
 {
     QImage newImg(img.size(), QImage::Format_RGB888);
+    newImg.fill(Qt::white);
 
     auto isContainPoint([=](QPoint point){
         return (point.x() >= 0 && point.x() < img.width() && point.y() >= 0 && point.y() < img.height());
@@ -347,6 +349,10 @@ void QGraphicsCanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
 
 void QGraphicsCanvasItem::setImage(QImage &image)
 {
+    if(image.isNull())
+    {
+        return;
+    }
     // 虽然是单色的，转为为RGB888，像素处理的时候方便一点
     this->image = image.convertToFormat(QImage::Format_RGB888);
     view->viewport()->update();

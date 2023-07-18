@@ -42,7 +42,7 @@ private slots:
 
     void on_actTest_triggered();
 
-    void on_SaveImage(QImage &image);
+    void on_SaveImage(QImage image);
 
 private:
     Ui::MainWindow *ui;

@@ -28,16 +28,17 @@ private:
 
     void initScrollerPos();   // 初始化滚轮位置为左上角
     void initAction();
+
 public slots:
     void paintView();
     void on_LoadImage(QImage &image);
-private slots:
-
-
-
     void on_actSelect_triggered();
     void on_actEdit_triggered();
     void on_actMeasure_triggered();
+    void on_actSave_triggered();
+
+signals:
+    void saveImage(QImage image);
 };
 
 #endif // FORMPIXELEDITOR_H

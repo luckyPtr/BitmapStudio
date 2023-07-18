@@ -100,6 +100,7 @@ void FormPixelEditor::initAction()
     ui->toolBntSelect->setDefaultAction(ui->actSelect);
     ui->toolBntEdit->setDefaultAction(ui->actEdit);
     ui->toolBntMeasure->setDefaultAction(ui->actMeasure);
+    ui->toolBtnSave->setDefaultAction(ui->actSave);
 }
 
 void FormPixelEditor::paintView()
@@ -139,5 +140,11 @@ void FormPixelEditor::on_actMeasure_triggered()
     ui->actEdit->setChecked(false);
     ui->actMeasure->setChecked(true);
     scanvasItem->setMode(QGraphicsCanvasItem::MeasureMode);
+}
+
+
+void FormPixelEditor::on_actSave_triggered()
+{
+    emit saveImage(scanvasItem->getImage());
 }
 
