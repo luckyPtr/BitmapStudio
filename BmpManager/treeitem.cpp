@@ -61,14 +61,14 @@ QVariant TreeItem::data(int column) const
     {
         return QString("组合图");
     }
-    else if(_type == FOLDER)
+    else if(_type == FOLDER_IMG)
     {
         if(column == RoleDisplay)
         {
             return rawData->getImgMap()[id].name;
         }
     }
-    else if(_type == FILE)
+    else if(_type == FILE_IMG)
     {
         if(column == RoleDisplay)
         {
@@ -94,9 +94,9 @@ QIcon TreeItem::icon() const
         return QIcon(":/Image/TreeIco/Image.svg");
     case CLASS_COMIMAGE:
         return QIcon(":/Image/TreeIco/CombiImage.svg");
-    case FOLDER:
+    case FOLDER_IMG:
         return QIcon(":/Image/TreeIco/Folder.svg");
-    case FILE:
+    case FILE_IMG:
         return QIcon(":/Image/TreeIco/ImageFile.svg");
     default:
         return QIcon();

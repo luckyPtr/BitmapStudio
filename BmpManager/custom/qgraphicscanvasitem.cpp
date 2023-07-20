@@ -256,6 +256,8 @@ void QGraphicsCanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
+    if(image.isNull())
+        return;
 
     // 绘制像素
     QImage imageShow = image;
@@ -351,7 +353,7 @@ void QGraphicsCanvasItem::setImage(QImage &image)
 {
     if(image.isNull())
     {
-        return;
+        //return;
     }
     // 虽然是单色的，转为为RGB888，像素处理的时候方便一点
     this->image = image.convertToFormat(QImage::Format_RGB888);

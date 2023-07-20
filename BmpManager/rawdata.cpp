@@ -26,6 +26,19 @@ void RawData::initDatabase()
                   );");
     query.exec();
 
+    // 创建tbl_comimg
+    query.prepare("CREATE TABLE tbl_comimg (\
+              id      INTEGER PRIMARY KEY,\
+              pid     INTEGER DEFAULT (0),\
+              folder  INTEGER DEFAULT (0),\
+              name    TEXT,\
+              details TEXT,\
+              wide    INTEGER DEFAULT (0),\
+              height  INTEGER DEFAULT (0),\
+              data    BLOB\
+              );");
+    query.exec();
+
     query.prepare("INSERT INTO tbl_settings (version) VALUES (1);");
     query.exec();
     db.commit();
@@ -33,7 +46,16 @@ void RawData::initDatabase()
 
 void RawData::load()
 {
+    // QString转QJsonObject
+    auto stringToJson = [](QString jsonString){
+        QJsonDocument jsonDocument = QJsonDocument::fromJson(jsonString.toLocal8Bit().data());
+        QJsonObject jsonObject = jsonDocument.object();
+        return jsonObject;
+    };
+
     imgMap.clear();
+    comImgMap.clear();
+
     QSqlQuery query(db);
     query.prepare("SELECT * FROM tbl_img");
     query.exec();
@@ -50,6 +72,24 @@ void RawData::load()
         QByteArray ba = query.value("data").toByteArray();
         bi.file.loadFromData(ba);
         imgMap.insert(bi.id, bi);
+    }
+
+
+    query.prepare("SELECT * FROM tbl_comimg");
+    query.exec();
+    while(query.next())
+    {
+        BmComImg bci;
+        bci.id = query.value("id").toUInt();
+        bci.pid = query.value("pid").toUInt();
+        bci.isFolder = query.value("folder").toBool();
+        bci.name = query.value("name").toString();
+        bci.details = query.value("details").toString();
+        bci.wide = query.value("wide").toUInt();
+        bci.height = query.value("height").toUInt();
+        bci.data = query.value("data").toString();
+        bci.jsonImg = stringToJson(bci.data);
+        comImgMap.insert(bci.id, bci);
     }
 }
 

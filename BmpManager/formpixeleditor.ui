@@ -48,8 +48,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>24</width>
+         <height>24</height>
         </size>
        </property>
        <property name="autoRaise">
@@ -67,8 +67,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>24</width>
+         <height>24</height>
         </size>
        </property>
        <property name="autoRaise">
@@ -83,8 +83,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>24</width>
+         <height>24</height>
         </size>
        </property>
        <property name="autoRaise">
@@ -99,8 +99,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>24</width>
+         <height>24</height>
         </size>
        </property>
        <property name="autoRaise">
@@ -118,8 +118,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>24</width>
+         <height>24</height>
         </size>
        </property>
        <property name="popupMode">
@@ -137,8 +137,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>24</width>
+         <height>24</height>
         </size>
        </property>
        <property name="autoRepeat">
@@ -165,8 +165,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>24</width>
+         <height>24</height>
         </size>
        </property>
        <property name="autoRaise">
@@ -181,8 +181,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>24</width>
+         <height>24</height>
         </size>
        </property>
        <property name="autoRaise">
@@ -197,8 +197,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>24</width>
+         <height>24</height>
         </size>
        </property>
        <property name="autoRaise">

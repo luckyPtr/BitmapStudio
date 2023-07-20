@@ -5,6 +5,7 @@
 #include <QtSql>
 #include <QPixmap>
 #include <QMap>
+#include <QJsonObject>
 
 struct BmImg
 {
@@ -30,6 +31,7 @@ struct BmComImg
     quint16 wide;
     quint16 height;
     QString data;
+    QJsonObject jsonImg;
     bool isExpand;
     BmComImg() {}
 };
@@ -56,6 +58,7 @@ public:
 
     QString getProject() const {return project;}
     QMap<quint16, BmImg> getImgMap() const {return imgMap;}
+    QMap<quint16, BmComImg> getComImgMap() const {return comImgMap;}
     BmImg getImgInfo(quint16 id) const { return imgMap[id]; }
     void load();    // 加载数据库数据
     void createFolder(quint16 id, QString name = "Untitled");

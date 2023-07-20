@@ -13,6 +13,9 @@
 #include <dialogimportimg.h>
 #include <formpixeleditor.h>
 #include <formcomimgeditor.h>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonValue>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -68,6 +71,8 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
 
     editedIndex = index;
     emit selectItem(img);
+
+    qDebug() << item->getID();
 }
 
 
@@ -187,11 +192,32 @@ void MainWindow::on_actTest_triggered()
     {
         ui->stackedWidget->setCurrentIndex(0);
     }
+
+
+
+    QJsonObject obj1;
+    obj1.insert("x", 0);
+    obj1.insert("y", 0);
+    obj1.insert("id", 1);
+    QJsonObject obj2;
+    obj2.insert("x", 10);
+    obj2.insert("y", 10);
+    obj2.insert("id", 2);
+
+    QJsonArray array;
+    array.append(obj1);
+    array.append(obj2);
+
+    QJsonObject pageObj;
+    pageObj.insert("width", 128);
+    pageObj.insert("height", 64);
+    pageObj.insert("images", QJsonValue(array));
+
+    qDebug() << pageObj;
 }
 
 void MainWindow::on_SaveImage(QImage image)
 {
-    qDebug() << "Save image" << editedIndex;
     pm.setImage(editedIndex, image);
 }
 

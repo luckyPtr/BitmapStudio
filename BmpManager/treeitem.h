@@ -60,8 +60,10 @@ public:
         CLASS_IMAGE,
         CLASS_COMIMAGE,
         CLASS_FONT,
-        FOLDER,
-        FILE
+        FOLDER_IMG,
+        FOLDER_IMG_GROUP,
+        FILE_IMG,
+        FILE_COMIMG,
     };
     enum
     {

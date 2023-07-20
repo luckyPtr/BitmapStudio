@@ -5,6 +5,7 @@
 void ProjectMng::addImgNode(RawData *rd, const quint16 pid, TreeItem *parent)
 {
     QMap<quint16, BmImg> imgMap = rd->getImgMap();
+
     foreach(auto bi, imgMap)
     {
         if(bi.pid == pid)
@@ -12,10 +13,29 @@ void ProjectMng::addImgNode(RawData *rd, const quint16 pid, TreeItem *parent)
             TreeItem *item = new TreeItem();
             item->setID(bi.id);
 //            item->setProject(rd->getProject());
-            item->setType(bi.isFolder ? TreeItem::FOLDER : TreeItem::FILE);
+            item->setType(bi.isFolder ? TreeItem::FOLDER_IMG : TreeItem::FILE_IMG);
             item->setRawData(rd);
             parent->addChild(item);
             addImgNode(rd, bi.id, item);
+        }
+    }
+}
+
+void ProjectMng::addComImgNode(RawData *rd, const quint16 pid, TreeItem *parent)
+{
+    QMap<quint16, BmComImg> comImgMap = rd->getComImgMap();
+
+    foreach(auto ci, comImgMap)
+    {
+        if(ci.pid == pid)
+        {
+            TreeItem *item = new TreeItem();
+            item->setID(ci.id);
+            //            item->setProject(rd->getProject());
+            item->setType(ci.isFolder ? TreeItem::FOLDER_IMG : TreeItem::FILE_IMG);
+            item->setRawData(rd);
+            parent->addChild(item);
+            addComImgNode(rd, ci.id, item);
         }
     }
 }
@@ -127,6 +147,7 @@ void ProjectMng::initModel()
         itemComImage->setRawData(&projList[i]);
         itemComImage->setID(10000);
         proItem->addChild(itemComImage);
+        addComImgNode(&projList[i], 0, itemComImage);
     }
     theModel->endReset();
     restoreExpand();

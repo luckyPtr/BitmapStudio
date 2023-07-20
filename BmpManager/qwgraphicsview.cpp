@@ -5,7 +5,7 @@
 
 void QWGraphicsView::mouseMoveEvent(QMouseEvent *event)
 {
-    qDebug() << "mouse move" << event->pos();
+//    qDebug() << "mouse move" << event->pos();
     QPoint point = event->pos();
     emit mouseMovePoint(point);
     QGraphicsView::mouseMoveEvent(event);

@@ -99,11 +99,6 @@ void QGraphicsScaleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem
     Q_UNUSED(widget)
 
     drawScale(painter);
-
-    if (option->state & QStyle::State_Selected)
-    {
-
-    }
 }
 
 QPainterPath QGraphicsScaleItem::shape() const

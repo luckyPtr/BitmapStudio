@@ -21,6 +21,7 @@ private:
     QTreeView *treeView;
 
     void addImgNode(RawData *rd, const quint16 pid, TreeItem *parent);
+    void addComImgNode(RawData *rd, const quint16 pid, TreeItem *parent);
     void getExpandNode(QModelIndex root);      // 保存展开的节点
     void setExpandNode(QModelIndex root);   // 恢复展开的节点
     void saveExpand();

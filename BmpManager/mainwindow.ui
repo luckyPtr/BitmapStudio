@@ -142,7 +142,7 @@
        <widget class="QTreeView" name="treeViewProject">
         <property name="font">
          <font>
-          <family>Arial</family>
+          <family>微软雅黑</family>
           <pointsize>11</pointsize>
          </font>
         </property>
