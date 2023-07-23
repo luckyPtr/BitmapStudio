@@ -30,9 +30,9 @@ void ProjectMng::addComImgNode(RawData *rd, const quint16 pid, TreeItem *parent)
         if(ci.pid == pid)
         {
             TreeItem *item = new TreeItem();
-            item->setID(ci.id);
+            item->setID(ci.id + 10000);     // 组合图id从10000开始
             //            item->setProject(rd->getProject());
-            item->setType(ci.isFolder ? TreeItem::FOLDER_IMG : TreeItem::FILE_IMG);
+            item->setType(ci.isFolder ? TreeItem::FOLDER_COMIMG : TreeItem::FILE_COMIMG);
             item->setRawData(rd);
             parent->addChild(item);
             addComImgNode(rd, ci.id, item);

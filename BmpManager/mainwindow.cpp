@@ -63,6 +63,8 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
 {
     TreeItem *item = pm.model()->itemFromIndex(index);
     BmImg bi = item->getRawData()->getImgInfo(item->getID());
+    qDebug() << "id" << item->getID();
+    qDebug() << "type" << item->getType();
     QImage img = bi.file;
     QImage resultImg = img.scaled(ui->labelPreview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
     ui->labelPreview->setPixmap(QPixmap::fromImage(resultImg));

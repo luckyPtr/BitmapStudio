@@ -89,7 +89,7 @@ void RawData::load()
         bci.height = query.value("height").toUInt();
         bci.data = query.value("data").toString();
         bci.jsonImg = stringToJson(bci.data);
-        comImgMap.insert(bci.id, bci);
+        comImgMap.insert(bci.id+10000, bci);
     }
 }
 

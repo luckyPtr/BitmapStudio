@@ -68,6 +68,13 @@ QVariant TreeItem::data(int column) const
             return rawData->getImgMap()[id].name;
         }
     }
+    else if(_type == FOLDER_COMIMG)
+    {
+        if(column == RoleDisplay)
+        {
+            return rawData->getComImgMap()[id].name;
+        }
+    }
     else if(_type == FILE_IMG)
     {
         if(column == RoleDisplay)
@@ -78,6 +85,13 @@ QVariant TreeItem::data(int column) const
 //        {
 //            return QVariant::fromValue(image);
 //        }
+    }
+    else if(_type == FILE_COMIMG)
+    {
+        if(column == RoleDisplay)
+        {
+            return rawData->getComImgMap()[id].name;
+        }
     }
 
     return QVariant();
@@ -95,9 +109,12 @@ QIcon TreeItem::icon() const
     case CLASS_COMIMAGE:
         return QIcon(":/Image/TreeIco/CombiImage.svg");
     case FOLDER_IMG:
+    case FOLDER_COMIMG:
         return QIcon(":/Image/TreeIco/Folder.svg");
     case FILE_IMG:
         return QIcon(":/Image/TreeIco/ImageFile.svg");
+    case FILE_COMIMG:
+        return QIcon(":/Image/TreeIco/ComImgFile.svg");
     default:
         return QIcon();
     }

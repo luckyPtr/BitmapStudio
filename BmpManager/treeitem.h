@@ -62,6 +62,7 @@ public:
         CLASS_FONT,
         FOLDER_IMG,
         FOLDER_IMG_GROUP,
+        FOLDER_COMIMG,
         FILE_IMG,
         FILE_COMIMG,
     };

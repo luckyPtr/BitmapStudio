@@ -7,6 +7,7 @@
 #include <QMap>
 #include <QJsonObject>
 
+// TODO 二合一 FileMap
 struct BmImg
 {
     quint32 id;
