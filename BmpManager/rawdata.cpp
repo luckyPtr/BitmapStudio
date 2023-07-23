@@ -1,5 +1,6 @@
 #include "rawdata.h"
 #include <QByteArray>
+#include <QImage>
 
 void RawData::initDatabase()
 {
@@ -54,14 +55,14 @@ void RawData::load()
     };
 
     imgMap.clear();
-    comImgMap.clear();
+//    comImgMap.clear();
 
     QSqlQuery query(db);
     query.prepare("SELECT * FROM tbl_img");
     query.exec();
     while (query.next())
     {
-        BmImg bi;
+        BmFile bi;
         bi.id = query.value("id").toUInt();
         bi.pid = query.value("pid").toUInt();
         bi.isFolder = query.value("folder").toBool();
@@ -70,7 +71,7 @@ void RawData::load()
         bi.wide = query.value("wide").toUInt();
         bi.height = query.value("height").toUInt();
         QByteArray ba = query.value("data").toByteArray();
-        bi.file.loadFromData(ba);
+        bi.image.loadFromData(ba);
         imgMap.insert(bi.id, bi);
     }
 
@@ -79,17 +80,21 @@ void RawData::load()
     query.exec();
     while(query.next())
     {
-        BmComImg bci;
-        bci.id = query.value("id").toUInt();
-        bci.pid = query.value("pid").toUInt();
+        BmFile bci;
+        bci.id = query.value("id").toUInt() + 10000;
+        bci.pid = query.value("pid").toUInt() + 10000;
         bci.isFolder = query.value("folder").toBool();
         bci.name = query.value("name").toString();
         bci.details = query.value("details").toString();
         bci.wide = query.value("wide").toUInt();
         bci.height = query.value("height").toUInt();
         bci.data = query.value("data").toString();
-        bci.jsonImg = stringToJson(bci.data);
-        comImgMap.insert(bci.id+10000, bci);
+        bci.jsonComImg = stringToJson(bci.data);
+        imgMap.insert(bci.id, bci);
+    }
+    qDebug() << "++++++";
+    foreach (auto a, imgMap) {
+        qDebug() << "id=" << a.id;
     }
 }
 
@@ -146,7 +151,7 @@ void RawData::createFolder(quint16 id, QString name)
         query.bindValue(":folder", true);
         query.bindValue(":pid", id);
         query.exec();
-        BmImg bi;
+        BmFile bi;
         bi.id = query.lastInsertId().toUInt();
         bi.pid = id;
         bi.isFolder = true;
@@ -185,14 +190,14 @@ void RawData::createBmp(quint16 id, QString name, const QImage &img)
         query.exec();
 
 
-        BmImg bi;
+        BmFile bi;
         bi.id = query.lastInsertId().toUInt();
         bi.pid = id;
         bi.isFolder = false;
         bi.name = name;
         bi.wide = img.width();
         bi.height = img.height();
-        bi.file = img;
+        bi.image = img;
         imgMap.insert(bi.id, bi);
     }
 }
@@ -241,7 +246,7 @@ QImage RawData::getImage(quint16 id)
 {
     if(imgMap.contains(id))
     {
-        return imgMap[id].file;
+        return imgMap[id].image;
     }
     return QImage();
 }
@@ -250,7 +255,7 @@ void RawData::setImage(quint16 id, QImage image)
 {
     if(imgMap.contains(id))
     {
-        imgMap[id].file = image;
+        imgMap[id].image = image;
 
         QByteArray byteArray = QByteArray();
         QBuffer buffer(&byteArray);

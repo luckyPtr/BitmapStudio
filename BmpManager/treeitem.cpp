@@ -72,7 +72,7 @@ QVariant TreeItem::data(int column) const
     {
         if(column == RoleDisplay)
         {
-            return rawData->getComImgMap()[id].name;
+            return rawData->getImgMap()[id].name;
         }
     }
     else if(_type == FILE_IMG)
@@ -90,7 +90,7 @@ QVariant TreeItem::data(int column) const
     {
         if(column == RoleDisplay)
         {
-            return rawData->getComImgMap()[id].name;
+            return rawData->getImgMap()[id].name;
         }
     }
 

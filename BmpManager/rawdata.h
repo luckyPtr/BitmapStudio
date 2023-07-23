@@ -8,7 +8,7 @@
 #include <QJsonObject>
 
 // TODO 二合一 FileMap
-struct BmImg
+struct BmFile
 {
     quint32 id;
     quint32 pid;
@@ -17,9 +17,11 @@ struct BmImg
     QString details;
     quint16 wide;
     quint16 height;
-    QImage file;
+    QImage image;
+    QString data;
+    QJsonObject jsonComImg;
     bool isExpand;
-    BmImg() {}
+    BmFile() {}
 };
 
 struct BmComImg
@@ -45,8 +47,8 @@ private:
     quint16 screenWith;     // 项目屏幕宽度(像素)
     quint16 screenHeight;   // 项目屏幕高度(像素)
     quint8 depth;           // 项目图片深度
-    QMap<quint16, BmImg> imgMap;
-    QMap<quint16, BmComImg> comImgMap;
+    QMap<quint16, BmFile> imgMap;
+ //   QMap<quint16, BmComImg> comImgMap;
 
 
     void initDatabase();
@@ -58,9 +60,9 @@ public:
     QVector<quint16> expand;
 
     QString getProject() const {return project;}
-    QMap<quint16, BmImg> getImgMap() const {return imgMap;}
-    QMap<quint16, BmComImg> getComImgMap() const {return comImgMap;}
-    BmImg getImgInfo(quint16 id) const { return imgMap[id]; }
+    QMap<quint16, BmFile> getImgMap() const {return imgMap;}
+//    QMap<quint16, BmComImg> getComImgMap() const {return comImgMap;}
+    BmFile getImgInfo(quint16 id) const { return imgMap[id]; }
     void load();    // 加载数据库数据
     void createFolder(quint16 id, QString name = "Untitled");
     void createBmp(quint16 id, QString name, const QImage &img);
