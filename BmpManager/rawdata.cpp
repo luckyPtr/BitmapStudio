@@ -45,6 +45,15 @@ void RawData::initDatabase()
     db.commit();
 }
 
+void RawData::convertComImgToImage(BmFile &file)
+{
+
+
+
+    QImage img(file.ComImg.width, file.ComImg.height, QImage::Format_RGB888);
+
+}
+
 void RawData::load()
 {
     // QString转QJsonObject
@@ -54,8 +63,8 @@ void RawData::load()
         return jsonObject;
     };
 
+
     imgMap.clear();
-//    comImgMap.clear();
 
     QSqlQuery query(db);
     query.prepare("SELECT * FROM tbl_img");
@@ -68,8 +77,6 @@ void RawData::load()
         bi.isFolder = query.value("folder").toBool();
         bi.name = query.value("name").toString();
         bi.details = query.value("details").toString();
-        bi.wide = query.value("wide").toUInt();
-        bi.height = query.value("height").toUInt();
         QByteArray ba = query.value("data").toByteArray();
         bi.image.loadFromData(ba);
         imgMap.insert(bi.id, bi);
@@ -86,15 +93,21 @@ void RawData::load()
         bci.isFolder = query.value("folder").toBool();
         bci.name = query.value("name").toString();
         bci.details = query.value("details").toString();
-        bci.wide = query.value("wide").toUInt();
-        bci.height = query.value("height").toUInt();
-        bci.data = query.value("data").toString();
-        bci.jsonComImg = stringToJson(bci.data);
+        QString s = query.value("data").toString();
+        QJsonObject jsonComImg = stringToJson(s);
+        bci.ComImg.width = jsonComImg.value("width").toInt();
+        bci.ComImg.height = jsonComImg.value("height").toInt();
+        QJsonArray array = jsonComImg.value("images").toArray();
+
+        for(auto obj : array)
+        {
+            ComImgItem item;
+            item.x = obj.toObject().value("x").toInt();
+            item.y = obj.toObject().value("y").toInt();
+            item.id = obj.toObject().value("id").toInt();
+            bci.ComImg.items.append(item);
+        }
         imgMap.insert(bci.id, bci);
-    }
-    qDebug() << "++++++";
-    foreach (auto a, imgMap) {
-        qDebug() << "id=" << a.id;
     }
 }
 
@@ -195,8 +208,8 @@ void RawData::createBmp(quint16 id, QString name, const QImage &img)
         bi.pid = id;
         bi.isFolder = false;
         bi.name = name;
-        bi.wide = img.width();
-        bi.height = img.height();
+//        bi.wide = img.width();
+//        bi.height = img.height();
         bi.image = img;
         imgMap.insert(bi.id, bi);
     }
@@ -244,9 +257,41 @@ void RawData::remove(quint16 id)
 
 QImage RawData::getImage(quint16 id)
 {
+    // 将img2合并到img1，img2的位置在x,y
+    auto merge = [](QImage &img1, QImage &img2, int x, int y) ->void {
+        for(int i = x; i < img1.width() && i < x + img2.width(); i++)
+        {
+            for(int j = y; j < img1.height() && j < y + img2.height(); j++)
+            {
+                img1.setPixelColor(i, j, img2.pixelColor(i-x, j-y));
+            }
+        }
+    };
+
+    auto comImgToImage = [=](){
+        QImage image(imgMap[id].ComImg.width, imgMap[id].ComImg.height, QImage::Format_RGB888);
+        image.fill(Qt::white);
+        foreach(auto item, imgMap[id].ComImg.items)
+        {
+            if(imgMap.contains(item.id))
+            {
+                merge(image, imgMap[item.id].image, item.x, item.y);
+            }
+        }
+        return image;
+    };
+
     if(imgMap.contains(id))
     {
-        return imgMap[id].image;
+        if(id < 10000)
+        {
+            return imgMap[id].image;
+        }
+        else
+        {
+            return comImgToImage();
+        }
+
     }
     return QImage();
 }
@@ -271,5 +316,7 @@ void RawData::setImage(quint16 id, QImage image)
         buffer.close();
     }
 }
+
+
 
 

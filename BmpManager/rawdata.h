@@ -5,7 +5,25 @@
 #include <QtSql>
 #include <QPixmap>
 #include <QMap>
+#include <QVector>
 #include <QJsonObject>
+
+// 组合图单个元素
+struct ComImgItem
+{
+    quint16 x;
+    quint16 y;
+    quint16 z;
+    quint16 id;
+
+    ComImgItem(){}
+    ComImgItem(quint16 x, quint16 y, quint16 id) {
+        this->x = x;
+        this->y = y;
+        this->id = id;
+    }
+};
+
 
 // TODO 二合一 FileMap
 struct BmFile
@@ -15,29 +33,19 @@ struct BmFile
     bool isFolder;
     QString name;
     QString details;
-    quint16 wide;
-    quint16 height;
     QImage image;
-    QString data;
-    QJsonObject jsonComImg;
+    struct
+    {
+        quint16 width;
+        quint16 height;
+        QVector<ComImgItem> items;
+    }ComImg;
+
     bool isExpand;
     BmFile() {}
 };
 
-struct BmComImg
-{
-    quint32 id;
-    quint32 pid;
-    bool isFolder;
-    QString name;
-    QString details;
-    quint16 wide;
-    quint16 height;
-    QString data;
-    QJsonObject jsonImg;
-    bool isExpand;
-    BmComImg() {}
-};
+
 
 class RawData
 {
@@ -48,12 +56,12 @@ private:
     quint16 screenHeight;   // 项目屏幕高度(像素)
     quint8 depth;           // 项目图片深度
     QMap<quint16, BmFile> imgMap;
- //   QMap<quint16, BmComImg> comImgMap;
-
 
     void initDatabase();
-
+    void convertComImgToImage(BmFile &file);
 public:
+
+
     RawData(const QString path);
     ~RawData();
 
@@ -62,7 +70,7 @@ public:
     QString getProject() const {return project;}
     QMap<quint16, BmFile> getImgMap() const {return imgMap;}
 //    QMap<quint16, BmComImg> getComImgMap() const {return comImgMap;}
-    BmFile getImgInfo(quint16 id) const { return imgMap[id]; }
+    BmFile getBmFile(quint16 id) const { return imgMap[id]; }
     void load();    // 加载数据库数据
     void createFolder(quint16 id, QString name = "Untitled");
     void createBmp(quint16 id, QString name, const QImage &img);
@@ -75,8 +83,6 @@ public:
     void addExpandNode(quint16 id) { expand << id; };
     bool isExpandNode(quint16 id) { return expand.contains(id); }
     void clearExpandNode() { expand.clear(); }
-
-    void test() {qDebug()<<"Test";}
 };
 
 #endif // RAWDATA_H

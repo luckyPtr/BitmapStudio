@@ -62,10 +62,10 @@ void MainWindow::on_actOpenProject_triggered()
 void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
 {
     TreeItem *item = pm.model()->itemFromIndex(index);
-    BmFile bi = item->getRawData()->getImgInfo(item->getID());
+//    BmFile bi = item->getRawData()->getBmFile(item->getID());
     qDebug() << "id" << item->getID();
     qDebug() << "type" << item->getType();
-    QImage img = bi.image;
+    QImage img = item->getRawData()->getImage(item->getID());
     QImage resultImg = img.scaled(ui->labelPreview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
     ui->labelPreview->setPixmap(QPixmap::fromImage(resultImg));
     ui->labelPreview->setAlignment(Qt::AlignCenter);
@@ -134,8 +134,8 @@ void MainWindow::on_splitter_splitterMoved(int pos, int index)
     if(curIndex.isValid())
     {
         TreeItem *item = pm.model()->itemFromIndex(curIndex);
-        BmFile bi = item->getRawData()->getImgInfo(item->getID());
-        QImage img = bi.image;
+ //       BmFile bi = item->getRawData()->getBmFile(item->getID());
+        QImage img = item->getRawData()->getImage(item->getID());
         QImage resultImg = img.scaled(ui->labelPreview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
         ui->labelPreview->setPixmap(QPixmap::fromImage(resultImg));
     }
