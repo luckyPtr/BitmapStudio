@@ -14,11 +14,13 @@ FormComImgEditor::FormComImgEditor(QWidget *parent) :
     scaleItem = new QGraphicsScaleItem(ui->graphicsView);
     scaleItem->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
 
+    comImgCanvansItem = new QGraphicsComImgCanvansItem(ui->graphicsView);
+    comImgCanvansItem->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
 //    scanvasItem = new QGraphicsCanvasItem(ui->graphicsView);
 //    scanvasItem->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
 
     scene->addItem(scaleItem);
-//    scene->addItem(scanvasItem);
+   scene->addItem(comImgCanvansItem);
     QBrush brush;
     brush.setColor(0xcbd4e4);
     brush.setStyle(Qt::SolidPattern);

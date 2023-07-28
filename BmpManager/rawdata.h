@@ -24,6 +24,14 @@ struct ComImgItem
     }
 };
 
+struct ComImg
+{
+    quint16 width;
+    quint16 height;
+    QVector<ComImgItem> items;
+    ComImg() {}
+};
+
 
 // TODO 二合一 FileMap
 struct BmFile
@@ -34,12 +42,7 @@ struct BmFile
     QString name;
     QString details;
     QImage image;
-    struct
-    {
-        quint16 width;
-        quint16 height;
-        QVector<ComImgItem> items;
-    }ComImg;
+    ComImg comImg;
 
     bool isExpand;
     BmFile() {}

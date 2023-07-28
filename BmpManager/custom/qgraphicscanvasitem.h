@@ -26,7 +26,7 @@ private:
 
     QGraphicsView *view;
     QImage image;
-    QPoint startPoint;  // 左上角其实位置坐标
+    QPoint startPoint;  // 左上角起始位置坐标
     QPoint currentPoint;
     QPoint currentPixel;    // 当前鼠标所在的坐标（图片像素）
     QPoint moveStartPixel;  // 开始移动画布的坐标(像素)

@@ -47,10 +47,10 @@ void RawData::initDatabase()
 
 void RawData::convertComImgToImage(BmFile &file)
 {
-
-
-
-    QImage img(file.ComImg.width, file.ComImg.height, QImage::Format_RGB888);
+    
+    
+    
+    QImage img(file.comImg.width, file.comImg.height, QImage::Format_RGB888);
 
 }
 
@@ -95,8 +95,8 @@ void RawData::load()
         bci.details = query.value("details").toString();
         QString s = query.value("data").toString();
         QJsonObject jsonComImg = stringToJson(s);
-        bci.ComImg.width = jsonComImg.value("width").toInt();
-        bci.ComImg.height = jsonComImg.value("height").toInt();
+        bci.comImg.width = jsonComImg.value("width").toInt();
+        bci.comImg.height = jsonComImg.value("height").toInt();
         QJsonArray array = jsonComImg.value("images").toArray();
 
         for(auto obj : array)
@@ -105,7 +105,7 @@ void RawData::load()
             item.x = obj.toObject().value("x").toInt();
             item.y = obj.toObject().value("y").toInt();
             item.id = obj.toObject().value("id").toInt();
-            bci.ComImg.items.append(item);
+            bci.comImg.items.append(item);
         }
         imgMap.insert(bci.id, bci);
     }
@@ -269,9 +269,9 @@ QImage RawData::getImage(quint16 id)
     };
 
     auto comImgToImage = [=](){
-        QImage image(imgMap[id].ComImg.width, imgMap[id].ComImg.height, QImage::Format_RGB888);
+        QImage image(imgMap[id].comImg.width, imgMap[id].comImg.height, QImage::Format_RGB888);
         image.fill(Qt::white);
-        foreach(auto item, imgMap[id].ComImg.items)
+        foreach(auto item, imgMap[id].comImg.items)
         {
             if(imgMap.contains(item.id))
             {
