@@ -13,6 +13,7 @@ class QGraphicsComImgCanvansItem : public QObject, public QGraphicsItem
     QPoint startPoint;  // 左上角起始位置坐标
     ComImg comImg;
 
+    void paintBackgrand(QPainter *painter);    // 绘制画布
 public:
     explicit QGraphicsComImgCanvansItem(QObject *parent = nullptr);
     QRectF boundingRect() const Q_DECL_OVERRIDE;

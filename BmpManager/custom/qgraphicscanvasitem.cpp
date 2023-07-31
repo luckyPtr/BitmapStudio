@@ -273,12 +273,12 @@ void QGraphicsCanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
             QColor color = imageShow.pixelColor(x, y);
             quint8 grayscale  = qGray(color.rgb());
             QRect rect(startPoint.x() + x * Global::pixelSize, startPoint.y() + y * Global::pixelSize, Global::pixelSize, Global::pixelSize);
-            painter->fillRect(rect, grayscale < 128 ? 0x9ce0ef : 0x495028);
+            painter->fillRect(rect, grayscale < 128 ? Global::pixelColor_0 : Global::pixelColor_1);
         }
     }
 
     // 绘制网格
-    QPen pen(0x303030);
+    QPen pen(Global::gridColor);
     painter->setPen(pen);
     for(int x = 0; x < image.width(); x++)
     {
