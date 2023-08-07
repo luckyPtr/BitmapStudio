@@ -42,6 +42,8 @@ void MainWindow::init()
 
     connect(this, SIGNAL(selectItem(QImage&)), ui->stackedWidget->widget(1), SLOT(on_LoadImage(QImage&)));
     connect(ui->stackedWidget->widget(1), SIGNAL(saveImage(QImage)), this, SLOT(on_SaveImage(QImage)));
+
+    connect(this, SIGNAL(selectItem(ComImg&, RawData*)), ui->stackedWidget->widget(0), SLOT(on_LoadComImg(ComImg&, RawData*)));
 }
 
 
@@ -72,7 +74,16 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
     ui->labelPreview->show();
 
     editedIndex = index;
-    emit selectItem(img);
+
+    if(item->getType() == TreeItem::FILE_IMG)
+    {
+        emit selectItem(img);
+    }
+    else if(item->getType() == TreeItem::FILE_COMIMG)
+    {
+        ComImg ci = item->getRawData()->getComImg(item->getID());
+        emit selectItem(ci, item->getRawData());
+    }
 
     qDebug() << item->getID();
 }

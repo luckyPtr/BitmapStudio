@@ -6,6 +6,7 @@
 #include "custom/qgraphicsscaleitem.h"
 #include "custom/qgraphicscomimgcanvansitem.h"
 
+
 namespace Ui {
 class FormComImgEditor;
 }
@@ -25,7 +26,11 @@ private:
     QGraphicsScaleItem *scaleItem;
     QGraphicsComImgCanvansItem * comImgCanvansItem;
 
+
     void initScrollerPos();   // 初始化滚轮位置为左上角
+
+public slots:
+    void on_LoadComImg(ComImg &comImg, RawData *rd);
 
 };
 

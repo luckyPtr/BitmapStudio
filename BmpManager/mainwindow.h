@@ -56,5 +56,7 @@ private:
 
 signals:
     void selectItem(QImage &Image);
+
+    void selectItem(ComImg &comImg, RawData *rd);
 };
 #endif // MAINWINDOW_H

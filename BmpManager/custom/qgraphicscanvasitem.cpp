@@ -273,7 +273,7 @@ void QGraphicsCanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
             QColor color = imageShow.pixelColor(x, y);
             quint8 grayscale  = qGray(color.rgb());
             QRect rect(startPoint.x() + x * Global::pixelSize, startPoint.y() + y * Global::pixelSize, Global::pixelSize, Global::pixelSize);
-            painter->fillRect(rect, grayscale < 128 ? Global::pixelColor_0 : Global::pixelColor_1);
+            painter->fillRect(rect, grayscale < 128 ? Global::pixelColor_1 : Global::pixelColor_0);
         }
     }
 

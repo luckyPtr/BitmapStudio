@@ -220,3 +220,17 @@ void ProjectMng::setImage(QModelIndex index, QImage &image)
     RawData *rd = item->getRawData();
     rd->setImage(item->getID(), image);
 }
+
+ComImg ProjectMng::getComImg(QModelIndex index)
+{
+    TreeItem *item = theModel->itemFromIndex(index);
+    RawData *rd = item->getRawData();
+    return rd->getComImg(item->getID());
+}
+
+void ProjectMng::setComImg(QModelIndex index, ComImg &comImg)
+{
+    TreeItem *item = theModel->itemFromIndex(index);
+    RawData *rd = item->getRawData();
+    rd->setComImg(item->getID(), comImg);
+}

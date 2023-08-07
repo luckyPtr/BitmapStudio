@@ -20,7 +20,7 @@ FormComImgEditor::FormComImgEditor(QWidget *parent) :
 //    scanvasItem->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
 
     scene->addItem(scaleItem);
-   scene->addItem(comImgCanvansItem);
+    scene->addItem(comImgCanvansItem);
     QBrush brush;
     brush.setColor(0xcbd4e4);
     brush.setStyle(Qt::SolidPattern);
@@ -48,4 +48,11 @@ void FormComImgEditor::initScrollerPos()
         ui->graphicsView->horizontalScrollBar()->setSliderPosition(0);
         ui->graphicsView->verticalScrollBar()->setSliderPosition(0);
     }
+}
+
+void FormComImgEditor::on_LoadComImg(ComImg &comImg, RawData *rd)
+{
+    comImgCanvansItem->setComImg(comImg);
+    comImgCanvansItem->setRawData(rd);
+    qDebug() << "Load ComImg:" << rd->getProject();
 }

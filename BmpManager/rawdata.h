@@ -22,6 +22,8 @@ struct ComImgItem
         this->y = y;
         this->id = id;
     }
+
+
 };
 
 struct ComImg
@@ -30,6 +32,16 @@ struct ComImg
     quint16 height;
     QVector<ComImgItem> items;
     ComImg() {}
+
+    ComImg & operator = (ComImg comimg)
+    {
+        this->width = comimg.width;
+        this->height = comimg.height;
+        this->items.clear();
+        this->items.swap(comimg.items);
+
+        return *this;
+    }
 };
 
 
@@ -82,6 +94,9 @@ public:
     void remove(quint16 id);
     QImage getImage(quint16 id);
     void setImage(quint16 id, QImage image);
+
+    ComImg getComImg(quint16 id);
+    void setComImg(quint16 id, ComImg ci);
 
     void addExpandNode(quint16 id) { expand << id; };
     bool isExpandNode(quint16 id) { return expand.contains(id); }

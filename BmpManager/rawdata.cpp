@@ -317,6 +317,16 @@ void RawData::setImage(quint16 id, QImage image)
     }
 }
 
+ComImg RawData::getComImg(quint16 id)
+{
+    return imgMap[id].comImg;
+}
+
+void RawData::setComImg(quint16 id, ComImg ci)
+{
+    imgMap[id].comImg = ci;
+}
+
 
 
 

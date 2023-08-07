@@ -41,6 +41,8 @@ public:
     void remove(QModelIndex &index);
     QImage getImage(QModelIndex index);
     void setImage(QModelIndex index, QImage &image);
+    ComImg getComImg(QModelIndex index);
+    void setComImg(QModelIndex index, ComImg &comImg);
 
     enum NodeType
     {
