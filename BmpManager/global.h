@@ -14,6 +14,8 @@ public:
     static int pixelColor_0;    // 像素编辑像素值为0的颜色
     static int pixelColor_1;
     static int gridColor;       // 像素编辑器网格颜色
+    static int itemBoundColor;
+    static int selectedItemBoundColor;
 };
 
 #endif // GLOBAL_H

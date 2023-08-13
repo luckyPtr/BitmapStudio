@@ -47,11 +47,7 @@ void RawData::initDatabase()
 
 void RawData::convertComImgToImage(BmFile &file)
 {
-    
-    
-    
     QImage img(file.comImg.width, file.comImg.height, QImage::Format_RGB888);
-
 }
 
 void RawData::load()
@@ -135,6 +131,7 @@ RawData::RawData(const QString path)
 RawData::~RawData()
 {
 //    db.close();
+    if(!expand.isEmpty())
     expand.clear();
     qDebug() << "~RawData:" << project;
 }

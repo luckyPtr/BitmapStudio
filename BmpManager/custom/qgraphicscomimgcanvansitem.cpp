@@ -27,15 +27,25 @@ void QGraphicsComImgCanvansItem::paintItems(QPainter *painter)
             {
                 QColor color = img.pixelColor(x, y);
                 quint8 grayscale  = qGray(color.rgb());
-                QRect rect(startPoint.x() + (x0 + x) * Global::pixelSize, startPoint.y() + (y0 + y) * Global::pixelSize, Global::pixelSize, Global::pixelSize);
+                QRect rect(startPoint.x() + (x0 + x) * Global::pixelSize + 1, startPoint.y() + (y0 + y) * Global::pixelSize + 1, Global::pixelSize - 1, Global::pixelSize - 1);
                 painter->fillRect(rect, grayscale < 128 ? Global::pixelColor_1 : Global::pixelColor_0);
             }
         }
     });
 
+    // 绘制图形外框
+    auto paintBound = ([=](int x0, int y0, QSize size, int id){
+        QPen pen;
+        pen.setColor(id == selectedItemId ? Global::selectedItemBoundColor : Global::itemBoundColor);
+        painter->setPen(pen);
+        QRect rect(startPoint.x() + x0 * Global::pixelSize, startPoint.y() + y0 * Global::pixelSize, Global::pixelSize * size.width(), Global::pixelSize * size.height());
+        painter->drawRect(rect);
+    });
+
     foreach (auto item, comImg.items) {
         QImage img = rd->getImage(item.id);
         paintItem(item.x, item.y, img);
+        paintBound(item.x, item.y, img.size(), item.id);
     }
 }
 
@@ -54,6 +64,12 @@ void QGraphicsComImgCanvansItem::paintGrid(QPainter *painter)
     }
 }
 
+QPoint QGraphicsComImgCanvansItem::pointToPixel(QPoint point)
+{
+    return QPoint((point.x() - startPoint.x()) / Global::pixelSize,
+                  (point.y() - startPoint.y()) / Global::pixelSize);
+}
+
 void QGraphicsComImgCanvansItem::setComImg(ComImg &comImg)
 {
     this->comImg = comImg;
@@ -63,6 +79,34 @@ void QGraphicsComImgCanvansItem::setRawData(RawData *rd)
 {
     this->rd = rd;
     view->viewport()->update();
+    qDebug() << "set rawdata";
+}
+
+void QGraphicsComImgCanvansItem::on_MousePress(QPoint point)
+{
+    bool isSelect = false;
+    qDebug() << "Press:" << pointToPixel(point);
+    QPoint p = pointToPixel(point);
+    foreach(auto item, comImg.items)
+    {
+        QImage img = rd->getImage(item.id);
+        QRect rect(item.x, item.y, img.width(), img.height());
+        if(rect.contains(p))
+        {
+            isSelect = true;
+            selectedItemId = item.id;
+        }
+    }
+    if(!isSelect)
+        selectedItemId = -1;
+    view->viewport()->update();
+
+}
+
+void QGraphicsComImgCanvansItem::on_MouseMove(QPoint point)
+{
+    qDebug() << "Move:" << point;
+
 }
 
 QGraphicsComImgCanvansItem::QGraphicsComImgCanvansItem(QObject *parent)
@@ -74,6 +118,8 @@ QGraphicsComImgCanvansItem::QGraphicsComImgCanvansItem(QObject *parent)
     startPoint.setY(Global::scaleWidth + Global::scaleOffset);
     comImg.height = 64;
     comImg.width = 128;
+
+    connect(view, SIGNAL(mousePress(QPoint)), this, SLOT(on_MousePress(QPoint)));
 }
 
 QRectF QGraphicsComImgCanvansItem::boundingRect() const
@@ -91,6 +137,7 @@ QPainterPath QGraphicsComImgCanvansItem::shape() const
 void QGraphicsComImgCanvansItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     paintBackgrand(painter);
-    paintItems(painter);
     paintGrid(painter);
+    paintItems(painter);
+
 }
