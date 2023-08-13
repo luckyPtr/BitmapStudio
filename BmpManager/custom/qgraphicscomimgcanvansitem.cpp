@@ -70,6 +70,21 @@ QPoint QGraphicsComImgCanvansItem::pointToPixel(QPoint point)
                   (point.y() - startPoint.y()) / Global::pixelSize);
 }
 
+int QGraphicsComImgCanvansItem::getPointImgId(QPoint point)
+{
+    int id = -1;
+    foreach(auto item, comImg.items)
+    {
+        QImage img = rd->getImage(item.id);
+        QRect rect(item.x, item.y, img.width(), img.height());
+        if(rect.contains(pointToPixel(point)))
+        {
+            id = item.id;
+        }
+    }
+    return id;
+}
+
 void QGraphicsComImgCanvansItem::setComImg(ComImg &comImg)
 {
     this->comImg = comImg;
@@ -79,34 +94,65 @@ void QGraphicsComImgCanvansItem::setRawData(RawData *rd)
 {
     this->rd = rd;
     view->viewport()->update();
-    qDebug() << "set rawdata";
 }
 
 void QGraphicsComImgCanvansItem::on_MousePress(QPoint point)
 {
-    bool isSelect = false;
-    qDebug() << "Press:" << pointToPixel(point);
-    QPoint p = pointToPixel(point);
-    foreach(auto item, comImg.items)
+    selectedItemId = getPointImgId(point);
+
+
+    if(action == ActionNull)
     {
-        QImage img = rd->getImage(item.id);
-        QRect rect(item.x, item.y, img.width(), img.height());
-        if(rect.contains(p))
+        if(selectedItemId == getPointImgId(point) && selectedItemId != -1)
         {
-            isSelect = true;
-            selectedItemId = item.id;
+            action = ActionSelect;
+            moveStartPixel = currentPixel;
         }
     }
-    if(!isSelect)
-        selectedItemId = -1;
-    view->viewport()->update();
 
+    view->viewport()->update();
 }
 
 void QGraphicsComImgCanvansItem::on_MouseMove(QPoint point)
 {
-    qDebug() << "Move:" << point;
+    auto itemMove([&](){
+        if(currentPixel != moveLastPixel)
+        {
+            // TODO：获取指定ID的图片
+            for(int i = 0; i < comImg.items.size(); i++)
+            {
+                if(comImg.items[i].id == selectedItemId)
+                {
+                    comImg.items[i].x += currentPixel.x() - moveLastPixel.x();
+                    comImg.items[i].y += currentPixel.y() - moveLastPixel.y();
+                }
+            }
+            moveLastPixel = currentPixel;
+        }
+    });
 
+    currentPoint = point;
+    currentPixel = pointToPixel(point);
+
+    if(action == ActionSelect)
+    {
+        action = ActionMove;
+        moveLastPixel = currentPixel;
+        view->setCursor(Qt::SizeAllCursor);
+    }
+    else if(action == ActionMove)
+    {
+        itemMove();
+    }
+}
+
+void QGraphicsComImgCanvansItem::on_MouseRelease(QPoint point)
+{
+    if(action == ActionSelect || action == ActionMove)
+    {
+        action = ActionNull;
+        view->setCursor(Qt::ArrowCursor);
+    }
 }
 
 QGraphicsComImgCanvansItem::QGraphicsComImgCanvansItem(QObject *parent)
@@ -120,6 +166,8 @@ QGraphicsComImgCanvansItem::QGraphicsComImgCanvansItem(QObject *parent)
     comImg.width = 128;
 
     connect(view, SIGNAL(mousePress(QPoint)), this, SLOT(on_MousePress(QPoint)));
+    connect(view, SIGNAL(mouseMovePoint(QPoint)), this, SLOT(on_MouseMove(QPoint)));
+    connect(view, SIGNAL(mouseRelease(QPoint)), this, SLOT(on_MouseRelease(QPoint)));
 }
 
 QRectF QGraphicsComImgCanvansItem::boundingRect() const
