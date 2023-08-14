@@ -33,7 +33,7 @@ public:
 
 
     TreeItem *itemFromIndex(const QModelIndex &index) const;
-
+    Qt::ItemFlags flags(const QModelIndex &index) const;
 private:
     QStringList _headers;
     TreeItem* _rootItem;

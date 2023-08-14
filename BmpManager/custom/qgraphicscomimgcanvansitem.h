@@ -16,6 +16,9 @@ class QGraphicsComImgCanvansItem : public QObject, public QGraphicsItem
         ActionMove,
     };
 
+    // https://blog.csdn.net/u013125105/article/details/100514290
+    // Drag Drop参考
+
 
     QGraphicsView *view;
     QPoint startPoint;  // 左上角起始位置坐标
@@ -28,8 +31,8 @@ class QGraphicsComImgCanvansItem : public QObject, public QGraphicsItem
     QPoint currentPixel;    // 当前鼠标所在的坐标（图片像素）
     QPoint moveLastPixel;   // 移动图元上一次所在的坐标(像素)
     QPoint moveStartPixel;  // 开始移动画布的坐标(像素)
-
-    void paintBackgrand(QPainter *painter);    // 绘制画布
+    
+    void paintBackground(QPainter *painter);    // 绘制画布
     void paintItems(QPainter *painter);        // 绘制图形元素
     void paintGrid(QPainter *painter);          // 绘制网格
     QPoint pointToPixel(QPoint point);  // 坐标转换为画布上的像素坐标

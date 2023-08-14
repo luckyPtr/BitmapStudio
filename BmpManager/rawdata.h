@@ -11,8 +11,8 @@
 // 组合图单个元素
 struct ComImgItem
 {
-    quint16 x;
-    quint16 y;
+    qint16 x;
+    qint16 y;
     quint16 z;
     quint16 id;
 

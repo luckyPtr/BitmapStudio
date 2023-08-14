@@ -3,7 +3,7 @@
 #include "global.h"
 
 
-void QGraphicsComImgCanvansItem::paintBackgrand(QPainter *painter)
+void QGraphicsComImgCanvansItem::paintBackground(QPainter *painter)
 {
     // 背景使用像素0的颜色填充
     QRect backgroudRect(startPoint.x(), startPoint.y(), comImg.width * Global::pixelSize, comImg.height * Global::pixelSize);
@@ -21,6 +21,7 @@ void QGraphicsComImgCanvansItem::paintItems(QPainter *painter)
 {
     // 在指定位置绘制单个图形
     auto paintItem = ([=](int x0, int y0, QImage img){
+        QRect canvasRect(startPoint.x(), startPoint.y(), comImg.width * Global::pixelSize, comImg.height * Global::pixelSize);
         for(int x = 0; x < img.width(); x++)
         {
             for(int y = 0; y < img.height(); y++)
@@ -28,7 +29,8 @@ void QGraphicsComImgCanvansItem::paintItems(QPainter *painter)
                 QColor color = img.pixelColor(x, y);
                 quint8 grayscale  = qGray(color.rgb());
                 QRect rect(startPoint.x() + (x0 + x) * Global::pixelSize + 1, startPoint.y() + (y0 + y) * Global::pixelSize + 1, Global::pixelSize - 1, Global::pixelSize - 1);
-                painter->fillRect(rect, grayscale < 128 ? Global::pixelColor_1 : Global::pixelColor_0);
+                if(canvasRect.contains(rect.topLeft()))
+                    painter->fillRect(rect, grayscale < 128 ? Global::pixelColor_1 : Global::pixelColor_0);
             }
         }
     });
@@ -184,7 +186,7 @@ QPainterPath QGraphicsComImgCanvansItem::shape() const
 
 void QGraphicsComImgCanvansItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    paintBackgrand(painter);
+    paintBackground(painter);
     paintGrid(painter);
     paintItems(painter);
 

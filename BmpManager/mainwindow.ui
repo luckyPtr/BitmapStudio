@@ -45,7 +45,11 @@
        <number>1</number>
       </property>
       <widget class="FormComImgEditor" name="pagePixelEditor"/>
-      <widget class="FormPixelEditor" name="pageComImgEditor"/>
+      <widget class="FormPixelEditor" name="pageComImgEditor">
+       <property name="acceptDrops">
+        <bool>true</bool>
+       </property>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -146,8 +150,14 @@
           <pointsize>11</pointsize>
          </font>
         </property>
+        <property name="cursor" stdset="0">
+         <cursorShape>ArrowCursor</cursorShape>
+        </property>
         <property name="focusPolicy">
          <enum>Qt::ClickFocus</enum>
+        </property>
+        <property name="acceptDrops">
+         <bool>true</bool>
         </property>
         <property name="editTriggers">
          <set>QAbstractItemView::EditKeyPressed</set>
@@ -155,8 +165,14 @@
         <property name="dragEnabled">
          <bool>true</bool>
         </property>
+        <property name="dragDropOverwriteMode">
+         <bool>true</bool>
+        </property>
         <property name="dragDropMode">
-         <enum>QAbstractItemView::DragOnly</enum>
+         <enum>QAbstractItemView::InternalMove</enum>
+        </property>
+        <property name="defaultDropAction">
+         <enum>Qt::MoveAction</enum>
         </property>
         <property name="alternatingRowColors">
          <bool>false</bool>

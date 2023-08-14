@@ -25,6 +25,12 @@ TreeItem *TreeModel::itemFromIndex(const QModelIndex &index) const
     return _rootItem;
 }
 
+Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
+{
+    Qt::ItemFlags flag = QAbstractItemModel::flags(index);
+    return flag | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;				//允许Model拖动，这个很重要
+}
+
 TreeItem *TreeModel::root()
 {
     return _rootItem;
