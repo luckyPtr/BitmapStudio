@@ -45,11 +45,6 @@ void MainWindow::init()
 
     connect(this, SIGNAL(selectItem(ComImg&, RawData*)), ui->stackedWidget->widget(0), SLOT(on_LoadComImg(ComImg&, RawData*)));
 
-    ui->treeViewProject->setDragEnabled(true);
-    ui->treeViewProject->setDragDropMode(QAbstractItemView::InternalMove);
-    ui->treeViewProject->setDefaultDropAction(Qt::MoveAction);
-    ui->treeViewProject->setDropIndicatorShown(true);
-    ui->treeViewProject->setDragDropOverwriteMode(true);
 }
 
 

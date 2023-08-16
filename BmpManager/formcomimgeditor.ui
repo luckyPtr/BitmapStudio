@@ -10,6 +10,9 @@
     <height>459</height>
    </rect>
   </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
@@ -37,6 +40,9 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="acceptDrops">
+      <bool>true</bool>
+     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -46,6 +52,9 @@
      <widget class="QWGraphicsView" name="graphicsView">
       <property name="alignment">
        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+      </property>
+      <property name="dragMode">
+       <enum>QGraphicsView::NoDrag</enum>
       </property>
      </widget>
     </widget>

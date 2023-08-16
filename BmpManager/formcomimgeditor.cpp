@@ -1,6 +1,8 @@
 #include "formcomimgeditor.h"
 #include "ui_formcomimgeditor.h"
 #include <QScrollBar>
+#include <QDragMoveEvent>
+#include <QDragEnterEvent>
 
 FormComImgEditor::FormComImgEditor(QWidget *parent) :
     QWidget(parent),
@@ -29,7 +31,6 @@ FormComImgEditor::FormComImgEditor(QWidget *parent) :
     ui->graphicsView->setRubberBandSelectionMode(Qt::ContainsItemBoundingRect);
 
     initScrollerPos();
-
 }
 
 FormComImgEditor::~FormComImgEditor()
@@ -49,6 +50,24 @@ void FormComImgEditor::initScrollerPos()
         ui->graphicsView->verticalScrollBar()->setSliderPosition(0);
     }
 }
+
+//void FormComImgEditor::dragEnterEvent(QDragEnterEvent *event)
+//{
+//    event->accept();
+//    qDebug() << "Drop Enter";
+//}
+
+//void FormComImgEditor::dropEvent(QDropEvent *event)
+//{
+//    event->accept();
+//    qDebug() << "Drop event";
+//}
+
+//void FormComImgEditor::dragMoveEvent(QDragMoveEvent *event)
+//{
+//    event->ignore();
+//    qDebug() << "Drag mvoe";
+//}
 
 void FormComImgEditor::on_LoadComImg(ComImg &comImg, RawData *rd)
 {

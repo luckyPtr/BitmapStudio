@@ -1,6 +1,7 @@
 #include "qgraphicscomimgcanvansitem.h"
 #include "qwgraphicsview.h"
 #include "global.h"
+#include <QGraphicsSceneDragDropEvent>
 
 
 void QGraphicsComImgCanvansItem::paintBackground(QPainter *painter)
@@ -98,6 +99,34 @@ void QGraphicsComImgCanvansItem::setRawData(RawData *rd)
     view->viewport()->update();
 }
 
+void QGraphicsComImgCanvansItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
+{
+    qDebug() << "Drag enter event" << event->mimeData()->formats();
+    event->accept();
+
+//    event->setAccepted(true);
+}
+
+void QGraphicsComImgCanvansItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
+{
+    qDebug() << "Drag level event";
+}
+
+void QGraphicsComImgCanvansItem::dropEvent(QGraphicsSceneDragDropEvent *event)
+{
+    qDebug() << "Drop event";
+}
+
+void QGraphicsComImgCanvansItem::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
+{
+    qDebug() << "Drop move event";
+}
+
+void QGraphicsComImgCanvansItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    qDebug() << "mouseMoveEvent";
+}
+
 void QGraphicsComImgCanvansItem::on_MousePress(QPoint point)
 {
     selectedItemId = getPointImgId(point);
@@ -166,6 +195,11 @@ QGraphicsComImgCanvansItem::QGraphicsComImgCanvansItem(QObject *parent)
     startPoint.setY(Global::scaleWidth + Global::scaleOffset);
     comImg.height = 64;
     comImg.width = 128;
+
+    this->setAcceptHoverEvents(true);
+    this->setAcceptDrops(true);
+
+
 
     connect(view, SIGNAL(mousePress(QPoint)), this, SLOT(on_MousePress(QPoint)));
     connect(view, SIGNAL(mouseMovePoint(QPoint)), this, SLOT(on_MouseMove(QPoint)));

@@ -33,7 +33,9 @@ public:
 
 
     TreeItem *itemFromIndex(const QModelIndex &index) const;
-    Qt::ItemFlags flags(const QModelIndex &index) const;
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
+    QMimeData *mimeData(const QModelIndexList &indexes) const override;
+//    QStringList mimeTypes() const override;
 private:
     QStringList _headers;
     TreeItem* _rootItem;

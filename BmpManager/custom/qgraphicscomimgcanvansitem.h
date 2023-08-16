@@ -45,6 +45,15 @@ public:
 
     void setComImg(ComImg &comImg);
     void setRawData(RawData *rd);
+
+protected:
+    void dragEnterEvent(QGraphicsSceneDragDropEvent *event) override;
+    void dragLeaveEvent(QGraphicsSceneDragDropEvent *event) override;
+    void dropEvent(QGraphicsSceneDragDropEvent *event) override;//处理drop
+    void dragMoveEvent(QGraphicsSceneDragDropEvent *event) override;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;//添加QDrag
+
+
 signals:
 
 public slots:

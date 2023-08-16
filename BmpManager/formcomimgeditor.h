@@ -29,6 +29,11 @@ private:
 
     void initScrollerPos();   // 初始化滚轮位置为左上角
 
+protected:
+//    void dragEnterEvent(QDragEnterEvent *event) override;
+//    void dropEvent(QDropEvent *event) override;
+//    void dragMoveEvent(QDragMoveEvent *event) override;
+
 public slots:
     void on_LoadComImg(ComImg &comImg, RawData *rd);
 
