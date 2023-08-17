@@ -37,14 +37,16 @@ QMimeData *TreeModel::mimeData(const QModelIndexList &indexes) const
     {
         QModelIndex index = indexes.at(0);
 
-        TreeModel* node = (TreeModel*)index.internalPointer();
-        QByteArray encoded;
-        QDataStream stream(&encoded, QIODevice::WriteOnly);
-        stream << (qint64)(node);
-        mimeD->setData("Node/NodePtr", encoded);							//将自己需要的数据 存入到MimeData中
+        TreeItem *item = itemFromIndex(index);
+        int id = data(index, RoleID).toInt();
+        mimeD->setData("bm/id", QByteArray::number(id));							//将自己需要的数据 存入到MimeData中
+        if(item->getType() == TreeItem::FILE_IMG)
+        {
+            mimeD->setData("bm/type", "image");
+        }
     }
     else
-        mimeD->setData("Node/NodePtr", "NULL");
+        mimeD->setData("bm/id", "NULL");
 
     return mimeD;
 }

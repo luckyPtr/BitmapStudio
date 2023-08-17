@@ -10,12 +10,7 @@ void QGraphicsComImgCanvansItem::paintBackground(QPainter *painter)
     QRect backgroudRect(startPoint.x(), startPoint.y(), comImg.width * Global::pixelSize, comImg.height * Global::pixelSize);
     painter->fillRect(backgroudRect, Global::pixelColor_0);
 
-    // 外边框
-    QPen pen(Qt::yellow);
-    pen.setWidth(2);
-    painter->setPen(pen);
-    QRectF rect(startPoint.x(), startPoint.y(), comImg.width * Global::pixelSize + 1, comImg.height * Global::pixelSize + 1);
-    painter->drawRect(rect);
+
 }
 
 void QGraphicsComImgCanvansItem::paintItems(QPainter *painter)
@@ -23,6 +18,9 @@ void QGraphicsComImgCanvansItem::paintItems(QPainter *painter)
     // 在指定位置绘制单个图形
     auto paintItem = ([=](int x0, int y0, QImage img){
         QRect canvasRect(startPoint.x(), startPoint.y(), comImg.width * Global::pixelSize, comImg.height * Global::pixelSize);
+
+        QRect rect(startPoint.x() + x0 * Global::pixelSize, startPoint.y() + y0 * Global::pixelSize, Global::pixelSize * img.width(), Global::pixelSize * img.height());
+        painter->fillRect(rect, Global::gridColor);
         for(int x = 0; x < img.width(); x++)
         {
             for(int y = 0; y < img.height(); y++)
@@ -37,18 +35,22 @@ void QGraphicsComImgCanvansItem::paintItems(QPainter *painter)
     });
 
     // 绘制图形外框
-    auto paintBound = ([=](int x0, int y0, QSize size, int id){
+    auto paintBound = ([=](int x0, int y0, QSize size, int index){
         QPen pen;
-        pen.setColor(id == selectedItemId ? Global::selectedItemBoundColor : Global::itemBoundColor);
+        pen.setColor(index == selectedItemIndex ? Global::selectedItemBoundColor : Global::itemBoundColor);
+        pen.setWidth(2);
         painter->setPen(pen);
+
         QRect rect(startPoint.x() + x0 * Global::pixelSize, startPoint.y() + y0 * Global::pixelSize, Global::pixelSize * size.width(), Global::pixelSize * size.height());
         painter->drawRect(rect);
     });
 
-    foreach (auto item, comImg.items) {
+    for(int i = 0; i < comImg.items.size(); i++)
+    {
+        ComImgItem item = comImg.items[i];
         QImage img = rd->getImage(item.id);
         paintItem(item.x, item.y, img);
-        paintBound(item.x, item.y, img.size(), item.id);
+        paintBound(item.x, item.y, img.size(), i);
     }
 }
 
@@ -65,6 +67,44 @@ void QGraphicsComImgCanvansItem::paintGrid(QPainter *painter)
     {
         painter->drawLine(startPoint.x(), startPoint.y() + y * Global::pixelSize, startPoint.x() + comImg.width * Global::pixelSize, startPoint.y() + y * Global::pixelSize);
     }
+
+    // 外边框
+    pen.setColor(Qt::yellow);
+    pen.setWidth(2);
+    painter->setPen(pen);
+    QRectF rect(startPoint.x(), startPoint.y(), comImg.width * Global::pixelSize + 1, comImg.height * Global::pixelSize + 1);
+    painter->drawRect(rect);
+}
+
+void QGraphicsComImgCanvansItem::paintDragItem(QPainter *painter)
+{
+    // 在指定位置绘制单个图形
+    auto paintItem = ([&](int x0, int y0, QImage img){
+        QRect canvasRect(startPoint.x(), startPoint.y(), comImg.width * Global::pixelSize, comImg.height * Global::pixelSize);
+        for(int x = 0; x < img.width(); x++)
+        {
+            for(int y = 0; y < img.height(); y++)
+            {
+                QColor color = img.pixelColor(x, y);
+                quint8 grayscale  = qGray(color.rgb());
+                QRect rect(startPoint.x() + (x0 + x) * Global::pixelSize + 1, startPoint.y() + (y0 + y) * Global::pixelSize + 1, Global::pixelSize - 1, Global::pixelSize - 1);
+                if(canvasRect.contains(rect.topLeft()))
+                    painter->fillRect(rect, grayscale < 128 ? Global::pixelColor_1 : Global::pixelColor_0);
+            }
+        }
+        QPen pen(Global::selectedItemBoundColor);
+        pen.setWidth(2);
+        painter->setPen(pen);
+        QRect rect(startPoint.x() + x0 * Global::pixelSize, startPoint.y() + y0 * Global::pixelSize, Global::pixelSize * img.width(), Global::pixelSize * img.height());
+        painter->drawRect(rect);
+    });
+
+
+    if(isDragImg)
+    {
+        QImage img = rd->getImage(dragImgId);
+        paintItem(currentPixel.x() - img.width() / 2, currentPixel.y() - img.height() / 2, img);
+    }
 }
 
 QPoint QGraphicsComImgCanvansItem::pointToPixel(QPoint point)
@@ -73,19 +113,21 @@ QPoint QGraphicsComImgCanvansItem::pointToPixel(QPoint point)
                   (point.y() - startPoint.y()) / Global::pixelSize);
 }
 
-int QGraphicsComImgCanvansItem::getPointImgId(QPoint point)
+
+
+int QGraphicsComImgCanvansItem::getPointImgIndex(QPoint point)
 {
-    int id = -1;
-    foreach(auto item, comImg.items)
+    int index = -1;
+    for(int i = 0; i < comImg.items.size(); i++)
     {
-        QImage img = rd->getImage(item.id);
-        QRect rect(item.x, item.y, img.width(), img.height());
+        QImage img = rd->getImage(comImg.items[i].id);
+        QRect rect(comImg.items[i].x, comImg.items[i].y, img.width(), img.height());
         if(rect.contains(pointToPixel(point)))
         {
-            id = item.id;
+            index = i;
         }
     }
-    return id;
+    return index;
 }
 
 void QGraphicsComImgCanvansItem::setComImg(ComImg &comImg)
@@ -101,40 +143,54 @@ void QGraphicsComImgCanvansItem::setRawData(RawData *rd)
 
 void QGraphicsComImgCanvansItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
-    qDebug() << "Drag enter event" << event->mimeData()->formats();
-    event->accept();
-
-//    event->setAccepted(true);
+    if(event->mimeData()->hasFormat("bm/type"))
+    {
+        // 仅接收图片
+        if(event->mimeData()->data("bm/type") == "image")
+        {
+            isDragImg = true;
+            dragImgId = event->mimeData()->data("bm/id").toInt();
+            selectedItemIndex = -1;
+            event->setAccepted(true);
+            return;
+        }
+    }
+    event->setAccepted(false);
 }
 
 void QGraphicsComImgCanvansItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
 {
-    qDebug() << "Drag level event";
+    isDragImg = false;
+    view->viewport()->update();
 }
 
 void QGraphicsComImgCanvansItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
-    qDebug() << "Drop event";
+    isDragImg = false;
+    QImage img = rd->getImage(dragImgId);
+    ComImgItem item(currentPixel.x() - img.width() / 2, currentPixel .y() - img.height() / 2, dragImgId);
+    comImg.items << item;
 }
 
 void QGraphicsComImgCanvansItem::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 {
-    qDebug() << "Drop move event";
+    currentPoint = event->pos().toPoint();
+    currentPixel = pointToPixel(currentPoint);
+    view->viewport()->update();
 }
 
 void QGraphicsComImgCanvansItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << "mouseMoveEvent";
+//    qDebug() << "mouseMoveEvent";
 }
 
 void QGraphicsComImgCanvansItem::on_MousePress(QPoint point)
 {
-    selectedItemId = getPointImgId(point);
-
+    selectedItemIndex = getPointImgIndex(point);
 
     if(action == ActionNull)
     {
-        if(selectedItemId == getPointImgId(point) && selectedItemId != -1)
+        if(selectedItemIndex != -1)
         {
             action = ActionSelect;
             moveStartPixel = currentPixel;
@@ -150,13 +206,10 @@ void QGraphicsComImgCanvansItem::on_MouseMove(QPoint point)
         if(currentPixel != moveLastPixel)
         {
             // TODO：获取指定ID的图片
-            for(int i = 0; i < comImg.items.size(); i++)
+            if(selectedItemIndex < comImg.items.size())
             {
-                if(comImg.items[i].id == selectedItemId)
-                {
-                    comImg.items[i].x += currentPixel.x() - moveLastPixel.x();
-                    comImg.items[i].y += currentPixel.y() - moveLastPixel.y();
-                }
+                comImg.items[selectedItemIndex].x += currentPixel.x() - moveLastPixel.x();
+                comImg.items[selectedItemIndex].y += currentPixel.y() - moveLastPixel.y();
             }
             moveLastPixel = currentPixel;
         }
@@ -223,5 +276,5 @@ void QGraphicsComImgCanvansItem::paint(QPainter *painter, const QStyleOptionGrap
     paintBackground(painter);
     paintGrid(painter);
     paintItems(painter);
-
+    paintDragItem(painter);
 }

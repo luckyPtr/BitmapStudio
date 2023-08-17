@@ -21,8 +21,9 @@ FormComImgEditor::FormComImgEditor(QWidget *parent) :
 //    scanvasItem = new QGraphicsCanvasItem(ui->graphicsView);
 //    scanvasItem->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
 
-    scene->addItem(scaleItem);
+
     scene->addItem(comImgCanvansItem);
+    scene->addItem(scaleItem);
     QBrush brush;
     brush.setColor(0xcbd4e4);
     brush.setStyle(Qt::SolidPattern);
@@ -73,5 +74,4 @@ void FormComImgEditor::on_LoadComImg(ComImg &comImg, RawData *rd)
 {
     comImgCanvansItem->setComImg(comImg);
     comImgCanvansItem->setRawData(rd);
-    qDebug() << "Load ComImg:" << rd->getProject();
 }
