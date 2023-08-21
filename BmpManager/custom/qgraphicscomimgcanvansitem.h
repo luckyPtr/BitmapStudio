@@ -68,7 +68,8 @@ public slots:
     void on_MouseRelease(QPoint point);
 
     void deleteSelectItem();    // 删除选中的图片
-
+    void on_MoveUp();           // 上移一层
+    void on_MoveDown();         // 下移一层
 };
 
 #endif // QGRAPHICSCOMIMGCANVANSITEM_H

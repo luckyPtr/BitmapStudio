@@ -37,8 +37,9 @@ FormComImgEditor::FormComImgEditor(QWidget *parent) :
     connect(ui->actDelete, SIGNAL(triggered()), comImgCanvansItem, SLOT(deleteSelectItem()));
     connect(ui->actSave, &QAction::triggered, this, [=]{
         emit saveComImg(comImgCanvansItem->getComImg());
-        qDebug() << "emit Save ComImg";
     });
+    connect(ui->actMoveUp, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveUp()));
+    connect(ui->actMoveDown, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveDown()));
 }
 
 FormComImgEditor::~FormComImgEditor()
@@ -63,6 +64,8 @@ void FormComImgEditor::initAction()
 {
     ui->toolButtonDelete->setDefaultAction(ui->actDelete);
     ui->toolButtonSave->setDefaultAction(ui->actSave);
+    ui->toolButtonMoveUp->setDefaultAction(ui->actMoveUp);
+    ui->toolButtonMoveDown->setDefaultAction(ui->actMoveDown);
 }
 
 

@@ -65,6 +65,38 @@
        <property name="text">
         <string>...</string>
        </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="toolButtonMoveUp">
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="toolButtonMoveDown">
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
       </widget>
      </item>
      <item>
@@ -99,6 +131,30 @@
    </property>
    <property name="text">
     <string>保存</string>
+   </property>
+  </action>
+  <action name="actMoveUp">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/ComImgEditor/MoveUp.svg</normaloff>:/Image/ComImgEditor/MoveUp.svg</iconset>
+   </property>
+   <property name="text">
+    <string>上移</string>
+   </property>
+   <property name="toolTip">
+    <string>上移</string>
+   </property>
+  </action>
+  <action name="actMoveDown">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/ComImgEditor/MoveDown.svg</normaloff>:/Image/ComImgEditor/MoveDown.svg</iconset>
+   </property>
+   <property name="text">
+    <string>下移</string>
+   </property>
+   <property name="toolTip">
+    <string>下移</string>
    </property>
   </action>
  </widget>

@@ -33,5 +33,10 @@
         <file>Image/ComImgEditor/Delete.svg</file>
         <file>Image/Toolbar/NewFolder.svg</file>
         <file>Image/Toolbar/Rename.svg</file>
+        <file>Image/Toolbar/NewProject.svg</file>
+        <file>Image/ComImgEditor/MoveButtom.svg</file>
+        <file>Image/ComImgEditor/MoveDown.svg</file>
+        <file>Image/ComImgEditor/MoveTop.svg</file>
+        <file>Image/ComImgEditor/MoveUp.svg</file>
     </qresource>
 </RCC>

@@ -58,6 +58,7 @@ private:
 
     enum
     {
+        STACKED_WIDGET_DEFAULT,
         STACKED_WIDGET_COMIMG,
         STACKED_WIDGET_IMG,
     };

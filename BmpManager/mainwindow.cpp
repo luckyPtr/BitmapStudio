@@ -40,11 +40,11 @@ void MainWindow::init()
     pm.blindTreeView(ui->treeViewProject);
 
 
-    connect(this, SIGNAL(selectItem(QImage&)), ui->stackedWidget->widget(1), SLOT(on_LoadImage(QImage&)));
-    connect(ui->stackedWidget->widget(1), SIGNAL(saveImage(QImage)), this, SLOT(on_SaveImage(QImage)));
-    connect(ui->stackedWidget->widget(0), SIGNAL(saveComImg(ComImg)), this, SLOT(on_SaveComImg(ComImg)));
+    connect(this, SIGNAL(selectItem(QImage&)), ui->stackedWidget->widget(STACKED_WIDGET_IMG), SLOT(on_LoadImage(QImage&)));
+    connect(ui->stackedWidget->widget(STACKED_WIDGET_IMG), SIGNAL(saveImage(QImage)), this, SLOT(on_SaveImage(QImage)));
+    connect(ui->stackedWidget->widget(STACKED_WIDGET_COMIMG), SIGNAL(saveComImg(ComImg)), this, SLOT(on_SaveComImg(ComImg)));
 
-    connect(this, SIGNAL(selectItem(ComImg&, RawData*)), ui->stackedWidget->widget(0), SLOT(on_LoadComImg(ComImg&, RawData*)));
+    connect(this, SIGNAL(selectItem(ComImg&, RawData*)), ui->stackedWidget->widget(STACKED_WIDGET_COMIMG), SLOT(on_LoadComImg(ComImg&, RawData*)));
 
 }
 
@@ -85,11 +85,17 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
     if(item->getType() == TreeItem::FILE_IMG)
     {
         emit selectItem(img);
+        setStackedWidget(STACKED_WIDGET_IMG);
     }
     else if(item->getType() == TreeItem::FILE_COMIMG)
     {
         ComImg ci = item->getRawData()->getComImg(item->getID());
         emit selectItem(ci, item->getRawData());
+        setStackedWidget(STACKED_WIDGET_COMIMG);
+    }
+    else
+    {
+        setStackedWidget(STACKED_WIDGET_DEFAULT);
     }
 
     qDebug() << item->getID();
@@ -212,28 +218,6 @@ void MainWindow::on_actTest_triggered()
     {
         ui->stackedWidget->setCurrentIndex(0);
     }
-
-
-
-    QJsonObject obj1;
-    obj1.insert("x", 0);
-    obj1.insert("y", 0);
-    obj1.insert("id", 1);
-    QJsonObject obj2;
-    obj2.insert("x", 10);
-    obj2.insert("y", 10);
-    obj2.insert("id", 2);
-
-    QJsonArray array;
-    array.append(obj1);
-    array.append(obj2);
-
-    QJsonObject pageObj;
-    pageObj.insert("width", 128);
-    pageObj.insert("height", 64);
-    pageObj.insert("images", QJsonValue(array));
-
-    qDebug() << pageObj;
 }
 
 void MainWindow::on_SaveImage(QImage image)

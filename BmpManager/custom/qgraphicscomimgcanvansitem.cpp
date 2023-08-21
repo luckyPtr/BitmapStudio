@@ -151,6 +151,32 @@ void QGraphicsComImgCanvansItem::deleteSelectItem()
     }
 }
 
+void QGraphicsComImgCanvansItem::on_MoveUp()
+{
+    if(selectedItemIndex != -1)
+    {
+        if(selectedItemIndex + 1 < comImg.items.size())
+        {
+            comImg.items.swapItemsAt(selectedItemIndex, selectedItemIndex + 1);
+            selectedItemIndex++;
+            view->viewport()->update();
+        }
+    }
+}
+
+void QGraphicsComImgCanvansItem::on_MoveDown()
+{
+    if(selectedItemIndex != -1)
+    {
+        if(selectedItemIndex > 0)
+        {
+            comImg.items.swapItemsAt(selectedItemIndex, selectedItemIndex - 1);
+            selectedItemIndex--;
+            view->viewport()->update();
+        }
+    }
+}
+
 
 
 

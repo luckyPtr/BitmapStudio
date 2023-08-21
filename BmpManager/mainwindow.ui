@@ -45,8 +45,9 @@
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
+      <widget class="QWidget" name="pageDefault"/>
       <widget class="FormComImgEditor" name="pagePixelEditor"/>
       <widget class="FormPixelEditor" name="pageComImgEditor">
        <property name="acceptDrops">
@@ -283,7 +284,7 @@
   <action name="actNewProject">
    <property name="icon">
     <iconset resource="Img.qrc">
-     <normaloff>:/Image/TreeIco/Image.svg</normaloff>:/Image/TreeIco/Image.svg</iconset>
+     <normaloff>:/Image/Toolbar/NewProject.svg</normaloff>:/Image/Toolbar/NewProject.svg</iconset>
    </property>
    <property name="text">
     <string>新建工程</string>
