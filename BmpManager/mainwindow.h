@@ -44,6 +44,8 @@ private slots:
 
     void on_SaveImage(QImage image);
 
+    void on_SaveComImg(ComImg comImg);
+
 private:
     Ui::MainWindow *ui;
 
@@ -53,6 +55,14 @@ private:
     void init();
 
     QModelIndex editedIndex;
+
+    enum
+    {
+        STACKED_WIDGET_COMIMG,
+        STACKED_WIDGET_IMG,
+    };
+
+    void setStackedWidget(int index);
 
 signals:
     void selectItem(QImage &Image);

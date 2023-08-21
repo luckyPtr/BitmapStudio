@@ -43,12 +43,14 @@ class QGraphicsComImgCanvansItem : public QObject, public QGraphicsItem
 
 public:
     explicit QGraphicsComImgCanvansItem(QObject *parent = nullptr);
+    ~QGraphicsComImgCanvansItem() { rd = nullptr; }
     QRectF boundingRect() const Q_DECL_OVERRIDE;
     QPainterPath shape() const Q_DECL_OVERRIDE;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) Q_DECL_OVERRIDE;
 
     void setComImg(ComImg &comImg);
     void setRawData(RawData *rd);
+    ComImg getComImg() { return comImg; }
 
 protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event) override;
@@ -58,12 +60,15 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;//添加QDrag
 
 
-signals:
+
 
 public slots:
     void on_MousePress(QPoint point);
     void on_MouseMove(QPoint point);
     void on_MouseRelease(QPoint point);
+
+    void deleteSelectItem();    // 删除选中的图片
+
 };
 
 #endif // QGRAPHICSCOMIMGCANVANSITEM_H

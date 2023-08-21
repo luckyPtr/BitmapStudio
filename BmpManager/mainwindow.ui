@@ -244,7 +244,6 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actOpenProject"/>
-   <addaction name="actNew"/>
    <addaction name="actNewProject"/>
    <addaction name="actNewFolder"/>
    <addaction name="separator"/>
@@ -291,11 +290,19 @@
    </property>
   </action>
   <action name="actNewFolder">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/Toolbar/NewFolder.svg</normaloff>:/Image/Toolbar/NewFolder.svg</iconset>
+   </property>
    <property name="text">
     <string>新建文件夹</string>
    </property>
   </action>
   <action name="actRename">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/Toolbar/Rename.svg</normaloff>:/Image/Toolbar/Rename.svg</iconset>
+   </property>
    <property name="text">
     <string>重命名</string>
    </property>

@@ -42,9 +42,15 @@ void MainWindow::init()
 
     connect(this, SIGNAL(selectItem(QImage&)), ui->stackedWidget->widget(1), SLOT(on_LoadImage(QImage&)));
     connect(ui->stackedWidget->widget(1), SIGNAL(saveImage(QImage)), this, SLOT(on_SaveImage(QImage)));
+    connect(ui->stackedWidget->widget(0), SIGNAL(saveComImg(ComImg)), this, SLOT(on_SaveComImg(ComImg)));
 
     connect(this, SIGNAL(selectItem(ComImg&, RawData*)), ui->stackedWidget->widget(0), SLOT(on_LoadComImg(ComImg&, RawData*)));
 
+}
+
+void MainWindow::setStackedWidget(int index)
+{
+    ui->stackedWidget->setCurrentIndex(index);
 }
 
 
@@ -233,5 +239,11 @@ void MainWindow::on_actTest_triggered()
 void MainWindow::on_SaveImage(QImage image)
 {
     pm.setImage(editedIndex, image);
+}
+
+void MainWindow::on_SaveComImg(ComImg comImg)
+{
+    qDebug() << "Save ComImg" << editedIndex;
+    pm.setComImg(editedIndex, comImg);
 }
 

@@ -32,6 +32,13 @@ FormComImgEditor::FormComImgEditor(QWidget *parent) :
     ui->graphicsView->setRubberBandSelectionMode(Qt::ContainsItemBoundingRect);
 
     initScrollerPos();
+    initAction();
+
+    connect(ui->actDelete, SIGNAL(triggered()), comImgCanvansItem, SLOT(deleteSelectItem()));
+    connect(ui->actSave, &QAction::triggered, this, [=]{
+        emit saveComImg(comImgCanvansItem->getComImg());
+        qDebug() << "emit Save ComImg";
+    });
 }
 
 FormComImgEditor::~FormComImgEditor()
@@ -52,26 +59,19 @@ void FormComImgEditor::initScrollerPos()
     }
 }
 
-//void FormComImgEditor::dragEnterEvent(QDragEnterEvent *event)
-//{
-//    event->accept();
-//    qDebug() << "Drop Enter";
-//}
+void FormComImgEditor::initAction()
+{
+    ui->toolButtonDelete->setDefaultAction(ui->actDelete);
+    ui->toolButtonSave->setDefaultAction(ui->actSave);
+}
 
-//void FormComImgEditor::dropEvent(QDropEvent *event)
-//{
-//    event->accept();
-//    qDebug() << "Drop event";
-//}
-
-//void FormComImgEditor::dragMoveEvent(QDragMoveEvent *event)
-//{
-//    event->ignore();
-//    qDebug() << "Drag mvoe";
-//}
 
 void FormComImgEditor::on_LoadComImg(ComImg &comImg, RawData *rd)
 {
     comImgCanvansItem->setComImg(comImg);
     comImgCanvansItem->setRawData(rd);
 }
+
+
+
+

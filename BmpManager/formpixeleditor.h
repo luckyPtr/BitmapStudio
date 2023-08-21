@@ -39,6 +39,7 @@ public slots:
 
 signals:
     void saveImage(QImage image);
+
 };
 
 #endif // FORMPIXELEDITOR_H

@@ -30,5 +30,8 @@
         <file>Image/PixelEditor/Select.svg</file>
         <file>Image/PixelEditor/Save.svg</file>
         <file>Image/TreeIco/ComImgFile.svg</file>
+        <file>Image/ComImgEditor/Delete.svg</file>
+        <file>Image/Toolbar/NewFolder.svg</file>
+        <file>Image/Toolbar/Rename.svg</file>
     </qresource>
 </RCC>

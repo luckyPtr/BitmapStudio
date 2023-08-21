@@ -141,6 +141,19 @@ void QGraphicsComImgCanvansItem::setRawData(RawData *rd)
     view->viewport()->update();
 }
 
+void QGraphicsComImgCanvansItem::deleteSelectItem()
+{
+    if(selectedItemIndex != -1)
+    {
+        comImg.items.removeAt(selectedItemIndex);
+        selectedItemIndex = -1;
+        view->viewport()->update();
+    }
+}
+
+
+
+
 void QGraphicsComImgCanvansItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
     if(event->mimeData()->hasFormat("bm/type"))

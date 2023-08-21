@@ -221,10 +221,21 @@ void RawData::createBmp(quint16 id, QString name, quint16 wide, quint16 height)
 
 void RawData::rename(quint16 id, QString name)
 {
+    qDebug() << "id " << id;
     QSqlQuery query(db);
-    query.prepare("UPDATE tbl_img SET name=:name WHERE id=:id");
-    query.bindValue(":name", name);
-    query.bindValue(":id", id);
+
+    if(id < 10000)
+    {
+        query.prepare("UPDATE tbl_img SET name=:name WHERE id=:id");
+        query.bindValue(":name", name);
+        query.bindValue(":id", id);
+    }
+    else if(id >= 10000 && id < 20000)
+    {
+        query.prepare("UPDATE tbl_comimg SET name=:name WHERE id=:id");
+        query.bindValue(":name", name);
+        query.bindValue(":id", id - 10000);
+    }
     query.exec();
 
     if(imgMap.contains(id))
@@ -321,7 +332,36 @@ ComImg RawData::getComImg(quint16 id)
 
 void RawData::setComImg(quint16 id, ComImg ci)
 {
-    imgMap[id].comImg = ci;
+    // JSON Object -> QString
+    auto jsonToString = [](QJsonObject jsonObj){
+        return QString(QJsonDocument(jsonObj).toJson());
+    };
+
+    if(imgMap.contains(id))
+    {
+        imgMap[id].comImg = ci;
+
+        QJsonArray imgList;
+        foreach(auto item, ci.items)
+        {
+            QJsonObject obj;
+            obj.insert("id", item.id);
+            obj.insert("x", item.x);
+            obj.insert("y", item.y);
+            imgList.append(obj);
+        }
+
+        QJsonObject ciObj;
+        ciObj.insert("width", ci.width);
+        ciObj.insert("height", ci.height);
+        ciObj.insert("images", QJsonValue(imgList));
+
+        QSqlQuery query(db);
+        query.prepare("UPDATE tbl_comimg SET data=:data WHERE id=:id");
+        query.bindValue(":data", jsonToString(ciObj));
+        query.bindValue(":id", id - 10000);
+        query.exec();
+    }
 }
 
 
