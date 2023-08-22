@@ -139,34 +139,75 @@ RawData::~RawData()
 void RawData::createFolder(quint16 id, QString name)
 {
     QSqlQuery query(db);
-    query.prepare("SELECT pid, folder FROM tbl_img WHERE id=?");
-    query.bindValue(0, id);
-    query.exec();
 
-    if(query.first() || id == 0)
+    if(id < 10000)
     {
-        if(id)
-        {
-            quint16 pid = query.value("pid").toUInt();
-            bool isFolder = query.value("folder").toBool();
-
-            if(!isFolder)
-            {
-                id = pid;
-            }
-        }
-
-        query.prepare("INSERT INTO tbl_img (name,folder,pid) VALUES(:name,:folder,:pid)");
-        query.bindValue(":name", name);
-        query.bindValue(":folder", true);
-        query.bindValue(":pid", id);
+        query.prepare("SELECT pid, folder FROM tbl_img WHERE id=?");
+        query.bindValue(0, id);
         query.exec();
-        BmFile bi;
-        bi.id = query.lastInsertId().toUInt();
-        bi.pid = id;
-        bi.isFolder = true;
-        bi.name = name;
-        imgMap.insert(bi.id, bi);
+
+        if(query.first() || id == 0)
+        {
+            if(id)
+            {
+                quint16 pid = query.value("pid").toUInt();
+                bool isFolder = query.value("folder").toBool();
+
+                if(!isFolder)
+                {
+                    id = pid;
+                }
+            }
+
+            query.prepare("INSERT INTO tbl_img (name,folder,pid) VALUES(:name,:folder,:pid)");
+            query.bindValue(":name", name);
+            query.bindValue(":folder", true);
+            query.bindValue(":pid", id);
+            query.exec();
+            BmFile bi;
+            bi.id = query.lastInsertId().toUInt();
+            bi.pid = id;
+            bi.isFolder = true;
+            bi.name = name;
+            imgMap.insert(bi.id, bi);
+        }
+    }
+    else if(id < 20000)
+    {
+        id -= 10000;
+        query.prepare("SELECT pid, folder FROM tbl_comimg WHERE id=?");
+        query.bindValue(0, id);
+        query.exec();
+
+        if(query.first() || id == 0)
+        {
+
+            if(id)
+            {
+                quint16 pid = query.value("pid").toUInt();
+                bool isFolder = query.value("folder").toBool();
+
+                if(!isFolder)
+                {
+                    id = pid;
+                }
+            }
+
+            query.prepare("INSERT INTO tbl_comimg (name,folder,pid) VALUES(:name,:folder,:pid)");
+            query.bindValue(":name", name);
+            query.bindValue(":folder", true);
+            query.bindValue(":pid", id);
+            query.exec();
+            BmFile bi;
+            bi.id = query.lastInsertId().toUInt() + 10000;
+            bi.pid = id + 10000;
+            bi.isFolder = true;
+            bi.name = name;
+            bi.image = QImage();
+            imgMap.insert(bi.id, bi);
+
+
+        }
     }
 }
 

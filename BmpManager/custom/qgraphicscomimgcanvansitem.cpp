@@ -177,6 +177,32 @@ void QGraphicsComImgCanvansItem::on_MoveDown()
     }
 }
 
+void QGraphicsComImgCanvansItem::on_MoveTop()
+{
+    if(selectedItemIndex != -1)
+    {
+        while (selectedItemIndex + 1 < comImg.items.size())
+        {
+            comImg.items.swapItemsAt(selectedItemIndex, selectedItemIndex + 1);
+            selectedItemIndex++;
+        }
+        view->viewport()->update();
+    }
+}
+
+void QGraphicsComImgCanvansItem::on_MoveBottom()
+{
+    if(selectedItemIndex != -1)
+    {
+        while (selectedItemIndex > 0)
+        {
+            comImg.items.swapItemsAt(selectedItemIndex, selectedItemIndex - 1);
+            selectedItemIndex--;
+        }
+        view->viewport()->update();
+    }
+}
+
 
 
 

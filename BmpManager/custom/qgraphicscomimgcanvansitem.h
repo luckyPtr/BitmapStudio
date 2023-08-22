@@ -70,6 +70,8 @@ public slots:
     void deleteSelectItem();    // 删除选中的图片
     void on_MoveUp();           // 上移一层
     void on_MoveDown();         // 下移一层
+    void on_MoveTop();
+    void on_MoveBottom();
 };
 
 #endif // QGRAPHICSCOMIMGCANVANSITEM_H

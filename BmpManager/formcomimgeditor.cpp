@@ -40,6 +40,8 @@ FormComImgEditor::FormComImgEditor(QWidget *parent) :
     });
     connect(ui->actMoveUp, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveUp()));
     connect(ui->actMoveDown, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveDown()));
+    connect(ui->actMoveTop, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveTop()));
+    connect(ui->actMoveBottom, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveBottom()));
 }
 
 FormComImgEditor::~FormComImgEditor()
@@ -66,6 +68,8 @@ void FormComImgEditor::initAction()
     ui->toolButtonSave->setDefaultAction(ui->actSave);
     ui->toolButtonMoveUp->setDefaultAction(ui->actMoveUp);
     ui->toolButtonMoveDown->setDefaultAction(ui->actMoveDown);
+    ui->toolButtonMoveTop->setDefaultAction(ui->actMoveTop);
+    ui->toolButtonMoveBottom->setDefaultAction(ui->actMoveBottom);
 }
 
 
