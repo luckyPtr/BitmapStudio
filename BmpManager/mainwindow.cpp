@@ -97,8 +97,6 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
     {
         setStackedWidget(STACKED_WIDGET_DEFAULT);
     }
-
-    qDebug() << item->getID();
 }
 
 

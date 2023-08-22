@@ -32,6 +32,12 @@ struct ComImg
     quint16 height;
     QVector<ComImgItem> items;
     ComImg() {}
+    ComImg(quint16 width, quint16 height)
+    {
+        this->width = width;
+        this->height = height;
+        items.clear();
+    }
 
     ComImg & operator = (ComImg comimg)
     {
@@ -89,7 +95,8 @@ public:
     void load();    // 加载数据库数据
     void createFolder(quint16 id, QString name = "Untitled");
     void createBmp(quint16 id, QString name, const QImage &img);
-    void createBmp(quint16 id, QString name, quint16 wide, quint16 height);
+    void createBmp(quint16 id, QString name, quint16 width, quint16 height);
+    void createComImg(quint16 id, QString name, QSize size);
     void rename(quint16 id, QString name);
     void remove(quint16 id);
     QImage getImage(quint16 id);

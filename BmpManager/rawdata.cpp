@@ -246,8 +246,6 @@ void RawData::createBmp(quint16 id, QString name, const QImage &img)
         bi.pid = id;
         bi.isFolder = false;
         bi.name = name;
-//        bi.wide = img.width();
-//        bi.height = img.height();
         bi.image = img;
         imgMap.insert(bi.id, bi);
     }
@@ -258,6 +256,49 @@ void RawData::createBmp(quint16 id, QString name, quint16 wide, quint16 height)
     QImage image(wide, height, QImage::Format_RGBA8888);
     image.fill(Qt::white);
     createBmp(id, name, image);
+}
+
+void RawData::createComImg(quint16 id, QString name, QSize size)
+{
+    id -= 10000;
+
+    QSqlQuery query(db);
+    query.prepare("SELECT pid, folder FROM tbl_comimg WHERE id=?");
+    query.bindValue(0, id);
+    query.exec();
+
+    if(query.first())
+    {
+        quint16 pid = query.value("pid").toUInt();
+        bool isFolder = query.value("folder").toBool();
+
+        if(!isFolder)
+        {
+            id = pid;
+        }
+
+        QJsonObject ciObj;
+        ciObj.insert("width", 128);
+        ciObj.insert("height", 64);
+
+        query.prepare("INSERT INTO tbl_comimg (name,folder,pid,data) VALUES(:name,:folder,:pid,:data)");
+        query.bindValue(":name", name);
+        query.bindValue(":folder", false);
+        query.bindValue(":pid", id);
+        query.bindValue(":data", ciObj);
+        query.exec();
+
+
+        BmFile bi;
+        bi.id = query.lastInsertId().toUInt() + 10000;
+        bi.pid = id + 10000;
+        bi.isFolder = false;
+        bi.name = name;
+
+        bi.image = QImage();
+        bi.comImg = ComImg(128, 64);
+        imgMap.insert(bi.id, bi);
+    }
 }
 
 void RawData::rename(quint16 id, QString name)

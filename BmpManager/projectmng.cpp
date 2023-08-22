@@ -182,7 +182,15 @@ void ProjectMng::createImage(QModelIndex &index, QString name, quint16 width, qu
 {
     TreeItem *item = theModel->itemFromIndex(index);
     RawData *rd = item->getRawData();
-    rd->createBmp(item->getID(), name, width, height);
+    int id = item->getID();
+    if(id < 10000)
+    {
+      rd->createBmp(item->getID(), name, width, height);
+    }
+    else if(id < 20000)
+    {
+      rd->createComImg(id, name, QSize(width, height));
+    }
 }
 
 void ProjectMng::createImage(QModelIndex &index, QString name, QImage &img)
