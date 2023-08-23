@@ -14,6 +14,19 @@ class QGraphicsComImgCanvansItem : public QObject, public QGraphicsItem
         ActionNull,
         ActionSelect,
         ActionMove,
+        ActionSelectAuxiliaryLine,
+        ActionMoveAuxiliaryLine,
+    };
+
+    struct AuxiliaryLine
+    {
+        Qt::Orientation dir;
+        int scale;
+        AuxiliaryLine(Qt::Orientation dir, int scale)
+        {
+            this->dir = dir;
+            this->scale = scale;
+        }
     };
 
     // https://blog.csdn.net/u013125105/article/details/100514290
@@ -33,13 +46,17 @@ class QGraphicsComImgCanvansItem : public QObject, public QGraphicsItem
     QPoint moveStartPixel;  // 开始移动画布的坐标(像素)
     int dragImgId;          // 拖入的图片ID
     bool isDragImg = false;
+    QVector<AuxiliaryLine> auxiliaryLines;
+    int selectedAuxiliaryLine;
     
     void paintBackground(QPainter *painter);    // 绘制画布
     void paintItems(QPainter *painter);        // 绘制图形元素
     void paintGrid(QPainter *painter);          // 绘制网格
     void paintDragItem(QPainter *painter);      // 绘制拖入的图片
+    void paintAuxiliaryLines(QPainter *painter);    // 绘制辅助线
     QPoint pointToPixel(QPoint point);  // 坐标转换为画布上的像素坐标
     int getPointImgIndex(QPoint point);
+    int getPointAuxLineIndex(QPoint point);
 
 public:
     explicit QGraphicsComImgCanvansItem(QObject *parent = nullptr);
@@ -66,6 +83,7 @@ public slots:
     void on_MousePress(QPoint point);
     void on_MouseMove(QPoint point);
     void on_MouseRelease(QPoint point);
+    void on_CreateAuxLine(Qt::Orientation dir);
 
     void deleteSelectItem();    // 删除选中的图片
     void on_MoveUp();           // 上移一层

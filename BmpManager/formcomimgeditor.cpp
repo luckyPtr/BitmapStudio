@@ -34,6 +34,7 @@ FormComImgEditor::FormComImgEditor(QWidget *parent) :
     initScrollerPos();
     initAction();
 
+    connect(scaleItem, SIGNAL(createAuxLine(Qt::Orientation)), comImgCanvansItem, SLOT(on_CreateAuxLine(Qt::Orientation)));
     connect(ui->actDelete, SIGNAL(triggered()), comImgCanvansItem, SLOT(deleteSelectItem()));
     connect(ui->actSave, &QAction::triggered, this, [=]{
         emit saveComImg(comImgCanvansItem->getComImg());
@@ -42,6 +43,7 @@ FormComImgEditor::FormComImgEditor(QWidget *parent) :
     connect(ui->actMoveDown, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveDown()));
     connect(ui->actMoveTop, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveTop()));
     connect(ui->actMoveBottom, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveBottom()));
+
 }
 
 FormComImgEditor::~FormComImgEditor()

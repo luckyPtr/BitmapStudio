@@ -11,6 +11,7 @@ private:
     QGraphicsView *view;
     QPointF mousePos;
     void drawScale(QPainter *painter);
+    bool createFlag = false;
 public:
     QGraphicsScaleItem(QWidget *parent = nullptr);
     QRectF boundingRect() const Q_DECL_OVERRIDE;
@@ -18,6 +19,10 @@ public:
     QPainterPath shape() const Q_DECL_OVERRIDE;
 public slots:
     void mouseMove(QPoint point);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+signals:
+    void createAuxLine(Qt::Orientation dir);
 };
 
 #endif // QGRAPHICSSCALEITEM_H

@@ -107,6 +107,29 @@ void QGraphicsComImgCanvansItem::paintDragItem(QPainter *painter)
     }
 }
 
+void QGraphicsComImgCanvansItem::paintAuxiliaryLines(QPainter *painter)
+{
+    QPen pen(Qt::green);
+    pen.setStyle(Qt::DotLine);
+    painter->setPen(pen);
+
+    auto paintLine = [=](Qt::Orientation dir, int scale){
+        if(dir == Qt::Horizontal)
+        {
+            painter->drawLine(startPoint.x(), startPoint.y() + scale * Global::pixelSize, startPoint.x() + comImg.width * Global::pixelSize, startPoint.y() + scale * Global::pixelSize);
+        }
+        else
+        {
+            painter->drawLine(startPoint.x() + scale * Global::pixelSize, startPoint.y(), startPoint.x() + scale * Global::pixelSize, startPoint.y() + comImg.height * Global::pixelSize);
+        }
+    };
+
+    foreach(auto line, auxiliaryLines)
+    {
+        paintLine(line.dir, line.scale);
+    }
+}
+
 QPoint QGraphicsComImgCanvansItem::pointToPixel(QPoint point)
 {
     return QPoint((point.x() - startPoint.x()) / Global::pixelSize,
@@ -127,6 +150,30 @@ int QGraphicsComImgCanvansItem::getPointImgIndex(QPoint point)
             index = i;
         }
     }
+    return index;
+}
+
+int QGraphicsComImgCanvansItem::getPointAuxLineIndex(QPoint point)
+{
+    int index = -1;
+    for(int i = 0; i < auxiliaryLines.size(); i++)
+    {
+        QRect lineRect;
+        AuxiliaryLine auxLine = auxiliaryLines[i];
+        if(auxLine.dir == Qt::Horizontal)
+        {
+            lineRect.setRect(startPoint.x(), startPoint.y() + auxLine.scale * Global::pixelSize - 2, comImg.width * Global::pixelSize, 5);
+        }
+        else
+        {
+            lineRect.setRect(startPoint.x() + auxLine.scale * Global::pixelSize - 2, startPoint.y(), 5, comImg.height * Global::pixelSize);
+        }
+        if(lineRect.contains(point))
+        {
+            index = i;
+        }
+    }
+
     return index;
 }
 
@@ -252,10 +299,15 @@ void QGraphicsComImgCanvansItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void QGraphicsComImgCanvansItem::on_MousePress(QPoint point)
 {
     selectedItemIndex = getPointImgIndex(point);
+    selectedAuxiliaryLine = getPointAuxLineIndex(point);
 
     if(action == ActionNull)
     {
-        if(selectedItemIndex != -1)
+        if(selectedAuxiliaryLine != -1)
+        {
+            action = ActionSelectAuxiliaryLine;
+        }
+        else if(selectedItemIndex != -1)
         {
             action = ActionSelect;
             moveStartPixel = currentPixel;
@@ -280,10 +332,37 @@ void QGraphicsComImgCanvansItem::on_MouseMove(QPoint point)
         }
     });
 
+    auto auxLineMove = [&](){
+        if(currentPixel != moveLastPixel)
+        {
+            AuxiliaryLine *line = &auxiliaryLines[selectedAuxiliaryLine];
+            if(line->dir == Qt::Horizontal)
+            {
+                line->scale += currentPixel.y() - moveLastPixel.y();
+            }
+            else
+            {
+                line->scale += currentPixel.x() - moveLastPixel.x();
+            }
+            moveLastPixel = currentPixel;
+        }
+    };
+
     currentPoint = point;
     currentPixel = pointToPixel(point);
 
-    if(action == ActionSelect)
+    if(action == ActionSelectAuxiliaryLine)
+    {
+        action = ActionMoveAuxiliaryLine;
+        moveLastPixel = currentPixel;
+        AuxiliaryLine auxLine = auxiliaryLines.at(selectedAuxiliaryLine);
+        view->setCursor(auxLine.dir == Qt::Horizontal ? Qt::SizeVerCursor : Qt::SizeHorCursor);
+    }
+    else if(action == ActionMoveAuxiliaryLine)
+    {
+        auxLineMove();
+    }
+    else if(action == ActionSelect)
     {
         action = ActionMove;
         moveLastPixel = currentPixel;
@@ -297,11 +376,35 @@ void QGraphicsComImgCanvansItem::on_MouseMove(QPoint point)
 
 void QGraphicsComImgCanvansItem::on_MouseRelease(QPoint point)
 {
-    if(action == ActionSelect || action == ActionMove)
+    auto removeAuxLine = [&](){
+        AuxiliaryLine auxLine = auxiliaryLines.at(selectedAuxiliaryLine);
+        if(auxLine.scale < 0)
+        {
+            auxiliaryLines.remove(selectedAuxiliaryLine);
+        }
+    };
+
+    if(action == ActionMoveAuxiliaryLine)
+    {
+        removeAuxLine();
+    }
+
+
+    if(action == ActionSelect || action == ActionMove || action == ActionSelectAuxiliaryLine || action == ActionMoveAuxiliaryLine)
     {
         action = ActionNull;
         view->setCursor(Qt::ArrowCursor);
     }
+}
+
+void QGraphicsComImgCanvansItem::on_CreateAuxLine(Qt::Orientation dir)
+{
+    AuxiliaryLine auxLine(dir, 0);
+    auxiliaryLines << auxLine;
+    selectedAuxiliaryLine = auxiliaryLines.size() - 1;
+    action = ActionMoveAuxiliaryLine;
+    moveLastPixel = currentPixel;
+    view->setCursor(auxLine.dir == Qt::Horizontal ? Qt::SizeVerCursor : Qt::SizeHorCursor);
 }
 
 QGraphicsComImgCanvansItem::QGraphicsComImgCanvansItem(QObject *parent)
@@ -317,7 +420,9 @@ QGraphicsComImgCanvansItem::QGraphicsComImgCanvansItem(QObject *parent)
     this->setAcceptHoverEvents(true);
     this->setAcceptDrops(true);
 
-
+    auxiliaryLines << AuxiliaryLine(Qt::Horizontal, 30);
+    auxiliaryLines << AuxiliaryLine(Qt::Horizontal, 20);
+    auxiliaryLines << AuxiliaryLine(Qt::Vertical, 10);
 
     connect(view, SIGNAL(mousePress(QPoint)), this, SLOT(on_MousePress(QPoint)));
     connect(view, SIGNAL(mouseMovePoint(QPoint)), this, SLOT(on_MouseMove(QPoint)));
@@ -342,4 +447,5 @@ void QGraphicsComImgCanvansItem::paint(QPainter *painter, const QStyleOptionGrap
     paintGrid(painter);
     paintItems(painter);
     paintDragItem(painter);
+    paintAuxiliaryLines(painter);
 }

@@ -5,6 +5,7 @@
 #include <QDebug>
 #include "global.h"
 #include <QScrollBar>
+#include <QGraphicsSceneMouseEvent>
 
 
 void QGraphicsScaleItem::drawScale(QPainter *painter)
@@ -80,6 +81,7 @@ void QGraphicsScaleItem::drawScale(QPainter *painter)
     painter->drawLine(lineVerticalScale);
 }
 
+
 QGraphicsScaleItem::QGraphicsScaleItem(QWidget *parent)
 {
     view = static_cast<QWGraphicsView*>(parent);
@@ -127,4 +129,37 @@ void QGraphicsScaleItem::mouseMove(QPoint point)
     mousePos.setX(mousePos.x() + view->horizontalScrollBar()->value());
     mousePos.setY(mousePos.y() + view->verticalScrollBar()->value());
     this->update();
+}
+
+void QGraphicsScaleItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    static QPointF lastPoint(520, 520);
+    QPointF currentPoint = event->pos();
+
+    if(lastPoint.x() <= Global::scaleWidth && currentPoint.x() > Global::scaleWidth)
+    {
+        if(!createFlag)
+        {
+            createFlag = true;
+            emit createAuxLine(Qt::Vertical);
+            qDebug() << "emit createAuxLine(Qt::Vertical);";
+        }
+
+    }
+    else if(lastPoint.y() <= Global::scaleWidth && currentPoint.y() > Global::scaleWidth)
+    {
+        if(!createFlag)
+        {
+            createFlag = true;
+            emit createAuxLine(Qt::Horizontal);
+            qDebug() << "emit createAuxLine(Qt::Horizontal);";
+        }
+    }
+
+    lastPoint = currentPoint;
+}
+
+void QGraphicsScaleItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    createFlag = false;
 }
