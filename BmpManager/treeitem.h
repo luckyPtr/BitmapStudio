@@ -52,20 +52,20 @@ class TreeItem
 {
 public:
 
-    enum Type
-    {
-        UNKNOWN = -1,
-        PROJECT,
-        CLASS_SETTINGS,
-        CLASS_IMAGE,
-        CLASS_COMIMAGE,
-        CLASS_FONT,
-        FOLDER_IMG,
-        FOLDER_IMG_GROUP,
-        FOLDER_COMIMG,
-        FILE_IMG,
-        FILE_COMIMG,
-    };
+//    enum Type
+//    {
+//        UNKNOWN = -1,
+//        PROJECT,
+//        CLASS_SETTINGS,
+//        CLASS_IMAGE,
+//        CLASS_COMIMAGE,
+//        CLASS_FONT,
+//        FOLDER_IMG,
+//        FOLDER_IMG_GROUP,
+//        FOLDER_COMIMG,
+//        FILE_IMG,
+//        FILE_COMIMG,
+//    };
     enum
     {
         RoleDisplay,
@@ -76,7 +76,7 @@ public:
 private:
     QList<TreeItem*> _children;   // 子节点
     TreeItem *_parent;          // 父节点
-    Type _type;      // 此节点保存的数据类型
+    int _type;      // 此节点保存的数据类型
     void* _ptr;     // 存储数据的指针
     int _row;       // 此item位于父节点中第几个
     quint16 id;
@@ -117,8 +117,8 @@ public:
     // 返回本节点位于父节点下第几个子节点
     int row() const { return _row; }
 
-    Type getType() const { return _type; }
-    void setType(const Type &value) { _type = value; }
+    int getType() const { return _type; }
+    void setType(const int &value) { _type = value; }
 
     void setRawData(RawData *rd) {rawData = rd;}
     RawData *getRawData() {return rawData;}

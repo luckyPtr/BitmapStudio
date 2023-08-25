@@ -1,4 +1,4 @@
-QT       += core gui sql
+QT       += core gui sql concurrent
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -14,6 +14,7 @@ SOURCES += \
     formcomimgeditor.cpp \
     formpixeleditor.cpp \
     global.cpp \
+    imgconvertor.cpp \
     main.cpp \
     mainwindow.cpp \
     projectmng.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     formcomimgeditor.h \
     formpixeleditor.h \
     global.h \
+    imgconvertor.h \
     mainwindow.h \
     projectmng.h \
     qgraphicsitemruler.h \

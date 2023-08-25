@@ -18,26 +18,11 @@ void RawData::initDatabase()
     query.prepare("CREATE TABLE tbl_img (\
                   id      INTEGER PRIMARY KEY,\
                   pid     INTEGER DEFAULT (0),\
-                  folder  INTEGER DEFAULT (0),\
+                  type    INTEGER DEFAULT (0),\
                   name    TEXT,\
                   details TEXT,\
-                  wide    INTEGER DEFAULT (0),\
-                  height  INTEGER DEFAULT (0),\
                   data    BLOB\
                   );");
-    query.exec();
-
-    // 创建tbl_comimg
-    query.prepare("CREATE TABLE tbl_comimg (\
-              id      INTEGER PRIMARY KEY,\
-              pid     INTEGER DEFAULT (0),\
-              folder  INTEGER DEFAULT (0),\
-              name    TEXT,\
-              details TEXT,\
-              wide    INTEGER DEFAULT (0),\
-              height  INTEGER DEFAULT (0),\
-              data    BLOB\
-              );");
     query.exec();
 
     query.prepare("INSERT INTO tbl_settings (version) VALUES (1);");
@@ -50,6 +35,24 @@ void RawData::convertComImgToImage(BmFile &file)
     QImage img(file.comImg.width, file.comImg.height, QImage::Format_RGB888);
 }
 
+int RawData::getTypeFromId(int id)
+{
+    switch(id)
+    {
+    case -1:
+        return RawData::TypeProject;
+    case -2:
+        return RawData::TypeClassSettings;
+    case -3:
+        return RawData::TypeClassImg;
+    case -4:
+        return RawData::TypeClassComImg;
+    default:
+        return getDataMap()[id].type;
+        break;
+    }
+}
+
 void RawData::load()
 {
     // QString转QJsonObject
@@ -60,7 +63,7 @@ void RawData::load()
     };
 
 
-    imgMap.clear();
+    dataMap.clear();
 
     QSqlQuery query(db);
     query.prepare("SELECT * FROM tbl_img");
@@ -68,48 +71,46 @@ void RawData::load()
     while (query.next())
     {
         BmFile bi;
-        bi.id = query.value("id").toUInt();
-        bi.pid = query.value("pid").toUInt();
-        bi.isFolder = query.value("folder").toBool();
+        bi.id = query.value("id").toInt();
+        bi.pid = query.value("pid").toInt();
+        bi.type = query.value("type").toInt();
         bi.name = query.value("name").toString();
         bi.details = query.value("details").toString();
-        QByteArray ba = query.value("data").toByteArray();
-        bi.image.loadFromData(ba);
-        imgMap.insert(bi.id, bi);
-    }
-
-
-    query.prepare("SELECT * FROM tbl_comimg");
-    query.exec();
-    while(query.next())
-    {
-        BmFile bci;
-        bci.id = query.value("id").toUInt() + 10000;
-        bci.pid = query.value("pid").toUInt() + 10000;
-        bci.isFolder = query.value("folder").toBool();
-        bci.name = query.value("name").toString();
-        bci.details = query.value("details").toString();
-        QString s = query.value("data").toString();
-        QJsonObject jsonComImg = stringToJson(s);
-        bci.comImg.width = jsonComImg.value("width").toInt();
-        bci.comImg.height = jsonComImg.value("height").toInt();
-        QJsonArray array = jsonComImg.value("images").toArray();
-
-        for(auto obj : array)
+        if(bi.type == RawData::TypeImgFile)
         {
-            ComImgItem item;
-            item.x = obj.toObject().value("x").toInt();
-            item.y = obj.toObject().value("y").toInt();
-            item.id = obj.toObject().value("id").toInt();
-            bci.comImg.items.append(item);
+            QByteArray ba = query.value("data").toByteArray();
+            bi.image.loadFromData(ba);
         }
-        imgMap.insert(bci.id, bci);
+        else if(bi.type == RawData::TypeComImgFile)
+        {
+            QString s = query.value("data").toString();
+            QJsonObject jsonComImg = stringToJson(s);
+            bi.comImg.width = jsonComImg.value("width").toInt();
+            bi.comImg.height = jsonComImg.value("height").toInt();
+            QJsonArray array = jsonComImg.value("images").toArray();
+
+            for(auto obj : array)
+            {
+                ComImgItem item;
+                item.x = obj.toObject().value("x").toInt();
+                item.y = obj.toObject().value("y").toInt();
+                item.id = obj.toObject().value("id").toInt();
+                bi.comImg.items.append(item);
+            }
+        }
+        dataMap.insert(bi.id, bi);
     }
+}
+
+void RawData::sortDataMap()
+{
+    QMap<quint16, BmFile> newMap;
+    QVector<BmFile> temp = dataMap.values().toVector();
+
 }
 
 RawData::RawData(const QString path)
 {
-    qDebug() << "RawData:" << project;
     project = path;
     QFileInfo file(path);
     bool isFile = file.isFile();
@@ -136,197 +137,197 @@ RawData::~RawData()
     qDebug() << "~RawData:" << project;
 }
 
-void RawData::createFolder(quint16 id, QString name)
+void RawData::createFolder(int id, QString name)
 {
+    int type = TypeUnknow;
+    int pid = 0;
     QSqlQuery query(db);
 
-    if(id < 10000)
+    if(id == -3)
     {
-        query.prepare("SELECT pid, folder FROM tbl_img WHERE id=?");
+        type = RawData::TypeImgFolder;
+    }
+    else if(id == -4)
+    {
+        type = RawData::TypeComImgFolder;
+    }
+    else
+    {
+        query.prepare("SELECT pid, type FROM tbl_img WHERE id=?");
         query.bindValue(0, id);
         query.exec();
 
-        if(query.first() || id == 0)
+        if(query.first())
         {
-            if(id)
-            {
-                quint16 pid = query.value("pid").toUInt();
-                bool isFolder = query.value("folder").toBool();
+            pid = query.value("pid").toUInt();
+            int curType = query.value("type").toInt();
 
-                if(!isFolder)
-                {
-                    id = pid;
-                }
+            // 如果选择的是文件夹，新建的文件夹在此文件夹下；如果选择的是文件，新建的文件夹在该文件所在的文件夹下
+            if(curType == RawData::TypeImgFolder || curType == RawData::TypeComImgFolder)
+            {
+                pid = id;
             }
 
-            query.prepare("INSERT INTO tbl_img (name,folder,pid) VALUES(:name,:folder,:pid)");
-            query.bindValue(":name", name);
-            query.bindValue(":folder", true);
-            query.bindValue(":pid", id);
-            query.exec();
-            BmFile bi;
-            bi.id = query.lastInsertId().toUInt();
-            bi.pid = id;
-            bi.isFolder = true;
-            bi.name = name;
-            imgMap.insert(bi.id, bi);
+            if(curType == RawData::TypeImgFile || curType == RawData::TypeImgFolder)
+            {
+                type = RawData::TypeImgFolder;
+            }
+            else if(curType == RawData::TypeComImgFile || curType == RawData::TypeComImgFolder)
+            {
+                type = RawData::TypeComImgFolder;
+            }
         }
     }
-    else if(id < 20000)
+
+    if(type != RawData::TypeUnknow)
     {
-        id -= 10000;
-        query.prepare("SELECT pid, folder FROM tbl_comimg WHERE id=?");
-        query.bindValue(0, id);
+        query.prepare("INSERT INTO tbl_img (name,type,pid) VALUES(:name,:type,:pid)");
+        query.bindValue(":name", name);
+        query.bindValue(":type", type);
+        query.bindValue(":pid", pid);
         query.exec();
 
-        if(query.first() || id == 0)
-        {
-
-            if(id)
-            {
-                quint16 pid = query.value("pid").toUInt();
-                bool isFolder = query.value("folder").toBool();
-
-                if(!isFolder)
-                {
-                    id = pid;
-                }
-            }
-
-            query.prepare("INSERT INTO tbl_comimg (name,folder,pid) VALUES(:name,:folder,:pid)");
-            query.bindValue(":name", name);
-            query.bindValue(":folder", true);
-            query.bindValue(":pid", id);
-            query.exec();
-            BmFile bi;
-            bi.id = query.lastInsertId().toUInt() + 10000;
-            bi.pid = id + 10000;
-            bi.isFolder = true;
-            bi.name = name;
-            bi.image = QImage();
-            imgMap.insert(bi.id, bi);
-
-
-        }
+        BmFile bi;
+        bi.id = query.lastInsertId().toUInt();
+        bi.pid = pid;
+        bi.type = type;
+        bi.name = name;
+        dataMap.insert(bi.id, bi);
     }
 }
 
-void RawData::createBmp(quint16 id, QString name, const QImage &img)
+void RawData::createBmp(int id, QString name, const QImage &img)
 {
+    bool isVaild = false;
+    int pid = 0;
+
     QByteArray byteArray = QByteArray();
     QBuffer buffer(&byteArray);
     buffer.open(QIODevice::WriteOnly);
     img.save(&buffer, "png");
 
     QSqlQuery query(db);
-    query.prepare("SELECT pid, folder FROM tbl_img WHERE id=?");
-    query.bindValue(0, id);
-    query.exec();
 
-    if(query.first())
+    if(id == -3)    // 如果是图片类
     {
-        quint16 pid = query.value("pid").toUInt();
-        bool isFolder = query.value("folder").toBool();
+        isVaild = true;
+    }
+    else
+    {
+        query.prepare("SELECT pid, type FROM tbl_img WHERE id=?");
+        query.bindValue(0, id);
+        query.exec();
 
-        if(!isFolder)
+        if(query.first())
         {
-            id = pid;
-        }
+            pid = query.value("pid").toUInt();
+            int type = query.value("type").toInt();
 
-        query.prepare("INSERT INTO tbl_img (name,folder,pid,data) VALUES(:name,:folder,:pid,:data)");
+            if(type == RawData::TypeImgFolder ||\
+               type == RawData::TypeImgGrpFolder)
+            {
+                pid = id;
+            }
+            isVaild = true;
+        }
+    }
+
+    if(isVaild)
+    {
+        query.prepare("INSERT INTO tbl_img (name,type,pid,data) VALUES(:name,:type,:pid,:data)");
         query.bindValue(":name", name);
-        query.bindValue(":folder", false);
-        query.bindValue(":pid", id);
+        query.bindValue(":type", RawData::TypeImgFile);
+        query.bindValue(":pid", pid);
         query.bindValue(":data", byteArray);
         query.exec();
 
-
         BmFile bi;
         bi.id = query.lastInsertId().toUInt();
-        bi.pid = id;
-        bi.isFolder = false;
+        bi.pid = pid;
+        bi.type = RawData::TypeImgFile;
         bi.name = name;
         bi.image = img;
-        imgMap.insert(bi.id, bi);
+        dataMap.insert(bi.id, bi);
     }
 }
 
-void RawData::createBmp(quint16 id, QString name, quint16 wide, quint16 height)
+void RawData::createBmp(int id, QString name, quint16 width, quint16 height)
 {
-    QImage image(wide, height, QImage::Format_RGBA8888);
+    QImage image(width, height, QImage::Format_RGBA8888);
     image.fill(Qt::white);
     createBmp(id, name, image);
 }
 
-void RawData::createComImg(quint16 id, QString name, QSize size)
+void RawData::createComImg(int id, QString name, QSize size)
 {
-    id -= 10000;
-
+    bool isVaild = false;
+    int pid = 0;
     QSqlQuery query(db);
-    query.prepare("SELECT pid, folder FROM tbl_comimg WHERE id=?");
-    query.bindValue(0, id);
-    query.exec();
 
-    if(query.first())
+    if(id == -4)
     {
-        quint16 pid = query.value("pid").toUInt();
-        bool isFolder = query.value("folder").toBool();
+        isVaild = true;
+    }
+    else
+    {
+        query.prepare("SELECT pid, type FROM tbl_img WHERE id=?");
+        query.bindValue(0, id);
+        query.exec();
 
-        if(!isFolder)
+        if(query.first())
         {
-            id = pid;
-        }
+            pid = query.value("pid").toInt();
+            int type = query.value("type").toInt();
 
+            if(type == RawData::TypeComImgFolder)
+            {
+                pid = id;
+            }
+            isVaild = true;
+        }
+    }
+
+    if(isVaild)
+    {
         QJsonObject ciObj;
         ciObj.insert("width", 128);
         ciObj.insert("height", 64);
 
-        query.prepare("INSERT INTO tbl_comimg (name,folder,pid,data) VALUES(:name,:folder,:pid,:data)");
+        query.prepare("INSERT INTO tbl_img (name,type,pid,data) VALUES(:name,:type,:pid,:data)");
         query.bindValue(":name", name);
-        query.bindValue(":folder", false);
-        query.bindValue(":pid", id);
-        query.bindValue(":data", ciObj);
+        query.bindValue(":type", RawData::TypeComImgFile);
+        query.bindValue(":pid", pid);
+        query.bindValue(":data", QString(QJsonDocument(ciObj).toJson()).toUtf8());
         query.exec();
 
-
         BmFile bi;
-        bi.id = query.lastInsertId().toUInt() + 10000;
-        bi.pid = id + 10000;
-        bi.isFolder = false;
+        bi.id = query.lastInsertId().toUInt();
+        bi.pid = pid;
+        bi.type = RawData::TypeComImgFile;
         bi.name = name;
 
         bi.image = QImage();
         bi.comImg = ComImg(128, 64);
-        imgMap.insert(bi.id, bi);
+        dataMap.insert(bi.id, bi);
     }
 }
 
-void RawData::rename(quint16 id, QString name)
+void RawData::rename(int id, QString name)
 {
-    qDebug() << "id " << id;
     QSqlQuery query(db);
 
-    if(id < 10000)
-    {
-        query.prepare("UPDATE tbl_img SET name=:name WHERE id=:id");
-        query.bindValue(":name", name);
-        query.bindValue(":id", id);
-    }
-    else if(id >= 10000 && id < 20000)
-    {
-        query.prepare("UPDATE tbl_comimg SET name=:name WHERE id=:id");
-        query.bindValue(":name", name);
-        query.bindValue(":id", id - 10000);
-    }
+    query.prepare("UPDATE tbl_img SET name=:name WHERE id=:id");
+    query.bindValue(":name", name);
+    query.bindValue(":id", id);
     query.exec();
 
-    if(imgMap.contains(id))
+    if(dataMap.contains(id))
     {
-        imgMap[id].name = name;
+        dataMap[id].name = name;
     }
 }
 
-void RawData::remove(quint16 id)
+void RawData::remove(int id)
 {
     // 删除对应id
     QSqlQuery query(db);
@@ -340,12 +341,33 @@ void RawData::remove(quint16 id)
     query.exec();
     while (query.next())
     {
-        quint16 childId = query.value("id").toInt();
+        int childId = query.value("id").toInt();
         remove(childId);
     }
 }
 
-QImage RawData::getImage(quint16 id)
+void RawData::imgFolderConvert(int id)
+{
+    if(dataMap.contains(id))
+    {
+        int type = dataMap[id].type;
+
+        if(type == RawData::TypeImgFolder || type == RawData::TypeImgGrpFolder)
+        {
+            dataMap[id].type = type == RawData::TypeImgFolder ? RawData::TypeImgGrpFolder : RawData::TypeImgFolder;
+            QSqlQuery query(db);
+            query.prepare("UPDATE tbl_img SET type=:type WHERE id=:id");
+            query.bindValue(":type", dataMap[id].type);
+            query.bindValue(":id", id);
+            query.exec();
+        }
+    }
+}
+
+
+
+
+QImage RawData::getImage(int id)
 {
     // 将img2合并到img1，img2的位置在x,y
     auto merge = [](QImage &img1, QImage &img2, int x, int y) ->void {
@@ -359,38 +381,37 @@ QImage RawData::getImage(quint16 id)
     };
 
     auto comImgToImage = [=](){
-        QImage image(imgMap[id].comImg.width, imgMap[id].comImg.height, QImage::Format_RGB888);
+        QImage image(dataMap[id].comImg.width, dataMap[id].comImg.height, QImage::Format_RGB888);
         image.fill(Qt::white);
-        foreach(auto item, imgMap[id].comImg.items)
+        foreach(auto item, dataMap[id].comImg.items)
         {
-            if(imgMap.contains(item.id))
+            if(dataMap.contains(item.id))
             {
-                merge(image, imgMap[item.id].image, item.x, item.y);
+                merge(image, dataMap[item.id].image, item.x, item.y);
             }
         }
         return image;
     };
 
-    if(imgMap.contains(id))
+    if(dataMap.contains(id))
     {
-        if(id < 10000)
+        if(dataMap[id].type == RawData::TypeImgFile)
         {
-            return imgMap[id].image;
+            return dataMap[id].image;
         }
-        else
+        else if(dataMap[id].type == RawData::TypeComImgFile)
         {
             return comImgToImage();
         }
-
     }
     return QImage();
 }
 
-void RawData::setImage(quint16 id, QImage image)
+void RawData::setImage(int id, QImage image)
 {
-    if(imgMap.contains(id))
+    if(dataMap.contains(id))
     {
-        imgMap[id].image = image;
+        dataMap[id].image = image;
 
         QByteArray byteArray = QByteArray();
         QBuffer buffer(&byteArray);
@@ -398,30 +419,30 @@ void RawData::setImage(quint16 id, QImage image)
         image.save(&buffer, "png");
 
         QSqlQuery query(db);
-        query.prepare("UPDATE tbl_img SET data=:data WHERE id=:id");
+        query.prepare("UPDATE tbl_img SET data=:data WHERE id=:id AND type=:type");
         query.bindValue(":data", byteArray);
         query.bindValue(":id", id);
+        query.bindValue(":type", RawData::TypeImgFile);
         query.exec();
-
         buffer.close();
     }
 }
 
-ComImg RawData::getComImg(quint16 id)
+ComImg RawData::getComImg(int id)
 {
-    return imgMap[id].comImg;
+    return dataMap[id].comImg;
 }
 
-void RawData::setComImg(quint16 id, ComImg ci)
+void RawData::setComImg(int id, ComImg ci)
 {
     // JSON Object -> QString
     auto jsonToString = [](QJsonObject jsonObj){
         return QString(QJsonDocument(jsonObj).toJson());
     };
 
-    if(imgMap.contains(id))
+    if(dataMap.contains(id))
     {
-        imgMap[id].comImg = ci;
+        dataMap[id].comImg = ci;
 
         QJsonArray imgList;
         foreach(auto item, ci.items)
@@ -439,9 +460,9 @@ void RawData::setComImg(quint16 id, ComImg ci)
         ciObj.insert("images", QJsonValue(imgList));
 
         QSqlQuery query(db);
-        query.prepare("UPDATE tbl_comimg SET data=:data WHERE id=:id");
-        query.bindValue(":data", jsonToString(ciObj));
-        query.bindValue(":id", id - 10000);
+        query.prepare("UPDATE tbl_img SET data=:data WHERE id=:id");
+        query.bindValue(":data", jsonToString(ciObj).toUtf8());
+        query.bindValue(":id", id);
         query.exec();
     }
 }

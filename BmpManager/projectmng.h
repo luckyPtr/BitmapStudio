@@ -20,8 +20,7 @@ private:
     TreeModel *theModel;
     QTreeView *treeView;
 
-    void addImgNode(RawData *rd, const quint16 pid, TreeItem *parent);
-    void addComImgNode(RawData *rd, const quint16 pid, TreeItem *parent);
+    void addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, bool(*filter)(int));
     void getExpandNode(QModelIndex root);      // 保存展开的节点
     void setExpandNode(QModelIndex root);   // 恢复展开的节点
     void saveExpand();
@@ -39,21 +38,12 @@ public:
     void createImage(QModelIndex &index, QString name, QImage &img);
     void rename(QModelIndex &index, QString name);
     void remove(QModelIndex &index);
+    void imgFolderConvert(QModelIndex &index);
     QImage getImage(QModelIndex index);
     void setImage(QModelIndex index, QImage &image);
     ComImg getComImg(QModelIndex index);
     void setComImg(QModelIndex index, ComImg &comImg);
 
-    enum NodeType
-    {
-        NodeProjRoot,   // 项目根目录
-        NodeSettings,   // 设置
-        NodeImage,      // 图片
-        NodeComImage,   // 组合图
-        NodeFont,       // 字体
-        NodeFile,       // 文件
-        NodeFolder,     // 文件夹
-    };
 
 signals:
 

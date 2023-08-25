@@ -64,7 +64,7 @@
      <x>0</x>
      <y>0</y>
      <width>1305</width>
-     <height>20</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
@@ -252,6 +252,7 @@
    <addaction name="actImportImg"/>
    <addaction name="actRename"/>
    <addaction name="actDelete"/>
+   <addaction name="actGrpImgTransform"/>
    <addaction name="actTest"/>
   </widget>
   <action name="actOpenProject">
@@ -344,6 +345,15 @@
   <action name="actTest">
    <property name="text">
     <string>测试</string>
+   </property>
+  </action>
+  <action name="actGrpImgTransform">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/Toolbar/Transform.svg</normaloff>:/Image/Toolbar/Transform.svg</iconset>
+   </property>
+   <property name="text">
+    <string>转为图片组</string>
    </property>
   </action>
  </widget>

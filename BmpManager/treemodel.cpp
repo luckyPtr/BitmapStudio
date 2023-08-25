@@ -40,7 +40,7 @@ QMimeData *TreeModel::mimeData(const QModelIndexList &indexes) const
         TreeItem *item = itemFromIndex(index);
         int id = data(index, RoleID).toInt();
         mimeD->setData("bm/id", QByteArray::number(id));							//将自己需要的数据 存入到MimeData中
-        if(item->getType() == TreeItem::FILE_IMG)
+        if(item->getType() == RawData::TypeImgFile)
         {
             mimeD->setData("bm/type", "image");
         }

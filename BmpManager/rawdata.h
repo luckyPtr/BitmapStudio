@@ -8,6 +8,8 @@
 #include <QVector>
 #include <QJsonObject>
 
+
+
 // 组合图单个元素
 struct ComImgItem
 {
@@ -51,12 +53,12 @@ struct ComImg
 };
 
 
-// TODO 二合一 FileMap
 struct BmFile
 {
     quint32 id;
     quint32 pid;
-    bool isFolder;
+    quint8 isFolder;    // 0-文件 1-文件夹 2-图片组文件夹
+    int type;
     QString name;
     QString details;
     QImage image;
@@ -70,44 +72,62 @@ struct BmFile
 
 class RawData
 {
+public:
+    enum
+    {
+        TypeUnknow = -1,
+        TypeImgFile,    // 图片文件
+        TypeComImgFile, // 组图文件
+        TypeImgFolder,  // 图片文件夹
+        TypeImgGrpFolder,   // 图片组文件夹
+        TypeComImgFolder,   // 组图文件夹
+
+        TypeProject = 0xFF,
+        TypeClassSettings,
+        TypeClassImg,
+        TypeClassComImg,
+    };
 private:
     QString project;        // 项目文件
     QSqlDatabase db;        // 项目数据库
     quint16 screenWith;     // 项目屏幕宽度(像素)
     quint16 screenHeight;   // 项目屏幕高度(像素)
     quint8 depth;           // 项目图片深度
-    QMap<quint16, BmFile> imgMap;
+    QMap<quint16, BmFile> dataMap;
 
     void initDatabase();
     void convertComImgToImage(BmFile &file);
+
+    int getTypeFromId(int id);
 public:
-
-
     RawData(const QString path);
     ~RawData();
 
     QVector<quint16> expand;
-
     QString getProject() const {return project;}
-    QMap<quint16, BmFile> getImgMap() const {return imgMap;}
-//    QMap<quint16, BmComImg> getComImgMap() const {return comImgMap;}
-    BmFile getBmFile(quint16 id) const { return imgMap[id]; }
+    QMap<quint16, BmFile> getDataMap() const {return dataMap;}
+    BmFile getBmFile(quint16 id) const { return dataMap[id]; }
     void load();    // 加载数据库数据
-    void createFolder(quint16 id, QString name = "Untitled");
-    void createBmp(quint16 id, QString name, const QImage &img);
-    void createBmp(quint16 id, QString name, quint16 width, quint16 height);
-    void createComImg(quint16 id, QString name, QSize size);
-    void rename(quint16 id, QString name);
-    void remove(quint16 id);
-    QImage getImage(quint16 id);
-    void setImage(quint16 id, QImage image);
+    void sortDataMap(); // 按名称字母顺序排列
+    void createFolder(int id, QString name = "Untitled");
+    void createBmp(int id, QString name, const QImage &img);
+    void createBmp(int id, QString name, quint16 width, quint16 height);
+    void createComImg(int id, QString name, QSize size);
+    void rename(int id, QString name);
+    void remove(int id);
+    void imgFolderConvert(int id);
+    QImage getImage(int id);
+    void setImage(int id, QImage image);
 
-    ComImg getComImg(quint16 id);
-    void setComImg(quint16 id, ComImg ci);
+    ComImg getComImg(int id);
+    void setComImg(int id, ComImg ci);
 
     void addExpandNode(quint16 id) { expand << id; };
     bool isExpandNode(quint16 id) { return expand.contains(id); }
     void clearExpandNode() { expand.clear(); }
+
+    static bool isClassImgType(int type) { return type == TypeImgFolder || type == TypeImgGrpFolder || type == TypeImgFile; }
+    static bool isClassComImgType(int type) { return type == TypeComImgFolder || type == TypeComImgFile; }
 };
 
 #endif // RAWDATA_H

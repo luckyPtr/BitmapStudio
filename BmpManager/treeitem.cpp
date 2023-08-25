@@ -2,7 +2,7 @@
 
 TreeItem::TreeItem(TreeItem *parent)
     : _parent(parent),
-    _type(UNKNOWN),
+    _type(-1),
     _ptr(nullptr),
     _row(-1)
 {
@@ -17,7 +17,6 @@ TreeItem::~TreeItem()
 // 在本节点下添加子节点
 void TreeItem::addChild(TreeItem *item)
 {
-
     item->setParent(this);
     item->setRow(_children.size());
     _children.append(item);
@@ -39,81 +38,54 @@ void TreeItem::removeChild(int row)
 // 获取本节点第column列的数据
 QVariant TreeItem::data(int column) const
 {
-    if(_type == PROJECT)
+    if(column == Qt::DisplayRole)
     {
-        if(column == Qt::DisplayRole)
+        switch(_type)
         {
+        case RawData::TypeProject:
             return QFileInfo(rawData->getProject()).baseName();
-        }
-    }
-    else if(_type == CLASS_SETTINGS)
-    {
-        return QString("设置");
-    }
-    else if(_type == CLASS_IMAGE)
-    {
-        if(column == RoleDisplay)
-        {
-            return QString("图片");
-        }
-    }
-    else if(_type == CLASS_COMIMAGE)
-    {
-        return QString("组合图");
-    }
-    else if(_type == FOLDER_IMG)
-    {
-        if(column == RoleDisplay)
-        {
-            return rawData->getImgMap()[id].name;
-        }
-    }
-    else if(_type == FOLDER_COMIMG)
-    {
-        if(column == RoleDisplay)
-        {
-            return rawData->getImgMap()[id].name;
-        }
-    }
-    else if(_type == FILE_IMG)
-    {
-        if(column == RoleDisplay)
-        {
-            return rawData->getImgMap()[id].name;
-        }
-//        else
-//        {
-//            return QVariant::fromValue(image);
-//        }
-    }
-    else if(_type == FILE_COMIMG)
-    {
-        if(column == RoleDisplay)
-        {
-            return rawData->getImgMap()[id].name;
-        }
-    }
 
+        case RawData::TypeClassSettings:
+            return QString("设置");
+
+        case RawData::TypeClassImg:
+            return QString("图片");
+
+        case RawData::TypeClassComImg:
+            return QString("组合图");
+
+        case RawData::TypeImgFile:
+        case RawData::TypeComImgFile:
+        case RawData::TypeImgFolder:
+        case RawData::TypeImgGrpFolder:
+        case RawData::TypeComImgFolder:
+            return rawData->getDataMap()[id].name;
+        default:
+            break;
+        }
+    }
     return QVariant();
 }
 
 QIcon TreeItem::icon() const
 {
     switch (_type) {
-    case PROJECT:
+    case RawData::TypeProject:
         return QIcon(":/Image/TreeIco/Project.svg");
-    case CLASS_SETTINGS:
+    case RawData::TypeClassSettings:
         return QIcon(":/Image/TreeIco/Setting.svg");
-    case CLASS_IMAGE:
+    case RawData::TypeClassImg:
         return QIcon(":/Image/TreeIco/Image.svg");
-    case CLASS_COMIMAGE:
+    case RawData::TypeClassComImg:
         return QIcon(":/Image/TreeIco/CombiImage.svg");
-    case FOLDER_IMG:
-    case FOLDER_COMIMG:
+    case RawData::TypeImgFolder:
+    case RawData::TypeComImgFolder:
         return QIcon(":/Image/TreeIco/Folder.svg");
-    case FILE_IMG:
+    case RawData::TypeImgGrpFolder:
+        return QIcon(":/Image/TreeIco/FolderImgGroup.svg");
+    case RawData::TypeImgFile:
         return QIcon(":/Image/TreeIco/ImageFile.svg");
-    case FILE_COMIMG:
+    case RawData::TypeComImgFile:
         return QIcon(":/Image/TreeIco/ComImgFile.svg");
     default:
         return QIcon();

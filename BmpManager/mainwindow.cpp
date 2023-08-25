@@ -82,12 +82,12 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
 
     editedIndex = index;
 
-    if(item->getType() == TreeItem::FILE_IMG)
+    if(item->getType() == RawData::TypeImgFile)
     {
         emit selectItem(img);
         setStackedWidget(STACKED_WIDGET_IMG);
     }
-    else if(item->getType() == TreeItem::FILE_COMIMG)
+    else if(item->getType() == RawData::TypeComImgFile)
     {
         ComImg ci = item->getRawData()->getComImg(item->getID());
         emit selectItem(ci, item->getRawData());
@@ -192,7 +192,7 @@ void MainWindow::on_actDelete_triggered()
     if(curIndex.isValid())
     {
         TreeItem *item = pm.model()->itemFromIndex(curIndex);
-        if(item->getType() == TreeItem::PROJECT)
+        if(item->getType() == RawData::TypeProject)
         {
             pm.closeProjcet(curIndex);
             pm.initModel();
@@ -205,17 +205,16 @@ void MainWindow::on_actDelete_triggered()
     }
 }
 
-
+#include "imgconvertor.h"
 void MainWindow::on_actTest_triggered()
 {
-    if(ui->stackedWidget->currentIndex() == 0)
-    {
-        ui->stackedWidget->setCurrentIndex(1);
-    }
-    else
-    {
-        ui->stackedWidget->setCurrentIndex(0);
-    }
+    ImgConvertor ic;
+    QModelIndex curIndex = ui->treeViewProject->currentIndex();
+    TreeItem *item = pm.model()->itemFromIndex(curIndex);
+    QImage img = item->getRawData()->getImage(item->getID());
+    qDebug().noquote() << ic.encodeImg(img);
+    QString s = "AA\nBB";
+    qDebug().noquote() << s;
 }
 
 void MainWindow::on_SaveImage(QImage image)
@@ -225,7 +224,14 @@ void MainWindow::on_SaveImage(QImage image)
 
 void MainWindow::on_SaveComImg(ComImg comImg)
 {
-    qDebug() << "Save ComImg" << editedIndex;
     pm.setComImg(editedIndex, comImg);
+}
+
+
+void MainWindow::on_actGrpImgTransform_triggered()
+{
+    QModelIndex curIndex = ui->treeViewProject->currentIndex();
+    pm.imgFolderConvert(curIndex);
+    pm.initModel();
 }
 

@@ -2,45 +2,48 @@
 #include <string.h>
 #include <QInputDialog>
 
-void ProjectMng::addImgNode(RawData *rd, const quint16 pid, TreeItem *parent)
-{
-    QMap<quint16, BmFile> imgMap = rd->getImgMap();
 
-    foreach(auto bi, imgMap)
+void ProjectMng::addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, bool (*filter)(int))
+{
+    QList<BmFile> imgList;
+
+    // 找出图片数据
+    QMap<quint16, BmFile> dataMap = rd->getDataMap();
+    foreach(const auto &key, dataMap.keys())
     {
-        if(bi.id < 10000)
-        if(bi.pid == pid)
+        if(filter(dataMap.value(key).type))
         {
-            TreeItem *item = new TreeItem();
-            item->setID(bi.id);
-//            item->setProject(rd->getProject());
-            item->setType(bi.isFolder ? TreeItem::FOLDER_IMG : TreeItem::FILE_IMG);
-            item->setRawData(rd);
-            parent->addChild(item);
-            addImgNode(rd, bi.id, item);
+            imgList << dataMap.value(key);
         }
     }
-}
 
-void ProjectMng::addComImgNode(RawData *rd, const quint16 pid, TreeItem *parent)
-{
-    QMap<quint16, BmFile> comImgMap = rd->getImgMap();
-
-     qDebug() << "add" << pid;
-    foreach(auto ci, comImgMap)
-    {
-
-        if(ci.id >= 10000)
-        if(ci.pid == pid)
-        {
-            TreeItem *item = new TreeItem();
-            item->setID(ci.id);     // 组合图id从10000开始
-            item->setType(ci.isFolder ? TreeItem::FOLDER_COMIMG : TreeItem::FILE_COMIMG);
-            item->setRawData(rd);
-            parent->addChild(item);
-            addComImgNode(rd, ci.id, item);
+    // 按照文件夹>文件，名称字母正序进行排序
+    std::sort(imgList.begin(), imgList.end(), [](const BmFile &file1, const BmFile &file2){
+        if(file1.type > file2.type) {
+            return true;
         }
-    }
+        else if(file1.type == file2.type) {
+            return file1.name.toLower() < file2.name.toLower();
+        }
+        return false;
+    });
+
+    auto addNode = [=](auto&& self, const quint16 pid, TreeItem *parent) -> void{
+        foreach(auto bf, imgList)
+        {
+            if(bf.pid == pid)
+            {
+                TreeItem *item = new TreeItem();
+                item->setID(bf.id);
+                item->setType(bf.type);
+                item->setRawData(rd);
+                parent->addChild(item);
+                self(self, bf.id, item);
+            }
+        }
+    };
+
+    addNode(addNode, pid, parent);
 }
 
 void ProjectMng::getExpandNode(QModelIndex root)
@@ -126,31 +129,30 @@ void ProjectMng::initModel()
     for(int i = 0; i < projList.size(); i++)
     {
         TreeItem *proItem = new TreeItem();
-        proItem->setType(TreeItem::PROJECT);
+        proItem->setType(RawData::TypeProject);
         proItem->setRawData(&projList[i]);
-//        proItem->setProject(projList[i].getProject());
         proItem->setID(-1);
         theModel->root()->addChild(proItem);
 
         TreeItem *itemSettings = new TreeItem();
-        itemSettings->setType(TreeItem::CLASS_SETTINGS);
+        itemSettings->setType(RawData::TypeClassSettings);
         itemSettings->setRawData(&projList[i]);
         itemSettings->setID(-2);
         proItem->addChild(itemSettings);
 
         TreeItem *itemImage = new TreeItem();
-        itemImage->setType(TreeItem::CLASS_IMAGE);
+        itemImage->setType(RawData::TypeClassImg);
         itemImage->setRawData(&projList[i]);
-        itemImage->setID(0);
+        itemImage->setID(-3);
         proItem->addChild(itemImage);
-        addImgNode(&projList[i], 0, itemImage);
+        addDataNodes(&projList[i], 0, itemImage, RawData::isClassImgType);
 
         TreeItem *itemComImage = new TreeItem();
-        itemComImage->setType(TreeItem::CLASS_COMIMAGE);
+        itemComImage->setType(RawData::TypeClassComImg);
         itemComImage->setRawData(&projList[i]);
-        itemComImage->setID(10000);
+        itemComImage->setID(-4);
         proItem->addChild(itemComImage);
-        addComImgNode(&projList[i], 10000, itemComImage);
+        addDataNodes(&projList[i], 0, itemComImage, RawData::isClassComImgType);
 
     }
     theModel->endReset();
@@ -183,13 +185,20 @@ void ProjectMng::createImage(QModelIndex &index, QString name, quint16 width, qu
     TreeItem *item = theModel->itemFromIndex(index);
     RawData *rd = item->getRawData();
     int id = item->getID();
-    if(id < 10000)
+    int type = item->getType();
+
+    if(type == RawData::TypeClassImg ||\
+        type == RawData::TypeImgFolder ||\
+        type == RawData::TypeImgGrpFolder ||\
+        type == RawData::TypeImgFile)
     {
-      rd->createBmp(item->getID(), name, width, height);
+        rd->createBmp(id, name, width, height);
     }
-    else if(id < 20000)
+    else if(type == RawData::TypeClassComImg ||\
+            type == RawData::TypeComImgFolder ||\
+            type == RawData::TypeComImgFolder)
     {
-      rd->createComImg(id, name, QSize(width, height));
+        rd->createComImg(id, name, QSize(width, height));
     }
 }
 
@@ -213,6 +222,13 @@ void ProjectMng::remove(QModelIndex &index)
     RawData *rd = item->getRawData();
     rd->remove(item->getID());
     rd->load();
+}
+
+void ProjectMng::imgFolderConvert(QModelIndex &index)
+{
+    TreeItem *item = theModel->itemFromIndex(index);
+    RawData *rd = item->getRawData();
+    rd->imgFolderConvert(item->getID());
 }
 
 QImage ProjectMng::getImage(QModelIndex index)

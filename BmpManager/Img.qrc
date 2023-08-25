@@ -38,5 +38,7 @@
         <file>Image/ComImgEditor/MoveDown.svg</file>
         <file>Image/ComImgEditor/MoveTop.svg</file>
         <file>Image/ComImgEditor/MoveUp.svg</file>
+        <file>Image/TreeIco/FolderImgGroup.svg</file>
+        <file>Image/Toolbar/Transform.svg</file>
     </qresource>
 </RCC>

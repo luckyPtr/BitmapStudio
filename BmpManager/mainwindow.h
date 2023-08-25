@@ -46,6 +46,8 @@ private slots:
 
     void on_SaveComImg(ComImg comImg);
 
+    void on_actGrpImgTransform_triggered();
+
 private:
     Ui::MainWindow *ui;
 
