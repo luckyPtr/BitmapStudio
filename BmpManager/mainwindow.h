@@ -48,6 +48,8 @@ private slots:
 
     void on_actGrpImgTransform_triggered();
 
+    void on_actRun_triggered();
+
 private:
     Ui::MainWindow *ui;
 

@@ -64,7 +64,7 @@
      <x>0</x>
      <y>0</y>
      <width>1305</width>
-     <height>26</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>
@@ -253,6 +253,7 @@
    <addaction name="actRename"/>
    <addaction name="actDelete"/>
    <addaction name="actGrpImgTransform"/>
+   <addaction name="actRun"/>
    <addaction name="actTest"/>
   </widget>
   <action name="actOpenProject">
@@ -354,6 +355,15 @@
    </property>
    <property name="text">
     <string>转为图片组</string>
+   </property>
+  </action>
+  <action name="actRun">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/Toolbar/Run.svg</normaloff>:/Image/Toolbar/Run.svg</iconset>
+   </property>
+   <property name="text">
+    <string>运行</string>
    </property>
   </action>
  </widget>

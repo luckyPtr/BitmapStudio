@@ -208,13 +208,15 @@ void MainWindow::on_actDelete_triggered()
 #include "imgconvertor.h"
 void MainWindow::on_actTest_triggered()
 {
-    ImgConvertor ic;
+
+//    ImgConvertor ic;
     QModelIndex curIndex = ui->treeViewProject->currentIndex();
     TreeItem *item = pm.model()->itemFromIndex(curIndex);
-    QImage img = item->getRawData()->getImage(item->getID());
-    qDebug().noquote() << ic.encodeImg(img);
-    QString s = "AA\nBB";
-    qDebug().noquote() << s;
+    ImgConvertor ic(item->getRawData()->getDataMap().values().toVector());
+    ic.test();
+//    qDebug().noquote() << ic.encodeImg(img);
+//    QString s = "AA\nBB";
+//    qDebug().noquote() << s;
 }
 
 void MainWindow::on_SaveImage(QImage image)
@@ -233,5 +235,56 @@ void MainWindow::on_actGrpImgTransform_triggered()
     QModelIndex curIndex = ui->treeViewProject->currentIndex();
     pm.imgFolderConvert(curIndex);
     pm.initModel();
+}
+
+
+void MainWindow::on_actRun_triggered()
+{
+    QString file_img_c;
+
+    QModelIndex curIndex = ui->treeViewProject->currentIndex();
+    TreeItem *item = pm.model()->itemFromIndex(curIndex);
+    ImgConvertor ic(item->getRawData()->getDataMap().values().toVector());
+
+    QString path = item->getRawData()->getProject();
+    QFileInfo fileInfo(path);
+    path = fileInfo.path();
+
+    if(!QDir(fileInfo.path() + "/Assets").exists())
+    {
+        QDir().mkdir(fileInfo.path() + "/Assets");
+        qDebug() << fileInfo.path() + "/Assets";
+    }
+
+
+    QFile file(path + "\\Assets\\bm_img.c");
+    if(file.open(QIODevice::WriteOnly))
+    {
+        file.write(ic.generateImgC().toUtf8());
+        file.close();
+    }
+
+    file.setFileName(path + "\\Assets\\bm_img.h");
+    if(file.open(QIODevice::WriteOnly))
+    {
+        file.write(ic.generateImgH().toUtf8());
+        file.close();
+    }
+
+    file.setFileName(path + "\\Assets\\bm_com_img.c");
+    if(file.open(QIODevice::WriteOnly))
+    {
+        file.write(ic.generateComImgC().toUtf8());
+        file.close();
+    }
+
+    file.setFileName(path + "/Assets/bm_com_img.h");
+    if(file.open(QIODevice::WriteOnly))
+    {
+        file.write(ic.generateComImgH().toUtf8());
+        file.close();
+    }
+
+    QMessageBox::information(this, "","已完成");
 }
 

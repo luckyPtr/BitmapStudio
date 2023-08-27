@@ -40,5 +40,6 @@
         <file>Image/ComImgEditor/MoveUp.svg</file>
         <file>Image/TreeIco/FolderImgGroup.svg</file>
         <file>Image/Toolbar/Transform.svg</file>
+        <file>Image/Toolbar/Run.svg</file>
     </qresource>
 </RCC>
