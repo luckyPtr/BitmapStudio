@@ -17,14 +17,14 @@ class FormPixelEditor : public QWidget
 public:
     explicit FormPixelEditor(QWidget *parent = nullptr);
     ~FormPixelEditor();
-
+    QGraphicsCanvasItem *scanvasItem;
 private:
     Ui::FormPixelEditor *ui;
 
     QImage *image;      // 编辑的图片
     QGraphicsScene *scene;
     QGraphicsScaleItem *scaleItem;
-    QGraphicsCanvasItem *scanvasItem;
+
 
     void initScrollerPos();   // 初始化滚轮位置为左上角
     void initAction();

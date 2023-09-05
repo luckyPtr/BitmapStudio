@@ -18,13 +18,13 @@ class FormComImgEditor : public QWidget
 public:
     explicit FormComImgEditor(QWidget *parent = nullptr);
     ~FormComImgEditor();
+    QGraphicsComImgCanvansItem * comImgCanvansItem;
 
 private:
     Ui::FormComImgEditor *ui;
 
     QGraphicsScene *scene;
     QGraphicsScaleItem *scaleItem;
-    QGraphicsComImgCanvansItem * comImgCanvansItem;
 
 
     void initScrollerPos();   // 初始化滚轮位置为左上角

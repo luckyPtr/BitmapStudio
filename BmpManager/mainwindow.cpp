@@ -16,6 +16,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonValue>
+#include <QClipboard>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -33,11 +34,17 @@ MainWindow::~MainWindow()
 
 
 
-
+#include "custom/qgraphicscanvasitem.h"
 
 void MainWindow::init()
 {
     pm.blindTreeView(ui->treeViewProject);
+
+    labelPosition = new QLabel();
+    labelSize = new QLabel();
+
+    ui->statusbar->addWidget(labelPosition);
+    ui->statusbar->addWidget(labelSize);
 
 
     connect(this, SIGNAL(selectItem(QImage&)), ui->stackedWidget->widget(STACKED_WIDGET_IMG), SLOT(on_LoadImage(QImage&)));
@@ -46,8 +53,9 @@ void MainWindow::init()
 
     connect(this, SIGNAL(selectItem(ComImg&, RawData*)), ui->stackedWidget->widget(STACKED_WIDGET_COMIMG), SLOT(on_LoadComImg(ComImg&, RawData*)));
 
+    connect(static_cast<FormPixelEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_IMG))->scanvasItem, SIGNAL(setStatusBarInfo(QPoint, QSize)), this, SLOT(on_StatusBarInfo(QPoint,QSize)));
+    connect(static_cast<FormComImgEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_COMIMG))->comImgCanvansItem, SIGNAL(setStatusBarInfo(QPoint, QSize)), this, SLOT(on_StatusBarInfo(QPoint,QSize)));
 }
-
 void MainWindow::setStackedWidget(int index)
 {
     ui->stackedWidget->setCurrentIndex(index);
@@ -213,7 +221,8 @@ void MainWindow::on_actTest_triggered()
     QModelIndex curIndex = ui->treeViewProject->currentIndex();
     TreeItem *item = pm.model()->itemFromIndex(curIndex);
     ImgConvertor ic(item->getRawData()->getDataMap().values().toVector());
-    ic.test();
+    QImage img = item->getRawData()->getImage(item->getID());
+    qDebug() << "==" << ic.imgToByteArray(img);
 //    qDebug().noquote() << ic.encodeImg(img);
 //    QString s = "AA\nBB";
 //    qDebug().noquote() << s;
@@ -257,34 +266,52 @@ void MainWindow::on_actRun_triggered()
     }
 
 
-    QFile file(path + "\\Assets\\bm_img.c");
+    QFile file(path + "/bm_img.c");
     if(file.open(QIODevice::WriteOnly))
     {
         file.write(ic.generateImgC().toUtf8());
         file.close();
     }
 
-    file.setFileName(path + "\\Assets\\bm_img.h");
+    file.setFileName(path + "/bm_img.h");
     if(file.open(QIODevice::WriteOnly))
     {
         file.write(ic.generateImgH().toUtf8());
         file.close();
     }
 
-    file.setFileName(path + "\\Assets\\bm_com_img.c");
+    file.setFileName(path + "/bm_com_img.c");
     if(file.open(QIODevice::WriteOnly))
     {
+
         file.write(ic.generateComImgC().toUtf8());
         file.close();
     }
 
-    file.setFileName(path + "/Assets/bm_com_img.h");
+    file.setFileName(path + "/bm_com_img.h");
     if(file.open(QIODevice::WriteOnly))
     {
         file.write(ic.generateComImgH().toUtf8());
         file.close();
     }
 
-    QMessageBox::information(this, "","已完成");
+    QMessageBox::information(this, "","字模转换完成");
+}
+
+void MainWindow::on_StatusBarInfo(QPoint point, QSize size)
+{
+    labelPosition->setText(QString("%1, %2像素  ").arg(point.x()).arg(point.y()));
+    labelSize->setText(QString("%1x%2像素").arg(size.width()).arg(size.height()));
+}
+
+
+void MainWindow::on_actCopyName_triggered()
+{
+    QModelIndex curIndex = ui->treeViewProject->currentIndex();
+    TreeItem *item = pm.model()->itemFromIndex(curIndex);
+    ImgConvertor ic(item->getRawData()->getDataMap().values().toVector());
+
+    QClipboard *clip = QApplication::clipboard();
+    clip->setText(ic.getFullName(item->getRawData()->getDataMap()[item->getID()]));
 }
 

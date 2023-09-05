@@ -82,6 +82,7 @@ void FormPixelEditor::initAction()
     menu->addAction(ui->actRotateLeft);
     menu->addAction(ui->actRotateRight);
     ui->toolBtnRotateFlip->setMenu(menu);
+    ui->toolBtnRotateFlip->setPopupMode(QToolButton::InstantPopup);
 
     ui->toolBtnMove->setIcon(QIcon(":/Image/PixelEditor/Move.svg"));
     QCustomMenu *menuMove = new QCustomMenu(this);
@@ -91,6 +92,7 @@ void FormPixelEditor::initAction()
     menuMove->addAction(ui->actMoveRight);
     menuMove->setToolTip("移动");
     ui->toolBtnMove->setMenu(menuMove);
+    ui->toolBtnMove->setPopupMode(QToolButton::InstantPopup);
 
     ui->toolBtnReserve->setDefaultAction(ui->actReserve);
     ui->toolBtnCenter->setDefaultAction(ui->actCenter);

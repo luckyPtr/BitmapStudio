@@ -409,6 +409,8 @@ void QGraphicsCanvasItem::on_MouseMove(QPoint point)
     currentPoint = point;
     currentPixel.setX((currentPoint.x() - startPoint.x()) / Global::pixelSize);
     currentPixel.setY((currentPoint.y() - startPoint.y()) / Global::pixelSize);
+
+    emit setStatusBarInfo(currentPixel, image.size());
 }
 
 void QGraphicsCanvasItem::on_MousePressLeft(QPoint point)

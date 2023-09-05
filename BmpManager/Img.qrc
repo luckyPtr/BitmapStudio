@@ -41,5 +41,8 @@
         <file>Image/TreeIco/FolderImgGroup.svg</file>
         <file>Image/Toolbar/Transform.svg</file>
         <file>Image/Toolbar/Run.svg</file>
+        <file>Image/Toolbar/Position.svg</file>
+        <file>Image/Toolbar/Size.svg</file>
+        <file>Image/Toolbar/Copy.svg</file>
     </qresource>
 </RCC>

@@ -90,6 +90,9 @@ public slots:
     void on_MoveDown();         // 下移一层
     void on_MoveTop();
     void on_MoveBottom();
+
+signals:
+    void setStatusBarInfo(QPoint point, QSize size);
 };
 
 #endif // QGRAPHICSCOMIMGCANVANSITEM_H

@@ -9,12 +9,13 @@ class ImgConvertor
 {
 private:
     QVector<BmFile> dataList;
-    QString getFullName(BmFile bf); // 获取包含文件夹的完整名称
+
 
 public:
     ImgConvertor(QVector<BmFile> dataMap);
     QByteArray imgToByteArray(QImage &img);
 
+    QString getFullName(BmFile bf); // 获取包含文件夹的完整名称
     QString encodeImgFile(BmFile bf);
     QString encodeImgArray(BmFile bf);
     QString encodeComImgFile(BmFile bf);

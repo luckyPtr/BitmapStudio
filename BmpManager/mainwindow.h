@@ -6,7 +6,7 @@
 #include <QStandardItem>
 #include <QVector>
 #include <projectmng.h>
-
+#include <QLabel>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -50,12 +50,20 @@ private slots:
 
     void on_actRun_triggered();
 
+    void on_StatusBarInfo(QPoint point, QSize size);
+
+    void on_actCopyName_triggered();
+
 private:
     Ui::MainWindow *ui;
 
     ProjectMng pm;
     QWidget *formPixelEditor;
     QWidget *formComImgEditor;
+    QLabel *labelPosition;
+    QLabel *labelSize;
+    QLabel *labelPositionIco;
+    QLabel *labelSizeIco;
     void init();
 
     QModelIndex editedIndex;

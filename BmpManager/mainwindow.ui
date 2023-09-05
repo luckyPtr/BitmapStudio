@@ -64,7 +64,7 @@
      <x>0</x>
      <y>0</y>
      <width>1305</width>
-     <height>20</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
@@ -223,13 +223,22 @@
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
-   <property name="movable">
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
+   </property>
+   <property name="autoFillBackground">
     <bool>false</bool>
+   </property>
+   <property name="movable">
+    <bool>true</bool>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
    </property>
    <property name="iconSize">
     <size>
-     <width>32</width>
-     <height>32</height>
+     <width>40</width>
+     <height>40</height>
     </size>
    </property>
    <property name="toolButtonStyle">
@@ -254,6 +263,7 @@
    <addaction name="actDelete"/>
    <addaction name="actGrpImgTransform"/>
    <addaction name="actRun"/>
+   <addaction name="actCopyName"/>
    <addaction name="actTest"/>
   </widget>
   <action name="actOpenProject">
@@ -364,6 +374,15 @@
    </property>
    <property name="text">
     <string>运行</string>
+   </property>
+  </action>
+  <action name="actCopyName">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/Toolbar/Copy.svg</normaloff>:/Image/Toolbar/Copy.svg</iconset>
+   </property>
+   <property name="text">
+    <string>复制名称</string>
    </property>
   </action>
  </widget>

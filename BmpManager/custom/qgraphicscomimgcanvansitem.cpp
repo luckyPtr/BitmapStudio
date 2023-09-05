@@ -41,8 +41,27 @@ void QGraphicsComImgCanvansItem::paintItems(QPainter *painter)
         pen.setWidth(2);
         painter->setPen(pen);
 
-        QRect rect(startPoint.x() + x0 * Global::pixelSize, startPoint.y() + y0 * Global::pixelSize, Global::pixelSize * size.width(), Global::pixelSize * size.height());
+        QRect rect(startPoint.x() + x0 * Global::pixelSize, startPoint.y() + y0 * Global::pixelSize, Global::pixelSize * size.width() + 1, Global::pixelSize * size.height() + 1);
         painter->drawRect(rect);
+
+        // 绘制选中图形
+        if(index == selectedItemIndex)
+        {
+            // 选择的图形高亮
+            QBrush brush(QColor(0, 255, 255, 16));
+            painter->fillRect(rect, brush);
+            QPoint pointTopMiddle(startPoint.x() + x0 * Global::pixelSize + size.width() * Global::pixelSize / 2 - 1, startPoint.y() + y0 * Global::pixelSize - 3);
+            QPoint pointBottomMiddle(pointTopMiddle.x(), pointTopMiddle.y() + size.height() * Global::pixelSize + 5);
+            QPoint pointLeftMiddle(startPoint.x() + x0 * Global::pixelSize - 3, startPoint.y() + y0 * Global::pixelSize + size.height() * Global::pixelSize / 2 - 1);
+            QPoint pointRightMiddle(pointLeftMiddle.x() + size.width() * Global::pixelSize + 5, pointLeftMiddle.y());
+            // 四边中点
+            brush.setColor(Global::selectedItemBoundColor);
+            painter->fillRect(QRect(pointTopMiddle, QSize(3, 3)), brush);
+            painter->fillRect(QRect(pointBottomMiddle, QSize(3, 3)), brush);
+            painter->fillRect(QRect(pointLeftMiddle, QSize(3, 3)), brush);
+            painter->fillRect(QRect(pointRightMiddle, QSize(3, 3)), brush);
+            //painter->drawLine(pointLeftMiddle, QPoint(pointLeftMiddle.x() + 200, pointLeftMiddle.y()));
+        }
     });
 
     for(int i = 0; i < comImg.items.size(); i++)
@@ -372,6 +391,8 @@ void QGraphicsComImgCanvansItem::on_MouseMove(QPoint point)
     {
         itemMove();
     }
+
+    emit setStatusBarInfo(currentPixel, QSize(comImg.width, comImg.height));
 }
 
 void QGraphicsComImgCanvansItem::on_MouseRelease(QPoint point)
@@ -419,10 +440,6 @@ QGraphicsComImgCanvansItem::QGraphicsComImgCanvansItem(QObject *parent)
 
     this->setAcceptHoverEvents(true);
     this->setAcceptDrops(true);
-
-    auxiliaryLines << AuxiliaryLine(Qt::Horizontal, 30);
-    auxiliaryLines << AuxiliaryLine(Qt::Horizontal, 20);
-    auxiliaryLines << AuxiliaryLine(Qt::Vertical, 10);
 
     connect(view, SIGNAL(mousePress(QPoint)), this, SLOT(on_MousePress(QPoint)));
     connect(view, SIGNAL(mouseMovePoint(QPoint)), this, SLOT(on_MouseMove(QPoint)));

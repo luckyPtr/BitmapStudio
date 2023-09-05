@@ -81,6 +81,9 @@ public slots:
     void on_FlipVer();
     void on_RotateLeft();
     void on_RotateRight();
+
+signals:
+    void setStatusBarInfo(QPoint point, QSize size);
 };
 
 #endif // QGRAPHICSCANVASITEM_H
