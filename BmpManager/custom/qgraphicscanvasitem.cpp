@@ -410,7 +410,7 @@ void QGraphicsCanvasItem::on_MouseMove(QPoint point)
     currentPixel.setX((currentPoint.x() - startPoint.x()) / Global::pixelSize);
     currentPixel.setY((currentPoint.y() - startPoint.y()) / Global::pixelSize);
 
-    emit setStatusBarInfo(currentPixel, image.size());
+    emit updataStatusBarPos(currentPixel);
 }
 
 void QGraphicsCanvasItem::on_MousePressLeft(QPoint point)
@@ -464,6 +464,7 @@ void QGraphicsCanvasItem::on_MousePressRight(QPoint point)
 
 void QGraphicsCanvasItem::on_MouseRelease(QPoint point)
 {
+    Q_UNUSED(point);
     if(action != ActionNull)
     {
         if(action == ActionResizeFDiag)

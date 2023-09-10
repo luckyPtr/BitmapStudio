@@ -52,6 +52,10 @@ private slots:
 
     void on_StatusBarInfo(QPoint point, QSize size);
 
+    void on_UpdataStatusBarPos(QPoint point);
+
+    void on_UpdataStatusBarSize(QSize size);
+
     void on_actCopyName_triggered();
 
 private:
@@ -61,10 +65,13 @@ private:
     QWidget *formPixelEditor;
     QWidget *formComImgEditor;
     QLabel *labelPosition;
+    QLabel *labelSelectSize;
     QLabel *labelSize;
     QLabel *labelPositionIco;
     QLabel *labelSizeIco;
+    QLabel *labelSelectSizeIco;
     void init();
+    void initStatusBar();   // 初始化
 
     QModelIndex editedIndex;
 

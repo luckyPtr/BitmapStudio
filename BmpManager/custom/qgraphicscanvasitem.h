@@ -83,7 +83,8 @@ public slots:
     void on_RotateRight();
 
 signals:
-    void setStatusBarInfo(QPoint point, QSize size);
+    void updataStatusBarPos(QPoint point);
+    void updataStatusBarSize(QSize size);
 };
 
 #endif // QGRAPHICSCANVASITEM_H

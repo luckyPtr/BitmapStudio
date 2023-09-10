@@ -38,13 +38,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::init()
 {
+    initStatusBar();
     pm.blindTreeView(ui->treeViewProject);
 
-    labelPosition = new QLabel();
-    labelSize = new QLabel();
-
-    ui->statusbar->addWidget(labelPosition);
-    ui->statusbar->addWidget(labelSize);
 
 
     connect(this, SIGNAL(selectItem(QImage&)), ui->stackedWidget->widget(STACKED_WIDGET_IMG), SLOT(on_LoadImage(QImage&)));
@@ -53,8 +49,33 @@ void MainWindow::init()
 
     connect(this, SIGNAL(selectItem(ComImg&, RawData*)), ui->stackedWidget->widget(STACKED_WIDGET_COMIMG), SLOT(on_LoadComImg(ComImg&, RawData*)));
 
-    connect(static_cast<FormPixelEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_IMG))->scanvasItem, SIGNAL(setStatusBarInfo(QPoint, QSize)), this, SLOT(on_StatusBarInfo(QPoint,QSize)));
-    connect(static_cast<FormComImgEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_COMIMG))->comImgCanvansItem, SIGNAL(setStatusBarInfo(QPoint, QSize)), this, SLOT(on_StatusBarInfo(QPoint,QSize)));
+    connect(static_cast<FormPixelEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_IMG))->scanvasItem, SIGNAL(updataStatusBarPos(QPoint)), this, SLOT(on_UpdataStatusBarPos(QPoint)));
+    connect(static_cast<FormComImgEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_COMIMG))->comImgCanvansItem, SIGNAL(updataStatusBarSize(QSize)), this, SLOT(on_UpdataStatusBarSize(QSize)));
+}
+
+void MainWindow::initStatusBar()
+{
+    labelPosition = new QLabel();
+    labelSelectSize = new QLabel();
+    labelSize = new QLabel();
+    labelPositionIco = new QLabel();
+    labelSelectSizeIco = new QLabel();
+    labelSizeIco = new QLabel();
+
+    labelPositionIco->setPixmap(QPixmap(":/Image/StatusBar/Position.png"));
+    labelSelectSizeIco->setPixmap(QPixmap(":/Image/StatusBar/SelectSize.png"));
+    labelSizeIco->setPixmap(QPixmap(":/Image/StatusBar/Size.png"));
+
+    ui->statusbar->addWidget(labelPositionIco);
+    ui->statusbar->addWidget(labelPosition);
+    ui->statusbar->addWidget(labelSelectSizeIco);
+    ui->statusbar->addWidget(labelSelectSize);
+    ui->statusbar->addWidget(labelSizeIco);
+    ui->statusbar->addWidget(labelSize);
+
+    labelPosition->setMinimumWidth(100);
+    labelSelectSize->setMinimumWidth(100);
+    labelSize->setMinimumWidth(100);
 }
 void MainWindow::setStackedWidget(int index)
 {
@@ -301,6 +322,16 @@ void MainWindow::on_actRun_triggered()
 void MainWindow::on_StatusBarInfo(QPoint point, QSize size)
 {
     labelPosition->setText(QString("%1, %2像素  ").arg(point.x()).arg(point.y()));
+    labelSize->setText(QString("%1x%2像素").arg(size.width()).arg(size.height()));
+}
+
+void MainWindow::on_UpdataStatusBarPos(QPoint point)
+{
+    labelPosition->setText(QString("%1, %2像素  ").arg(point.x()).arg(point.y()));
+}
+
+void MainWindow::on_UpdataStatusBarSize(QSize size)
+{
     labelSize->setText(QString("%1x%2像素").arg(size.width()).arg(size.height()));
 }
 
