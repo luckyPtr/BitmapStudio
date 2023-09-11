@@ -30,16 +30,14 @@ private:
     void initScrollerPos();   // 初始化滚轮位置为左上角
     void initAction();
 protected:
-//    void dragEnterEvent(QDragEnterEvent *event) override;
-//    void dropEvent(QDropEvent *event) override;
-//    void dragMoveEvent(QDragMoveEvent *event) override;
+    void leaveEvent(QEvent *event) override;
 
 public slots:
     void on_LoadComImg(ComImg &comImg, RawData *rd);
 
 signals:
     void saveComImg(ComImg comImg);
-
+    void updataStatusBarPos(QPoint);
 };
 
 #endif // FORMCOMIMGEDITOR_H

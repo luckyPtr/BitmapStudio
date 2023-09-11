@@ -50,8 +50,6 @@ private slots:
 
     void on_actRun_triggered();
 
-    void on_StatusBarInfo(QPoint point, QSize size);
-
     void on_UpdataStatusBarPos(QPoint point);
 
     void on_UpdataStatusBarSize(QSize size);
@@ -65,11 +63,9 @@ private:
     QWidget *formPixelEditor;
     QWidget *formComImgEditor;
     QLabel *labelPosition;
-    QLabel *labelSelectSize;
     QLabel *labelSize;
     QLabel *labelPositionIco;
-    QLabel *labelSizeIco;
-    QLabel *labelSelectSizeIco;
+    QLabel *labelSizeIco_new;
     void init();
     void initStatusBar();   // 初始化
 
@@ -86,7 +82,6 @@ private:
 
 signals:
     void selectItem(QImage &Image);
-
     void selectItem(ComImg &comImg, RawData *rd);
 };
 #endif // MAINWINDOW_H

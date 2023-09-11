@@ -36,9 +36,9 @@ bool QGraphicsCanvasItem::isInImgArea(QPoint point)
     return rect.contains(point);
 }
 
-void QGraphicsCanvasItem::resizeImage(QImage &img, int width, int heighy)
+void QGraphicsCanvasItem::resizeImage(QImage &img, QSize size)
 {
-    QImage newImage(width, heighy, QImage::Format_RGB888);
+    QImage newImage(size.width(), size.height(), QImage::Format_RGB888);
     newImage.fill(Qt::white);
 
     for(int x = 0; x < img.width() && x < newImage.width(); x++)
@@ -310,8 +310,6 @@ void QGraphicsCanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
         painter->drawRect(QRect(startPoint.x() + image.width() * Global::pixelSize, startPoint.y() + image.height() * Global::pixelSize / 2 - 2, 4, 4));
     }
 
-
-
     // 画布预览
 
     // 校准画布大小到像素点对应的大小
@@ -372,6 +370,10 @@ void QGraphicsCanvasItem::setMode(quint8 mode)
 
 void QGraphicsCanvasItem::on_MouseMove(QPoint point)
 {
+    currentPoint = point;
+    currentPixel.setX((currentPoint.x() - startPoint.x()) / Global::pixelSize);
+    currentPixel.setY((currentPoint.y() - startPoint.y()) / Global::pixelSize);
+
     if(action == ActionNull)
     {
         Qt::CursorShape cursor = Qt::ArrowCursor;
@@ -404,11 +406,21 @@ void QGraphicsCanvasItem::on_MouseMove(QPoint point)
     {
         drawPoint(image, pointToPixel(point), false);
     }
-
-
-    currentPoint = point;
-    currentPixel.setX((currentPoint.x() - startPoint.x()) / Global::pixelSize);
-    currentPixel.setY((currentPoint.y() - startPoint.y()) / Global::pixelSize);
+    else if(action == ActionResizeFDiag)
+    {
+        newSize = QSize(currentPixel.x(), currentPixel.y());
+        emit updataStatusBarSize(newSize);
+    }
+    else if(action == ActionResizeVer)
+    {
+        newSize = QSize(image.size().width(), currentPixel.y());
+        emit updataStatusBarSize(newSize);
+    }
+    else if(action == ActionResizeHor)
+    {
+        newSize = QSize(currentPixel.x(), image.size().height());
+        emit updataStatusBarSize(newSize);
+    }
 
     emit updataStatusBarPos(currentPixel);
 }
@@ -467,19 +479,9 @@ void QGraphicsCanvasItem::on_MouseRelease(QPoint point)
     Q_UNUSED(point);
     if(action != ActionNull)
     {
-        if(action == ActionResizeFDiag)
+        if(action == ActionResizeFDiag || action == ActionResizeVer || action == ActionResizeHor)
         {
-            resizeImage(image, currentPixel.x(), currentPixel.y());
-            view->scene()->setSceneRect(QRectF(0, 0, image.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
-        }
-        else if(action == ActionResizeVer)
-        {
-            resizeImage(image, image.width(), currentPixel.y());
-            view->scene()->setSceneRect(QRectF(0, 0, image.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
-        }
-        else if(action == ActionResizeHor)
-        {
-            resizeImage(image, currentPixel.x(), image.height());
+            resizeImage(image, newSize);
             view->scene()->setSceneRect(QRectF(0, 0, image.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
         }
         else if(action == ActionMove)
@@ -513,7 +515,7 @@ void QGraphicsCanvasItem::on_AutoResize()
     int upMargin, downMargin, leftMargin, rightMargin;  // 图片离画布边缘的距离
     getMargin(upMargin, downMargin, leftMargin, rightMargin);
     moveImage(image, -leftMargin, -upMargin);   // 图形移到左上角
-    resizeImage(image, image.width() - leftMargin - rightMargin, image.height() - upMargin - downMargin);
+    resizeImage(image, QSize(image.width() - leftMargin - rightMargin, image.height() - upMargin - downMargin));
     view->scene()->setSceneRect(QRectF(0, 0, image.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
     view->viewport()->update();
 }

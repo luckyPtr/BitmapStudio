@@ -58,6 +58,8 @@ class QGraphicsComImgCanvansItem : public QObject, public QGraphicsItem
     int getPointImgIndex(QPoint point);
     int getPointAuxLineIndex(QPoint point);
 
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+
 public:
     explicit QGraphicsComImgCanvansItem(QObject *parent = nullptr);
     ~QGraphicsComImgCanvansItem() { rd = nullptr; }
@@ -92,7 +94,7 @@ public slots:
     void on_MoveBottom();
 
 signals:
-    void setStatusBarInfo(QPoint point, QSize size);
+    void updataStatusBarPos(QPoint);
 };
 
 #endif // QGRAPHICSCOMIMGCANVANSITEM_H

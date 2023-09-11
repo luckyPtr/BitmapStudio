@@ -103,6 +103,11 @@ void FormPixelEditor::initAction()
     ui->toolBtnSave->setDefaultAction(ui->actSave);
 }
 
+void FormPixelEditor::leaveEvent(QEvent *event)
+{
+    emit updataStatusBarPos(QPoint(-1, -1));
+}
+
 void FormPixelEditor::paintView()
 {
     initScrollerPos();

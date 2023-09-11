@@ -45,7 +45,6 @@
         <file>Image/Toolbar/Size.svg</file>
         <file>Image/Toolbar/Copy.svg</file>
         <file>Image/StatusBar/Position.png</file>
-        <file>Image/StatusBar/SelectSize.png</file>
         <file>Image/StatusBar/Size.png</file>
     </qresource>
 </RCC>

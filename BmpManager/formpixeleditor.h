@@ -29,6 +29,9 @@ private:
     void initScrollerPos();   // 初始化滚轮位置为左上角
     void initAction();
 
+protected:
+    void leaveEvent(QEvent *event) override;
+
 public slots:
     void paintView();
     void on_LoadImage(QImage &image);
@@ -38,6 +41,7 @@ public slots:
     void on_actSave_triggered();
 
 signals:
+    void updataStatusBarPos(QPoint);
     void saveImage(QImage image);
 
 };

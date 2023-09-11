@@ -74,6 +74,12 @@ void FormComImgEditor::initAction()
     ui->toolButtonMoveBottom->setDefaultAction(ui->actMoveBottom);
 }
 
+void FormComImgEditor::leaveEvent(QEvent *event)
+{
+    qDebug() << "Leavel ++";
+    emit updataStatusBarPos(QPoint(-1, -1));
+}
+
 
 void FormComImgEditor::on_LoadComImg(ComImg &comImg, RawData *rd)
 {

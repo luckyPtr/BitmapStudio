@@ -49,33 +49,31 @@ void MainWindow::init()
 
     connect(this, SIGNAL(selectItem(ComImg&, RawData*)), ui->stackedWidget->widget(STACKED_WIDGET_COMIMG), SLOT(on_LoadComImg(ComImg&, RawData*)));
 
+    // statusBar位置的大小显示
     connect(static_cast<FormPixelEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_IMG))->scanvasItem, SIGNAL(updataStatusBarPos(QPoint)), this, SLOT(on_UpdataStatusBarPos(QPoint)));
-    connect(static_cast<FormComImgEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_COMIMG))->comImgCanvansItem, SIGNAL(updataStatusBarSize(QSize)), this, SLOT(on_UpdataStatusBarSize(QSize)));
+    connect(static_cast<FormPixelEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_IMG)), SIGNAL(updataStatusBarPos(QPoint)), this, SLOT(on_UpdataStatusBarPos(QPoint)));
+    connect(static_cast<FormComImgEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_COMIMG))->comImgCanvansItem, SIGNAL(updataStatusBarPos(QPoint)), this, SLOT(on_UpdataStatusBarPos(QPoint)));
+    connect(static_cast<FormComImgEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_COMIMG)), SIGNAL(updataStatusBarPos(QPoint)), this, SLOT(on_UpdataStatusBarPos(QPoint)));
+    connect(static_cast<FormPixelEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_IMG))->scanvasItem, SIGNAL(updataStatusBarSize(QSize)), this, SLOT(on_UpdataStatusBarSize(QSize)));
 }
 
 void MainWindow::initStatusBar()
 {
     labelPosition = new QLabel();
-    labelSelectSize = new QLabel();
     labelSize = new QLabel();
     labelPositionIco = new QLabel();
-    labelSelectSizeIco = new QLabel();
-    labelSizeIco = new QLabel();
+    labelSizeIco_new = new QLabel();
 
     labelPositionIco->setPixmap(QPixmap(":/Image/StatusBar/Position.png"));
-    labelSelectSizeIco->setPixmap(QPixmap(":/Image/StatusBar/SelectSize.png"));
-    labelSizeIco->setPixmap(QPixmap(":/Image/StatusBar/Size.png"));
+    labelSizeIco_new->setPixmap(QPixmap(":/Image/StatusBar/Size.png"));
 
     ui->statusbar->addWidget(labelPositionIco);
     ui->statusbar->addWidget(labelPosition);
-    ui->statusbar->addWidget(labelSelectSizeIco);
-    ui->statusbar->addWidget(labelSelectSize);
-    ui->statusbar->addWidget(labelSizeIco);
+    ui->statusbar->addWidget(labelSizeIco_new);
     ui->statusbar->addWidget(labelSize);
 
-    labelPosition->setMinimumWidth(100);
-    labelSelectSize->setMinimumWidth(100);
-    labelSize->setMinimumWidth(100);
+    labelPosition->setMinimumWidth(120);
+    labelSize->setMinimumWidth(120);
 }
 void MainWindow::setStackedWidget(int index)
 {
@@ -115,16 +113,19 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
     {
         emit selectItem(img);
         setStackedWidget(STACKED_WIDGET_IMG);
+        on_UpdataStatusBarSize(img.size());
     }
     else if(item->getType() == RawData::TypeComImgFile)
     {
         ComImg ci = item->getRawData()->getComImg(item->getID());
         emit selectItem(ci, item->getRawData());
         setStackedWidget(STACKED_WIDGET_COMIMG);
+        on_UpdataStatusBarSize(QSize(ci.width, ci.height));
     }
     else
     {
         setStackedWidget(STACKED_WIDGET_DEFAULT);
+        on_UpdataStatusBarSize(QSize(-1, -1));
     }
 }
 
@@ -319,20 +320,28 @@ void MainWindow::on_actRun_triggered()
     QMessageBox::information(this, "","字模转换完成");
 }
 
-void MainWindow::on_StatusBarInfo(QPoint point, QSize size)
-{
-    labelPosition->setText(QString("%1, %2像素  ").arg(point.x()).arg(point.y()));
-    labelSize->setText(QString("%1x%2像素").arg(size.width()).arg(size.height()));
-}
-
 void MainWindow::on_UpdataStatusBarPos(QPoint point)
 {
-    labelPosition->setText(QString("%1, %2像素  ").arg(point.x()).arg(point.y()));
+    if(point.x() >= 0 && point.y() >= 0)
+    {
+        labelPosition->setText(QString(tr("%1, %2像素")).arg(point.x()).arg(point.y()));
+    }
+    else
+    {
+        labelPosition->clear();
+    }
 }
 
 void MainWindow::on_UpdataStatusBarSize(QSize size)
 {
-    labelSize->setText(QString("%1x%2像素").arg(size.width()).arg(size.height()));
+    if(size.width() >= 0 && size.height() >= 0)
+    {
+        labelSize->setText(QString(tr("%1 x %2像素")).arg(size.width()).arg(size.height()));
+    }
+    else
+    {
+        labelSize->clear();
+    }
 }
 
 

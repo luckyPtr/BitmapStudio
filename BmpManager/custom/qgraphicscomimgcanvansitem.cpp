@@ -196,6 +196,11 @@ int QGraphicsComImgCanvansItem::getPointAuxLineIndex(QPoint point)
     return index;
 }
 
+void QGraphicsComImgCanvansItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    emit updataStatusBarPos(QPoint(-1, -1));
+}
+
 void QGraphicsComImgCanvansItem::setComImg(ComImg &comImg)
 {
     this->comImg = comImg;
@@ -297,6 +302,7 @@ void QGraphicsComImgCanvansItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *eve
 
 void QGraphicsComImgCanvansItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
+    Q_UNUSED(event);
     isDragImg = false;
     QImage img = rd->getImage(dragImgId);
     ComImgItem item(currentPixel.x() - img.width() / 2, currentPixel .y() - img.height() / 2, dragImgId);
@@ -392,7 +398,7 @@ void QGraphicsComImgCanvansItem::on_MouseMove(QPoint point)
         itemMove();
     }
 
-    emit setStatusBarInfo(currentPixel, QSize(comImg.width, comImg.height));
+    emit updataStatusBarPos(currentPixel);
 }
 
 void QGraphicsComImgCanvansItem::on_MouseRelease(QPoint point)

@@ -22,23 +22,22 @@ private:
         ActionMeasure,
     };
 
-
-
     QGraphicsView *view;
     QImage image;
     QPoint startPoint;  // 左上角起始位置坐标
     QPoint currentPoint;
     QPoint currentPixel;    // 当前鼠标所在的坐标（图片像素）
     QPoint moveStartPixel;  // 开始移动画布的坐标(像素)
+    QSize newSize;          // 调整画布大小的新的大小
+
     QPoint pointToPixel(QPoint point);  // 坐标转换为画布上的像素坐标
-    bool isResezeMode;  // 是否为重新设置画布大小的模式
     bool isInSizeVerArea(QPoint point); // 是否处于垂直调整画布大小的区域内
     bool isInSizeHorArea(QPoint point); // 是否处于水平调整画布大小的区域内
     bool isInSizeFDiagArea(QPoint point);
     bool isInImgArea(QPoint point);     // 是否在图片的区域内
     quint8 action = ActionNull;  // 调整画布大小的步骤 0-初始状态 1-按下
     quint8 mode;
-    void resizeImage(QImage &img, int width, int heighy);
+    void resizeImage(QImage &img, QSize size);
     void moveImage(QImage &img,  int OffsetX, int OffsetY);
     void reserveImage(QImage &img);
     void flipHor(QImage &img);
@@ -83,8 +82,8 @@ public slots:
     void on_RotateRight();
 
 signals:
-    void updataStatusBarPos(QPoint point);
-    void updataStatusBarSize(QSize size);
+    void updataStatusBarPos(QPoint);
+    void updataStatusBarSize(QSize);
 };
 
 #endif // QGRAPHICSCANVASITEM_H
