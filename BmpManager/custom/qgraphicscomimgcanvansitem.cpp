@@ -19,8 +19,23 @@ void QGraphicsComImgCanvansItem::paintItems(QPainter *painter)
     auto paintItem = ([=](int x0, int y0, QImage img){
         QRect canvasRect(startPoint.x(), startPoint.y(), comImg.width * Global::pixelSize, comImg.height * Global::pixelSize);
 
-        QRect rect(startPoint.x() + x0 * Global::pixelSize, startPoint.y() + y0 * Global::pixelSize, Global::pixelSize * img.width(), Global::pixelSize * img.height());
-        painter->fillRect(rect, Global::gridColor);
+        QRect rect(QPoint(x0, y0), img.size());
+        if(rect.right() >= comImg.width)
+            rect.setRight(comImg.width - 1);
+        if(rect.bottom() >= comImg.height)
+            rect.setBottom(comImg.height - 1);
+        if(rect.x() < 0)
+            rect.setX(0);
+        if(rect.y() < 0)
+            rect.setY(0);
+
+        if(rect.x() < comImg.width && rect.y() < comImg.height)
+        {
+            painter->fillRect(QRect(startPoint.x() + rect.x() * Global::pixelSize + 1, startPoint.y() + rect.y() * Global::pixelSize + 1,\
+                              Global::pixelSize * rect.width() - 1, Global::pixelSize * rect.height() - 1),\
+                              Global::gridColor); // 把画布内的用网格色填充，遮挡下面图形的边框
+        }
+
         for(int x = 0; x < img.width(); x++)
         {
             for(int y = 0; y < img.height(); y++)
@@ -147,6 +162,42 @@ void QGraphicsComImgCanvansItem::paintAuxiliaryLines(QPainter *painter)
     {
         paintLine(line.dir, line.scale);
     }
+
+#if AUX_LINE_SCALE
+    auto paintLinePos = [=](AuxiliaryLine line) {
+        painter->setRenderHints(QPainter::Antialiasing);    // 开启抗锯齿
+        if(line.scale >= 0)
+        {
+            QPen pen(QColor(247, 247, 247, 200));
+            QBrush brush;
+            brush.setColor(QColor(247, 247, 247, 200));
+            brush.setStyle(Qt::SolidPattern);
+            painter->setBrush(brush);
+            painter->setPen(pen);
+            QPoint p;
+            if(line.dir == Qt::Horizontal)
+            {
+                p = QPoint(startPoint.x() + 10, startPoint.y() + line.scale * Global::pixelSize + 5);
+            }
+            else
+            {
+                p = QPoint(startPoint.x() + line.scale * Global::pixelSize + 10, startPoint.y() + 5);
+            }
+
+            QRect rect(p, QSize(30, 16));
+            painter->drawRoundedRect(rect, 3, 3);
+            pen.setColor(Global::gridColor);
+            painter->setPen(pen);
+            painter->drawText(rect, Qt::AlignCenter, QString::asprintf("%d", line.scale));
+        }
+        painter->setRenderHints(QPainter::Antialiasing, false);
+    };
+
+    if(selectedAuxiliaryLine != -1)
+    {
+        paintLinePos(auxiliaryLines.at(selectedAuxiliaryLine));
+    }
+#endif
 }
 
 QPoint QGraphicsComImgCanvansItem::pointToPixel(QPoint point)
@@ -350,8 +401,11 @@ void QGraphicsComImgCanvansItem::on_MouseMove(QPoint point)
             // TODO：获取指定ID的图片
             if(selectedItemIndex < comImg.items.size())
             {
-                comImg.items[selectedItemIndex].x += currentPixel.x() - moveLastPixel.x();
-                comImg.items[selectedItemIndex].y += currentPixel.y() - moveLastPixel.y();
+                ComImgItem *item = &comImg.items[selectedItemIndex];
+                item->x += currentPixel.x() - moveLastPixel.x();
+                item->y += currentPixel.y() - moveLastPixel.y();
+
+                view->setCursor((item->x >= comImg.width || item->y >= comImg.height) ? Qt::ForbiddenCursor : Qt::SizeAllCursor);
             }
             moveLastPixel = currentPixel;
         }
@@ -370,6 +424,15 @@ void QGraphicsComImgCanvansItem::on_MouseMove(QPoint point)
                 line->scale += currentPixel.x() - moveLastPixel.x();
             }
             moveLastPixel = currentPixel;
+
+            if(line->scale >= 0)
+            {
+                view->setCursor(line->dir == Qt::Horizontal ? Qt::SizeVerCursor : Qt::SizeHorCursor);
+            }
+            else
+            {
+                view->setCursor(Qt::ForbiddenCursor);
+            }
         }
     };
 
@@ -408,6 +471,7 @@ void QGraphicsComImgCanvansItem::on_MouseRelease(QPoint point)
         if(auxLine.scale < 0)
         {
             auxiliaryLines.remove(selectedAuxiliaryLine);
+            selectedAuxiliaryLine = -1;
         }
     };
 
@@ -420,6 +484,7 @@ void QGraphicsComImgCanvansItem::on_MouseRelease(QPoint point)
     if(action == ActionSelect || action == ActionMove || action == ActionSelectAuxiliaryLine || action == ActionMoveAuxiliaryLine)
     {
         action = ActionNull;
+        selectedAuxiliaryLine = -1;
         view->setCursor(Qt::ArrowCursor);
     }
 }

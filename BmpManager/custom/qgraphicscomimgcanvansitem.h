@@ -47,7 +47,7 @@ class QGraphicsComImgCanvansItem : public QObject, public QGraphicsItem
     int dragImgId;          // 拖入的图片ID
     bool isDragImg = false;
     QVector<AuxiliaryLine> auxiliaryLines;
-    int selectedAuxiliaryLine;
+    int selectedAuxiliaryLine = -1;
     
     void paintBackground(QPainter *painter);    // 绘制画布
     void paintItems(QPainter *painter);        // 绘制图形元素
@@ -77,9 +77,6 @@ protected:
     void dropEvent(QGraphicsSceneDragDropEvent *event) override;//处理drop
     void dragMoveEvent(QGraphicsSceneDragDropEvent *event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;//添加QDrag
-
-
-
 
 public slots:
     void on_MousePress(QPoint point);

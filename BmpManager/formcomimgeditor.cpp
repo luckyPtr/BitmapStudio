@@ -76,7 +76,6 @@ void FormComImgEditor::initAction()
 
 void FormComImgEditor::leaveEvent(QEvent *event)
 {
-    qDebug() << "Leavel ++";
     emit updataStatusBarPos(QPoint(-1, -1));
 }
 
