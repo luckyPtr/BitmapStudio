@@ -89,6 +89,8 @@ public slots:
     void on_MoveDown();         // 下移一层
     void on_MoveTop();
     void on_MoveBottom();
+    void on_AlignVCenter();
+    void on_AlignHCenter();
 
 signals:
     void updataStatusBarPos(QPoint);

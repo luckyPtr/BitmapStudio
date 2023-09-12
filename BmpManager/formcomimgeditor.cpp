@@ -43,7 +43,8 @@ FormComImgEditor::FormComImgEditor(QWidget *parent) :
     connect(ui->actMoveDown, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveDown()));
     connect(ui->actMoveTop, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveTop()));
     connect(ui->actMoveBottom, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveBottom()));
-
+    connect(ui->actAlignVCenter, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_AlignVCenter()));
+    connect(ui->actAlignHCenter, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_AlignHCenter()));
 }
 
 FormComImgEditor::~FormComImgEditor()
@@ -72,6 +73,8 @@ void FormComImgEditor::initAction()
     ui->toolButtonMoveDown->setDefaultAction(ui->actMoveDown);
     ui->toolButtonMoveTop->setDefaultAction(ui->actMoveTop);
     ui->toolButtonMoveBottom->setDefaultAction(ui->actMoveBottom);
+    ui->toolButtonAlignVCenter->setDefaultAction(ui->actAlignVCenter);
+    ui->toolButtonAlignHCenter->setDefaultAction(ui->actAlignHCenter);
 }
 
 void FormComImgEditor::leaveEvent(QEvent *event)

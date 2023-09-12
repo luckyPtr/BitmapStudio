@@ -46,5 +46,7 @@
         <file>Image/Toolbar/Copy.svg</file>
         <file>Image/StatusBar/Position.png</file>
         <file>Image/StatusBar/Size.png</file>
+        <file>Image/ComImgEditor/HCenter.svg</file>
+        <file>Image/ComImgEditor/VCenter.svg</file>
     </qresource>
 </RCC>

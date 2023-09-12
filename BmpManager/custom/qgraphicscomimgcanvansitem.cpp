@@ -325,7 +325,27 @@ void QGraphicsComImgCanvansItem::on_MoveBottom()
     }
 }
 
+void QGraphicsComImgCanvansItem::on_AlignVCenter()
+{
+    if(selectedItemIndex != -1)
+    {
+        ComImgItem *ci = &comImg.items[selectedItemIndex];
+        QImage img = rd->getImage(ci->id);
+        ci->x = (comImg.width - img.width()) / 2;
+        view->viewport()->update();
+    }
+}
 
+void QGraphicsComImgCanvansItem::on_AlignHCenter()
+{
+    if(selectedItemIndex != -1)
+    {
+        ComImgItem *ci = &comImg.items[selectedItemIndex];
+        QImage img = rd->getImage(ci->id);
+        ci->y = (comImg.height - img.height()) / 2;
+        view->viewport()->update();
+    }
+}
 
 
 void QGraphicsComImgCanvansItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
@@ -480,7 +500,6 @@ void QGraphicsComImgCanvansItem::on_MouseRelease(QPoint point)
     {
         removeAuxLine();
     }
-
 
     if(action == ActionSelect || action == ActionMove || action == ActionSelectAuxiliaryLine || action == ActionMoveAuxiliaryLine)
     {
