@@ -382,6 +382,7 @@ void QGraphicsComImgCanvansItem::on_MousePress(QPoint point)
         if(selectedAuxiliaryLine != -1)
         {
             action = ActionSelectAuxiliaryLine;
+            selectedItemIndex = -1;
         }
         else if(selectedItemIndex != -1)
         {
