@@ -42,7 +42,6 @@ void MainWindow::init()
     pm.blindTreeView(ui->treeViewProject);
 
 
-
     connect(this, SIGNAL(selectItem(QImage&)), ui->stackedWidget->widget(STACKED_WIDGET_IMG), SLOT(on_LoadImage(QImage&)));
     connect(ui->stackedWidget->widget(STACKED_WIDGET_IMG), SIGNAL(saveImage(QImage)), this, SLOT(on_SaveImage(QImage)));
     connect(ui->stackedWidget->widget(STACKED_WIDGET_COMIMG), SIGNAL(saveComImg(ComImg)), this, SLOT(on_SaveComImg(ComImg)));
@@ -98,6 +97,16 @@ void MainWindow::on_actOpenProject_triggered()
 void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
 {
     TreeItem *item = pm.model()->itemFromIndex(index);
+    if(item->getType() == RawData::TypeImgFile)
+    {
+        ui->tabWidget->addImgTab(item);
+    }
+    else if(item->getType() == RawData::TypeComImgFile)
+    {
+        //ui->tabWidget->addImgTab(item);
+    }
+
+    return;
 //    BmFile bi = item->getRawData()->getBmFile(item->getID());
     qDebug() << "id" << item->getID();
     qDebug() << "type" << item->getType();
@@ -353,5 +362,11 @@ void MainWindow::on_actCopyName_triggered()
 
     QClipboard *clip = QApplication::clipboard();
     clip->setText(ic.getFullName(item->getRawData()->getDataMap()[item->getID()]));
+}
+
+
+void MainWindow::on_tabWidget_tabCloseRequested(int index)
+{
+    ui->tabWidget->removeTab(index);
 }
 

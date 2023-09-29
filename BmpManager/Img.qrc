@@ -48,5 +48,7 @@
         <file>Image/StatusBar/Size.png</file>
         <file>Image/ComImgEditor/HCenter.svg</file>
         <file>Image/ComImgEditor/VCenter.svg</file>
+        <file>Image/TabBar/Close1.svg</file>
+        <file>Image/TabBar/Close2.svg</file>
     </qresource>
 </RCC>

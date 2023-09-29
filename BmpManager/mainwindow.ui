@@ -23,40 +23,94 @@
    </size>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout_2">
-    <property name="leftMargin">
+   <widget class="CustomTabWidget" name="tabWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>801</width>
+      <height>551</height>
+     </rect>
+    </property>
+    <property name="acceptDrops">
+     <bool>true</bool>
+    </property>
+    <property name="statusTip">
+     <string/>
+    </property>
+    <property name="whatsThis">
+     <string/>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QTabBar::tab{
+	height:22;
+    padding-left:4;
+    padding-right:4;
+	border:1px solid #C4C4C3;
+    border-top-left-radius:4px;
+    border-top-right-radius:4px;
+    font: 9pt &quot;微软雅黑&quot;;
+}
+
+
+QTabBar::close-button {
+    image:url( :/Image/TabBar/Close1.svg)
+}
+
+QTabBar::close-button:hover {
+    image:url(:/Image/TabBar/Close2.svg)
+}
+
+QTabBar::tab:selected,QTabBar::tab:hover
+{
+	background-color: rgb(255, 255, 255);
+}</string>
+    </property>
+    <property name="tabPosition">
+     <enum>QTabWidget::North</enum>
+    </property>
+    <property name="tabShape">
+     <enum>QTabWidget::Rounded</enum>
+    </property>
+    <property name="currentIndex">
+     <number>-1</number>
+    </property>
+    <property name="documentMode">
+     <bool>true</bool>
+    </property>
+    <property name="tabsClosable">
+     <bool>true</bool>
+    </property>
+    <property name="movable">
+     <bool>true</bool>
+    </property>
+    <property name="tabBarAutoHide">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QStackedWidget" name="stackedWidget">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>910</x>
+      <y>400</y>
+      <width>131</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
      <number>0</number>
     </property>
-    <property name="topMargin">
-     <number>4</number>
-    </property>
-    <property name="rightMargin">
-     <number>0</number>
-    </property>
-    <property name="bottomMargin">
-     <number>0</number>
-    </property>
-    <property name="horizontalSpacing">
-     <number>0</number>
-    </property>
-    <property name="verticalSpacing">
-     <number>4</number>
-    </property>
-    <item row="0" column="0">
-     <widget class="QStackedWidget" name="stackedWidget">
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <widget class="QWidget" name="pageDefault"/>
-      <widget class="FormComImgEditor" name="pagePixelEditor"/>
-      <widget class="FormPixelEditor" name="pageComImgEditor">
-       <property name="acceptDrops">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </widget>
-    </item>
-   </layout>
+    <widget class="QWidget" name="pageDefault"/>
+    <widget class="FormComImgEditor" name="pagePixelEditor"/>
+    <widget class="FormPixelEditor" name="pageComImgEditor">
+     <property name="acceptDrops">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -64,7 +118,7 @@
      <x>0</x>
      <y>0</y>
      <width>1305</width>
-     <height>26</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>
@@ -397,6 +451,12 @@
    <class>FormComImgEditor</class>
    <extends>QWidget</extends>
    <header location="global">formcomimgeditor.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CustomTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header location="global">customtabwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
