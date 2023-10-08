@@ -4,6 +4,7 @@
 #include <QTabWidget>
 #include <QObject>
 #include <QWidget>
+#include <QMenu>
 #include "treeitem.h"
 
 class CustomTabWidget : public QTabWidget
@@ -32,14 +33,21 @@ private:
     };
 
     QVector<TabWidgetItem *> tabWidgetItems;
+    QMenu *menu;
+    void initMenu();
+protected:
+    void contextMenuEvent(QContextMenuEvent *event);
 public:
     CustomTabWidget(QWidget *parent = nullptr) : QTabWidget(parent)
     {
-
+        //initMenu();
+        this->setMouseTracking(true);
     }
 
     int addImgTab(TreeItem *treeItem);
     void removeTab(int index);
+    void removeAllTabs();
+    void removeOtherTabs(int index);
 };
 
 #endif // CUSTOMTABWIDGET_H

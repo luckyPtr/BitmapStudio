@@ -1,6 +1,56 @@
 #include "customtabwidget.h"
 #include "formpixeleditor.h"
 #include <QTabBar>
+#include <QContextMenuEvent>
+#include "imgconvertor.h"
+
+
+void CustomTabWidget::initMenu()
+{
+    menu = new QMenu(this);
+
+
+    \
+    QTabBar *tb = tabBar();
+
+    tb->setContextMenuPolicy(Qt::ActionsContextMenu);
+}
+
+void CustomTabWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+    QTabBar* bar = tabBar();
+
+    int index = bar->tabAt(bar->mapFrom(this, event->pos()));
+
+    if(index < 0)
+        return;
+
+    QMenu menu(this);
+    QAction *actCloseThis = new QAction(tr("关闭"));
+    QAction *actCloseAll = new QAction(tr("关闭全部"));
+    QAction *actCloseOthers = new QAction(tr("关闭其他"));
+
+    menu.addAction(actCloseThis);
+    menu.addAction(actCloseAll);
+    menu.addAction(actCloseOthers);
+
+    connect(actCloseThis, &QAction::triggered, this, [=](){
+        removeTab(index);
+    });
+
+    connect(actCloseAll, &QAction::triggered, this, [=](){
+        removeAllTabs();
+    });
+
+    connect(actCloseOthers, &QAction::triggered, this, [=](){
+        removeOtherTabs(index);
+    });
+
+
+    menu.exec(mapToGlobal(event->pos()));
+}
+
+
 
 
 int CustomTabWidget::addImgTab(TreeItem *treeItem)
@@ -18,6 +68,8 @@ int CustomTabWidget::addImgTab(TreeItem *treeItem)
     TabWidgetItem *tabItem = new TabWidgetItem;
     int id = treeItem->getID();
     BmFile bf = treeItem->getRawData()->getBmFile(id);
+    ImgConvertor ic(treeItem->getRawData()->getDataMap().values().toVector());
+
     tabItem->title = bf.name;
     tabItem->treeItem = treeItem;
     tabItem->window = new FormPixelEditor;
@@ -27,7 +79,7 @@ int CustomTabWidget::addImgTab(TreeItem *treeItem)
     tabWidgetItems << tabItem;
 
     QTabBar *tb = this->tabBar();
-    tb->setTabToolTip(index, tabItem->title);
+    tb->setTabToolTip(index, ic.getFullName(bf).replace("_", "\\"));
     tb->setTabIcon(index, QIcon(":/Image/TreeIco/ImageFile.svg"));
 
     return index;
@@ -43,5 +95,25 @@ void CustomTabWidget::removeTab(int index)
             tabWidgetItems.removeAt(i);
             break;
         }
+    }
+}
+
+void CustomTabWidget::removeAllTabs()
+{
+    tabWidgetItems.clear();
+    QTabWidget::clear();
+}
+
+void CustomTabWidget::removeOtherTabs(int index)
+{
+    // 移除左边的tabs
+    for(int i = 0; i < index; i++)
+    {
+        removeTab(0);
+    }
+    // 移除右边的tabs
+    while(count() > 1)
+    {
+        removeTab(1);
     }
 }
