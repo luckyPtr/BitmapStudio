@@ -5,7 +5,7 @@
 #include <QDragEnterEvent>
 
 FormComImgEditor::FormComImgEditor(QWidget *parent) :
-    QWidget(parent),
+    CustomTab(parent),
     ui(new Ui::FormComImgEditor)
 {
     ui->setupUi(this);
@@ -76,6 +76,7 @@ void FormComImgEditor::initAction()
     ui->toolButtonAlignVCenter->setDefaultAction(ui->actAlignVCenter);
     ui->toolButtonAlignHCenter->setDefaultAction(ui->actAlignHCenter);
 }
+
 
 void FormComImgEditor::leaveEvent(QEvent *event)
 {

@@ -8,7 +8,7 @@
 
 
 FormPixelEditor::FormPixelEditor(QWidget *parent) :
-    QWidget(parent),
+    CustomTab(parent),
     ui(new Ui::FormPixelEditor)
 {
     ui->setupUi(this);
@@ -48,7 +48,6 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
     connect(ui->actFlipVerital, SIGNAL(triggered()), scanvasItem, SLOT(on_FlipVer()));
     connect(ui->actRotateLeft, SIGNAL(triggered()), scanvasItem, SLOT(on_RotateLeft()));
     connect(ui->actRotateRight, SIGNAL(triggered()), scanvasItem, SLOT(on_RotateRight()));
-
 
     //connect(parent->parent(), SIGNAL(selectItem(QImage&)), this, SLOT(on_LoadImage(QImage&)));
 }

@@ -5,12 +5,13 @@
 #include <QGraphicsScene>
 #include "custom/qgraphicsscaleitem.h"
 #include "custom/qgraphicscanvasitem.h"
+#include "custom/customtab.h"
 
 namespace Ui {
 class FormPixelEditor;
 }
 
-class FormPixelEditor : public QWidget
+class FormPixelEditor : public CustomTab
 {
     Q_OBJECT
 
@@ -24,7 +25,6 @@ private:
     QImage *image;      // 编辑的图片
     QGraphicsScene *scene;
     QGraphicsScaleItem *scaleItem;
-
 
     void initScrollerPos();   // 初始化滚轮位置为左上角
     void initAction();

@@ -45,6 +45,7 @@ public:
     }
 
     int addImgTab(TreeItem *treeItem);
+    int addComImgTab(TreeItem *treeItem);
     void removeTab(int index);
     void removeAllTabs();
     void removeOtherTabs(int index);

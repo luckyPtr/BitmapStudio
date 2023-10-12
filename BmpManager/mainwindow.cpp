@@ -103,7 +103,7 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
     }
     else if(item->getType() == RawData::TypeComImgFile)
     {
-        //ui->tabWidget->addImgTab(item);
+        ui->tabWidget->addComImgTab(item);
     }
 
     return;

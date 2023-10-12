@@ -1,8 +1,10 @@
 #include "customtabwidget.h"
 #include "formpixeleditor.h"
+#include "formcomimgeditor.h"
 #include <QTabBar>
 #include <QContextMenuEvent>
 #include "imgconvertor.h"
+#include "custom/customtab.h"
 
 
 void CustomTabWidget::initMenu()
@@ -55,32 +57,67 @@ void CustomTabWidget::contextMenuEvent(QContextMenuEvent *event)
 
 int CustomTabWidget::addImgTab(TreeItem *treeItem)
 {
+    int id = treeItem->getID();
+    QString project = treeItem->getRawData()->getProject();
+    BmFile bf = treeItem->getRawData()->getBmFile(id);
+    ImgConvertor ic(treeItem->getRawData()->getDataMap().values().toVector());
+
     // 如果已经存在，不新增，直接选中相应的tabWidget
-    for(int i = 0; i < tabWidgetItems.size(); i++)
+    for(int i = 0; i < count(); i++)
     {
-        if(treeItem == tabWidgetItems.at(i)->treeItem)
+        CustomTab *widget = static_cast<CustomTab *>(this->widget(i));
+        if(widget->getProject() == project && widget->getId() == id)
         {
             this->setCurrentIndex(i);
             return i;
         }
     }
 
-    TabWidgetItem *tabItem = new TabWidgetItem;
-    int id = treeItem->getID();
-    BmFile bf = treeItem->getRawData()->getBmFile(id);
-    ImgConvertor ic(treeItem->getRawData()->getDataMap().values().toVector());
 
-    tabItem->title = bf.name;
-    tabItem->treeItem = treeItem;
-    tabItem->window = new FormPixelEditor;
-    FormPixelEditor *window = static_cast<FormPixelEditor *>(tabItem->window);
+    FormPixelEditor *window = new FormPixelEditor;
+    window->setProjct(project);
+    window->setId(id);
     window->on_LoadImage(bf.image);
-    int index = this->addTab(window, tabItem->title);
-    tabWidgetItems << tabItem;
+    int index = this->addTab(window, bf.name);
 
     QTabBar *tb = this->tabBar();
     tb->setTabToolTip(index, ic.getFullName(bf).replace("_", "\\"));
     tb->setTabIcon(index, QIcon(":/Image/TreeIco/ImageFile.svg"));
+
+    setCurrentIndex(index);
+
+    return index;
+}
+
+int CustomTabWidget::addComImgTab(TreeItem *treeItem)
+{
+    int id = treeItem->getID();
+    QString project = treeItem->getRawData()->getProject();
+    BmFile bf = treeItem->getRawData()->getBmFile(id);
+    ImgConvertor ic(treeItem->getRawData()->getDataMap().values().toVector());
+
+    // 如果已存在直接切换到相应的界面
+    for(int i = 0; i < count(); i++)
+    {
+        CustomTab *widget = static_cast<CustomTab *>(this->widget(i));
+        if(widget->getProject() == project && widget->getId() == id)
+        {
+            this->setCurrentIndex(i);
+            return i;
+        }
+    }
+
+    FormComImgEditor *window = new FormComImgEditor;
+    window->setId(id);
+    window->setProjct(project);
+    window->on_LoadComImg(bf.comImg, treeItem->getRawData());
+    int index = this->addTab(window, bf.name);
+
+    QTabBar *tb = this->tabBar();
+    tb->setTabToolTip(index, ic.getFullName(bf).replace("_", "\\"));
+    tb->setTabIcon(index, QIcon(":/Image/TreeIco/ComImgFile.svg"));
+
+    setCurrentIndex(index);
 
     return index;
 }
