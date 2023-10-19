@@ -14,8 +14,6 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
     ui->setupUi(this);
     initAction();
 
-    //image = new QImage("C:\\Users\\Naive\\Desktop\\1\\AMQ图标\\大-日期.bmp");
-
     //QRectF rect(0, 0, image->width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image->height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset);
     scene = new QGraphicsScene(QRectF(0, 0, 1, 1));
     ui->graphicsView->setScene(scene);
@@ -49,7 +47,8 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
     connect(ui->actRotateLeft, SIGNAL(triggered()), scanvasItem, SLOT(on_RotateLeft()));
     connect(ui->actRotateRight, SIGNAL(triggered()), scanvasItem, SLOT(on_RotateRight()));
 
-    //connect(parent->parent(), SIGNAL(selectItem(QImage&)), this, SLOT(on_LoadImage(QImage&)));
+    connect(this->scanvasItem, SIGNAL(updataStatusBarPos(QPoint)), this->parent()->parent()->parent(), SLOT(on_UpdataStatusBarPos(QPoint)));
+    connect(this->scanvasItem, SIGNAL(updataStatusBarSize(QSize)), this->parent()->parent()->parent(), SLOT(on_UpdataStatusBarSize(QSize)));
 }
 
 FormPixelEditor::~FormPixelEditor()
@@ -115,6 +114,7 @@ void FormPixelEditor::paintView()
 void FormPixelEditor::on_LoadImage(QImage &image)
 {
     scanvasItem->setImage(image);
+    setSize(image.size());
 }
 
 

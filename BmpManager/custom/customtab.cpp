@@ -21,6 +21,11 @@ void CustomTab::setId(int id)
     this->id = id;
 }
 
+void CustomTab::setSize(QSize size)
+{
+    this->size = size;
+}
+
 QString CustomTab::getProject()
 {
     return project;
@@ -34,4 +39,9 @@ int CustomTab::getType()
 int CustomTab::getId()
 {
     return id;
+}
+
+QSize CustomTab::getSize()
+{
+    return size;
 }

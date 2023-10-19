@@ -7,16 +7,16 @@
 #include "custom/customtab.h"
 
 
+
 void CustomTabWidget::initMenu()
 {
     menu = new QMenu(this);
-
-
-    \
+  \
     QTabBar *tb = tabBar();
 
     tb->setContextMenuPolicy(Qt::ActionsContextMenu);
 }
+
 
 void CustomTabWidget::contextMenuEvent(QContextMenuEvent *event)
 {
@@ -41,15 +41,24 @@ void CustomTabWidget::contextMenuEvent(QContextMenuEvent *event)
     });
 
     connect(actCloseAll, &QAction::triggered, this, [=](){
-        removeAllTabs();
+        clear();
     });
 
     connect(actCloseOthers, &QAction::triggered, this, [=](){
         removeOtherTabs(index);
     });
 
-
     menu.exec(mapToGlobal(event->pos()));
+}
+
+CustomTabWidget::CustomTabWidget(QWidget *parent) : QTabWidget(parent)
+{
+    this->setMouseTracking(true);
+    connect(this, SIGNAL(updateSize(QSize)), this->parent()->parent(), SLOT(on_UpdataStatusBarSize(QSize)));
+    connect(this, &CustomTabWidget::currentChanged, this, [=](){
+        CustomTab *tab = static_cast<CustomTab *>(currentWidget());
+        emit updateSize(tab->getSize());
+    });
 }
 
 
@@ -74,7 +83,7 @@ int CustomTabWidget::addImgTab(TreeItem *treeItem)
     }
 
 
-    FormPixelEditor *window = new FormPixelEditor;
+    FormPixelEditor *window = new FormPixelEditor(this);
     window->setProjct(project);
     window->setId(id);
     window->on_LoadImage(bf.image);
@@ -107,7 +116,7 @@ int CustomTabWidget::addComImgTab(TreeItem *treeItem)
         }
     }
 
-    FormComImgEditor *window = new FormComImgEditor;
+    FormComImgEditor *window = new FormComImgEditor(this);
     window->setId(id);
     window->setProjct(project);
     window->on_LoadComImg(bf.comImg, treeItem->getRawData());
@@ -122,24 +131,6 @@ int CustomTabWidget::addComImgTab(TreeItem *treeItem)
     return index;
 }
 
-void CustomTabWidget::removeTab(int index)
-{
-    for(int i = 0; i < tabWidgetItems.size(); i++)
-    {
-        if(index == this->indexOf(tabWidgetItems[i]->window))
-        {
-            QTabWidget::removeTab(index);
-            tabWidgetItems.removeAt(i);
-            break;
-        }
-    }
-}
-
-void CustomTabWidget::removeAllTabs()
-{
-    tabWidgetItems.clear();
-    QTabWidget::clear();
-}
 
 void CustomTabWidget::removeOtherTabs(int index)
 {
@@ -154,3 +145,5 @@ void CustomTabWidget::removeOtherTabs(int index)
         removeTab(1);
     }
 }
+
+

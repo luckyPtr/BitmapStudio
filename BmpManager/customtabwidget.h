@@ -6,6 +6,7 @@
 #include <QWidget>
 #include <QMenu>
 #include "treeitem.h"
+#include <QPoint>
 
 class CustomTabWidget : public QTabWidget
 {
@@ -28,7 +29,6 @@ private:
         {
             if(window != nullptr)
                 delete window;
-            qDebug() << "deleted";
         }
     };
 
@@ -38,17 +38,15 @@ private:
 protected:
     void contextMenuEvent(QContextMenuEvent *event);
 public:
-    CustomTabWidget(QWidget *parent = nullptr) : QTabWidget(parent)
-    {
-        //initMenu();
-        this->setMouseTracking(true);
-    }
+    CustomTabWidget(QWidget *parent = nullptr);
 
     int addImgTab(TreeItem *treeItem);
     int addComImgTab(TreeItem *treeItem);
-    void removeTab(int index);
+//    void removeTab(int index);
     void removeAllTabs();
     void removeOtherTabs(int index);
+signals:
+    void updateSize(QSize);
 };
 
 #endif // CUSTOMTABWIDGET_H

@@ -34,7 +34,7 @@ MainWindow::~MainWindow()
 
 
 
-#include "custom/qgraphicscanvasitem.h"
+
 
 void MainWindow::init()
 {
@@ -42,18 +42,18 @@ void MainWindow::init()
     pm.blindTreeView(ui->treeViewProject);
 
 
-    connect(this, SIGNAL(selectItem(QImage&)), ui->stackedWidget->widget(STACKED_WIDGET_IMG), SLOT(on_LoadImage(QImage&)));
-    connect(ui->stackedWidget->widget(STACKED_WIDGET_IMG), SIGNAL(saveImage(QImage)), this, SLOT(on_SaveImage(QImage)));
-    connect(ui->stackedWidget->widget(STACKED_WIDGET_COMIMG), SIGNAL(saveComImg(ComImg)), this, SLOT(on_SaveComImg(ComImg)));
+//    connect(this, SIGNAL(selectItem(QImage&)), ui->stackedWidget->widget(STACKED_WIDGET_IMG), SLOT(on_LoadImage(QImage&)));
+//    connect(ui->stackedWidget->widget(STACKED_WIDGET_IMG), SIGNAL(saveImage(QImage)), this, SLOT(on_SaveImage(QImage)));
+//    connect(ui->stackedWidget->widget(STACKED_WIDGET_COMIMG), SIGNAL(saveComImg(ComImg)), this, SLOT(on_SaveComImg(ComImg)));
 
-    connect(this, SIGNAL(selectItem(ComImg&, RawData*)), ui->stackedWidget->widget(STACKED_WIDGET_COMIMG), SLOT(on_LoadComImg(ComImg&, RawData*)));
+//    connect(this, SIGNAL(selectItem(ComImg&, RawData*)), ui->stackedWidget->widget(STACKED_WIDGET_COMIMG), SLOT(on_LoadComImg(ComImg&, RawData*)));
 
-    // statusBar位置的大小显示
-    connect(static_cast<FormPixelEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_IMG))->scanvasItem, SIGNAL(updataStatusBarPos(QPoint)), this, SLOT(on_UpdataStatusBarPos(QPoint)));
-    connect(static_cast<FormPixelEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_IMG)), SIGNAL(updataStatusBarPos(QPoint)), this, SLOT(on_UpdataStatusBarPos(QPoint)));
-    connect(static_cast<FormComImgEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_COMIMG))->comImgCanvansItem, SIGNAL(updataStatusBarPos(QPoint)), this, SLOT(on_UpdataStatusBarPos(QPoint)));
-    connect(static_cast<FormComImgEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_COMIMG)), SIGNAL(updataStatusBarPos(QPoint)), this, SLOT(on_UpdataStatusBarPos(QPoint)));
-    connect(static_cast<FormPixelEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_IMG))->scanvasItem, SIGNAL(updataStatusBarSize(QSize)), this, SLOT(on_UpdataStatusBarSize(QSize)));
+//    // statusBar位置的大小显示
+//    connect(static_cast<FormPixelEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_IMG))->scanvasItem, SIGNAL(updataStatusBarPos(QPoint)), this, SLOT(on_UpdataStatusBarPos(QPoint)));
+//    connect(static_cast<FormPixelEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_IMG)), SIGNAL(updataStatusBarPos(QPoint)), this, SLOT(on_UpdataStatusBarPos(QPoint)));
+//    connect(static_cast<FormComImgEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_COMIMG))->comImgCanvansItem, SIGNAL(updataStatusBarPos(QPoint)), this, SLOT(on_UpdataStatusBarPos(QPoint)));
+//    connect(static_cast<FormComImgEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_COMIMG)), SIGNAL(updataStatusBarPos(QPoint)), this, SLOT(on_UpdataStatusBarPos(QPoint)));
+//    connect(static_cast<FormPixelEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_IMG))->scanvasItem, SIGNAL(updataStatusBarSize(QSize)), this, SLOT(on_UpdataStatusBarSize(QSize)));
 }
 
 void MainWindow::initStatusBar()
@@ -76,7 +76,7 @@ void MainWindow::initStatusBar()
 }
 void MainWindow::setStackedWidget(int index)
 {
-    ui->stackedWidget->setCurrentIndex(index);
+    //ui->stackedWidget->setCurrentIndex(index);
 }
 
 

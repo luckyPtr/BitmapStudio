@@ -10,16 +10,19 @@ class CustomTab : public QWidget
     QString project;
     int type;
     int id;
+    QSize size;
 public:
     explicit CustomTab(QWidget *parent = nullptr);
 
     void setProjct(QString project);
     void setType(int type);
     void setId(int id);
+    void setSize(QSize size);
 
     QString getProject();
     int getType();
     int getId();
+    QSize getSize();
 signals:
 
 };

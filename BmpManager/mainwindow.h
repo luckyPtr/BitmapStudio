@@ -50,6 +50,7 @@ private slots:
 
     void on_actRun_triggered();
 
+public slots:
     void on_UpdataStatusBarPos(QPoint point);
 
     void on_UpdataStatusBarSize(QSize size);
