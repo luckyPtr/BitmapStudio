@@ -249,7 +249,7 @@ int QGraphicsComImgCanvansItem::getPointAuxLineIndex(QPoint point)
 
 void QGraphicsComImgCanvansItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-    emit updataStatusBarPos(QPoint(-1, -1));
+    emit updateStatusBarPos(QPoint(-1, -1));
 }
 
 void QGraphicsComImgCanvansItem::setComImg(ComImg &comImg)
@@ -482,7 +482,7 @@ void QGraphicsComImgCanvansItem::on_MouseMove(QPoint point)
         itemMove();
     }
 
-    emit updataStatusBarPos(currentPixel);
+    emit updateStatusBarPos(currentPixel);
 }
 
 void QGraphicsComImgCanvansItem::on_MouseRelease(QPoint point)

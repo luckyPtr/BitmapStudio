@@ -51,9 +51,9 @@ private slots:
     void on_actRun_triggered();
 
 public slots:
-    void on_UpdataStatusBarPos(QPoint point);
+    void on_UpdateStatusBarPos(QPoint point);
 
-    void on_UpdataStatusBarSize(QSize size);
+    void on_UpdateStatusBarSize(QSize size);
 
     void on_actCopyName_triggered();
 

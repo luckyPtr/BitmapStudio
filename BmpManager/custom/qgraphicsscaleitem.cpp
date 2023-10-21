@@ -88,6 +88,11 @@ QGraphicsScaleItem::QGraphicsScaleItem(QWidget *parent)
     connect(view, SIGNAL(mouseMovePoint(QPoint)), this, SLOT(mouseMove(QPoint)));
 }
 
+QGraphicsScaleItem::~QGraphicsScaleItem()
+{
+
+}
+
 QRectF QGraphicsScaleItem::boundingRect() const
 {
     int width = qMax(view->width(), (int)view->scene()->width());

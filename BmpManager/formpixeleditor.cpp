@@ -47,12 +47,16 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
     connect(ui->actRotateLeft, SIGNAL(triggered()), scanvasItem, SLOT(on_RotateLeft()));
     connect(ui->actRotateRight, SIGNAL(triggered()), scanvasItem, SLOT(on_RotateRight()));
 
-    connect(this->scanvasItem, SIGNAL(updataStatusBarPos(QPoint)), this->parent()->parent()->parent(), SLOT(on_UpdataStatusBarPos(QPoint)));
-    connect(this->scanvasItem, SIGNAL(updataStatusBarSize(QSize)), this->parent()->parent()->parent(), SLOT(on_UpdataStatusBarSize(QSize)));
+    connect(this->scanvasItem, SIGNAL(updataStatusBarPos(QPoint)), this->parent()->parent()->parent(), SLOT(on_UpdateStatusBarPos(QPoint)));
+    connect(this->scanvasItem, SIGNAL(updataStatusBarSize(QSize)), this->parent()->parent()->parent(), SLOT(on_UpdateStatusBarSize(QSize)));
 }
 
 FormPixelEditor::~FormPixelEditor()
 {
+    delete scaleItem;
+    delete scanvasItem;
+    delete scene;
+
     delete ui;
 }
 

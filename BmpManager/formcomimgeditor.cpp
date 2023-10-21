@@ -45,10 +45,16 @@ FormComImgEditor::FormComImgEditor(QWidget *parent) :
     connect(ui->actMoveBottom, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveBottom()));
     connect(ui->actAlignVCenter, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_AlignVCenter()));
     connect(ui->actAlignHCenter, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_AlignHCenter()));
+
+    connect(this->comImgCanvansItem, SIGNAL(updateStatusBarPos(QPoint)), this->parent()->parent()->parent(), SLOT(on_UpdateStatusBarPos(QPoint)));
+    connect(this->comImgCanvansItem, SIGNAL(updateStatusBarSize(QSize)), this->parent()->parent()->parent(), SLOT(on_UpdateStatusBarSize(QSize)));
 }
 
 FormComImgEditor::~FormComImgEditor()
 {
+    delete comImgCanvansItem;
+    delete scaleItem;
+    delete scene;
     delete ui;
 }
 
@@ -88,6 +94,7 @@ void FormComImgEditor::on_LoadComImg(ComImg &comImg, RawData *rd)
 {
     comImgCanvansItem->setComImg(comImg);
     comImgCanvansItem->setRawData(rd);
+    setSize(QSize(comImg.width, comImg.height));
 }
 
 

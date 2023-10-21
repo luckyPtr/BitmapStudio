@@ -41,7 +41,7 @@ void CustomTabWidget::contextMenuEvent(QContextMenuEvent *event)
     });
 
     connect(actCloseAll, &QAction::triggered, this, [=](){
-        clear();
+        removeAll();
     });
 
     connect(actCloseOthers, &QAction::triggered, this, [=](){
@@ -54,10 +54,11 @@ void CustomTabWidget::contextMenuEvent(QContextMenuEvent *event)
 CustomTabWidget::CustomTabWidget(QWidget *parent) : QTabWidget(parent)
 {
     this->setMouseTracking(true);
-    connect(this, SIGNAL(updateSize(QSize)), this->parent()->parent(), SLOT(on_UpdataStatusBarSize(QSize)));
+    connect(this, SIGNAL(updateSize(QSize)), this->parent()->parent(), SLOT(on_UpdateStatusBarSize(QSize)));
     connect(this, &CustomTabWidget::currentChanged, this, [=](){
         CustomTab *tab = static_cast<CustomTab *>(currentWidget());
-        emit updateSize(tab->getSize());
+        if(tab != nullptr)
+            emit updateSize(tab->getSize());
     });
 }
 
@@ -130,6 +131,22 @@ int CustomTabWidget::addComImgTab(TreeItem *treeItem)
 
     return index;
 }
+
+void CustomTabWidget::removeTab(int index)
+{
+    QWidget *removeWidget = widget(index);
+    QTabWidget::removeTab(index);
+    delete removeWidget;
+}
+
+void CustomTabWidget::removeAll()
+{
+    while(widget(0) != nullptr)
+    {
+        removeTab(0);
+    }
+}
+
 
 
 void CustomTabWidget::removeOtherTabs(int index)

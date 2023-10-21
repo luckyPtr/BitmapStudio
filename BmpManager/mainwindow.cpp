@@ -122,19 +122,19 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
     {
         emit selectItem(img);
         setStackedWidget(STACKED_WIDGET_IMG);
-        on_UpdataStatusBarSize(img.size());
+        on_UpdateStatusBarSize(img.size());
     }
     else if(item->getType() == RawData::TypeComImgFile)
     {
         ComImg ci = item->getRawData()->getComImg(item->getID());
         emit selectItem(ci, item->getRawData());
         setStackedWidget(STACKED_WIDGET_COMIMG);
-        on_UpdataStatusBarSize(QSize(ci.width, ci.height));
+        on_UpdateStatusBarSize(QSize(ci.width, ci.height));
     }
     else
     {
         setStackedWidget(STACKED_WIDGET_DEFAULT);
-        on_UpdataStatusBarSize(QSize(-1, -1));
+        on_UpdateStatusBarSize(QSize(-1, -1));
     }
 }
 
@@ -329,7 +329,7 @@ void MainWindow::on_actRun_triggered()
     QMessageBox::information(this, "","字模转换完成");
 }
 
-void MainWindow::on_UpdataStatusBarPos(QPoint point)
+void MainWindow::on_UpdateStatusBarPos(QPoint point)
 {
     if(point.x() >= 0 && point.y() >= 0)
     {
@@ -341,7 +341,7 @@ void MainWindow::on_UpdataStatusBarPos(QPoint point)
     }
 }
 
-void MainWindow::on_UpdataStatusBarSize(QSize size)
+void MainWindow::on_UpdateStatusBarSize(QSize size)
 {
     if(size.width() >= 0 && size.height() >= 0)
     {

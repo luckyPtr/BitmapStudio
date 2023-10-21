@@ -93,7 +93,8 @@ public slots:
     void on_AlignHCenter();
 
 signals:
-    void updataStatusBarPos(QPoint);
+    void updateStatusBarPos(QPoint);
+    void updateStatusBarSize(QSize);
 };
 
 #endif // QGRAPHICSCOMIMGCANVANSITEM_H

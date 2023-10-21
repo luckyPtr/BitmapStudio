@@ -43,7 +43,8 @@ public:
     int addImgTab(TreeItem *treeItem);
     int addComImgTab(TreeItem *treeItem);
 //    void removeTab(int index);
-    void removeAllTabs();
+    void removeTab(int index);
+    void removeAll();
     void removeOtherTabs(int index);
 signals:
     void updateSize(QSize);
