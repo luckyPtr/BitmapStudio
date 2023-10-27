@@ -43,7 +43,7 @@ public slots:
 signals:
     void updataStatusBarPos(QPoint);
     void saveImage(QImage image);
-
+    void saveImage(QString, int, QImage);
 };
 
 #endif // FORMPIXELEDITOR_H

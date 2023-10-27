@@ -247,16 +247,10 @@ void MainWindow::on_actDelete_triggered()
 #include "imgconvertor.h"
 void MainWindow::on_actTest_triggered()
 {
-
-//    ImgConvertor ic;
     QModelIndex curIndex = ui->treeViewProject->currentIndex();
-    TreeItem *item = pm.model()->itemFromIndex(curIndex);
-    ImgConvertor ic(item->getRawData()->getDataMap().values().toVector());
-    QImage img = item->getRawData()->getImage(item->getID());
-    qDebug() << "==" << ic.imgToByteArray(img);
-//    qDebug().noquote() << ic.encodeImg(img);
-//    QString s = "AA\nBB";
-//    qDebug().noquote() << s;
+    //TreeItem *item = pm.model()->itemFromIndex(curIndex);
+    //QModelIndex i = pm.getModelIndex(item->getRawData()->getProject(), item->getID());
+    qDebug() << curIndex.column();
 }
 
 void MainWindow::on_SaveImage(QImage image)
@@ -267,6 +261,15 @@ void MainWindow::on_SaveImage(QImage image)
 void MainWindow::on_SaveComImg(ComImg comImg)
 {
     pm.setComImg(editedIndex, comImg);
+}
+
+void MainWindow::on_SaveImage(QString project, int id, QImage image)
+{
+    QModelIndex index = pm.getModelIndex(project, id);
+    if(index.isValid())
+    {
+        pm.setImage(index, image);
+    }
 }
 
 

@@ -43,7 +43,7 @@ public:
     void setImage(QModelIndex index, QImage &image);
     ComImg getComImg(QModelIndex index);
     void setComImg(QModelIndex index, ComImg &comImg);
-
+    QModelIndex getModelIndex(QString project, int id);   // 从项目名称和id获取ModelIndex
 
 signals:
 

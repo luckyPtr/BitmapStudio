@@ -258,3 +258,35 @@ void ProjectMng::setComImg(QModelIndex index, ComImg &comImg)
     RawData *rd = item->getRawData();
     rd->setComImg(item->getID(), comImg);
 }
+
+QModelIndex ProjectMng::getModelIndex(QString project, int id)
+{
+    QModelIndex retIndex;
+
+    auto getIndex = [&](auto&& self, QModelIndex &parentIndex) -> void {
+        for(int i = 0; i < theModel->rowCount(parentIndex); i++)
+        {
+            QModelIndex index = theModel->index(i, 0, parentIndex);
+            TreeItem *item = theModel->itemFromIndex(index);
+            if(item->getID() == id)
+            {
+                retIndex = index;
+                return;
+            }
+            self(self, index);
+        }
+    };
+
+    QModelIndex rootIndex = treeView->rootIndex();
+    for(int i = 0; i < theModel->rowCount(rootIndex); i++)
+    {
+        QModelIndex index = theModel->index(i, 0, rootIndex);
+        TreeItem *item = theModel->itemFromIndex(index);
+        if(item->getRawData()->getProject() == project)
+        {
+            getIndex(getIndex, rootIndex);
+        }
+    }
+
+    return retIndex;
+}

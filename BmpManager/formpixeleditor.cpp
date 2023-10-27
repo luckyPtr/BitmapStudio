@@ -49,6 +49,8 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
 
     connect(this->scanvasItem, SIGNAL(updataStatusBarPos(QPoint)), this->parent()->parent()->parent(), SLOT(on_UpdateStatusBarPos(QPoint)));
     connect(this->scanvasItem, SIGNAL(updataStatusBarSize(QSize)), this->parent()->parent()->parent(), SLOT(on_UpdateStatusBarSize(QSize)));
+
+    connect(this, SIGNAL(saveImage(QString,int,QImage)), this->parent()->parent()->parent(), SLOT(on_SaveImage(QString, int, QImage)));
 }
 
 FormPixelEditor::~FormPixelEditor()
@@ -153,6 +155,8 @@ void FormPixelEditor::on_actMeasure_triggered()
 
 void FormPixelEditor::on_actSave_triggered()
 {
+    emit saveImage(getProject(), getId(), scanvasItem->getImage());
+
     emit saveImage(scanvasItem->getImage());
 }
 

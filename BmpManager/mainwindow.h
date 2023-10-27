@@ -44,8 +44,6 @@ private slots:
 
     void on_SaveImage(QImage image);
 
-    void on_SaveComImg(ComImg comImg);
-
     void on_actGrpImgTransform_triggered();
 
     void on_actRun_triggered();
@@ -58,6 +56,11 @@ public slots:
     void on_actCopyName_triggered();
 
     void on_tabWidget_tabCloseRequested(int index);
+
+    void on_SaveComImg(ComImg comImg);
+
+    void on_SaveImage(QString project, int id, QImage image);
+
 
 private:
     Ui::MainWindow *ui;
@@ -82,7 +85,6 @@ private:
     };
 
     void setStackedWidget(int index);
-
 signals:
     void selectItem(QImage &Image);
     void selectItem(ComImg &comImg, RawData *rd);
