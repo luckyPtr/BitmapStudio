@@ -61,6 +61,8 @@ public slots:
 
     void on_SaveImage(QString project, int id, QImage image);
 
+    void on_SaveComImg(QString project, int id, ComImg comImg);
+
 
 private:
     Ui::MainWindow *ui;

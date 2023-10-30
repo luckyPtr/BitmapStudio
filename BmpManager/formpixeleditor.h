@@ -7,6 +7,7 @@
 #include "custom/qgraphicscanvasitem.h"
 #include "custom/customtab.h"
 
+
 namespace Ui {
 class FormPixelEditor;
 }

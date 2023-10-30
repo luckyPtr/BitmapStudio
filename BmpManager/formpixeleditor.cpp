@@ -156,7 +156,5 @@ void FormPixelEditor::on_actMeasure_triggered()
 void FormPixelEditor::on_actSave_triggered()
 {
     emit saveImage(getProject(), getId(), scanvasItem->getImage());
-
-    emit saveImage(scanvasItem->getImage());
 }
 

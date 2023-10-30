@@ -48,6 +48,8 @@ FormComImgEditor::FormComImgEditor(QWidget *parent) :
 
     connect(this->comImgCanvansItem, SIGNAL(updateStatusBarPos(QPoint)), this->parent()->parent()->parent(), SLOT(on_UpdateStatusBarPos(QPoint)));
     connect(this->comImgCanvansItem, SIGNAL(updateStatusBarSize(QSize)), this->parent()->parent()->parent(), SLOT(on_UpdateStatusBarSize(QSize)));
+
+    connect(this, SIGNAL(saveComImg(QString,int,ComImg)), this->parent()->parent()->parent(), SLOT(on_SaveComImg(QString,int,ComImg)));
 }
 
 FormComImgEditor::~FormComImgEditor()
@@ -99,4 +101,10 @@ void FormComImgEditor::on_LoadComImg(ComImg &comImg, RawData *rd)
 
 
 
+
+
+void FormComImgEditor::on_actSave_triggered()
+{
+    emit saveComImg(getProject(), getId(), comImgCanvansItem->getComImg());
+}
 

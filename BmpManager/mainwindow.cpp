@@ -272,6 +272,15 @@ void MainWindow::on_SaveImage(QString project, int id, QImage image)
     }
 }
 
+void MainWindow::on_SaveComImg(QString project, int id, ComImg comImg)
+{
+    QModelIndex index = pm.getModelIndex(project, id);
+    if(index.isValid())
+    {
+        pm.setComImg(index, comImg);
+    }
+}
+
 
 void MainWindow::on_actGrpImgTransform_triggered()
 {
