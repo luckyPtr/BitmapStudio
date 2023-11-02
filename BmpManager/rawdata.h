@@ -60,7 +60,7 @@ struct BmFile
     quint8 isFolder;    // 0-文件 1-文件夹 2-图片组文件夹
     int type;
     QString name;
-    QString details;
+    QString notes;
     QImage image;
     ComImg comImg;
 

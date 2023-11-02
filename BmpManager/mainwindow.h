@@ -7,6 +7,7 @@
 #include <QVector>
 #include <projectmng.h>
 #include <QLabel>
+#include <custom/treeitemdelegate.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -74,6 +75,7 @@ private:
     QLabel *labelSize;
     QLabel *labelPositionIco;
     QLabel *labelSizeIco_new;
+    TreeItemDelegate *treeItemDelegate;
     void init();
     void initStatusBar();   // 初始化
 

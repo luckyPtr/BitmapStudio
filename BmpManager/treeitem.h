@@ -122,8 +122,8 @@ public:
 
     void setRawData(RawData *rd) {rawData = rd;}
     RawData *getRawData() {return rawData;}
-
-
+    QString getText();  // 获取item名称
+    QString getNotes();  // 获取备注
 };
 
 #endif // TREEITEM_H

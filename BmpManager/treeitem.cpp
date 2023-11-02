@@ -92,4 +92,14 @@ QIcon TreeItem::icon() const
     }
 }
 
+QString TreeItem::getText()
+{
+    return data(Qt::DisplayRole).toString();
+}
+
+QString TreeItem::getNotes()
+{
+    return rawData->getDataMap()[id].notes;
+}
+
 

@@ -20,7 +20,7 @@ void RawData::initDatabase()
                   pid     INTEGER DEFAULT (0),\
                   type    INTEGER DEFAULT (0),\
                   name    TEXT,\
-                  details TEXT,\
+                  notes   TEXT,\
                   data    BLOB\
                   );");
     query.exec();
@@ -75,7 +75,7 @@ void RawData::load()
         bi.pid = query.value("pid").toInt();
         bi.type = query.value("type").toInt();
         bi.name = query.value("name").toString();
-        bi.details = query.value("details").toString();
+        bi.notes = query.value("notes").toString();
         if(bi.type == RawData::TypeImgFile)
         {
             QByteArray ba = query.value("data").toByteArray();
@@ -95,6 +95,7 @@ void RawData::load()
                 item.x = obj.toObject().value("x").toInt();
                 item.y = obj.toObject().value("y").toInt();
                 item.id = obj.toObject().value("id").toInt();
+
                 bi.comImg.items.append(item);
             }
         }

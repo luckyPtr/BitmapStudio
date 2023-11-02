@@ -39,21 +39,10 @@ MainWindow::~MainWindow()
 void MainWindow::init()
 {
     initStatusBar();
+
+    treeItemDelegate = new TreeItemDelegate();
+    ui->treeViewProject->setItemDelegate(treeItemDelegate);
     pm.blindTreeView(ui->treeViewProject);
-
-
-//    connect(this, SIGNAL(selectItem(QImage&)), ui->stackedWidget->widget(STACKED_WIDGET_IMG), SLOT(on_LoadImage(QImage&)));
-//    connect(ui->stackedWidget->widget(STACKED_WIDGET_IMG), SIGNAL(saveImage(QImage)), this, SLOT(on_SaveImage(QImage)));
-//    connect(ui->stackedWidget->widget(STACKED_WIDGET_COMIMG), SIGNAL(saveComImg(ComImg)), this, SLOT(on_SaveComImg(ComImg)));
-
-//    connect(this, SIGNAL(selectItem(ComImg&, RawData*)), ui->stackedWidget->widget(STACKED_WIDGET_COMIMG), SLOT(on_LoadComImg(ComImg&, RawData*)));
-
-//    // statusBar位置的大小显示
-//    connect(static_cast<FormPixelEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_IMG))->scanvasItem, SIGNAL(updataStatusBarPos(QPoint)), this, SLOT(on_UpdataStatusBarPos(QPoint)));
-//    connect(static_cast<FormPixelEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_IMG)), SIGNAL(updataStatusBarPos(QPoint)), this, SLOT(on_UpdataStatusBarPos(QPoint)));
-//    connect(static_cast<FormComImgEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_COMIMG))->comImgCanvansItem, SIGNAL(updataStatusBarPos(QPoint)), this, SLOT(on_UpdataStatusBarPos(QPoint)));
-//    connect(static_cast<FormComImgEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_COMIMG)), SIGNAL(updataStatusBarPos(QPoint)), this, SLOT(on_UpdataStatusBarPos(QPoint)));
-//    connect(static_cast<FormPixelEditor *>(ui->stackedWidget->widget(STACKED_WIDGET_IMG))->scanvasItem, SIGNAL(updataStatusBarSize(QSize)), this, SLOT(on_UpdataStatusBarSize(QSize)));
 }
 
 void MainWindow::initStatusBar()
@@ -105,6 +94,7 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
     {
         ui->tabWidget->addComImgTab(item);
     }
+    qDebug() << "notes" << item->getNotes();
 
     return;
 //    BmFile bi = item->getRawData()->getBmFile(item->getID());
