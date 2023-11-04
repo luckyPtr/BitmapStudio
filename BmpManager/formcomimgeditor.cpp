@@ -4,13 +4,14 @@
 #include <QDragMoveEvent>
 #include <QDragEnterEvent>
 
+
 FormComImgEditor::FormComImgEditor(QWidget *parent) :
     CustomTab(parent),
     ui(new Ui::FormComImgEditor)
 {
     ui->setupUi(this);
 
-    scene = new QGraphicsScene(QRectF(0, 0, 1, 1));
+    scene = new QGraphicsScene(QRectF(0, 0, 128, 64));
     ui->graphicsView->setScene(scene);
 
     scaleItem = new QGraphicsScaleItem(ui->graphicsView);
@@ -18,8 +19,6 @@ FormComImgEditor::FormComImgEditor(QWidget *parent) :
 
     comImgCanvansItem = new QGraphicsComImgCanvansItem(ui->graphicsView);
     comImgCanvansItem->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
-//    scanvasItem = new QGraphicsCanvasItem(ui->graphicsView);
-//    scanvasItem->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
 
 
     scene->addItem(comImgCanvansItem);

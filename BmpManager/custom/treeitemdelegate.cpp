@@ -14,11 +14,12 @@ void TreeItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
 
-    const TreeModel *model = dynamic_cast<const TreeModel*>(index.model());
-    TreeItem *item = dynamic_cast<TreeItem*>(model->itemFromIndex(index));
+    const TreeModel *model = static_cast<const TreeModel*>(index.model());
+    TreeItem *item = static_cast<TreeItem*>(model->itemFromIndex(index));
 
     QString notes = item->getNotes();
     QString text = item->getText();
+
 
 //    opt.state |= QStyle::State_HasFocus;
     QStyledItemDelegate::paint(painter, opt, index);

@@ -94,7 +94,6 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
     {
         ui->tabWidget->addComImgTab(item);
     }
-    qDebug() << "notes" << item->getNotes();
 
     return;
 //    BmFile bi = item->getRawData()->getBmFile(item->getID());

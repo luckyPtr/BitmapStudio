@@ -355,6 +355,7 @@ void QGraphicsCanvasItem::setImage(QImage &image)
     }
     // 虽然是单色的，转为为RGB888，像素处理的时候方便一点
     this->image = image.convertToFormat(QImage::Format_RGB888);
+    view->scene()->setSceneRect(QRectF(0, 0, image.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
     view->viewport()->update();
 }
 

@@ -4,13 +4,29 @@
 #include <QGraphicsSceneDragDropEvent>
 
 
+bool QGraphicsComImgCanvansItem::isInSizeVerArea(QPoint point)
+{
+    QRect rect(startPoint.x() + comImg.width * Global::pixelSize / 2 - 6, startPoint.y() + comImg.height * Global::pixelSize, 12, 12);
+    return rect.contains(point);
+}
+
+bool QGraphicsComImgCanvansItem::isInSizeHorArea(QPoint point)
+{
+    QRect rect(startPoint.x() + comImg.width * Global::pixelSize, startPoint.y() + comImg.height * Global::pixelSize / 2 - 6, 12, 12);
+    return rect.contains(point);
+}
+
+bool QGraphicsComImgCanvansItem::isInSizeFDiagArea(QPoint point)
+{
+    QRect rect(startPoint.x() + comImg.width * Global::pixelSize, startPoint.y() + comImg.height * Global::pixelSize, 12, 12);
+    return rect.contains(point);
+}
+
 void QGraphicsComImgCanvansItem::paintBackground(QPainter *painter)
 {
     // 背景使用像素0的颜色填充
     QRect backgroudRect(startPoint.x(), startPoint.y(), comImg.width * Global::pixelSize, comImg.height * Global::pixelSize);
     painter->fillRect(backgroudRect, Global::pixelColor_0);
-
-
 }
 
 void QGraphicsComImgCanvansItem::paintItems(QPainter *painter)
@@ -200,6 +216,20 @@ void QGraphicsComImgCanvansItem::paintAuxiliaryLines(QPainter *painter)
 #endif
 }
 
+void QGraphicsComImgCanvansItem::paintResizePoint(QPainter *painter)
+{
+    QPen pen;
+    pen.setWidth(1);
+    pen.setColor(Qt::black);
+    painter->setPen(pen);
+    QBrush brush(Qt::white);
+    brush.setStyle(Qt::SolidPattern);
+    painter->setBrush(brush);
+    painter->drawRect(QRect(startPoint.x() + comImg.width * Global::pixelSize, startPoint.y() + comImg.height * Global::pixelSize, 4, 4));
+    painter->drawRect(QRect(startPoint.x() + comImg.width * Global::pixelSize / 2 - 2, startPoint.y() + comImg.height * Global::pixelSize, 4, 4));
+    painter->drawRect(QRect(startPoint.x() + comImg.width * Global::pixelSize, startPoint.y() + comImg.height * Global::pixelSize / 2 - 2, 4, 4));
+}
+
 QPoint QGraphicsComImgCanvansItem::pointToPixel(QPoint point)
 {
     return QPoint((point.x() - startPoint.x()) / Global::pixelSize,
@@ -255,6 +285,7 @@ void QGraphicsComImgCanvansItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event
 void QGraphicsComImgCanvansItem::setComImg(ComImg &comImg)
 {
     this->comImg = comImg;
+    view->scene()->setSceneRect(QRectF(0, 0, comImg.width * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, comImg.height * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
 }
 
 void QGraphicsComImgCanvansItem::setRawData(RawData *rd)
@@ -460,7 +491,24 @@ void QGraphicsComImgCanvansItem::on_MouseMove(QPoint point)
     currentPoint = point;
     currentPixel = pointToPixel(point);
 
-    if(action == ActionSelectAuxiliaryLine)
+    if(action == ActionNull)
+    {
+        Qt::CursorShape cursor = Qt::ArrowCursor;
+        if(isInSizeFDiagArea(point))
+        {
+            cursor = Qt::SizeFDiagCursor;
+        }
+        else if(isInSizeVerArea(point))
+        {
+            cursor = Qt::SizeVerCursor;
+        }
+        else if(isInSizeHorArea(point))
+        {
+            cursor = Qt::SizeHorCursor;
+        }
+        view->setCursor(cursor);
+    }
+    else if(action == ActionSelectAuxiliaryLine)
     {
         action = ActionMoveAuxiliaryLine;
         moveLastPixel = currentPixel;
@@ -556,4 +604,5 @@ void QGraphicsComImgCanvansItem::paint(QPainter *painter, const QStyleOptionGrap
     paintItems(painter);
     paintDragItem(painter);
     paintAuxiliaryLines(painter);
+    paintResizePoint(painter);
 }

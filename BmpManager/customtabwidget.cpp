@@ -83,7 +83,6 @@ int CustomTabWidget::addImgTab(TreeItem *treeItem)
         }
     }
 
-
     FormPixelEditor *window = new FormPixelEditor(this);
     window->setProjct(project);
     window->setId(id);
@@ -117,6 +116,7 @@ int CustomTabWidget::addComImgTab(TreeItem *treeItem)
         }
     }
 
+
     FormComImgEditor *window = new FormComImgEditor(this);
     window->setId(id);
     window->setProjct(project);
@@ -137,6 +137,7 @@ void CustomTabWidget::removeTab(int index)
     QWidget *removeWidget = widget(index);
     QTabWidget::removeTab(index);
     delete removeWidget;
+    // todo:delete QScrollArea
 }
 
 void CustomTabWidget::removeAll()

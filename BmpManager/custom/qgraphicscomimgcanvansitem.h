@@ -16,6 +16,9 @@ class QGraphicsComImgCanvansItem : public QObject, public QGraphicsItem
         ActionMove,
         ActionSelectAuxiliaryLine,
         ActionMoveAuxiliaryLine,
+        ActionResizeVer,
+        ActionResizeHor,
+        ActionResizeFDiag,
     };
 
     struct AuxiliaryLine
@@ -49,11 +52,15 @@ class QGraphicsComImgCanvansItem : public QObject, public QGraphicsItem
     QVector<AuxiliaryLine> auxiliaryLines;
     int selectedAuxiliaryLine = -1;
     
+    bool isInSizeVerArea(QPoint point); // 是否处于垂直调整画布大小的区域内
+    bool isInSizeHorArea(QPoint point); // 是否处于水平调整画布大小的区域内
+    bool isInSizeFDiagArea(QPoint point);
     void paintBackground(QPainter *painter);    // 绘制画布
     void paintItems(QPainter *painter);        // 绘制图形元素
     void paintGrid(QPainter *painter);          // 绘制网格
     void paintDragItem(QPainter *painter);      // 绘制拖入的图片
     void paintAuxiliaryLines(QPainter *painter);    // 绘制辅助线
+    void paintResizePoint(QPainter *painter);  // 绘制调整画布大小的点
     QPoint pointToPixel(QPoint point);  // 坐标转换为画布上的像素坐标
     int getPointImgIndex(QPoint point);
     int getPointAuxLineIndex(QPoint point);

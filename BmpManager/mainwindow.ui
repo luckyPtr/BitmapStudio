@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1305</width>
-    <height>651</height>
+    <width>1109</width>
+    <height>579</height>
    </rect>
   </property>
   <property name="acceptDrops">
@@ -106,7 +106,7 @@ QTabBar::tab:selected,QTabBar::tab:hover
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1305</width>
+     <width>1109</width>
      <height>20</height>
     </rect>
    </property>
