@@ -228,6 +228,38 @@ void QGraphicsComImgCanvansItem::paintResizePoint(QPainter *painter)
     painter->drawRect(QRect(startPoint.x() + comImg.width * Global::pixelSize, startPoint.y() + comImg.height * Global::pixelSize, 4, 4));
     painter->drawRect(QRect(startPoint.x() + comImg.width * Global::pixelSize / 2 - 2, startPoint.y() + comImg.height * Global::pixelSize, 4, 4));
     painter->drawRect(QRect(startPoint.x() + comImg.width * Global::pixelSize, startPoint.y() + comImg.height * Global::pixelSize / 2 - 2, 4, 4));
+
+    // 校准画布大小到像素点对应的大小
+    auto calibrate = ([=](QPoint point){
+        return QPoint(((point.x() - startPoint.x()) / Global::pixelSize) * Global::pixelSize + startPoint.x(),
+                      ((point.y() - startPoint.y()) / Global::pixelSize) * Global::pixelSize + startPoint.y());
+    });
+    if(action != ActionNull)
+    {
+        QBrush brush;
+        brush.setStyle(Qt::NoBrush);
+        painter->setBrush(brush);
+        pen.setWidth(2);
+        pen.setStyle(Qt::DotLine);
+        pen.setColor(Qt::yellow);
+        painter->setPen(pen);
+
+
+        if(action == ActionResizeFDiag)
+        {
+            painter->drawRect(QRect(startPoint, calibrate(currentPoint)));
+        }
+        else if(action == ActionResizeVer)
+        {
+            QPoint point(startPoint.x() + comImg.width * Global::pixelSize, currentPoint.y());
+            painter->drawRect(QRect(startPoint, calibrate(point)));
+        }
+        else if(action == ActionResizeHor)
+        {
+            QPoint point(currentPoint.x(), startPoint.y() + comImg.height * Global::pixelSize);
+            painter->drawRect(QRect(startPoint, calibrate(point)));
+        }
+    }
 }
 
 QPoint QGraphicsComImgCanvansItem::pointToPixel(QPoint point)
@@ -430,7 +462,19 @@ void QGraphicsComImgCanvansItem::on_MousePress(QPoint point)
 
     if(action == ActionNull)
     {
-        if(selectedAuxiliaryLine != -1)
+        if(isInSizeFDiagArea(point))
+        {
+            action = ActionResizeFDiag;
+        }
+        else if(isInSizeVerArea(point))
+        {
+            action = ActionResizeVer;
+        }
+        else if(isInSizeHorArea(point))
+        {
+            action = ActionResizeHor;
+        }
+        else if(selectedAuxiliaryLine != -1)
         {
             action = ActionSelectAuxiliaryLine;
             selectedItemIndex = -1;
@@ -441,6 +485,7 @@ void QGraphicsComImgCanvansItem::on_MousePress(QPoint point)
             moveStartPixel = currentPixel;
         }
     }
+
 
     view->viewport()->update();
 }
@@ -529,6 +574,21 @@ void QGraphicsComImgCanvansItem::on_MouseMove(QPoint point)
     {
         itemMove();
     }
+    else if(action == ActionResizeFDiag)
+    {
+        newSize = QSize(currentPixel.x(), currentPixel.y());
+        emit updateStatusBarSize(newSize);
+    }
+    else if(action == ActionResizeVer)
+    {
+        newSize = QSize(comImg.width, currentPixel.y());
+        emit updateStatusBarSize(newSize);
+    }
+    else if(action == ActionResizeHor)
+    {
+        newSize = QSize(currentPixel.x(), comImg.height);
+        emit updateStatusBarSize(newSize);
+    }
 
     emit updateStatusBarPos(currentPixel);
 }
@@ -549,12 +609,20 @@ void QGraphicsComImgCanvansItem::on_MouseRelease(QPoint point)
         removeAuxLine();
     }
 
-    if(action == ActionSelect || action == ActionMove || action == ActionSelectAuxiliaryLine || action == ActionMoveAuxiliaryLine)
+    if(action == ActionResizeFDiag || action == ActionResizeVer || action == ActionResizeHor)
+    {
+        action = ActionNull;
+        comImg.width = newSize.width();
+        comImg.height = newSize.height();
+        view->scene()->setSceneRect(QRectF(0, 0, comImg.width * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, comImg.height * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
+    }
+    else if(action == ActionSelect || action == ActionMove || action == ActionSelectAuxiliaryLine || action == ActionMoveAuxiliaryLine)
     {
         action = ActionNull;
         selectedAuxiliaryLine = -1;
         view->setCursor(Qt::ArrowCursor);
     }
+    view->viewport()->update();
 }
 
 void QGraphicsComImgCanvansItem::on_CreateAuxLine(Qt::Orientation dir)

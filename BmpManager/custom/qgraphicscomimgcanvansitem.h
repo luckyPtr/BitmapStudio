@@ -43,6 +43,7 @@ class QGraphicsComImgCanvansItem : public QObject, public QGraphicsItem
 //    int dummy;  // RawData看起来有问题，程序关闭后会报错，可能是数组越界，这里添加应该变量后无报错 ？？？？？？？
     int selectedItemIndex = -1;
     Action action = ActionNull;
+    QSize newSize;
     QPoint currentPoint;
     QPoint currentPixel;    // 当前鼠标所在的坐标（图片像素）
     QPoint moveLastPixel;   // 移动图元上一次所在的坐标(像素)
