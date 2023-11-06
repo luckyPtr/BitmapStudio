@@ -1,11 +1,10 @@
 #ifndef QGRAPHICSCOMIMGCANVANSITEM_H
 #define QGRAPHICSCOMIMGCANVANSITEM_H
 
-#include <QGraphicsItem>
-#include <QObject>
+#include <custom/qgraphicsitembase.h>
 #include "rawdata.h"
 
-class QGraphicsComImgCanvansItem : public QObject, public QGraphicsItem
+class QGraphicsComImgCanvansItem : public QGraphicsItemBase
 {
     Q_OBJECT
 
@@ -21,16 +20,16 @@ class QGraphicsComImgCanvansItem : public QObject, public QGraphicsItem
         ActionResizeFDiag,
     };
 
-    struct AuxiliaryLine
-    {
-        Qt::Orientation dir;
-        int scale;
-        AuxiliaryLine(Qt::Orientation dir, int scale)
-        {
-            this->dir = dir;
-            this->scale = scale;
-        }
-    };
+//    struct AuxiliaryLine
+//    {
+//        Qt::Orientation dir;
+//        int scale;
+//        AuxiliaryLine(Qt::Orientation dir, int scale)
+//        {
+//            this->dir = dir;
+//            this->scale = scale;
+//        }
+//    };
 
     // https://blog.csdn.net/u013125105/article/details/100514290
     // Drag Drop参考
@@ -41,7 +40,7 @@ class QGraphicsComImgCanvansItem : public QObject, public QGraphicsItem
     ComImg comImg;
     RawData *rd = nullptr;
 //    int dummy;  // RawData看起来有问题，程序关闭后会报错，可能是数组越界，这里添加应该变量后无报错 ？？？？？？？
-    int selectedItemIndex = -1;
+
     Action action = ActionNull;
     QSize newSize;
     QPoint currentPoint;
@@ -50,7 +49,6 @@ class QGraphicsComImgCanvansItem : public QObject, public QGraphicsItem
     QPoint moveStartPixel;  // 开始移动画布的坐标(像素)
     int dragImgId;          // 拖入的图片ID
     bool isDragImg = false;
-    QVector<AuxiliaryLine> auxiliaryLines;
     int selectedAuxiliaryLine = -1;
     
     bool isInSizeVerArea(QPoint point); // 是否处于垂直调整画布大小的区域内

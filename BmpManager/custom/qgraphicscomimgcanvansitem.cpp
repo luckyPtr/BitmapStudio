@@ -636,7 +636,7 @@ void QGraphicsComImgCanvansItem::on_CreateAuxLine(Qt::Orientation dir)
 }
 
 QGraphicsComImgCanvansItem::QGraphicsComImgCanvansItem(QObject *parent)
-    : QObject{parent}
+
 {
     view = static_cast<QWGraphicsView*>(parent);
     // 初始化左上角0点坐标

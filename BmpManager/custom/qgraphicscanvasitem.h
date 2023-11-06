@@ -1,12 +1,11 @@
 #ifndef QGRAPHICSCANVASITEM_H
 #define QGRAPHICSCANVASITEM_H
 
-#include <QGraphicsItem>
-#include <QObject>
+#include "custom/qgraphicsitembase.h"
 
 
 
-class QGraphicsCanvasItem : public QObject, public QGraphicsItem
+class QGraphicsCanvasItem : public QGraphicsItemBase
 {
     Q_OBJECT
 private:
