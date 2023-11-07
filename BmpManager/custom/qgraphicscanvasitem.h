@@ -19,6 +19,8 @@ private:
         ActionWrite,
         ActionErase,
         ActionMeasure,
+        ActionSelectAuxiliaryLine,
+        ActionMoveAuxiliaryLine
     };
 
     QGraphicsView *view;
@@ -27,6 +29,7 @@ private:
     QPoint currentPoint;
     QPoint currentPixel;    // 当前鼠标所在的坐标（图片像素）
     QPoint moveStartPixel;  // 开始移动画布的坐标(像素)
+    QPoint moveLastPixel;   // 移动图元上一次所在的坐标(像素)
     QSize newSize;          // 调整画布大小的新的大小
 
     QPoint pointToPixel(QPoint point);  // 坐标转换为画布上的像素坐标
@@ -46,6 +49,9 @@ private:
     void getMargin(int &up, int &down, int &left, int &right);  // 获取四周的距离
     void drawPoint(QImage &img, int x, int y, bool dot);
     void drawPoint(QImage &img, QPoint point, bool dot);
+
+    void paintAuxiliaryLines(QPainter *painter);
+    int getPointAuxLineIndex(QPoint point);
 public:
     enum Mode
     {
@@ -79,6 +85,7 @@ public slots:
     void on_FlipVer();
     void on_RotateLeft();
     void on_RotateRight();
+    void on_CreateAuxLine(Qt::Orientation dir);
 
 signals:
     void updataStatusBarPos(QPoint);

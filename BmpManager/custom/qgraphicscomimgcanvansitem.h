@@ -20,20 +20,8 @@ class QGraphicsComImgCanvansItem : public QGraphicsItemBase
         ActionResizeFDiag,
     };
 
-//    struct AuxiliaryLine
-//    {
-//        Qt::Orientation dir;
-//        int scale;
-//        AuxiliaryLine(Qt::Orientation dir, int scale)
-//        {
-//            this->dir = dir;
-//            this->scale = scale;
-//        }
-//    };
-
     // https://blog.csdn.net/u013125105/article/details/100514290
     // Drag Drop参考
-
 
     QGraphicsView *view;
     QPoint startPoint;  // 左上角起始位置坐标
@@ -43,13 +31,14 @@ class QGraphicsComImgCanvansItem : public QGraphicsItemBase
 
     Action action = ActionNull;
     QSize newSize;
+    int selectedItemIndex = -1;
     QPoint currentPoint;
     QPoint currentPixel;    // 当前鼠标所在的坐标（图片像素）
     QPoint moveLastPixel;   // 移动图元上一次所在的坐标(像素)
     QPoint moveStartPixel;  // 开始移动画布的坐标(像素)
     int dragImgId;          // 拖入的图片ID
     bool isDragImg = false;
-    int selectedAuxiliaryLine = -1;
+
     
     bool isInSizeVerArea(QPoint point); // 是否处于垂直调整画布大小的区域内
     bool isInSizeHorArea(QPoint point); // 是否处于水平调整画布大小的区域内
