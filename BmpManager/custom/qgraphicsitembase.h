@@ -25,7 +25,7 @@ public:
     int selectedAuxiliaryLine = -1;
     static QVector<AuxiliaryLine> auxiliaryLines;
 
-    explicit QGraphicsItemBase(QGraphicsItem *parent = nullptr);
+    explicit QGraphicsItemBase(QGraphicsItem *parent = nullptr) : QGraphicsItem(parent) {}
 
 };
 

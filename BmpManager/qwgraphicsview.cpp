@@ -5,27 +5,31 @@
 
 void QWGraphicsView::mouseMoveEvent(QMouseEvent *event)
 {
-//    qDebug() << "mouse move" << event->pos();
-    QPoint point = event->pos();
+//    qDebug() << "mouse move" << mapToScene(event->pos());
+    QPoint point = mapToScene(event->pos()).toPoint();
+
     emit mouseMovePoint(point);
     QGraphicsView::mouseMoveEvent(event);
 }
 
 void QWGraphicsView::mousePressEvent(QMouseEvent *event)
 {
+    QPoint point = mapToScene(event->pos()).toPoint();
+
     if(event->button() == Qt::LeftButton)
-        emit mousePress(event->pos());
+        emit mousePress(point);
     else if(event->button() == Qt::MiddleButton)
-        emit mousePressMiddle(event->pos());
+        emit mousePressMiddle(point);
     else if(event->button() == Qt::RightButton)
-        emit mousePressRight(event->pos());
+        emit mousePressRight(point);
 
     QGraphicsView::mousePressEvent(event);
 }
 
 void QWGraphicsView::mouseReleaseEvent(QMouseEvent *event)
 {
-    emit mouseRelease(event->pos());
+    QPoint point = mapToScene(event->pos()).toPoint();
+    emit mouseRelease(point);
     QGraphicsView::mouseReleaseEvent(event);
 }
 

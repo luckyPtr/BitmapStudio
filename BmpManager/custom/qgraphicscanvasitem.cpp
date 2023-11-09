@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QPen>
 #include <QImage>
+#include <QScrollBar>
 #include <QtConcurrent/QtConcurrent>
 
 QPoint QGraphicsCanvasItem::pointToPixel(QPoint point)
@@ -457,6 +458,8 @@ void QGraphicsCanvasItem::setMode(quint8 mode)
 
 void QGraphicsCanvasItem::on_MouseMove(QPoint point)
 {
+//    point += QPoint(view->horizontalScrollBar()->value(), view->verticalScrollBar()->value());
+
     auto auxLineMove = [&](){
         if(currentPixel != moveLastPixel)
         {
@@ -485,6 +488,8 @@ void QGraphicsCanvasItem::on_MouseMove(QPoint point)
     currentPoint = point;
     currentPixel.setX((currentPoint.x() - startPoint.x()) / Global::pixelSize);
     currentPixel.setY((currentPoint.y() - startPoint.y()) / Global::pixelSize);
+
+    qDebug() << "currentPixel:" << currentPixel;
 
     if(action == ActionNull)
     {
@@ -550,7 +555,7 @@ void QGraphicsCanvasItem::on_MouseMove(QPoint point)
 
 void QGraphicsCanvasItem::on_MousePressLeft(QPoint point)
 {
-
+//    point += QPoint(view->horizontalScrollBar()->value(), view->verticalScrollBar()->value());
     selectedAuxiliaryLine = getPointAuxLineIndex(point);
 
     if(action == ActionNull)
