@@ -14,6 +14,8 @@ public:
     {
         Qt::Orientation dir;
         int scale;
+        static bool lock;  // 锁定辅助线
+        static bool hide;  // 隐藏辅助线
         AuxiliaryLine(Qt::Orientation dir, int scale)
         {
             this->dir = dir;

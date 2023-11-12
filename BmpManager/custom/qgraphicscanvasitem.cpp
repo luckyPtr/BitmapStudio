@@ -4,7 +4,9 @@
 #include <QDebug>
 #include <QPen>
 #include <QImage>
+#include <QMenu>
 #include <QScrollBar>
+#include <QGraphicsSceneContextMenuEvent>
 #include <QtConcurrent/QtConcurrent>
 
 QPoint QGraphicsCanvasItem::pointToPixel(QPoint point)
@@ -225,6 +227,11 @@ void QGraphicsCanvasItem::drawPoint(QImage &img, QPoint point, bool dot)
 
 void QGraphicsCanvasItem::paintAuxiliaryLines(QPainter *painter)
 {
+    if(QGraphicsCanvasItem::AuxiliaryLine::hide)
+    {
+        return;
+    }
+
     QPen pen(Qt::green);
     pen.setStyle(Qt::DotLine);
     painter->setPen(pen);
@@ -489,8 +496,6 @@ void QGraphicsCanvasItem::on_MouseMove(QPoint point)
     currentPixel.setX((currentPoint.x() - startPoint.x()) / Global::pixelSize);
     currentPixel.setY((currentPoint.y() - startPoint.y()) / Global::pixelSize);
 
-    qDebug() << "currentPixel:" << currentPixel;
-
     if(action == ActionNull)
     {
         Qt::CursorShape cursor = Qt::ArrowCursor;
@@ -572,7 +577,7 @@ void QGraphicsCanvasItem::on_MousePressLeft(QPoint point)
         {
             action = ActionResizeHor;
         }
-        else if(selectedAuxiliaryLine != -1)
+        else if(selectedAuxiliaryLine != -1 && !QGraphicsCanvasItem::AuxiliaryLine::hide && !QGraphicsCanvasItem::AuxiliaryLine::lock)
         {
             action = ActionSelectAuxiliaryLine;
         }
@@ -731,3 +736,5 @@ void QGraphicsCanvasItem::on_CreateAuxLine(Qt::Orientation dir)
     moveLastPixel = currentPixel;
     view->setCursor(auxLine.dir == Qt::Horizontal ? Qt::SizeVerCursor : Qt::SizeHorCursor);
 }
+
+

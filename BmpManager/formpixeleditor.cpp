@@ -4,6 +4,8 @@
 #include <QDebug>
 #include <global.h>
 #include <QScrollBar>
+#include <QCursor>
+#include <custom/qcustommenu.h>
 #include "custom/qcustommenu.h"
 
 
@@ -114,6 +116,38 @@ void FormPixelEditor::leaveEvent(QEvent *event)
     emit updataStatusBarPos(QPoint(-1, -1));
 }
 
+void FormPixelEditor::contextMenuEvent(QContextMenuEvent *event)
+{
+    QMenu menu;
+
+    menu.addAction(ui->actAutoResize);
+
+    QMenu menuRotate(tr("变换"));
+    menuRotate.addAction(ui->actRotateLeft);
+    menuRotate.addAction(ui->actRotateRight);
+    menuRotate.addAction(ui->actFlipHorizontal);
+    menuRotate.addAction(ui->actFlipVerital);
+    menu.addMenu(&menuRotate);
+
+    QCustomMenu menuMove;
+    menuMove.setTitle(tr("移动"));
+    menuMove.setIcon(QIcon(":/Image/PixelEditor/Move.svg"));
+    menuMove.addAction(ui->actMoveUp);
+    menuMove.addAction(ui->actMoveDown);
+    menuMove.addAction(ui->actMoveLeft);
+    menuMove.addAction(ui->actMoveRight);
+    menu.addMenu(&menuMove);
+
+    QMenu menuAuxiliaryLine(tr("辅助线"));
+    menuAuxiliaryLine.addAction(ui->actLockAuxiliaryLine);
+    menuAuxiliaryLine.addAction(ui->actHideAuxiliaryLine);
+    menu.addMenu(&menuAuxiliaryLine);
+
+    menu.addAction(ui->actCenter);
+    menu.addAction(ui->actReserve);
+    menu.exec(QCursor::pos());
+}
+
 void FormPixelEditor::paintView()
 {
     initScrollerPos();
@@ -158,5 +192,33 @@ void FormPixelEditor::on_actMeasure_triggered()
 void FormPixelEditor::on_actSave_triggered()
 {
     emit saveImage(getProject(), getId(), scanvasItem->getImage());
+}
+
+
+void FormPixelEditor::on_actLockAuxiliaryLine_triggered()
+{
+    QGraphicsCanvasItem::AuxiliaryLine::lock = !QGraphicsCanvasItem::AuxiliaryLine::lock;
+    if(QGraphicsCanvasItem::AuxiliaryLine::lock)
+    {
+        ui->actLockAuxiliaryLine->setText(tr("解锁"));
+    }
+    else
+    {
+        ui->actLockAuxiliaryLine->setText(tr("锁定"));
+    }
+}
+
+
+void FormPixelEditor::on_actHideAuxiliaryLine_triggered()
+{
+    QGraphicsCanvasItem::AuxiliaryLine::hide = !QGraphicsCanvasItem::AuxiliaryLine::hide;
+    if(QGraphicsCanvasItem::AuxiliaryLine::hide)
+    {
+        ui->actHideAuxiliaryLine->setText(tr("显示"));
+    }
+    else
+    {
+        ui->actHideAuxiliaryLine->setText(tr("隐藏"));
+    }
 }
 

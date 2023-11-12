@@ -290,6 +290,9 @@
    <property name="text">
     <string>上移</string>
    </property>
+   <property name="shortcut">
+    <string>Up</string>
+   </property>
   </action>
   <action name="actMoveDown">
    <property name="icon">
@@ -298,6 +301,9 @@
    </property>
    <property name="text">
     <string>下移</string>
+   </property>
+   <property name="shortcut">
+    <string>Down</string>
    </property>
   </action>
   <action name="actMoveLeft">
@@ -308,6 +314,9 @@
    <property name="text">
     <string>左移</string>
    </property>
+   <property name="shortcut">
+    <string>Left</string>
+   </property>
   </action>
   <action name="actMoveRight">
    <property name="icon">
@@ -316,6 +325,9 @@
    </property>
    <property name="text">
     <string>右移</string>
+   </property>
+   <property name="shortcut">
+    <string>Right</string>
    </property>
   </action>
   <action name="actMove">
@@ -418,6 +430,25 @@
    </property>
    <property name="toolTip">
     <string>保存</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actLockAuxiliaryLine">
+   <property name="text">
+    <string>锁定</string>
+   </property>
+   <property name="toolTip">
+    <string>锁定辅助线</string>
+   </property>
+  </action>
+  <action name="actHideAuxiliaryLine">
+   <property name="text">
+    <string>隐藏</string>
+   </property>
+   <property name="toolTip">
+    <string>隐藏辅助线</string>
    </property>
   </action>
  </widget>

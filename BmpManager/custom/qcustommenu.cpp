@@ -1,7 +1,7 @@
 #include "qcustommenu.h"
 #include <QMouseEvent>
 
-QCustomMenu::QCustomMenu(QWidget *parent)
+QCustomMenu::QCustomMenu(QWidget *parent) : QMenu(parent)
 {
 
 }

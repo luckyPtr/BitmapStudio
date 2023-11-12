@@ -32,6 +32,7 @@ private:
 
 protected:
     void leaveEvent(QEvent *event) override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
 
 public slots:
     void paintView();
@@ -45,6 +46,9 @@ signals:
     void updataStatusBarPos(QPoint);
     void saveImage(QImage image);
     void saveImage(QString, int, QImage);
+private slots:
+    void on_actLockAuxiliaryLine_triggered();
+    void on_actHideAuxiliaryLine_triggered();
 };
 
 #endif // FORMPIXELEDITOR_H

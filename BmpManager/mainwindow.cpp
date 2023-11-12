@@ -39,7 +39,6 @@ MainWindow::~MainWindow()
 void MainWindow::init()
 {
     initStatusBar();
-
     treeItemDelegate = new TreeItemDelegate();
     ui->treeViewProject->setItemDelegate(treeItemDelegate);
     pm.blindTreeView(ui->treeViewProject);
