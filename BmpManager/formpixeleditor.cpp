@@ -40,7 +40,9 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
     connect(scaleItem, SIGNAL(createAuxLine(Qt::Orientation)), scanvasItem, SLOT(on_CreateAuxLine(Qt::Orientation)));
     connect(ui->graphicsView, SIGNAL(paint()), this, SLOT(paintView()));    // todo Lambda
     connect(ui->actReserve, SIGNAL(triggered()), scanvasItem, SLOT(on_Reserve()));
-    connect(ui->actCenter, SIGNAL(triggered()), scanvasItem, SLOT(on_Center()));
+    connect(ui->actCenter, SIGNAL(triggered()), scanvasItem, SLOT(on_AlignCenter()));
+    connect(ui->actAlignHCenter, SIGNAL(triggered()), scanvasItem, SLOT(on_AlignHCenter()));
+    connect(ui->actAlignVCenter, SIGNAL(triggered()), scanvasItem, SLOT(on_AlignVCenter()));
     connect(ui->actAutoResize, SIGNAL(triggered()), scanvasItem, SLOT(on_AutoResize()));
     connect(ui->actMoveUp, SIGNAL(triggered()), scanvasItem, SLOT(on_MoveUp()));
     connect(ui->actMoveDown, SIGNAL(triggered()), scanvasItem, SLOT(on_MoveDown()));
@@ -141,9 +143,15 @@ void FormPixelEditor::contextMenuEvent(QContextMenuEvent *event)
     QMenu menuAuxiliaryLine(tr("辅助线"));
     menuAuxiliaryLine.addAction(ui->actLockAuxiliaryLine);
     menuAuxiliaryLine.addAction(ui->actHideAuxiliaryLine);
+    menuAuxiliaryLine.addAction(ui->actClearAuxiliaryLines);
     menu.addMenu(&menuAuxiliaryLine);
 
-    menu.addAction(ui->actCenter);
+    QMenu menuAlign(tr("布局"));
+    menuAlign.addAction(ui->actCenter);
+    menuAlign.addAction(ui->actAlignHCenter);
+    menuAlign.addAction(ui->actAlignVCenter);
+    menu.addMenu(&menuAlign);
+
     menu.addAction(ui->actReserve);
     menu.exec(QCursor::pos());
 }
@@ -221,4 +229,14 @@ void FormPixelEditor::on_actHideAuxiliaryLine_triggered()
         ui->actHideAuxiliaryLine->setText(tr("隐藏"));
     }
 }
+
+
+void FormPixelEditor::on_actClearAuxiliaryLines_triggered()
+{
+    QGraphicsCanvasItem::auxiliaryLines.clear();
+}
+
+
+
+
 

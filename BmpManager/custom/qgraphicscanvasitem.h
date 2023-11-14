@@ -75,7 +75,9 @@ public slots:
     void on_MousePressRight(QPoint point);
     void on_MouseRelease(QPoint point);
     void on_Reserve();  // 反色
-    void on_Center();   // 居中
+    void on_AlignCenter();   // 居中
+    void on_AlignHCenter(); // 水平居中
+    void on_AlignVCenter(); // 垂直居中
     void on_AutoResize();   // 自动裁剪
     void on_MoveUp();
     void on_MoveDown();

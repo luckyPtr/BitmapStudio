@@ -451,6 +451,32 @@
     <string>隐藏辅助线</string>
    </property>
   </action>
+  <action name="actClearAuxiliaryLines">
+   <property name="text">
+    <string>清除</string>
+   </property>
+   <property name="toolTip">
+    <string>清除全部辅助线</string>
+   </property>
+  </action>
+  <action name="actAlignHCenter">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/ComImgEditor/HCenter.svg</normaloff>:/Image/ComImgEditor/HCenter.svg</iconset>
+   </property>
+   <property name="text">
+    <string>水平居中</string>
+   </property>
+  </action>
+  <action name="actAlignVCenter">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/ComImgEditor/VCenter.svg</normaloff>:/Image/ComImgEditor/VCenter.svg</iconset>
+   </property>
+   <property name="text">
+    <string>垂直居中</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

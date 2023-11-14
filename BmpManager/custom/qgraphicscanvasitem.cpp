@@ -659,11 +659,27 @@ void QGraphicsCanvasItem::on_Reserve()
     view->viewport()->update();
 }
 
-void QGraphicsCanvasItem::on_Center()
+void QGraphicsCanvasItem::on_AlignCenter()
 {
     int upMargin, downMargin, leftMargin, rightMargin;  // 图片离画布边缘的距离
     getMargin(upMargin, downMargin, leftMargin, rightMargin);
     moveImage(image, (leftMargin + rightMargin) / 2 - leftMargin, (upMargin + downMargin) / 2 - upMargin);
+    view->viewport()->update();
+}
+
+void QGraphicsCanvasItem::on_AlignHCenter()
+{
+    int upMargin, downMargin, leftMargin, rightMargin;  // 图片离画布边缘的距离
+    getMargin(upMargin, downMargin, leftMargin, rightMargin);
+    moveImage(image, (leftMargin + rightMargin) / 2 - leftMargin, 0);
+    view->viewport()->update();
+}
+
+void QGraphicsCanvasItem::on_AlignVCenter()
+{
+    int upMargin, downMargin, leftMargin, rightMargin;  // 图片离画布边缘的距离
+    getMargin(upMargin, downMargin, leftMargin, rightMargin);
+    moveImage(image, 0, (upMargin + downMargin) / 2 - upMargin);
     view->viewport()->update();
 }
 

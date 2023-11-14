@@ -49,6 +49,7 @@ signals:
 private slots:
     void on_actLockAuxiliaryLine_triggered();
     void on_actHideAuxiliaryLine_triggered();
+    void on_actClearAuxiliaryLines_triggered();
 };
 
 #endif // FORMPIXELEDITOR_H
