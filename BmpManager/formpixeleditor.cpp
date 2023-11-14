@@ -209,10 +209,12 @@ void FormPixelEditor::on_actLockAuxiliaryLine_triggered()
     if(QGraphicsCanvasItem::AuxiliaryLine::lock)
     {
         ui->actLockAuxiliaryLine->setText(tr("解锁"));
+        ui->actLockAuxiliaryLine->setIcon(QIcon(":/Image/PixelEditor/Unlock.svg"));
     }
     else
     {
         ui->actLockAuxiliaryLine->setText(tr("锁定"));
+        ui->actLockAuxiliaryLine->setIcon(QIcon(":/Image/PixelEditor/Lock.svg"));
     }
 }
 
@@ -223,10 +225,12 @@ void FormPixelEditor::on_actHideAuxiliaryLine_triggered()
     if(QGraphicsCanvasItem::AuxiliaryLine::hide)
     {
         ui->actHideAuxiliaryLine->setText(tr("显示"));
+        ui->actHideAuxiliaryLine->setIcon(QIcon(":/Image/PixelEditor/Visible.svg"));
     }
     else
     {
         ui->actHideAuxiliaryLine->setText(tr("隐藏"));
+        ui->actHideAuxiliaryLine->setIcon(QIcon(":/Image/PixelEditor/Invisible.svg"));
     }
 }
 

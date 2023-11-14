@@ -436,6 +436,10 @@
    </property>
   </action>
   <action name="actLockAuxiliaryLine">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/Lock.svg</normaloff>:/Image/PixelEditor/Lock.svg</iconset>
+   </property>
    <property name="text">
     <string>锁定</string>
    </property>
@@ -444,6 +448,10 @@
    </property>
   </action>
   <action name="actHideAuxiliaryLine">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/Invisible.svg</normaloff>:/Image/PixelEditor/Invisible.svg</iconset>
+   </property>
    <property name="text">
     <string>隐藏</string>
    </property>

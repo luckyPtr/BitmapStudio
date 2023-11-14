@@ -50,5 +50,11 @@
         <file>Image/ComImgEditor/VCenter.svg</file>
         <file>Image/TabBar/Close1.svg</file>
         <file>Image/TabBar/Close2.svg</file>
+        <file>Image/PixelEditor/Height.svg</file>
+        <file>Image/PixelEditor/Width.svg</file>
+        <file>Image/PixelEditor/Lock.svg</file>
+        <file>Image/PixelEditor/Unlock.svg</file>
+        <file>Image/PixelEditor/Invisible.svg</file>
+        <file>Image/PixelEditor/Visible.svg</file>
     </qresource>
 </RCC>
