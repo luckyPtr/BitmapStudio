@@ -370,3 +370,24 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index)
     ui->tabWidget->removeTab(index);
 }
 
+
+void MainWindow::on_actReplaceImage_triggered()
+{
+    QString aFile = QFileDialog::getOpenFileName(this, tr("导入图片"), "", tr("图片(*.jpg *.png *.bmp);;JPEG(*.jpg *.jpeg);;PNG(*.png);;BMP(*.bmp)"));
+    if(!aFile.isEmpty())
+    {
+        QImage img(aFile);
+        DialogImportImg *dlgImportImg = new DialogImportImg(img, this);
+        dlgImportImg->setImgName(QFileInfo(aFile).baseName());
+        int ret = dlgImportImg->exec();
+        if(ret == QDialog::Accepted)
+        {
+            QModelIndex curIndex = ui->treeViewProject->currentIndex();
+            QImage img = dlgImportImg->getMonoImg();
+            pm.setImage(curIndex, img);
+        }
+        delete dlgImportImg;
+        on_treeViewProject_clicked(ui->treeViewProject->currentIndex());
+    }
+}
+

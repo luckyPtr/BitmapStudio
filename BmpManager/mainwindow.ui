@@ -108,7 +108,7 @@ QTabBar::tab:selected,QTabBar::tab:hover
      <x>0</x>
      <y>0</y>
      <width>1109</width>
-     <height>20</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
@@ -314,6 +314,7 @@ QTabBar::tab:selected,QTabBar::tab:hover
    <addaction name="actGrpImgTransform"/>
    <addaction name="actRun"/>
    <addaction name="actCopyName"/>
+   <addaction name="actReplaceImage"/>
    <addaction name="actTest"/>
   </widget>
   <action name="actOpenProject">
@@ -433,6 +434,15 @@ QTabBar::tab:selected,QTabBar::tab:hover
    </property>
    <property name="text">
     <string>复制名称</string>
+   </property>
+  </action>
+  <action name="actReplaceImage">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/Toolbar/Replace.svg</normaloff>:/Image/Toolbar/Replace.svg</iconset>
+   </property>
+   <property name="text">
+    <string>替换图片</string>
    </property>
   </action>
  </widget>

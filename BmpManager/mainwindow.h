@@ -49,6 +49,8 @@ private slots:
 
     void on_actRun_triggered();
 
+    void on_actReplaceImage_triggered();
+
 public slots:
     void on_UpdateStatusBarPos(QPoint point);
 

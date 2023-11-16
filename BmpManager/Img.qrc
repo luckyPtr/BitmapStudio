@@ -56,5 +56,7 @@
         <file>Image/PixelEditor/Unlock.svg</file>
         <file>Image/PixelEditor/Invisible.svg</file>
         <file>Image/PixelEditor/Visible.svg</file>
+        <file>Image/Toolbar/Export.svg</file>
+        <file>Image/Toolbar/Replace.svg</file>
     </qresource>
 </RCC>
