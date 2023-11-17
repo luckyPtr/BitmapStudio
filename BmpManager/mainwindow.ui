@@ -315,6 +315,7 @@ QTabBar::tab:selected,QTabBar::tab:hover
    <addaction name="actRun"/>
    <addaction name="actCopyName"/>
    <addaction name="actReplaceImage"/>
+   <addaction name="actExport"/>
    <addaction name="actTest"/>
   </widget>
   <action name="actOpenProject">
@@ -443,6 +444,15 @@ QTabBar::tab:selected,QTabBar::tab:hover
    </property>
    <property name="text">
     <string>替换图片</string>
+   </property>
+  </action>
+  <action name="actExport">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/Toolbar/Export.svg</normaloff>:/Image/Toolbar/Export.svg</iconset>
+   </property>
+   <property name="text">
+    <string>导出图片</string>
    </property>
   </action>
  </widget>

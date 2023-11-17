@@ -391,3 +391,20 @@ void MainWindow::on_actReplaceImage_triggered()
     }
 }
 
+
+void MainWindow::on_actExport_triggered()
+{
+    QModelIndex curIndex = ui->treeViewProject->currentIndex();
+    if(curIndex.isValid())
+    {
+        TreeItem *item = pm.model()->itemFromIndex(curIndex);
+        QImage img = item->getRawData()->getImage(item->getID());
+
+        QString fileName = QFileDialog::getSaveFileName(this, "保存图片", "./", "BMP(*.bmp);;PNG(*.png)");
+        if(!fileName.isEmpty())
+        {
+            img.save(fileName);
+        }
+    }
+}
+
