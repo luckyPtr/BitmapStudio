@@ -142,7 +142,7 @@ void MainWindow::on_actRename_triggered()
     {
         QModelIndex curIndex = ui->treeViewProject->currentIndex();
         pm.rename(curIndex, name);
-        pm.initModel();
+        on_treeViewProject_clicked(curIndex);
     }
 }
 

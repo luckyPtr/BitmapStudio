@@ -78,7 +78,9 @@ int CustomTabWidget::addImgTab(TreeItem *treeItem)
         CustomTab *widget = static_cast<CustomTab *>(this->widget(i));
         if(widget->getProject() == project && widget->getId() == id)
         {
-            this->setCurrentIndex(i);
+            (static_cast<FormPixelEditor *>(widget))->on_LoadImage(bf.image);
+            setTabText(i, bf.name);
+            setCurrentIndex(i);
             return i;
         }
     }
@@ -111,7 +113,9 @@ int CustomTabWidget::addComImgTab(TreeItem *treeItem)
         CustomTab *widget = static_cast<CustomTab *>(this->widget(i));
         if(widget->getProject() == project && widget->getId() == id)
         {
-            this->setCurrentIndex(i);
+            (static_cast<FormComImgEditor *>(widget))->on_LoadComImg(bf.comImg, treeItem->getRawData());
+            setTabText(i, bf.name);
+            setCurrentIndex(i);
             return i;
         }
     }
@@ -137,7 +141,6 @@ void CustomTabWidget::removeTab(int index)
     QWidget *removeWidget = widget(index);
     QTabWidget::removeTab(index);
     delete removeWidget;
-    // todo:delete QScrollArea
 }
 
 void CustomTabWidget::removeAll()
