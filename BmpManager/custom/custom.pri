@@ -1,5 +1,6 @@
 HEADERS += \
     $$PWD/customtab.h \
+    $$PWD/dialogresize.h \
     $$PWD/qcustommenu.h \
     $$PWD/qgraphicscanvasitem.h \
     $$PWD/qgraphicscomimgcanvansitem.h \
@@ -9,9 +10,13 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/customtab.cpp \
+    $$PWD/dialogresize.cpp \
     $$PWD/qcustommenu.cpp \
     $$PWD/qgraphicscanvasitem.cpp \
     $$PWD/qgraphicscomimgcanvansitem.cpp \
     $$PWD/qgraphicsitembase.cpp \
     $$PWD/qgraphicsscaleitem.cpp \
     $$PWD/treeitemdelegate.cpp
+
+FORMS += \
+    $$PWD/dialogresize.ui

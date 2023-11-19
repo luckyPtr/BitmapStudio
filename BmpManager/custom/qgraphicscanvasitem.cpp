@@ -463,6 +463,12 @@ void QGraphicsCanvasItem::setMode(quint8 mode)
     this->mode = mode;
 }
 
+void QGraphicsCanvasItem::resize(QSize size)
+{
+    resizeImage(image, size);
+    view->scene()->setSceneRect(QRectF(0, 0, image.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
+}
+
 void QGraphicsCanvasItem::on_MouseMove(QPoint point)
 {
 //    point += QPoint(view->horizontalScrollBar()->value(), view->verticalScrollBar()->value());

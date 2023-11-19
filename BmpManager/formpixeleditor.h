@@ -50,6 +50,7 @@ private slots:
     void on_actLockAuxiliaryLine_triggered();
     void on_actHideAuxiliaryLine_triggered();
     void on_actClearAuxiliaryLines_triggered();
+    void on_actResize_triggered();
 };
 
 #endif // FORMPIXELEDITOR_H

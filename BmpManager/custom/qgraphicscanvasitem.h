@@ -67,6 +67,7 @@ public:
     void setImage(QImage &image);
     QImage getImage();
     void setMode(quint8 mode);
+    void resize(QSize size);
 
 public slots:
     void on_MouseMove(QPoint point);

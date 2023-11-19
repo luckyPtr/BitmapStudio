@@ -6,7 +6,7 @@
 #include <QScrollBar>
 #include <QCursor>
 #include <custom/qcustommenu.h>
-#include "custom/qcustommenu.h"
+#include "custom/dialogresize.h"
 
 
 FormPixelEditor::FormPixelEditor(QWidget *parent) :
@@ -85,32 +85,32 @@ void FormPixelEditor::initScrollerPos()
 
 void FormPixelEditor::initAction()
 {
-    ui->toolBtnRotateFlip->setIcon(QIcon(":/Image/PixelEditor/FlipHorizontal.svg"));
-    QCustomMenu *menu = new QCustomMenu(this);
-    menu->addAction(ui->actFlipHorizontal);
-    menu->addAction(ui->actFlipVerital);
-    menu->addAction(ui->actRotateLeft);
-    menu->addAction(ui->actRotateRight);
-    ui->toolBtnRotateFlip->setMenu(menu);
-    ui->toolBtnRotateFlip->setPopupMode(QToolButton::InstantPopup);
+//    ui->toolBtnRotateFlip->setIcon(QIcon(":/Image/PixelEditor/FlipHorizontal.svg"));
+//    QCustomMenu *menu = new QCustomMenu(this);
+//    menu->addAction(ui->actFlipHorizontal);
+//    menu->addAction(ui->actFlipVerital);
+//    menu->addAction(ui->actRotateLeft);
+//    menu->addAction(ui->actRotateRight);
+//    ui->toolBtnRotateFlip->setMenu(menu);
+//    ui->toolBtnRotateFlip->setPopupMode(QToolButton::InstantPopup);
 
-    ui->toolBtnMove->setIcon(QIcon(":/Image/PixelEditor/Move.svg"));
-    QCustomMenu *menuMove = new QCustomMenu(this);
-    menuMove->addAction(ui->actMoveUp);
-    menuMove->addAction(ui->actMoveDown);
-    menuMove->addAction(ui->actMoveLeft);
-    menuMove->addAction(ui->actMoveRight);
-    menuMove->setToolTip("移动");
-    ui->toolBtnMove->setMenu(menuMove);
-    ui->toolBtnMove->setPopupMode(QToolButton::InstantPopup);
+//    ui->toolBtnMove->setIcon(QIcon(":/Image/PixelEditor/Move.svg"));
+//    QCustomMenu *menuMove = new QCustomMenu(this);
+//    menuMove->addAction(ui->actMoveUp);
+//    menuMove->addAction(ui->actMoveDown);
+//    menuMove->addAction(ui->actMoveLeft);
+//    menuMove->addAction(ui->actMoveRight);
+//    menuMove->setToolTip("移动");
+//    ui->toolBtnMove->setMenu(menuMove);
+//    ui->toolBtnMove->setPopupMode(QToolButton::InstantPopup);
 
-    ui->toolBtnReserve->setDefaultAction(ui->actReserve);
-    ui->toolBtnCenter->setDefaultAction(ui->actCenter);
-    ui->toolBtnAutoResize->setDefaultAction(ui->actAutoResize);
-    ui->toolBntSelect->setDefaultAction(ui->actSelect);
-    ui->toolBntEdit->setDefaultAction(ui->actEdit);
-    ui->toolBntMeasure->setDefaultAction(ui->actMeasure);
-    ui->toolBtnSave->setDefaultAction(ui->actSave);
+//    ui->toolBtnReserve->setDefaultAction(ui->actReserve);
+//    ui->toolBtnCenter->setDefaultAction(ui->actCenter);
+//    ui->toolBtnAutoResize->setDefaultAction(ui->actAutoResize);
+//    ui->toolBntSelect->setDefaultAction(ui->actSelect);
+//    ui->toolBntEdit->setDefaultAction(ui->actEdit);
+//    ui->toolBntMeasure->setDefaultAction(ui->actMeasure);
+//    ui->toolBtnSave->setDefaultAction(ui->actSave);
 }
 
 void FormPixelEditor::leaveEvent(QEvent *event)
@@ -151,6 +151,8 @@ void FormPixelEditor::contextMenuEvent(QContextMenuEvent *event)
     menuAlign.addAction(ui->actAlignHCenter);
     menuAlign.addAction(ui->actAlignVCenter);
     menu.addMenu(&menuAlign);
+
+    menu.addAction(ui->actResize);
 
     menu.addAction(ui->actReserve);
     menu.exec(QCursor::pos());
@@ -242,5 +244,15 @@ void FormPixelEditor::on_actClearAuxiliaryLines_triggered()
 
 
 
-
+void FormPixelEditor::on_actResize_triggered()
+{
+    DialogResize *dlgResize = new DialogResize(this);
+    int ret = dlgResize->exec();
+    if(ret == QDialog::Accepted)
+    {
+        QSize size = dlgResize->getSize();
+        scanvasItem->resize(size);
+    }
+    delete dlgResize;
+}
 
