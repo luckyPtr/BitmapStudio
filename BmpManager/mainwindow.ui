@@ -108,7 +108,7 @@ QTabBar::tab:selected,QTabBar::tab:hover
      <x>0</x>
      <y>0</y>
      <width>1109</width>
-     <height>26</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>
@@ -159,7 +159,7 @@ QTabBar::tab:selected,QTabBar::tab:hover
       <number>0</number>
      </property>
      <item>
-      <widget class="QLineEdit" name="lineEditSerch">
+      <widget class="QLineEdit" name="lineEditSearch">
        <property name="autoFillBackground">
         <bool>false</bool>
        </property>

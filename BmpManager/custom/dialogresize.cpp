@@ -7,6 +7,9 @@ DialogResize::DialogResize(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    setWindowFlag(Qt::MSWindowsFixedSizeDialogHint);        // 固定窗口
+    setWindowFlag(Qt::WindowContextHelpButtonHint, false);  // 取消Dialog的？
+
     QPixmap pixemapWidth = QPixmap(":/Image/PixelEditor/Width.svg");
     pixemapWidth = pixemapWidth.scaled(QSize(48, 48), Qt::KeepAspectRatio);
     ui->labelWidth->setPixmap(pixemapWidth);

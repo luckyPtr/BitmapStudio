@@ -247,6 +247,7 @@ void FormPixelEditor::on_actClearAuxiliaryLines_triggered()
 void FormPixelEditor::on_actResize_triggered()
 {
     DialogResize *dlgResize = new DialogResize(this);
+    dlgResize->setDefaultSize(scanvasItem->getImage().size());
     int ret = dlgResize->exec();
     if(ret == QDialog::Accepted)
     {
