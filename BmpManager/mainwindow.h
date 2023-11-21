@@ -53,6 +53,8 @@ private slots:
 
     void on_actExport_triggered();
 
+    void on_actEditMode_triggered(bool checked);
+
 public slots:
     void on_UpdateStatusBarPos(QPoint point);
 
@@ -96,5 +98,6 @@ private:
 signals:
     void selectItem(QImage &Image);
     void selectItem(ComImg &comImg, RawData *rd);
+    void editModeTriggered(bool);
 };
 #endif // MAINWINDOW_H

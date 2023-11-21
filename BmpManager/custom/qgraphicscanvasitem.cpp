@@ -320,7 +320,6 @@ QGraphicsCanvasItem::QGraphicsCanvasItem(QWidget *parent)
     startPoint.setX(Global::scaleWidth + Global::scaleOffset);
     startPoint.setY(Global::scaleWidth + Global::scaleOffset);
     action = ActionNull;
-    mode = SelectMode;
 
     connect(view, SIGNAL(mousePress(QPoint)), this, SLOT(on_MousePressLeft(QPoint)));
     connect(view, SIGNAL(mousePressMiddle(QPoint)), this, SLOT(on_MousePressMiddle(QPoint)));
@@ -458,10 +457,6 @@ QImage QGraphicsCanvasItem::getImage()
     return image;
 }
 
-void QGraphicsCanvasItem::setMode(quint8 mode)
-{
-    this->mode = mode;
-}
 
 void QGraphicsCanvasItem::resize(QSize size)
 {
@@ -589,7 +584,7 @@ void QGraphicsCanvasItem::on_MousePressLeft(QPoint point)
         }
         else
         {
-            if(mode == EditMode)
+            if(Global::editMode)
             {
                 action = ActionWrite;
                 drawPoint(image, pointToPixel(point), true);
@@ -611,7 +606,7 @@ void QGraphicsCanvasItem::on_MousePressMiddle(QPoint point)
 
 void QGraphicsCanvasItem::on_MousePressRight(QPoint point)
 {
-    if(mode == EditMode)
+    if(Global::editMode)
     {
         action = ActionErase;
         drawPoint(image, pointToPixel(point), false);

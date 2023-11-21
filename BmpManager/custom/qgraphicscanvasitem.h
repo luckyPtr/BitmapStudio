@@ -38,7 +38,6 @@ private:
     bool isInSizeFDiagArea(QPoint point);
     bool isInImgArea(QPoint point);     // 是否在图片的区域内
     quint8 action = ActionNull;  // 调整画布大小的步骤 0-初始状态 1-按下
-    quint8 mode;
     void resizeImage(QImage &img, QSize size);
     void moveImage(QImage &img,  int OffsetX, int OffsetY);
     void reserveImage(QImage &img);
@@ -66,7 +65,6 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) Q_DECL_OVERRIDE;
     void setImage(QImage &image);
     QImage getImage();
-    void setMode(quint8 mode);
     void resize(QSize size);
 
 public slots:

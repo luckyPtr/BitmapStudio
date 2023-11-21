@@ -37,9 +37,6 @@ protected:
 public slots:
     void paintView();
     void on_LoadImage(QImage &image);
-    void on_actSelect_triggered();
-    void on_actEdit_triggered();
-    void on_actMeasure_triggered();
     void on_actSave_triggered();
 
 signals:

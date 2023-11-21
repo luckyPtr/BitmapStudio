@@ -57,6 +57,7 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
     connect(this->scanvasItem, SIGNAL(updataStatusBarSize(QSize)), this->parent()->parent()->parent(), SLOT(on_UpdateStatusBarSize(QSize)));
 
     connect(this, SIGNAL(saveImage(QString,int,QImage)), this->parent()->parent()->parent(), SLOT(on_SaveImage(QString, int, QImage)));
+
 }
 
 FormPixelEditor::~FormPixelEditor()
@@ -120,6 +121,10 @@ void FormPixelEditor::leaveEvent(QEvent *event)
 
 void FormPixelEditor::contextMenuEvent(QContextMenuEvent *event)
 {
+    // 编辑模式下右键无效
+    if(Global::editMode)
+        return;
+
     QMenu menu;
 
     menu.addAction(ui->actAutoResize);
@@ -172,37 +177,12 @@ void FormPixelEditor::on_LoadImage(QImage &image)
 
 
 
-void FormPixelEditor::on_actSelect_triggered()
-{
-    ui->actSelect->setChecked(true);
-    ui->actEdit->setChecked(false);
-    ui->actMeasure->setChecked(false);
-    scanvasItem->setMode(QGraphicsCanvasItem::SelectMode);
-}
-
-
-void FormPixelEditor::on_actEdit_triggered()
-{
-    ui->actSelect->setChecked(false);
-    ui->actEdit->setChecked(true);
-    ui->actMeasure->setChecked(false);
-    scanvasItem->setMode(QGraphicsCanvasItem::EditMode);
-}
-
-
-void FormPixelEditor::on_actMeasure_triggered()
-{
-    ui->actSelect->setChecked(false);
-    ui->actEdit->setChecked(false);
-    ui->actMeasure->setChecked(true);
-    scanvasItem->setMode(QGraphicsCanvasItem::MeasureMode);
-}
-
-
 void FormPixelEditor::on_actSave_triggered()
 {
     emit saveImage(getProject(), getId(), scanvasItem->getImage());
 }
+
+
 
 
 void FormPixelEditor::on_actLockAuxiliaryLine_triggered()

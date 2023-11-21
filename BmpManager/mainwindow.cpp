@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "global.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <treemodel.h>
@@ -406,5 +407,11 @@ void MainWindow::on_actExport_triggered()
             img.save(fileName);
         }
     }
+}
+
+
+void MainWindow::on_actEditMode_triggered(bool checked)
+{
+    Global::editMode = checked;
 }
 

@@ -196,51 +196,6 @@
     <string>选择</string>
    </property>
   </action>
-  <action name="actEdit">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="Img.qrc">
-     <normaloff>:/Image/PixelEditor/Edit.svg</normaloff>:/Image/PixelEditor/Edit.svg</iconset>
-   </property>
-   <property name="text">
-    <string>编辑</string>
-   </property>
-   <property name="toolTip">
-    <string>编辑</string>
-   </property>
-  </action>
-  <action name="actMeasure">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="Img.qrc">
-     <normaloff>:/Image/PixelEditor/Measure.svg</normaloff>:/Image/PixelEditor/Measure.svg</iconset>
-   </property>
-   <property name="text">
-    <string>测量</string>
-   </property>
-   <property name="toolTip">
-    <string>测量</string>
-   </property>
-  </action>
-  <action name="actSave">
-   <property name="icon">
-    <iconset resource="Img.qrc">
-     <normaloff>:/Image/PixelEditor/Save.svg</normaloff>:/Image/PixelEditor/Save.svg</iconset>
-   </property>
-   <property name="text">
-    <string>保存</string>
-   </property>
-   <property name="toolTip">
-    <string>保存</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+S</string>
-   </property>
-  </action>
   <action name="actLockAuxiliaryLine">
    <property name="icon">
     <iconset resource="Img.qrc">

@@ -19,7 +19,7 @@ public:
     static int gridColor;       // 像素编辑器网格颜色
     static int itemBoundColor;
     static int selectedItemBoundColor;
-
+    static bool editMode;       // 编辑模式
 };
 
 #endif // GLOBAL_H
