@@ -58,6 +58,11 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
 
     connect(this, SIGNAL(saveImage(QString,int,QImage)), this->parent()->parent()->parent(), SLOT(on_SaveImage(QString, int, QImage)));
 
+    addAction(ui->actSave);
+    addAction(ui->actMoveUp);
+    addAction(ui->actMoveDown);
+    addAction(ui->actMoveLeft);
+    addAction(ui->actMoveRight);
 }
 
 FormPixelEditor::~FormPixelEditor()
@@ -179,6 +184,7 @@ void FormPixelEditor::on_LoadImage(QImage &image)
 
 void FormPixelEditor::on_actSave_triggered()
 {
+    qDebug() << "Save";
     emit saveImage(getProject(), getId(), scanvasItem->getImage());
 }
 

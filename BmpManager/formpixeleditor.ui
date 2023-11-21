@@ -181,21 +181,6 @@
     <string>居中</string>
    </property>
   </action>
-  <action name="actSelect">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="Img.qrc">
-     <normaloff>:/Image/PixelEditor/Select.svg</normaloff>:/Image/PixelEditor/Select.svg</iconset>
-   </property>
-   <property name="text">
-    <string>选择</string>
-   </property>
-   <property name="toolTip">
-    <string>选择</string>
-   </property>
-  </action>
   <action name="actLockAuxiliaryLine">
    <property name="icon">
     <iconset resource="Img.qrc">
@@ -249,6 +234,21 @@
   <action name="actResize">
    <property name="text">
     <string>重新调整大小</string>
+   </property>
+  </action>
+  <action name="actSave">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/Save.svg</normaloff>:/Image/PixelEditor/Save.svg</iconset>
+   </property>
+   <property name="text">
+    <string>保存</string>
+   </property>
+   <property name="toolTip">
+    <string>保存</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
  </widget>
