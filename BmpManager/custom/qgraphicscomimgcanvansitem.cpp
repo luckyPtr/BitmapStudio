@@ -336,7 +336,7 @@ void QGraphicsComImgCanvansItem::deleteSelectItem()
     }
 }
 
-void QGraphicsComImgCanvansItem::on_MoveUp()
+void QGraphicsComImgCanvansItem::on_Forward()
 {
     if(selectedItemIndex != -1)
     {
@@ -349,7 +349,7 @@ void QGraphicsComImgCanvansItem::on_MoveUp()
     }
 }
 
-void QGraphicsComImgCanvansItem::on_MoveDown()
+void QGraphicsComImgCanvansItem::on_Backward()
 {
     if(selectedItemIndex != -1)
     {
@@ -362,7 +362,7 @@ void QGraphicsComImgCanvansItem::on_MoveDown()
     }
 }
 
-void QGraphicsComImgCanvansItem::on_MoveTop()
+void QGraphicsComImgCanvansItem::on_Top()
 {
     if(selectedItemIndex != -1)
     {
@@ -375,7 +375,7 @@ void QGraphicsComImgCanvansItem::on_MoveTop()
     }
 }
 
-void QGraphicsComImgCanvansItem::on_MoveBottom()
+void QGraphicsComImgCanvansItem::on_Bottom()
 {
     if(selectedItemIndex != -1)
     {
@@ -406,6 +406,50 @@ void QGraphicsComImgCanvansItem::on_AlignHCenter()
         ComImgItem *ci = &comImg.items[selectedItemIndex];
         QImage img = rd->getImage(ci->id);
         ci->y = (comImg.height - img.height()) / 2;
+        view->viewport()->update();
+    }
+}
+
+void QGraphicsComImgCanvansItem::on_MoveUp()
+{
+    if(selectedItemIndex != -1)
+    {
+        ComImgItem *ci = &comImg.items[selectedItemIndex];
+        QImage img = rd->getImage(ci->id);
+        ci->y--;
+        view->viewport()->update();
+    }
+}
+
+void QGraphicsComImgCanvansItem::on_MoveDown()
+{
+    if(selectedItemIndex != -1)
+    {
+        ComImgItem *ci = &comImg.items[selectedItemIndex];
+        QImage img = rd->getImage(ci->id);
+        ci->y++;
+        view->viewport()->update();
+    }
+}
+
+void QGraphicsComImgCanvansItem::on_MoveLeft()
+{
+    if(selectedItemIndex != -1)
+    {
+        ComImgItem *ci = &comImg.items[selectedItemIndex];
+        QImage img = rd->getImage(ci->id);
+        ci->x--;
+        view->viewport()->update();
+    }
+}
+
+void QGraphicsComImgCanvansItem::on_MoveRight()
+{
+    if(selectedItemIndex != -1)
+    {
+        ComImgItem *ci = &comImg.items[selectedItemIndex];
+        QImage img = rd->getImage(ci->id);
+        ci->x++;
         view->viewport()->update();
     }
 }

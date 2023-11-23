@@ -175,6 +175,9 @@
    <property name="text">
     <string>删除</string>
    </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
   </action>
   <action name="actSave">
    <property name="icon">
@@ -184,32 +187,35 @@
    <property name="text">
     <string>保存</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
   </action>
-  <action name="actMoveUp">
+  <action name="actForward">
    <property name="icon">
     <iconset resource="Img.qrc">
      <normaloff>:/Image/ComImgEditor/MoveUp.svg</normaloff>:/Image/ComImgEditor/MoveUp.svg</iconset>
    </property>
    <property name="text">
-    <string>上移</string>
+    <string>上移一层</string>
    </property>
    <property name="toolTip">
-    <string>上移</string>
+    <string>上移一层</string>
    </property>
   </action>
-  <action name="actMoveDown">
+  <action name="actBackward">
    <property name="icon">
     <iconset resource="Img.qrc">
      <normaloff>:/Image/ComImgEditor/MoveDown.svg</normaloff>:/Image/ComImgEditor/MoveDown.svg</iconset>
    </property>
    <property name="text">
-    <string>下移</string>
+    <string>下移一层</string>
    </property>
    <property name="toolTip">
-    <string>下移</string>
+    <string>下移一层</string>
    </property>
   </action>
-  <action name="actMoveTop">
+  <action name="actTop">
    <property name="icon">
     <iconset resource="Img.qrc">
      <normaloff>:/Image/ComImgEditor/MoveTop.svg</normaloff>:/Image/ComImgEditor/MoveTop.svg</iconset>
@@ -221,7 +227,7 @@
     <string>移到顶层</string>
    </property>
   </action>
-  <action name="actMoveBottom">
+  <action name="actBottom">
    <property name="icon">
     <iconset resource="Img.qrc">
      <normaloff>:/Image/ComImgEditor/MoveButtom.svg</normaloff>:/Image/ComImgEditor/MoveButtom.svg</iconset>
@@ -249,6 +255,66 @@
    </property>
    <property name="text">
     <string>垂直居中</string>
+   </property>
+  </action>
+  <action name="actMoveUp">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/MoveUp.svg</normaloff>:/Image/PixelEditor/MoveUp.svg</iconset>
+   </property>
+   <property name="text">
+    <string>上移</string>
+   </property>
+   <property name="toolTip">
+    <string>上移</string>
+   </property>
+   <property name="shortcut">
+    <string>Up</string>
+   </property>
+  </action>
+  <action name="actMoveDown">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/MoveDown.svg</normaloff>:/Image/PixelEditor/MoveDown.svg</iconset>
+   </property>
+   <property name="text">
+    <string>下移</string>
+   </property>
+   <property name="toolTip">
+    <string>下移</string>
+   </property>
+   <property name="shortcut">
+    <string>Down</string>
+   </property>
+  </action>
+  <action name="actMoveLeft">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/MoveLeft.svg</normaloff>:/Image/PixelEditor/MoveLeft.svg</iconset>
+   </property>
+   <property name="text">
+    <string>左移</string>
+   </property>
+   <property name="toolTip">
+    <string>左移</string>
+   </property>
+   <property name="shortcut">
+    <string>Left</string>
+   </property>
+  </action>
+  <action name="actMoveRight">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/MoveRight.svg</normaloff>:/Image/PixelEditor/MoveRight.svg</iconset>
+   </property>
+   <property name="text">
+    <string>右移</string>
+   </property>
+   <property name="toolTip">
+    <string>右移</string>
+   </property>
+   <property name="shortcut">
+    <string>Right</string>
    </property>
   </action>
  </widget>

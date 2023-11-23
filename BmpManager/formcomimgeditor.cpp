@@ -3,6 +3,8 @@
 #include <QScrollBar>
 #include <QDragMoveEvent>
 #include <QDragEnterEvent>
+#include <QMenu>
+#include <custom/qcustommenu.h>
 
 
 FormComImgEditor::FormComImgEditor(QWidget *parent) :
@@ -11,7 +13,7 @@ FormComImgEditor::FormComImgEditor(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    scene = new QGraphicsScene(QRectF(0, 0, 128, 64));
+    scene = new QGraphicsScene(QRectF(0, 0, 1, 1));
     ui->graphicsView->setScene(scene);
 
     scaleItem = new QGraphicsScaleItem(ui->graphicsView);
@@ -19,7 +21,6 @@ FormComImgEditor::FormComImgEditor(QWidget *parent) :
 
     comImgCanvansItem = new QGraphicsComImgCanvansItem(ui->graphicsView);
     comImgCanvansItem->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
-
 
     scene->addItem(comImgCanvansItem);
     scene->addItem(scaleItem);
@@ -30,25 +31,35 @@ FormComImgEditor::FormComImgEditor(QWidget *parent) :
 
     ui->graphicsView->setRubberBandSelectionMode(Qt::ContainsItemBoundingRect);
 
-    initScrollerPos();
-    initAction();
+//    initScrollerPos();
 
     connect(scaleItem, SIGNAL(createAuxLine(Qt::Orientation)), comImgCanvansItem, SLOT(on_CreateAuxLine(Qt::Orientation)));
     connect(ui->actDelete, SIGNAL(triggered()), comImgCanvansItem, SLOT(deleteSelectItem()));
     connect(ui->actSave, &QAction::triggered, this, [=]{
         emit saveComImg(comImgCanvansItem->getComImg());
     });
-    connect(ui->actMoveUp, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveUp()));
-    connect(ui->actMoveDown, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveDown()));
-    connect(ui->actMoveTop, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveTop()));
-    connect(ui->actMoveBottom, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveBottom()));
+    connect(ui->actForward, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_Forward()));
+    connect(ui->actBackward, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_Backward()));
+    connect(ui->actTop, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_Top()));
+    connect(ui->actBottom, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_Bottom()));
     connect(ui->actAlignVCenter, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_AlignVCenter()));
     connect(ui->actAlignHCenter, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_AlignHCenter()));
+    connect(ui->actMoveUp, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveUp()));
+    connect(ui->actMoveDown, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveDown()));
+    connect(ui->actMoveLeft, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveLeft()));
+    connect(ui->actMoveRight, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveRight()));
+
 
     connect(this->comImgCanvansItem, SIGNAL(updateStatusBarPos(QPoint)), this->parent()->parent()->parent(), SLOT(on_UpdateStatusBarPos(QPoint)));
     connect(this->comImgCanvansItem, SIGNAL(updateStatusBarSize(QSize)), this->parent()->parent()->parent(), SLOT(on_UpdateStatusBarSize(QSize)));
 
     connect(this, SIGNAL(saveComImg(QString,int,ComImg)), this->parent()->parent()->parent(), SLOT(on_SaveComImg(QString,int,ComImg)));
+
+    addAction(ui->actSave);
+    addAction(ui->actMoveUp);
+    addAction(ui->actMoveDown);
+    addAction(ui->actMoveLeft);
+    addAction(ui->actMoveRight);
 }
 
 FormComImgEditor::~FormComImgEditor()
@@ -76,10 +87,10 @@ void FormComImgEditor::initAction()
 {
     ui->toolButtonDelete->setDefaultAction(ui->actDelete);
     ui->toolButtonSave->setDefaultAction(ui->actSave);
-    ui->toolButtonMoveUp->setDefaultAction(ui->actMoveUp);
-    ui->toolButtonMoveDown->setDefaultAction(ui->actMoveDown);
-    ui->toolButtonMoveTop->setDefaultAction(ui->actMoveTop);
-    ui->toolButtonMoveBottom->setDefaultAction(ui->actMoveBottom);
+    ui->toolButtonMoveUp->setDefaultAction(ui->actForward);
+    ui->toolButtonMoveDown->setDefaultAction(ui->actBackward);
+    ui->toolButtonMoveTop->setDefaultAction(ui->actTop);
+    ui->toolButtonMoveBottom->setDefaultAction(ui->actBottom);
     ui->toolButtonAlignVCenter->setDefaultAction(ui->actAlignVCenter);
     ui->toolButtonAlignHCenter->setDefaultAction(ui->actAlignHCenter);
 }
@@ -88,6 +99,35 @@ void FormComImgEditor::initAction()
 void FormComImgEditor::leaveEvent(QEvent *event)
 {
     emit updataStatusBarPos(QPoint(-1, -1));
+}
+
+void FormComImgEditor::contextMenuEvent(QContextMenuEvent *event)
+{
+    QMenu menu;
+
+    QCustomMenu menuMove;
+    menuMove.setTitle(tr("移动"));
+    menuMove.addAction(ui->actMoveUp);
+    menuMove.addAction(ui->actMoveDown);
+    menuMove.addAction(ui->actMoveLeft);
+    menuMove.addAction(ui->actMoveRight);
+    menu.addMenu(&menuMove);
+
+    QMenu menuTop(tr("上移"));
+    menuTop.addAction(ui->actTop);
+    menuTop.addAction(ui->actForward);
+    menu.addMenu(&menuTop);
+
+    QMenu menuBottom(tr("下移"));
+    menuBottom.addAction(ui->actBottom);
+    menuBottom.addAction(ui->actBackward);
+    menu.addMenu(&menuBottom);
+
+
+
+
+
+    menu.exec(QCursor::pos());
 }
 
 

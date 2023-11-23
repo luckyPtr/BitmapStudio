@@ -32,6 +32,7 @@ private:
 
 protected:
     void leaveEvent(QEvent *event) override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
 
 public slots:
     void on_LoadComImg(ComImg &comImg, RawData *rd);

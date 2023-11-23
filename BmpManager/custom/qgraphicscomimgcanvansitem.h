@@ -80,12 +80,16 @@ public slots:
     void on_CreateAuxLine(Qt::Orientation dir);
 
     void deleteSelectItem();    // 删除选中的图片
-    void on_MoveUp();           // 上移一层
-    void on_MoveDown();         // 下移一层
-    void on_MoveTop();
-    void on_MoveBottom();
+    void on_Forward();           // 上移一层
+    void on_Backward();         // 下移一层
+    void on_Top();
+    void on_Bottom();
     void on_AlignVCenter();
     void on_AlignHCenter();
+    void on_MoveUp();
+    void on_MoveDown();
+    void on_MoveLeft();
+    void on_MoveRight();
 
 signals:
     void updateStatusBarPos(QPoint);

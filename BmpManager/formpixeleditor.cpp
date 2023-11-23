@@ -14,8 +14,6 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
     ui(new Ui::FormPixelEditor)
 {
     ui->setupUi(this);
-    initAction();
-
 
     //QRectF rect(0, 0, image->width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image->height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset);
     scene = new QGraphicsScene(QRectF(0, 0, 1, 1));
@@ -26,7 +24,6 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
 
     scanvasItem = new QGraphicsCanvasItem(ui->graphicsView);
     scanvasItem->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
-   // scanvasItem->setImage(*image);
 
     scene->addItem(scaleItem);
     scene->addItem(scanvasItem);
