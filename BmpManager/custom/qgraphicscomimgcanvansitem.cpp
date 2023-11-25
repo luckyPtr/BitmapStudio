@@ -326,6 +326,13 @@ void QGraphicsComImgCanvansItem::setRawData(RawData *rd)
     view->viewport()->update();
 }
 
+void QGraphicsComImgCanvansItem::resize(QSize size)
+{
+    comImg.width = size.width();
+    comImg.height = size.height();
+    view->scene()->setSceneRect(QRectF(0, 0, comImg.width * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, comImg.height * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
+}
+
 void QGraphicsComImgCanvansItem::deleteSelectItem()
 {
     if(selectedItemIndex != -1)

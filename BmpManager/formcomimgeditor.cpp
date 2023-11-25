@@ -5,6 +5,7 @@
 #include <QDragEnterEvent>
 #include <QMenu>
 #include <custom/qcustommenu.h>
+#include <custom/dialogresize.h>
 
 
 FormComImgEditor::FormComImgEditor(QWidget *parent) :
@@ -84,17 +85,7 @@ void FormComImgEditor::initScrollerPos()
     }
 }
 
-void FormComImgEditor::initAction()
-{
-    ui->toolButtonDelete->setDefaultAction(ui->actDelete);
-    ui->toolButtonSave->setDefaultAction(ui->actSave);
-    ui->toolButtonMoveUp->setDefaultAction(ui->actForward);
-    ui->toolButtonMoveDown->setDefaultAction(ui->actBackward);
-    ui->toolButtonMoveTop->setDefaultAction(ui->actTop);
-    ui->toolButtonMoveBottom->setDefaultAction(ui->actBottom);
-    ui->toolButtonAlignVCenter->setDefaultAction(ui->actAlignHCenter);
-    ui->toolButtonAlignHCenter->setDefaultAction(ui->actAlignVCenter);
-}
+
 
 
 void FormComImgEditor::leaveEvent(QEvent *event)
@@ -127,7 +118,7 @@ void FormComImgEditor::contextMenuEvent(QContextMenuEvent *event)
     menuLayout.addAction(ui->actAlignCenter);
     menu.addMenu(&menuLayout);
 
-
+    menu.addAction(ui->actResize);
 
     menu.exec(QCursor::pos());
 }
@@ -147,5 +138,20 @@ void FormComImgEditor::on_LoadComImg(ComImg &comImg, RawData *rd)
 void FormComImgEditor::on_actSave_triggered()
 {
     emit saveComImg(getProject(), getId(), comImgCanvansItem->getComImg());
+}
+
+
+void FormComImgEditor::on_actResize_triggered()
+{
+    DialogResize *dlgResize = new DialogResize(this);
+    QSize defaultSize = QSize(comImgCanvansItem->getComImg().width, comImgCanvansItem->getComImg().height);
+    dlgResize->setDefaultSize(defaultSize);
+    int ret = dlgResize->exec();
+    if(ret == QDialog::Accepted)
+    {
+        QSize size = dlgResize->getSize();
+        comImgCanvansItem->resize(size);
+    }
+    delete dlgResize;
 }
 

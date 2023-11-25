@@ -65,6 +65,7 @@ public:
     void setComImg(ComImg &comImg);
     void setRawData(RawData *rd);
     ComImg getComImg() { return comImg; }
+    void resize(QSize size);
 
 protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event) override;
