@@ -42,8 +42,9 @@ FormComImgEditor::FormComImgEditor(QWidget *parent) :
     connect(ui->actBackward, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_Backward()));
     connect(ui->actTop, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_Top()));
     connect(ui->actBottom, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_Bottom()));
-    connect(ui->actAlignVCenter, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_AlignVCenter()));
-    connect(ui->actAlignHCenter, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_AlignHCenter()));
+    connect(ui->actAlignHCenter, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_AlignVCenter()));
+    connect(ui->actAlignVCenter, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_AlignHCenter()));
+    connect(ui->actAlignCenter, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_AlignCenter()));
     connect(ui->actMoveUp, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveUp()));
     connect(ui->actMoveDown, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveDown()));
     connect(ui->actMoveLeft, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_MoveLeft()));
@@ -91,8 +92,8 @@ void FormComImgEditor::initAction()
     ui->toolButtonMoveDown->setDefaultAction(ui->actBackward);
     ui->toolButtonMoveTop->setDefaultAction(ui->actTop);
     ui->toolButtonMoveBottom->setDefaultAction(ui->actBottom);
-    ui->toolButtonAlignVCenter->setDefaultAction(ui->actAlignVCenter);
-    ui->toolButtonAlignHCenter->setDefaultAction(ui->actAlignHCenter);
+    ui->toolButtonAlignVCenter->setDefaultAction(ui->actAlignHCenter);
+    ui->toolButtonAlignHCenter->setDefaultAction(ui->actAlignVCenter);
 }
 
 
@@ -113,17 +114,18 @@ void FormComImgEditor::contextMenuEvent(QContextMenuEvent *event)
     menuMove.addAction(ui->actMoveRight);
     menu.addMenu(&menuMove);
 
-    QMenu menuTop(tr("上移"));
-    menuTop.addAction(ui->actTop);
-    menuTop.addAction(ui->actForward);
-    menu.addMenu(&menuTop);
+    QMenu menuLayer(tr("图层"));
+    menuLayer.addAction(ui->actTop);
+    menuLayer.addAction(ui->actBottom);
+    menuLayer.addAction(ui->actForward);
+    menuLayer.addAction(ui->actBackward);
+    menu.addMenu(&menuLayer);
 
-    QMenu menuBottom(tr("下移"));
-    menuBottom.addAction(ui->actBottom);
-    menuBottom.addAction(ui->actBackward);
-    menu.addMenu(&menuBottom);
-
-
+    QMenu menuLayout(tr("布局"));
+    menuLayout.addAction(ui->actAlignHCenter);
+    menuLayout.addAction(ui->actAlignVCenter);
+    menuLayout.addAction(ui->actAlignCenter);
+    menu.addMenu(&menuLayout);
 
 
 

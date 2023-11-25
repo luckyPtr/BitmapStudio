@@ -410,6 +410,18 @@ void QGraphicsComImgCanvansItem::on_AlignHCenter()
     }
 }
 
+void QGraphicsComImgCanvansItem::on_AlignCenter()
+{
+    if(selectedItemIndex != -1)
+    {
+        ComImgItem *ci = &comImg.items[selectedItemIndex];
+        QImage img = rd->getImage(ci->id);
+        ci->x = (comImg.width - img.width()) / 2;
+        ci->y = (comImg.height - img.height()) / 2;
+        view->viewport()->update();
+    }
+}
+
 void QGraphicsComImgCanvansItem::on_MoveUp()
 {
     if(selectedItemIndex != -1)

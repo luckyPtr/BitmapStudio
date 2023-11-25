@@ -239,22 +239,28 @@
     <string>移到底层</string>
    </property>
   </action>
-  <action name="actAlignHCenter">
+  <action name="actAlignVCenter">
    <property name="icon">
     <iconset resource="Img.qrc">
      <normaloff>:/Image/ComImgEditor/HCenter.svg</normaloff>:/Image/ComImgEditor/HCenter.svg</iconset>
    </property>
    <property name="text">
-    <string>水平居中</string>
+    <string>垂直居中</string>
+   </property>
+   <property name="toolTip">
+    <string>垂直居中</string>
    </property>
   </action>
-  <action name="actAlignVCenter">
+  <action name="actAlignHCenter">
    <property name="icon">
     <iconset resource="Img.qrc">
      <normaloff>:/Image/ComImgEditor/VCenter.svg</normaloff>:/Image/ComImgEditor/VCenter.svg</iconset>
    </property>
    <property name="text">
-    <string>垂直居中</string>
+    <string>水平居中</string>
+   </property>
+   <property name="toolTip">
+    <string>水平居中</string>
    </property>
   </action>
   <action name="actMoveUp">
@@ -315,6 +321,15 @@
    </property>
    <property name="shortcut">
     <string>Right</string>
+   </property>
+  </action>
+  <action name="actAlignCenter">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/Center.svg</normaloff>:/Image/PixelEditor/Center.svg</iconset>
+   </property>
+   <property name="text">
+    <string>居中</string>
    </property>
   </action>
  </widget>

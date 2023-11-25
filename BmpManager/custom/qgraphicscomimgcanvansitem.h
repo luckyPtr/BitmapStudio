@@ -86,6 +86,7 @@ public slots:
     void on_Bottom();
     void on_AlignVCenter();
     void on_AlignHCenter();
+    void on_AlignCenter();
     void on_MoveUp();
     void on_MoveDown();
     void on_MoveLeft();
