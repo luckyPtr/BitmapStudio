@@ -36,6 +36,7 @@ FormComImgEditor::FormComImgEditor(QWidget *parent) :
 
     connect(scaleItem, SIGNAL(createAuxLine(Qt::Orientation)), comImgCanvansItem, SLOT(on_CreateAuxLine(Qt::Orientation)));
     connect(ui->actDelete, SIGNAL(triggered()), comImgCanvansItem, SLOT(deleteSelectItem()));
+    connect(ui->actClean, SIGNAL(triggered()), comImgCanvansItem, SLOT(deleteAll()));
     connect(ui->actSave, &QAction::triggered, this, [=]{
         emit saveComImg(comImgCanvansItem->getComImg());
     });
@@ -62,6 +63,7 @@ FormComImgEditor::FormComImgEditor(QWidget *parent) :
     addAction(ui->actMoveDown);
     addAction(ui->actMoveLeft);
     addAction(ui->actMoveRight);
+    addAction(ui->actDelete);
 }
 
 FormComImgEditor::~FormComImgEditor()
@@ -117,6 +119,9 @@ void FormComImgEditor::contextMenuEvent(QContextMenuEvent *event)
     menuLayout.addAction(ui->actAlignVCenter);
     menuLayout.addAction(ui->actAlignCenter);
     menu.addMenu(&menuLayout);
+
+    menu.addAction(ui->actDelete);
+    menu.addAction(ui->actClean);
 
     menu.addAction(ui->actResize);
 

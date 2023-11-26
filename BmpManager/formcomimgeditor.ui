@@ -219,6 +219,14 @@
     <string>调整画布大小</string>
    </property>
   </action>
+  <action name="actClean">
+   <property name="text">
+    <string>清空画布</string>
+   </property>
+   <property name="toolTip">
+    <string>清空画布</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

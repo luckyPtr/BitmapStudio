@@ -343,6 +343,13 @@ void QGraphicsComImgCanvansItem::deleteSelectItem()
     }
 }
 
+void QGraphicsComImgCanvansItem::deleteAll()
+{
+    comImg.items.clear();
+    selectedItemIndex = -1;
+    view->viewport()->update();
+}
+
 void QGraphicsComImgCanvansItem::on_Forward()
 {
     if(selectedItemIndex != -1)

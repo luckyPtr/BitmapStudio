@@ -81,6 +81,7 @@ public slots:
     void on_CreateAuxLine(Qt::Orientation dir);
 
     void deleteSelectItem();    // 删除选中的图片
+    void deleteAll();           // 删除所有
     void on_Forward();           // 上移一层
     void on_Backward();         // 下移一层
     void on_Top();
