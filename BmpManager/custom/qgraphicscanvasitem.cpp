@@ -232,8 +232,8 @@ void QGraphicsCanvasItem::paintAuxiliaryLines(QPainter *painter)
         return;
     }
 
-    QPen pen(Qt::green);
-    pen.setStyle(Qt::DotLine);
+    QPen pen(QColor(255,105,180));
+//    pen.setStyle(Qt::DotLine);
     painter->setPen(pen);
 
     auto paintLine = [=](Qt::Orientation dir, int scale){

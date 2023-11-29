@@ -181,7 +181,6 @@ void FormPixelEditor::on_LoadImage(QImage &image)
 
 void FormPixelEditor::on_actSave_triggered()
 {
-    qDebug() << "Save";
     emit saveImage(getProject(), getId(), scanvasItem->getImage());
 }
 

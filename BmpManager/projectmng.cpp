@@ -1,7 +1,7 @@
 #include "projectmng.h"
 #include <string.h>
 #include <QInputDialog>
-
+#include <QMenu>
 
 void ProjectMng::addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, bool (*filter)(int))
 {
@@ -98,12 +98,28 @@ void ProjectMng::restoreExpand()
     }
 }
 
+void ProjectMng::initActions()
+{
+    actOpen = new QAction(tr("打开"), this);
+    connect(actOpen, SIGNAL(triggered()), this, SLOT(on_ActOpen_Triggered()));
+
+    actDelete = new QAction(QIcon(":/Image/Toolbar/Delete.svg"), tr("删除"), this);
+    connect(actDelete, SIGNAL(triggered()), this, SLOT(on_ActDelete_Triggered()));
+
+    actRename = new QAction(tr("重命名"), this);
+    connect(actRename, SIGNAL(triggered()), this, SLOT(on_ActRename_Triggered()));
+
+    actProperties = new QAction(tr("属性"), this);
+    connect(actProperties, SIGNAL(triggered()), this, SLOT(on_ActProperties_Triggered()));
+}
+
 
 
 ProjectMng::ProjectMng(QWidget *parent)
     : QWidget{parent}
 {
     theModel = new TreeModel(this);
+    initActions();
 }
 
 void ProjectMng::openProject(QString pro)
@@ -163,6 +179,8 @@ void ProjectMng::blindTreeView(QTreeView *treeView)
 {
     this->treeView = treeView;
     treeView->setModel(theModel);
+    treeView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(treeView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(on_CustomContextMenu(QPoint)));
 }
 
 
@@ -289,4 +307,52 @@ QModelIndex ProjectMng::getModelIndex(QString project, int id)
     }
 
     return retIndex;
+}
+
+void ProjectMng::on_CustomContextMenu(QPoint point)
+{
+    currentIndex = treeView->indexAt(point);
+    TreeItem *item = theModel->itemFromIndex(currentIndex);
+    // 图片文件菜单
+    auto menuImgFile = [=]() {
+        QMenu menu;
+        menu.addAction(actOpen);
+        menu.addAction(actDelete);
+        menu.addAction(actRename);
+        menu.addAction(actProperties);
+        menu.exec(QCursor::pos());
+    };
+
+
+qDebug() <<  item->getType();
+    switch (item->getType()) {
+    case RawData::TypeImgFile:
+        menuImgFile();
+        break;
+    default:
+        break;
+    }
+
+
+
+}
+
+void ProjectMng::on_ActOpen_Triggered()
+{
+
+}
+
+void ProjectMng::on_ActDelete_Triggered()
+{
+    qDebug() << "actDelete";
+}
+
+void ProjectMng::on_ActRename_Triggered()
+{
+
+}
+
+void ProjectMng::on_ActProperties_Triggered()
+{
+
 }

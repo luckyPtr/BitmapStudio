@@ -19,12 +19,19 @@ private:
     QList<RawData> projList;
     TreeModel *theModel;
     QTreeView *treeView;
+    QModelIndex currentIndex;
+
+    QAction *actOpen;
+    QAction *actDelete;
+    QAction *actRename;
+    QAction *actProperties;
 
     void addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, bool(*filter)(int));
     void getExpandNode(QModelIndex root);      // 保存展开的节点
     void setExpandNode(QModelIndex root);   // 恢复展开的节点
     void saveExpand();
     void restoreExpand();
+    void initActions();
 
 public:
     explicit ProjectMng(QWidget *parent = nullptr);
@@ -45,6 +52,12 @@ public:
     void setComImg(QModelIndex index, ComImg &comImg);
     QModelIndex getModelIndex(QString project, int id);   // 从项目名称和id获取ModelIndex
 
+public slots:
+    void on_CustomContextMenu(QPoint point);
+    void on_ActOpen_Triggered();
+    void on_ActDelete_Triggered();
+    void on_ActRename_Triggered();
+    void on_ActProperties_Triggered();
 signals:
 
 };
