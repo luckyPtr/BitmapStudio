@@ -35,10 +35,14 @@ private:
     QVector<TabWidgetItem *> tabWidgetItems;
     QMenu *menu;
     void initMenu();
+//    void openImgTab(TreeItem *treeItem);
+//    void openComImgTab(TreeItem *treeItem);
 protected:
     void contextMenuEvent(QContextMenuEvent *event);
 public:
     CustomTabWidget(QWidget *parent = nullptr);
+
+    int openTab(TreeItem *treeItem);
 
     int addImgTab(TreeItem *treeItem);
     int addComImgTab(TreeItem *treeItem);

@@ -62,6 +62,19 @@ CustomTabWidget::CustomTabWidget(QWidget *parent) : QTabWidget(parent)
     });
 }
 
+int CustomTabWidget::openTab(TreeItem *treeItem)
+{
+    if(treeItem->getType() == RawData::TypeImgFile)
+    {
+        return addImgTab(treeItem);
+    }
+    else if(treeItem->getType() == RawData::TypeComImgFile)
+    {
+        return addComImgTab(treeItem);
+    }
+    return -1;
+}
+
 
 
 

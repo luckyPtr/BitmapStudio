@@ -10,6 +10,7 @@
 #include <rawdata.h>
 #include <treemodel.h>
 #include <treeitem.h>
+#include <customtabwidget.h>
 
 
 class ProjectMng : public QWidget
@@ -20,6 +21,7 @@ private:
     TreeModel *theModel;
     QTreeView *treeView;
     QModelIndex currentIndex;
+    CustomTabWidget *tabWidget;
 
     QAction *actOpen;
     QAction *actDelete;
@@ -40,6 +42,7 @@ public:
     void initModel();   // 根据数据库重新初始化模型
     TreeModel* model() { return theModel; }
     void blindTreeView(QTreeView *treeView);
+    void setTabWidget(CustomTabWidget *tabWidget);
     void createFolder(QModelIndex index); // 新建文件夹
     void createImage(QModelIndex &index, QString name, quint16 width, quint16 height);
     void createImage(QModelIndex &index, QString name, QImage &img);

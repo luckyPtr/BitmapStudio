@@ -100,7 +100,7 @@ void ProjectMng::restoreExpand()
 
 void ProjectMng::initActions()
 {
-    actOpen = new QAction(tr("打开"), this);
+    actOpen = new QAction(tr("打开文件"), this);
     connect(actOpen, SIGNAL(triggered()), this, SLOT(on_ActOpen_Triggered()));
 
     actDelete = new QAction(QIcon(":/Image/Toolbar/Delete.svg"), tr("删除"), this);
@@ -181,6 +181,11 @@ void ProjectMng::blindTreeView(QTreeView *treeView)
     treeView->setModel(theModel);
     treeView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(treeView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(on_CustomContextMenu(QPoint)));
+}
+
+void ProjectMng::setTabWidget(CustomTabWidget *tabWidget)
+{
+    this->tabWidget = tabWidget;
 }
 
 
@@ -339,7 +344,16 @@ qDebug() <<  item->getType();
 
 void ProjectMng::on_ActOpen_Triggered()
 {
-
+    TreeItem *item = theModel->itemFromIndex(currentIndex);
+    switch(item->getType())
+    {
+    case RawData::TypeImgFile:
+    case RawData::TypeComImgFile:
+        tabWidget->openTab(item);
+        break;
+    default:
+        break;
+    }
 }
 
 void ProjectMng::on_ActDelete_Triggered()
@@ -349,10 +363,10 @@ void ProjectMng::on_ActDelete_Triggered()
 
 void ProjectMng::on_ActRename_Triggered()
 {
-
+qDebug() << "actRename";
 }
 
 void ProjectMng::on_ActProperties_Triggered()
 {
-
+qDebug() << "actProperties";
 }

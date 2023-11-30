@@ -55,6 +55,8 @@ private slots:
 
     void on_actEditMode_triggered(bool checked);
 
+    void on_treeViewProject_doubleClicked(const QModelIndex &index);
+
 public slots:
     void on_UpdateStatusBarPos(QPoint point);
 

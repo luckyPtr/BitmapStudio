@@ -43,6 +43,7 @@ void MainWindow::init()
     treeItemDelegate = new TreeItemDelegate();
     ui->treeViewProject->setItemDelegate(treeItemDelegate);
     pm.blindTreeView(ui->treeViewProject);
+    pm.setTabWidget(ui->tabWidget);
 }
 
 void MainWindow::initStatusBar()
@@ -85,46 +86,16 @@ void MainWindow::on_actOpenProject_triggered()
 
 void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
 {
-    TreeItem *item = pm.model()->itemFromIndex(index);
-    if(item->getType() == RawData::TypeImgFile)
-    {
-        ui->tabWidget->addImgTab(item);
-    }
-    else if(item->getType() == RawData::TypeComImgFile)
-    {
-        ui->tabWidget->addComImgTab(item);
-    }
-qDebug() << "id" << item->getID();
+//    TreeItem *item = pm.model()->itemFromIndex(index);
+//    if(item->getType() == RawData::TypeImgFile)
+//    {
+//        ui->tabWidget->addImgTab(item);
+//    }
+//    else if(item->getType() == RawData::TypeComImgFile)
+//    {
+//        ui->tabWidget->addComImgTab(item);
+
     return;
-//    BmFile bi = item->getRawData()->getBmFile(item->getID());
-    qDebug() << "id" << item->getID();
-    qDebug() << "type" << item->getType();
-    QImage img = item->getRawData()->getImage(item->getID());
-    QImage resultImg = img.scaled(ui->labelPreview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    ui->labelPreview->setPixmap(QPixmap::fromImage(resultImg));
-    ui->labelPreview->setAlignment(Qt::AlignCenter);
-    ui->labelPreview->show();
-
-    editedIndex = index;
-
-    if(item->getType() == RawData::TypeImgFile)
-    {
-        emit selectItem(img);
-        setStackedWidget(STACKED_WIDGET_IMG);
-        on_UpdateStatusBarSize(img.size());
-    }
-    else if(item->getType() == RawData::TypeComImgFile)
-    {
-        ComImg ci = item->getRawData()->getComImg(item->getID());
-        emit selectItem(ci, item->getRawData());
-        setStackedWidget(STACKED_WIDGET_COMIMG);
-        on_UpdateStatusBarSize(QSize(ci.width, ci.height));
-    }
-    else
-    {
-        setStackedWidget(STACKED_WIDGET_DEFAULT);
-        on_UpdateStatusBarSize(QSize(-1, -1));
-    }
 }
 
 
@@ -413,5 +384,12 @@ void MainWindow::on_actExport_triggered()
 void MainWindow::on_actEditMode_triggered(bool checked)
 {
     Global::editMode = checked;
+}
+
+
+void MainWindow::on_treeViewProject_doubleClicked(const QModelIndex &index)
+{
+    TreeItem *item = pm.model()->itemFromIndex(index);
+    ui->tabWidget->openTab(item);
 }
 
