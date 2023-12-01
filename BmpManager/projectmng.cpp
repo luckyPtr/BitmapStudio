@@ -2,6 +2,7 @@
 #include <string.h>
 #include <QInputDialog>
 #include <QMenu>
+#include <QMessageBox>
 
 void ProjectMng::addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, bool (*filter)(int))
 {
@@ -102,6 +103,9 @@ void ProjectMng::initActions()
 {
     actOpen = new QAction(tr("打开文件"), this);
     connect(actOpen, SIGNAL(triggered()), this, SLOT(on_ActOpen_Triggered()));
+
+    actCloseProject = new QAction(tr("关闭项目"), this);
+    connect(actCloseProject, SIGNAL(triggered()), this, SLOT(on_ActCloseProject_Triggered()));
 
     actDelete = new QAction(QIcon(":/Image/Toolbar/Delete.svg"), tr("删除"), this);
     connect(actDelete, SIGNAL(triggered()), this, SLOT(on_ActDelete_Triggered()));
@@ -318,6 +322,14 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
 {
     currentIndex = treeView->indexAt(point);
     TreeItem *item = theModel->itemFromIndex(currentIndex);
+
+    // 项目工程菜单
+    auto menuProject = [=]() {
+        QMenu menu;
+        menu.addAction(actCloseProject);
+        menu.exec(QCursor::pos());
+    };
+
     // 图片文件菜单
     auto menuImgFile = [=]() {
         QMenu menu;
@@ -329,8 +341,11 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
     };
 
 
-qDebug() <<  item->getType();
-    switch (item->getType()) {
+    switch (item->getType())
+    {
+    case RawData::TypeProject:
+        menuProject();
+        break;
     case RawData::TypeImgFile:
         menuImgFile();
         break;
@@ -354,6 +369,21 @@ void ProjectMng::on_ActOpen_Triggered()
     default:
         break;
     }
+}
+
+void ProjectMng::on_ActCloseProject_Triggered()
+{
+    TreeItem *item = theModel->itemFromIndex(currentIndex);
+    if(item->getType() == RawData::TypeProject)
+    {
+        QString s = QString(tr("关闭项目%1?")).arg(item->getRawData()->getProject());
+        if(QMessageBox::question(this, tr("关闭项目"), s) == QMessageBox::Yes)
+        {
+            closeProjcet(currentIndex);
+            initModel();
+        }
+    }
+
 }
 
 void ProjectMng::on_ActDelete_Triggered()

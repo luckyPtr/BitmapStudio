@@ -24,6 +24,7 @@ private:
     CustomTabWidget *tabWidget;
 
     QAction *actOpen;
+    QAction *actCloseProject;
     QAction *actDelete;
     QAction *actRename;
     QAction *actProperties;
@@ -58,6 +59,7 @@ public:
 public slots:
     void on_CustomContextMenu(QPoint point);
     void on_ActOpen_Triggered();
+    void on_ActCloseProject_Triggered();
     void on_ActDelete_Triggered();
     void on_ActRename_Triggered();
     void on_ActProperties_Triggered();
