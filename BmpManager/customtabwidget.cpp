@@ -75,6 +75,23 @@ int CustomTabWidget::openTab(TreeItem *treeItem)
     return -1;
 }
 
+void CustomTabWidget::closeTab(TreeItem *treeItem)
+{
+    int id = treeItem->getID();
+    QString project = treeItem->getRawData()->getProject();
+
+    // 如果已经存在，不新增，直接选中相应的tabWidget
+    for(int i = 0; i < count(); i++)
+    {
+        CustomTab *widget = static_cast<CustomTab *>(this->widget(i));
+        if(widget->getProject() == project && widget->getId() == id)
+        {
+            removeTab(i);
+            break;
+        }
+    }
+}
+
 
 
 

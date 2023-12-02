@@ -43,6 +43,7 @@ public:
     CustomTabWidget(QWidget *parent = nullptr);
 
     int openTab(TreeItem *treeItem);
+    void closeTab(TreeItem *treeItem);
 
     int addImgTab(TreeItem *treeItem);
     int addComImgTab(TreeItem *treeItem);

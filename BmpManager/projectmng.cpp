@@ -247,6 +247,7 @@ void ProjectMng::remove(QModelIndex &index)
 {
     TreeItem *item = theModel->itemFromIndex(index);
     RawData *rd = item->getRawData();
+    tabWidget->closeTab(item);
     rd->remove(item->getID());
     rd->load();
 }
@@ -376,7 +377,7 @@ void ProjectMng::on_ActCloseProject_Triggered()
     TreeItem *item = theModel->itemFromIndex(currentIndex);
     if(item->getType() == RawData::TypeProject)
     {
-        QString s = QString(tr("关闭项目%1?")).arg(item->getRawData()->getProject());
+        QString s = QString(tr("关闭项目%1?")).arg(item->getText());
         if(QMessageBox::question(this, tr("关闭项目"), s) == QMessageBox::Yes)
         {
             closeProjcet(currentIndex);
@@ -388,7 +389,30 @@ void ProjectMng::on_ActCloseProject_Triggered()
 
 void ProjectMng::on_ActDelete_Triggered()
 {
-    qDebug() << "actDelete";
+    TreeItem *item = theModel->itemFromIndex(currentIndex);
+
+    switch(item->getType())
+    {
+    case RawData::TypeImgFolder:
+    case RawData::TypeImgGrpFolder:
+    case RawData::TypeComImgFolder:
+        if(QMessageBox::question(this, tr("删除文件夹"), QString(tr("删除文件夹%1及其所有子文件?")).arg(item->getText())) == QMessageBox::Yes)
+        {
+            remove(currentIndex);
+            initModel();
+        }
+        break;
+    case RawData::TypeImgFile:
+    case RawData::TypeComImgFile:
+        if(QMessageBox::question(this, tr("删除文件"), QString(tr("删除文件%1?")).arg(item->getText())) == QMessageBox::Yes)
+        {
+            remove(currentIndex);
+            initModel();
+        }
+        break;
+    default:
+        break;
+    }
 }
 
 void ProjectMng::on_ActRename_Triggered()
