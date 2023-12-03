@@ -3,6 +3,7 @@
 #include <QInputDialog>
 #include <QMenu>
 #include <QMessageBox>
+#include <dialognewimgfile.h>
 
 void ProjectMng::addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, bool (*filter)(int))
 {
@@ -101,6 +102,15 @@ void ProjectMng::restoreExpand()
 
 void ProjectMng::initActions()
 {
+    actNewImgFile = new QAction(tr("图片"), this);
+    connect(actNewImgFile, SIGNAL(triggered()), this, SLOT(on_ActNewImg_Triggered()));
+
+    actNewComImgFile = new QAction(tr("组合图"), this);
+    connect(actNewComImgFile, SIGNAL(triggered()), this, SLOT(on_ActNewComImg_Triggered()));
+
+    actNewFolder = new QAction(tr("文件夹"), this);
+    connect(actNewFolder, SIGNAL(triggered()), this, SLOT(on_ActNewFolder_Triggered()));
+
     actOpen = new QAction(tr("打开文件"), this);
     connect(actOpen, SIGNAL(triggered()), this, SLOT(on_ActOpen_Triggered()));
 
@@ -207,7 +217,7 @@ void ProjectMng::createFolder(QModelIndex index)
     }
 }
 
-void ProjectMng::createImage(QModelIndex &index, QString name, quint16 width, quint16 height)
+void ProjectMng::createImage(QModelIndex &index, QString name, QSize size, QString brief)
 {
     TreeItem *item = theModel->itemFromIndex(index);
     RawData *rd = item->getRawData();
@@ -219,13 +229,13 @@ void ProjectMng::createImage(QModelIndex &index, QString name, quint16 width, qu
         type == RawData::TypeImgGrpFolder ||\
         type == RawData::TypeImgFile)
     {
-        rd->createBmp(id, name, width, height);
+        rd->createBmp(id, name, size, brief);
     }
     else if(type == RawData::TypeClassComImg ||\
             type == RawData::TypeComImgFolder ||\
             type == RawData::TypeComImgFolder)
     {
-        rd->createComImg(id, name, QSize(width, height));
+        rd->createComImg(id, name, size);
     }
 }
 
@@ -328,6 +338,29 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
     auto menuProject = [=]() {
         QMenu menu;
         menu.addAction(actCloseProject);
+
+        menu.addSeparator();
+        menu.addAction(actProperties);
+
+        menu.exec(QCursor::pos());
+    };
+
+    // 图片文件夹菜单
+    auto menuImgFolder = [=]() {
+        QMenu menu;
+
+        QMenu menuNew(tr("新建"));
+        menuNew.addAction(actNewImgFile);
+        menuNew.addAction(actNewFolder);
+        menu.addMenu(&menuNew);
+
+        menu.addSeparator();
+
+        menu.addAction(actDelete);
+
+        menu.addSeparator();
+        menu.addAction(actProperties);
+
         menu.exec(QCursor::pos());
     };
 
@@ -341,14 +374,40 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
         menu.exec(QCursor::pos());
     };
 
+    // 组合图文件夹菜单
+    auto menuComImgFolder = [=]() {
+        QMenu menu;
+
+        QMenu menuNew(tr("新建"));
+        menuNew.addAction(actNewComImgFile);
+        menuNew.addAction(actNewFolder);
+        menu.addMenu(&menuNew);
+
+        menu.addSeparator();
+
+        menu.addAction(actDelete);
+
+        menu.addSeparator();
+        menu.addAction(actProperties);
+
+        menu.exec(QCursor::pos());
+    };
+
 
     switch (item->getType())
     {
     case RawData::TypeProject:
         menuProject();
         break;
+    case RawData::TypeImgFolder:
+    case RawData::TypeImgGrpFolder:
+        menuImgFolder();
+        break;
     case RawData::TypeImgFile:
         menuImgFile();
+        break;
+    case RawData::TypeComImgFolder:
+        menuComImgFolder();
         break;
     default:
         break;
@@ -423,4 +482,30 @@ qDebug() << "actRename";
 void ProjectMng::on_ActProperties_Triggered()
 {
 qDebug() << "actProperties";
+}
+
+void ProjectMng::on_ActNewImg_Triggered()
+{
+    TreeItem *item = theModel->itemFromIndex(currentIndex);
+
+    DialogNewImgFile *dlgNewImg = new DialogNewImgFile(this, item->getRawData()->getSize());
+    Qt::WindowFlags flags = dlgNewImg->windowFlags();
+    dlgNewImg->setWindowFlags(flags | Qt::MSWindowsFixedSizeDialogHint);
+    int ret = dlgNewImg->exec();
+    if(ret == QDialog::Accepted)
+    {
+        createImage(currentIndex, dlgNewImg->imgFileName(), dlgNewImg->size(), dlgNewImg->brief());
+        initModel();
+    }
+    delete dlgNewImg;
+}
+
+void ProjectMng::on_ActNewComImg_Triggered()
+{
+
+}
+
+void ProjectMng::on_ActNewFolder_Triggered()
+{
+
 }

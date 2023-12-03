@@ -138,9 +138,9 @@ void MainWindow::on_actNewImg_triggered()
     int ret = dlgNewImg->exec();
     if(ret == QDialog::Accepted)
     {
-        QModelIndex curIndex = ui->treeViewProject->currentIndex();
-        pm.createImage(curIndex, dlgNewImg->imgFileName(), dlgNewImg->width(), dlgNewImg->height());
-        pm.initModel();
+//        QModelIndex curIndex = ui->treeViewProject->currentIndex();
+//        pm.createImage(curIndex, dlgNewImg->imgFileName(), dlgNewImg->width(), dlgNewImg->height());
+//        pm.initModel();
     }
     delete dlgNewImg;
 }

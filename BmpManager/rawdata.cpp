@@ -20,7 +20,7 @@ void RawData::initDatabase()
                   pid     INTEGER DEFAULT (0),\
                   type    INTEGER DEFAULT (0),\
                   name    TEXT,\
-                  notes   TEXT,\
+                  brief   TEXT,\
                   data    BLOB\
                   );");
     query.exec();
@@ -66,6 +66,18 @@ void RawData::load()
     dataMap.clear();
 
     QSqlQuery query(db);
+
+    query.prepare("SELECT * FROM tbl_settings");
+    query.exec();
+    if(query.first())
+    {
+        depth = query.value("depth").toInt();
+        int width = query.value("width").toInt();
+        int height = query.value("height").toInt();
+        size.setWidth(width);
+        size.setHeight(height);
+    }
+
     query.prepare("SELECT * FROM tbl_img");
     query.exec();
     while (query.next())
@@ -75,7 +87,7 @@ void RawData::load()
         bi.pid = query.value("pid").toInt();
         bi.type = query.value("type").toInt();
         bi.name = query.value("name").toString();
-        bi.notes = query.value("notes").toString();
+        bi.brief = query.value("brief").toString();
         if(bi.type == RawData::TypeImgFile)
         {
             QByteArray ba = query.value("data").toByteArray();
@@ -197,7 +209,7 @@ void RawData::createFolder(int id, QString name)
     }
 }
 
-void RawData::createBmp(int id, QString name, const QImage &img)
+void RawData::createBmp(int id, QString name, const QImage &img, const QString brief)
 {
     bool isVaild = false;
     int pid = 0;
@@ -235,11 +247,12 @@ void RawData::createBmp(int id, QString name, const QImage &img)
 
     if(isVaild)
     {
-        query.prepare("INSERT INTO tbl_img (name,type,pid,data) VALUES(:name,:type,:pid,:data)");
+        query.prepare("INSERT INTO tbl_img (name,type,pid,data,brief) VALUES(:name,:type,:pid,:data,:brief)");
         query.bindValue(":name", name);
         query.bindValue(":type", RawData::TypeImgFile);
         query.bindValue(":pid", pid);
         query.bindValue(":data", byteArray);
+        query.bindValue(":brief", brief);
         query.exec();
 
         BmFile bi;
@@ -248,15 +261,16 @@ void RawData::createBmp(int id, QString name, const QImage &img)
         bi.type = RawData::TypeImgFile;
         bi.name = name;
         bi.image = img;
+        bi.brief = brief;
         dataMap.insert(bi.id, bi);
     }
 }
 
-void RawData::createBmp(int id, QString name, quint16 width, quint16 height)
+void RawData::createBmp(int id, QString name, QSize size, const QString brief)
 {
-    QImage image(width, height, QImage::Format_RGBA8888);
+    QImage image(size, QImage::Format_RGBA8888);
     image.fill(Qt::white);
-    createBmp(id, name, image);
+    createBmp(id, name, image, brief);
 }
 
 void RawData::createComImg(int id, QString name, QSize size)
@@ -466,6 +480,11 @@ void RawData::setComImg(int id, ComImg ci)
         query.bindValue(":id", id);
         query.exec();
     }
+}
+
+QSize RawData::getSize()
+{
+    return size;
 }
 
 

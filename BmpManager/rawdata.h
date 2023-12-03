@@ -60,7 +60,7 @@ struct BmFile
     quint8 isFolder;    // 0-文件 1-文件夹 2-图片组文件夹
     int type;
     QString name;
-    QString notes;
+    QString brief;
     QImage image;
     ComImg comImg;
 
@@ -90,9 +90,8 @@ public:
 private:
     QString project;        // 项目文件
     QSqlDatabase db;        // 项目数据库
-    quint16 screenWith;     // 项目屏幕宽度(像素)
-    quint16 screenHeight;   // 项目屏幕高度(像素)
     quint8 depth;           // 项目图片深度
+    QSize size;             // 项目屏幕大小(像素)
     QMap<quint16, BmFile> dataMap;
 
     void initDatabase();
@@ -110,8 +109,8 @@ public:
     void load();    // 加载数据库数据
     void sortDataMap(); // 按名称字母顺序排列
     void createFolder(int id, QString name = "Untitled");
-    void createBmp(int id, QString name, const QImage &img);
-    void createBmp(int id, QString name, quint16 width, quint16 height);
+    void createBmp(int id, QString name, const QImage &img, const QString brief = "");
+    void createBmp(int id, QString name, QSize size, const QString brief = "");
     void createComImg(int id, QString name, QSize size);
     void rename(int id, QString name);
     void remove(int id);
@@ -128,6 +127,8 @@ public:
 
     static bool isClassImgType(int type) { return type == TypeImgFolder || type == TypeImgGrpFolder || type == TypeImgFile; }
     static bool isClassComImgType(int type) { return type == TypeComImgFolder || type == TypeComImgFile; }
+
+    QSize getSize();
 };
 
 #endif // RAWDATA_H

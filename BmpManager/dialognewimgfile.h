@@ -13,12 +13,15 @@ class DialogNewImgFile : public QDialog
     Q_OBJECT
 
 public:
-    explicit DialogNewImgFile(QWidget *parent = nullptr);
+    explicit DialogNewImgFile(QWidget *parent = nullptr, QSize defaultSize = QSize(16, 16));
     ~DialogNewImgFile();
     quint16 width();
     quint16 height();
+    QSize size();
     QString imgFileName();
+    QString brief();
     void setExistFile(QVector<QString> files);
+    void setSize(QSize size);
 private slots:
     void on_lineEditImgFileName_textChanged(const QString &arg1);
 

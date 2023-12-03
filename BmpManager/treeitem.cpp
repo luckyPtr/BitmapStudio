@@ -99,7 +99,7 @@ QString TreeItem::getText()
 
 QString TreeItem::getNotes()
 {
-    return rawData->getDataMap()[id].notes;
+    return rawData->getDataMap()[id].brief;
 }
 
 
