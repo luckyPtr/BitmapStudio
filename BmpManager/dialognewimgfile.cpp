@@ -47,7 +47,7 @@ QString DialogNewImgFile::imgFileName()
 
 QString DialogNewImgFile::brief()
 {
-    return ui->lineEdit->text();
+    return ui->textEdit->toPlainText();
 }
 
 void DialogNewImgFile::setExistFile(QVector<QString> files)

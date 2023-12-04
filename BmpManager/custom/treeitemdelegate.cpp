@@ -17,7 +17,9 @@ void TreeItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     const TreeModel *model = static_cast<const TreeModel*>(index.model());
     TreeItem *item = static_cast<TreeItem*>(model->itemFromIndex(index));
 
-    QString notes = item->getNotes();
+    QString brief = item->getNotes();
+    QString briefTitle = brief.left(brief.indexOf('\n'));
+
     QString text = item->getText();
 
 
@@ -30,12 +32,12 @@ void TreeItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     int y = opt.rect.y() + (opt.rect.height() - opt.fontMetrics.descent() - opt.fontMetrics.ascent()) / 2 + opt.fontMetrics.ascent();
 
     // Paint
-    if(!notes.isEmpty())
+    if(!briefTitle.isEmpty())
     {
         QPen pen(QColor(128, 128, 0));
         painter->setPen(pen);
         painter->setFont(opt.font);
-        painter->drawText(QPoint(x, y), QString("(%1)").arg(notes));
+        painter->drawText(QPoint(x, y), QString("(%1)").arg(briefTitle));
     }
 
     painter->restore();
