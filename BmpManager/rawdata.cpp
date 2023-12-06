@@ -487,6 +487,17 @@ QSize RawData::getSize()
     return size;
 }
 
+bool RawData::haveSubFolder(int id)
+{
+    foreach (auto i, dataMap) {
+        if(i.pid == id && (i.type == TypeImgFolder || i.type == TypeImgGrpFolder))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 
 

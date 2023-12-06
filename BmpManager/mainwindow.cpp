@@ -101,10 +101,10 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
 
 void MainWindow::on_actNewFolder_triggered()
 {
-    QModelIndex curIndex = ui->treeViewProject->currentIndex();
-    pm.createFolder(curIndex);
-    ui->treeViewProject->expand(curIndex);
-    pm.initModel();
+//    QModelIndex curIndex = ui->treeViewProject->currentIndex();
+//    pm.createFolder(curIndex);
+//    ui->treeViewProject->expand(curIndex);
+//    pm.initModel();
 }
 
 void MainWindow::on_actRename_triggered()

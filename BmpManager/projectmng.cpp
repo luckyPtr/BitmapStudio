@@ -125,6 +125,9 @@ void ProjectMng::initActions()
 
     actProperties = new QAction(tr("属性"), this);
     connect(actProperties, SIGNAL(triggered()), this, SLOT(on_ActProperties_Triggered()));
+
+    actImgGrpFolder = new QAction(tr("转换为图片组文件夹"), this);
+    connect(actImgGrpFolder, SIGNAL(triggered()), this, SLOT(on_ActImgGrpFolder_Triggered()));
 }
 
 
@@ -205,16 +208,11 @@ void ProjectMng::setTabWidget(CustomTabWidget *tabWidget)
 
 
 
-void ProjectMng::createFolder(QModelIndex index)
+void ProjectMng::createFolder(QModelIndex index, QString name)
 {
-    bool ok = false;
-    QString text = QInputDialog::getText(this, tr("新建文件夹"), tr("文件夹名"), QLineEdit::Normal, "", &ok);
-    if(ok && !text.isEmpty())
-    {
-        TreeItem *item = theModel->itemFromIndex(index);
-        RawData *rd = item->getRawData();
-        rd->createFolder(item->getID(), text);
-    }
+    TreeItem *item = theModel->itemFromIndex(index);
+    RawData *rd = item->getRawData();
+    rd->createFolder(item->getID(), name);
 }
 
 void ProjectMng::createImage(QModelIndex &index, QString name, QSize size, QString brief)
@@ -358,6 +356,28 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
 
         menu.addAction(actDelete);
 
+        menu.addAction(actImgGrpFolder);
+
+        // 非最后一级菜单
+        if(item->getRawData()->haveSubFolder(item->getID()))
+        {
+            actImgGrpFolder->setEnabled(false);
+        }
+        else
+        {
+            actImgGrpFolder->setEnabled(true);
+            if(item->getType() == RawData::TypeImgGrpFolder)
+            {
+                actImgGrpFolder->setText(tr("转换为普通文件夹"));
+            }
+            else
+            {
+                actImgGrpFolder->setText(tr("转换为图片组"));
+            }
+        }
+
+
+
         menu.addSeparator();
         menu.addAction(actProperties);
 
@@ -367,7 +387,15 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
     // 图片文件菜单
     auto menuImgFile = [=]() {
         QMenu menu;
+
         menu.addAction(actOpen);
+
+        QMenu menuNew(tr("新建"));
+        menuNew.addAction(actNewImgFile);
+        menuNew.addAction(actNewFolder);
+        menu.addMenu(&menuNew);
+        menu.addAction(actImgGrpFolder);
+
         menu.addAction(actDelete);
         menu.addAction(actRename);
         menu.addAction(actProperties);
@@ -507,5 +535,18 @@ void ProjectMng::on_ActNewComImg_Triggered()
 
 void ProjectMng::on_ActNewFolder_Triggered()
 {
+    bool ok = false;
+    QString text = QInputDialog::getText(this, tr("新建文件夹"), tr("文件夹名"), QLineEdit::Normal, "", &ok);
+    if(ok && !text.isEmpty())
+    {
+        createFolder(currentIndex, text);
+        treeView->expand(currentIndex);
+        initModel();
+    }
+}
 
+void ProjectMng::on_ActImgGrpFolder_Triggered()
+{
+    imgFolderConvert(currentIndex);
+    initModel();
 }

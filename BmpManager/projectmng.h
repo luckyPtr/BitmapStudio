@@ -29,6 +29,7 @@ private:
     QAction *actOpen;
     QAction *actCloseProject;
     QAction *actDelete;
+    QAction *actImgGrpFolder; // 普通文件夹和图片组文件夹互相转换
     QAction *actRename;
     QAction *actProperties;
 
@@ -47,7 +48,7 @@ public:
     TreeModel* model() { return theModel; }
     void blindTreeView(QTreeView *treeView);
     void setTabWidget(CustomTabWidget *tabWidget);
-    void createFolder(QModelIndex index); // 新建文件夹
+    void createFolder(QModelIndex index, QString name); // 新建文件夹
     void createImage(QModelIndex &index, QString name, QSize size, QString brief = "");
     void createImage(QModelIndex &index, QString name, QImage &img);
     void rename(QModelIndex &index, QString name);
@@ -69,6 +70,7 @@ public slots:
     void on_ActNewImg_Triggered();
     void on_ActNewComImg_Triggered();
     void on_ActNewFolder_Triggered();
+    void on_ActImgGrpFolder_Triggered();
 signals:
 
 };

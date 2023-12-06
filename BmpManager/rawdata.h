@@ -129,6 +129,7 @@ public:
     static bool isClassComImgType(int type) { return type == TypeComImgFolder || type == TypeComImgFile; }
 
     QSize getSize();
+    bool haveSubFolder(int id); // 是否还有子文件夹
 };
 
 #endif // RAWDATA_H

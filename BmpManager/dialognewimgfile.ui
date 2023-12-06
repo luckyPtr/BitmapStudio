@@ -102,6 +102,7 @@
         <font>
          <family>Microsoft YaHei UI</family>
          <pointsize>11</pointsize>
+         <bold>false</bold>
         </font>
        </property>
        <property name="text">
