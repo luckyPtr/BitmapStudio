@@ -150,7 +150,7 @@ RawData::~RawData()
     qDebug() << "~RawData:" << project;
 }
 
-void RawData::createFolder(int id, QString name)
+void RawData::createFolder(int id, QString name, QString brief)
 {
     int type = TypeUnknow;
     int pid = 0;
@@ -194,10 +194,11 @@ void RawData::createFolder(int id, QString name)
 
     if(type != RawData::TypeUnknow)
     {
-        query.prepare("INSERT INTO tbl_img (name,type,pid) VALUES(:name,:type,:pid)");
+        query.prepare("INSERT INTO tbl_img (name,type,pid,brief) VALUES(:name,:type,:pid,:brief)");
         query.bindValue(":name", name);
         query.bindValue(":type", type);
         query.bindValue(":pid", pid);
+        query.bindValue(":brief", brief);
         query.exec();
 
         BmFile bi;
@@ -205,6 +206,7 @@ void RawData::createFolder(int id, QString name)
         bi.pid = pid;
         bi.type = type;
         bi.name = name;
+        bi.brief = brief;
         dataMap.insert(bi.id, bi);
     }
 }

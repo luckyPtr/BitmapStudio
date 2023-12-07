@@ -108,7 +108,7 @@ public:
     BmFile getBmFile(quint16 id) const { return dataMap[id]; }
     void load();    // 加载数据库数据
     void sortDataMap(); // 按名称字母顺序排列
-    void createFolder(int id, QString name = "Untitled");
+    void createFolder(int id, QString name = "Untitled", QString brief = "");
     void createBmp(int id, QString name, const QImage &img, const QString brief = "");
     void createBmp(int id, QString name, QSize size, const QString brief = "");
     void createComImg(int id, QString name, QSize size);

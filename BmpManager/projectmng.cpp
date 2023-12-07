@@ -4,6 +4,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <dialognewimgfile.h>
+#include <custom/dialognewfolder.h>
 
 void ProjectMng::addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, bool (*filter)(int))
 {
@@ -208,11 +209,11 @@ void ProjectMng::setTabWidget(CustomTabWidget *tabWidget)
 
 
 
-void ProjectMng::createFolder(QModelIndex index, QString name)
+void ProjectMng::createFolder(QModelIndex index, QString name, QString brief)
 {
     TreeItem *item = theModel->itemFromIndex(index);
     RawData *rd = item->getRawData();
-    rd->createFolder(item->getID(), name);
+    rd->createFolder(item->getID(), name, brief);
 }
 
 void ProjectMng::createImage(QModelIndex &index, QString name, QSize size, QString brief)
@@ -376,8 +377,6 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
             }
         }
 
-
-
         menu.addSeparator();
         menu.addAction(actProperties);
 
@@ -394,7 +393,6 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
         menuNew.addAction(actNewImgFile);
         menuNew.addAction(actNewFolder);
         menu.addMenu(&menuNew);
-        menu.addAction(actImgGrpFolder);
 
         menu.addAction(actDelete);
         menu.addAction(actRename);
@@ -535,14 +533,19 @@ void ProjectMng::on_ActNewComImg_Triggered()
 
 void ProjectMng::on_ActNewFolder_Triggered()
 {
-    bool ok = false;
-    QString text = QInputDialog::getText(this, tr("新建文件夹"), tr("文件夹名"), QLineEdit::Normal, "", &ok);
-    if(ok && !text.isEmpty())
+    DialogNewFolder *dlgNewFolder = new DialogNewFolder(this);
+    if(dlgNewFolder->exec() == QDialog::Accepted)
     {
-        createFolder(currentIndex, text);
-        treeView->expand(currentIndex);
-        initModel();
+        QString name = dlgNewFolder->name();
+        QString brief = dlgNewFolder->brief();
+        if(!name.isEmpty())
+        {
+            createFolder(currentIndex, name, brief);
+            treeView->expand(currentIndex);
+            initModel();
+        }
     }
+    delete dlgNewFolder;
 }
 
 void ProjectMng::on_ActImgGrpFolder_Triggered()

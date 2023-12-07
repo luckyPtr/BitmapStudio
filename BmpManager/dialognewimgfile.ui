@@ -106,7 +106,7 @@
         </font>
        </property>
        <property name="text">
-        <string>备注</string>
+        <string>描述</string>
        </property>
       </widget>
      </item>
@@ -138,7 +138,7 @@
       <bool>false</bool>
      </property>
      <property name="placeholderText">
-      <string>输入图片备注...</string>
+      <string>添加图片描述...</string>
      </property>
     </widget>
    </item>
