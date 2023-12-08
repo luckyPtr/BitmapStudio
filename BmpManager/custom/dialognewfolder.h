@@ -17,6 +17,9 @@ public:
 
     QString name();
     QString brief();
+private slots:
+    void on_lineEditName_textChanged(const QString &arg1);
+
 private:
     Ui::DialogNewFolder *ui;
 };

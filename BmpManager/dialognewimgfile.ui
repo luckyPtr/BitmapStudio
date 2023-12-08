@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>DialogNewImgFile</class>
  <widget class="QDialog" name="DialogNewImgFile">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -178,6 +181,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="btnOK">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="font">
         <font>
          <family>Arial</family>

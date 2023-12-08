@@ -14,10 +14,13 @@ DialogNewImgFile::DialogNewImgFile(QWidget *parent, QSize defaultSize) :
     // 把焦点设置在图片名称的lineEdit上
     QTimer::singleShot(0, ui->lineEditImgFileName, SLOT(setFocus()));
 
+    setWindowFlag(Qt::WindowContextHelpButtonHint, false);  // 去掉标题栏上的问号图标
+    setWindowFlag(Qt::MSWindowsFixedSizeDialogHint);        // 固定窗口大小
+
     // 限制图片名称输入格式同C语言变量命名规则
-    QRegExp regx("^[a-zA-Z_][a-zA-Z0-9_]+$");
-    QValidator *validator = new QRegExpValidator(regx, ui->lineEditImgFileName);
-    ui->lineEditImgFileName->setValidator(validator);
+//    QRegExp regx("^[a-zA-Z_][a-zA-Z0-9_]+$");
+//    QValidator *validator = new QRegExpValidator(regx, ui->lineEditImgFileName);
+//    ui->lineEditImgFileName->setValidator(validator);
 }
 
 DialogNewImgFile::~DialogNewImgFile()
@@ -73,16 +76,18 @@ bool DialogNewImgFile::checkImgFileName()
 
 void DialogNewImgFile::on_lineEditImgFileName_textChanged(const QString &arg1)
 {
-    Q_UNUSED(arg1);
-    if(!checkImgFileName())
+    // 有字母数字下划线组成，长度不为0
+    QRegExp regx("^[a-zA-Z0-9_]+$");
+    if(regx.exactMatch(arg1))
     {
-        ui->lineEditImgFileName->setStyleSheet("color:red");
+        ui->btnOK->setEnabled(true);
+        ui->lineEditImgFileName->setStyleSheet("color:black;");
     }
     else
     {
-        ui->lineEditImgFileName->setStyleSheet("color:black");
+        ui->btnOK->setEnabled(false);
+        ui->lineEditImgFileName->setStyleSheet("color:#ff4040;");
     }
-    ui->btnOK->setEnabled(checkImgFileName());
 }
 
 

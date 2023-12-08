@@ -515,8 +515,6 @@ void ProjectMng::on_ActNewImg_Triggered()
     TreeItem *item = theModel->itemFromIndex(currentIndex);
 
     DialogNewImgFile *dlgNewImg = new DialogNewImgFile(this, item->getRawData()->getSize());
-    Qt::WindowFlags flags = dlgNewImg->windowFlags();
-    dlgNewImg->setWindowFlags(flags | Qt::MSWindowsFixedSizeDialogHint);
     int ret = dlgNewImg->exec();
     if(ret == QDialog::Accepted)
     {

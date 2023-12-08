@@ -75,6 +75,9 @@
        <pointsize>10</pointsize>
       </font>
      </property>
+     <property name="placeholderText">
+      <string>添加文件夹描述...</string>
+     </property>
     </widget>
    </item>
    <item row="2" column="0" colspan="2">
@@ -94,6 +97,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="btnOK">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="font">
         <font>
          <pointsize>10</pointsize>
