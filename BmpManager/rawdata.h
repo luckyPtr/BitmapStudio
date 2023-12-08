@@ -30,21 +30,18 @@ struct ComImgItem
 
 struct ComImg
 {
-    quint16 width;
-    quint16 height;
+    QSize size;
     QVector<ComImgItem> items;
     ComImg() {}
-    ComImg(quint16 width, quint16 height)
+    ComImg(QSize size)
     {
-        this->width = width;
-        this->height = height;
+        this->size = size;
         items.clear();
     }
 
     ComImg & operator = (ComImg comimg)
     {
-        this->width = comimg.width;
-        this->height = comimg.height;
+        this->size = comimg.size;
         this->items.clear();
         this->items.swap(comimg.items);
 

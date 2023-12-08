@@ -6,26 +6,26 @@
 
 bool QGraphicsComImgCanvansItem::isInSizeVerArea(QPoint point)
 {
-    QRect rect(startPoint.x() + comImg.width * Global::pixelSize / 2 - 6, startPoint.y() + comImg.height * Global::pixelSize, 12, 12);
+    QRect rect(startPoint.x() + comImg.size.width() * Global::pixelSize / 2 - 6, startPoint.y() + comImg.size.height() * Global::pixelSize, 12, 12);
     return rect.contains(point);
 }
 
 bool QGraphicsComImgCanvansItem::isInSizeHorArea(QPoint point)
 {
-    QRect rect(startPoint.x() + comImg.width * Global::pixelSize, startPoint.y() + comImg.height * Global::pixelSize / 2 - 6, 12, 12);
+    QRect rect(startPoint.x() + comImg.size.width() * Global::pixelSize, startPoint.y() + comImg.size.height() * Global::pixelSize / 2 - 6, 12, 12);
     return rect.contains(point);
 }
 
 bool QGraphicsComImgCanvansItem::isInSizeFDiagArea(QPoint point)
 {
-    QRect rect(startPoint.x() + comImg.width * Global::pixelSize, startPoint.y() + comImg.height * Global::pixelSize, 12, 12);
+    QRect rect(startPoint.x() + comImg.size.width() * Global::pixelSize, startPoint.y() + comImg.size.height() * Global::pixelSize, 12, 12);
     return rect.contains(point);
 }
 
 void QGraphicsComImgCanvansItem::paintBackground(QPainter *painter)
 {
     // 背景使用像素0的颜色填充
-    QRect backgroudRect(startPoint.x(), startPoint.y(), comImg.width * Global::pixelSize, comImg.height * Global::pixelSize);
+    QRect backgroudRect(startPoint.x(), startPoint.y(), comImg.size.width() * Global::pixelSize, comImg.size.height() * Global::pixelSize);
     painter->fillRect(backgroudRect, Global::pixelColor_0);
 }
 
@@ -33,19 +33,19 @@ void QGraphicsComImgCanvansItem::paintItems(QPainter *painter)
 {
     // 在指定位置绘制单个图形
     auto paintItem = ([=](int x0, int y0, QImage img){
-        QRect canvasRect(startPoint.x(), startPoint.y(), comImg.width * Global::pixelSize, comImg.height * Global::pixelSize);
+        QRect canvasRect(startPoint.x(), startPoint.y(), comImg.size.width() * Global::pixelSize, comImg.size.height() * Global::pixelSize);
 
         QRect rect(QPoint(x0, y0), img.size());
-        if(rect.right() >= comImg.width)
-            rect.setRight(comImg.width - 1);
-        if(rect.bottom() >= comImg.height)
-            rect.setBottom(comImg.height - 1);
+        if(rect.right() >= comImg.size.width())
+            rect.setRight(comImg.size.width() - 1);
+        if(rect.bottom() >= comImg.size.height())
+            rect.setBottom(comImg.size.height() - 1);
         if(rect.x() < 0)
             rect.setX(0);
         if(rect.y() < 0)
             rect.setY(0);
 
-        if(rect.x() < comImg.width && rect.y() < comImg.height)
+        if(rect.x() < comImg.size.width() && rect.y() < comImg.size.height())
         {
             painter->fillRect(QRect(startPoint.x() + rect.x() * Global::pixelSize + 1, startPoint.y() + rect.y() * Global::pixelSize + 1,\
                               Global::pixelSize * rect.width() - 1, Global::pixelSize * rect.height() - 1),\
@@ -109,20 +109,20 @@ void QGraphicsComImgCanvansItem::paintGrid(QPainter *painter)
     // 网格
     QPen pen(Global::gridColor);
     painter->setPen(pen);
-    for(int x = 0; x < comImg.width; x++)
+    for(int x = 0; x < comImg.size.width(); x++)
     {
-        painter->drawLine(startPoint.x() + x * Global::pixelSize, startPoint.y(), startPoint.x() + x * Global::pixelSize, startPoint.y() + comImg.height * Global::pixelSize);
+        painter->drawLine(startPoint.x() + x * Global::pixelSize, startPoint.y(), startPoint.x() + x * Global::pixelSize, startPoint.y() + comImg.size.height() * Global::pixelSize);
     }
-    for(int y = 0; y < comImg.height; y++)
+    for(int y = 0; y < comImg.size.height(); y++)
     {
-        painter->drawLine(startPoint.x(), startPoint.y() + y * Global::pixelSize, startPoint.x() + comImg.width * Global::pixelSize, startPoint.y() + y * Global::pixelSize);
+        painter->drawLine(startPoint.x(), startPoint.y() + y * Global::pixelSize, startPoint.x() + comImg.size.width() * Global::pixelSize, startPoint.y() + y * Global::pixelSize);
     }
 
     // 外边框
     pen.setColor(Qt::yellow);
     pen.setWidth(2);
     painter->setPen(pen);
-    QRectF rect(startPoint.x(), startPoint.y(), comImg.width * Global::pixelSize + 1, comImg.height * Global::pixelSize + 1);
+    QRectF rect(startPoint.x(), startPoint.y(), comImg.size.width() * Global::pixelSize + 1, comImg.size.height() * Global::pixelSize + 1);
     painter->drawRect(rect);
 }
 
@@ -130,7 +130,7 @@ void QGraphicsComImgCanvansItem::paintDragItem(QPainter *painter)
 {
     // 在指定位置绘制单个图形
     auto paintItem = ([&](int x0, int y0, QImage img){
-        QRect canvasRect(startPoint.x(), startPoint.y(), comImg.width * Global::pixelSize, comImg.height * Global::pixelSize);
+        QRect canvasRect(startPoint.x(), startPoint.y(), comImg.size.width() * Global::pixelSize, comImg.size.height() * Global::pixelSize);
         for(int x = 0; x < img.width(); x++)
         {
             for(int y = 0; y < img.height(); y++)
@@ -166,11 +166,11 @@ void QGraphicsComImgCanvansItem::paintAuxiliaryLines(QPainter *painter)
     auto paintLine = [=](Qt::Orientation dir, int scale){
         if(dir == Qt::Horizontal)
         {
-            painter->drawLine(startPoint.x(), startPoint.y() + scale * Global::pixelSize, startPoint.x() + comImg.width * Global::pixelSize, startPoint.y() + scale * Global::pixelSize);
+            painter->drawLine(startPoint.x(), startPoint.y() + scale * Global::pixelSize, startPoint.x() + comImg.size.width() * Global::pixelSize, startPoint.y() + scale * Global::pixelSize);
         }
         else
         {
-            painter->drawLine(startPoint.x() + scale * Global::pixelSize, startPoint.y(), startPoint.x() + scale * Global::pixelSize, startPoint.y() + comImg.height * Global::pixelSize);
+            painter->drawLine(startPoint.x() + scale * Global::pixelSize, startPoint.y(), startPoint.x() + scale * Global::pixelSize, startPoint.y() + comImg.size.height() * Global::pixelSize);
         }
     };
 
@@ -225,9 +225,9 @@ void QGraphicsComImgCanvansItem::paintResizePoint(QPainter *painter)
     QBrush brush(Qt::white);
     brush.setStyle(Qt::SolidPattern);
     painter->setBrush(brush);
-    painter->drawRect(QRect(startPoint.x() + comImg.width * Global::pixelSize, startPoint.y() + comImg.height * Global::pixelSize, 4, 4));
-    painter->drawRect(QRect(startPoint.x() + comImg.width * Global::pixelSize / 2 - 2, startPoint.y() + comImg.height * Global::pixelSize, 4, 4));
-    painter->drawRect(QRect(startPoint.x() + comImg.width * Global::pixelSize, startPoint.y() + comImg.height * Global::pixelSize / 2 - 2, 4, 4));
+    painter->drawRect(QRect(startPoint.x() + comImg.size.width() * Global::pixelSize, startPoint.y() + comImg.size.height() * Global::pixelSize, 4, 4));
+    painter->drawRect(QRect(startPoint.x() + comImg.size.width() * Global::pixelSize / 2 - 2, startPoint.y() + comImg.size.height() * Global::pixelSize, 4, 4));
+    painter->drawRect(QRect(startPoint.x() + comImg.size.width() * Global::pixelSize, startPoint.y() + comImg.size.height() * Global::pixelSize / 2 - 2, 4, 4));
 
     // 校准画布大小到像素点对应的大小
     auto calibrate = ([=](QPoint point){
@@ -251,12 +251,12 @@ void QGraphicsComImgCanvansItem::paintResizePoint(QPainter *painter)
         }
         else if(action == ActionResizeVer)
         {
-            QPoint point(startPoint.x() + comImg.width * Global::pixelSize, currentPoint.y());
+            QPoint point(startPoint.x() + comImg.size.width() * Global::pixelSize, currentPoint.y());
             painter->drawRect(QRect(startPoint, calibrate(point)));
         }
         else if(action == ActionResizeHor)
         {
-            QPoint point(currentPoint.x(), startPoint.y() + comImg.height * Global::pixelSize);
+            QPoint point(currentPoint.x(), startPoint.y() + comImg.size.height() * Global::pixelSize);
             painter->drawRect(QRect(startPoint, calibrate(point)));
         }
     }
@@ -294,11 +294,11 @@ int QGraphicsComImgCanvansItem::getPointAuxLineIndex(QPoint point)
         AuxiliaryLine auxLine = auxiliaryLines[i];
         if(auxLine.dir == Qt::Horizontal)
         {
-            lineRect.setRect(startPoint.x(), startPoint.y() + auxLine.scale * Global::pixelSize - 2, comImg.width * Global::pixelSize, 5);
+            lineRect.setRect(startPoint.x(), startPoint.y() + auxLine.scale * Global::pixelSize - 2, comImg.size.width() * Global::pixelSize, 5);
         }
         else
         {
-            lineRect.setRect(startPoint.x() + auxLine.scale * Global::pixelSize - 2, startPoint.y(), 5, comImg.height * Global::pixelSize);
+            lineRect.setRect(startPoint.x() + auxLine.scale * Global::pixelSize - 2, startPoint.y(), 5, comImg.size.height() * Global::pixelSize);
         }
         if(lineRect.contains(point))
         {
@@ -317,7 +317,7 @@ void QGraphicsComImgCanvansItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event
 void QGraphicsComImgCanvansItem::setComImg(ComImg &comImg)
 {
     this->comImg = comImg;
-    view->scene()->setSceneRect(QRectF(0, 0, comImg.width * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, comImg.height * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
+    view->scene()->setSceneRect(QRectF(0, 0, comImg.size.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, comImg.size.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
 }
 
 void QGraphicsComImgCanvansItem::setRawData(RawData *rd)
@@ -328,9 +328,8 @@ void QGraphicsComImgCanvansItem::setRawData(RawData *rd)
 
 void QGraphicsComImgCanvansItem::resize(QSize size)
 {
-    comImg.width = size.width();
-    comImg.height = size.height();
-    view->scene()->setSceneRect(QRectF(0, 0, comImg.width * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, comImg.height * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
+    comImg.size = size;
+    view->scene()->setSceneRect(QRectF(0, 0, comImg.size.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, comImg.size.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
 }
 
 void QGraphicsComImgCanvansItem::deleteSelectItem()
@@ -408,7 +407,7 @@ void QGraphicsComImgCanvansItem::on_AlignVCenter()
     {
         ComImgItem *ci = &comImg.items[selectedItemIndex];
         QImage img = rd->getImage(ci->id);
-        ci->x = (comImg.width - img.width()) / 2;
+        ci->x = (comImg.size.width() - img.width()) / 2;
         view->viewport()->update();
     }
 }
@@ -419,7 +418,7 @@ void QGraphicsComImgCanvansItem::on_AlignHCenter()
     {
         ComImgItem *ci = &comImg.items[selectedItemIndex];
         QImage img = rd->getImage(ci->id);
-        ci->y = (comImg.height - img.height()) / 2;
+        ci->y = (comImg.size.height() - img.height()) / 2;
         view->viewport()->update();
     }
 }
@@ -430,8 +429,8 @@ void QGraphicsComImgCanvansItem::on_AlignCenter()
     {
         ComImgItem *ci = &comImg.items[selectedItemIndex];
         QImage img = rd->getImage(ci->id);
-        ci->x = (comImg.width - img.width()) / 2;
-        ci->y = (comImg.height - img.height()) / 2;
+        ci->x = (comImg.size.width() - img.width()) / 2;
+        ci->y = (comImg.size.height() - img.height()) / 2;
         view->viewport()->update();
     }
 }
@@ -572,7 +571,7 @@ void QGraphicsComImgCanvansItem::on_MouseMove(QPoint point)
                 item->x += currentPixel.x() - moveLastPixel.x();
                 item->y += currentPixel.y() - moveLastPixel.y();
 
-                view->setCursor((item->x >= comImg.width || item->y >= comImg.height) ? Qt::ForbiddenCursor : Qt::SizeAllCursor);
+                view->setCursor((item->x >= comImg.size.width() || item->y >= comImg.size.height()) ? Qt::ForbiddenCursor : Qt::SizeAllCursor);
             }
             moveLastPixel = currentPixel;
         }
@@ -651,12 +650,12 @@ void QGraphicsComImgCanvansItem::on_MouseMove(QPoint point)
     }
     else if(action == ActionResizeVer)
     {
-        newSize = QSize(comImg.width, currentPixel.y());
+        newSize = QSize(comImg.size.width(), currentPixel.y());
         emit updateStatusBarSize(newSize);
     }
     else if(action == ActionResizeHor)
     {
-        newSize = QSize(currentPixel.x(), comImg.height);
+        newSize = QSize(currentPixel.x(), comImg.size.height());
         emit updateStatusBarSize(newSize);
     }
 
@@ -682,9 +681,8 @@ void QGraphicsComImgCanvansItem::on_MouseRelease(QPoint point)
     if(action == ActionResizeFDiag || action == ActionResizeVer || action == ActionResizeHor)
     {
         action = ActionNull;
-        comImg.width = newSize.width();
-        comImg.height = newSize.height();
-        view->scene()->setSceneRect(QRectF(0, 0, comImg.width * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, comImg.height * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
+        comImg.size = newSize;
+        view->scene()->setSceneRect(QRectF(0, 0, comImg.size.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, comImg.size.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
     }
     else if(action == ActionSelect || action == ActionMove || action == ActionSelectAuxiliaryLine || action == ActionMoveAuxiliaryLine)
     {
@@ -712,8 +710,7 @@ QGraphicsComImgCanvansItem::QGraphicsComImgCanvansItem(QObject *parent)
     // 初始化左上角0点坐标
     startPoint.setX(Global::scaleWidth + Global::scaleOffset);
     startPoint.setY(Global::scaleWidth + Global::scaleOffset);
-    comImg.height = 64;
-    comImg.width = 128;
+    comImg.size = QSize(128, 64);
 
     this->setAcceptHoverEvents(true);
     this->setAcceptDrops(true);
@@ -725,7 +722,7 @@ QGraphicsComImgCanvansItem::QGraphicsComImgCanvansItem(QObject *parent)
 
 QRectF QGraphicsComImgCanvansItem::boundingRect() const
 {
-    return QRectF(startPoint.x(), startPoint.y(), comImg.width * Global::pixelSize, comImg.height * Global::pixelSize);
+    return QRectF(startPoint.x(), startPoint.y(), comImg.size.width() * Global::pixelSize, comImg.size.height() * Global::pixelSize);
 }
 
 QPainterPath QGraphicsComImgCanvansItem::shape() const

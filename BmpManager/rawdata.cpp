@@ -32,7 +32,7 @@ void RawData::initDatabase()
 
 void RawData::convertComImgToImage(BmFile &file)
 {
-    QImage img(file.comImg.width, file.comImg.height, QImage::Format_RGB888);
+    QImage img(file.comImg.size, QImage::Format_RGB888);
 }
 
 int RawData::getTypeFromId(int id)
@@ -97,8 +97,8 @@ void RawData::load()
         {
             QString s = query.value("data").toString();
             QJsonObject jsonComImg = stringToJson(s);
-            bi.comImg.width = jsonComImg.value("width").toInt();
-            bi.comImg.height = jsonComImg.value("height").toInt();
+            bi.comImg.size.setWidth(jsonComImg.value("width").toInt());
+            bi.comImg.size.setHeight(jsonComImg.value("height").toInt());
             QJsonArray array = jsonComImg.value("images").toArray();
 
             for(auto obj : array)
@@ -326,7 +326,7 @@ void RawData::createComImg(int id, QString name, QSize size, const QString brief
         bi.brief = brief;
 
         bi.image = QImage();
-        bi.comImg = ComImg(size.width(), size.height());
+        bi.comImg = ComImg(size);
         dataMap.insert(bi.id, bi);
     }
 }
@@ -400,7 +400,7 @@ QImage RawData::getImage(int id)
     };
 
     auto comImgToImage = [=](){
-        QImage image(dataMap[id].comImg.width, dataMap[id].comImg.height, QImage::Format_RGB888);
+        QImage image(dataMap[id].comImg.size, QImage::Format_RGB888);
         image.fill(Qt::white);
         foreach(auto item, dataMap[id].comImg.items)
         {
@@ -474,8 +474,8 @@ void RawData::setComImg(int id, ComImg ci)
         }
 
         QJsonObject ciObj;
-        ciObj.insert("width", ci.width);
-        ciObj.insert("height", ci.height);
+        ciObj.insert("width", ci.size.width());
+        ciObj.insert("height", ci.size.height());
         ciObj.insert("images", QJsonValue(imgList));
 
         QSqlQuery query(db);

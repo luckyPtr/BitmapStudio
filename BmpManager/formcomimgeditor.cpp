@@ -133,7 +133,7 @@ void FormComImgEditor::on_LoadComImg(ComImg &comImg, RawData *rd)
 {
     comImgCanvansItem->setComImg(comImg);
     comImgCanvansItem->setRawData(rd);
-    setSize(QSize(comImg.width, comImg.height));
+    setSize(comImg.size);
 }
 
 
@@ -149,7 +149,7 @@ void FormComImgEditor::on_actSave_triggered()
 void FormComImgEditor::on_actResize_triggered()
 {
     DialogResize *dlgResize = new DialogResize(this);
-    QSize defaultSize = QSize(comImgCanvansItem->getComImg().width, comImgCanvansItem->getComImg().height);
+    QSize defaultSize = comImgCanvansItem->getComImg().size;
     dlgResize->setDefaultSize(defaultSize);
     int ret = dlgResize->exec();
     if(ret == QDialog::Accepted)

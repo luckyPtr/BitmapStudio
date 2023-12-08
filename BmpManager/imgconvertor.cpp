@@ -174,7 +174,7 @@ QString ImgConvertor::encodeComImgFile(BmFile bf)
     array.append("\t{IMG_END}\n");
 
     res.append("// " + fullName + "\n");
-    res.append(QString::asprintf("// %dx%d\n", bf.comImg.width, bf.comImg.height));
+    res.append(QString::asprintf("// %dx%d\n", bf.comImg.size.width(), bf.comImg.size.height()));
     res.append(QString("const ComImg_t %1[] = \n{\n%2};\n").arg(fullName).arg(array));
 
     return res;
