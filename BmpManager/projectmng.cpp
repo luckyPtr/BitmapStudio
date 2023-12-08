@@ -245,6 +245,13 @@ void ProjectMng::createImage(QModelIndex &index, QString name, QImage &img)
     rd->createBmp(item->getID(), name, img);
 }
 
+void ProjectMng::createComImg(QModelIndex &index, QString name, QSize size, QString brief)
+{
+    TreeItem *item = theModel->itemFromIndex(index);
+    RawData *rd = item->getRawData();
+    rd->createComImg(item->getID(), name, size, brief);
+}
+
 void ProjectMng::rename(QModelIndex &index, QString name)
 {
     TreeItem *item = theModel->itemFromIndex(index);
@@ -526,7 +533,17 @@ void ProjectMng::on_ActNewImg_Triggered()
 
 void ProjectMng::on_ActNewComImg_Triggered()
 {
+    TreeItem *item = theModel->itemFromIndex(currentIndex);
 
+    DialogNewImgFile *dlgNewComImg = new DialogNewImgFile(this, item->getRawData()->getSize());
+    dlgNewComImg->setWindowTitle(tr("新建组合图"));
+    int ret = dlgNewComImg->exec();
+    if(ret == QDialog::Accepted)
+    {
+        createComImg(currentIndex, dlgNewComImg->imgFileName(), dlgNewComImg->size(), dlgNewComImg->brief());
+        initModel();
+    }
+    delete dlgNewComImg;
 }
 
 void ProjectMng::on_ActNewFolder_Triggered()

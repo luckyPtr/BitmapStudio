@@ -111,7 +111,7 @@ public:
     void createFolder(int id, QString name = "Untitled", QString brief = "");
     void createBmp(int id, QString name, const QImage &img, const QString brief = "");
     void createBmp(int id, QString name, QSize size, const QString brief = "");
-    void createComImg(int id, QString name, QSize size);
+    void createComImg(int id, QString name, QSize size, const QString brief = "");
     void rename(int id, QString name);
     void remove(int id);
     void imgFolderConvert(int id);

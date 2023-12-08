@@ -22,6 +22,7 @@ public:
     QString brief();
     void setExistFile(QVector<QString> files);
     void setSize(QSize size);
+
 private slots:
     void on_lineEditImgFileName_textChanged(const QString &arg1);
 

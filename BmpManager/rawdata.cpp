@@ -275,7 +275,7 @@ void RawData::createBmp(int id, QString name, QSize size, const QString brief)
     createBmp(id, name, image, brief);
 }
 
-void RawData::createComImg(int id, QString name, QSize size)
+void RawData::createComImg(int id, QString name, QSize size, const QString brief)
 {
     bool isVaild = false;
     int pid = 0;
@@ -307,14 +307,15 @@ void RawData::createComImg(int id, QString name, QSize size)
     if(isVaild)
     {
         QJsonObject ciObj;
-        ciObj.insert("width", 128);
-        ciObj.insert("height", 64);
+        ciObj.insert("width", size.width());
+        ciObj.insert("height", size.height());
 
-        query.prepare("INSERT INTO tbl_img (name,type,pid,data) VALUES(:name,:type,:pid,:data)");
+        query.prepare("INSERT INTO tbl_img (name,type,pid,data,brief) VALUES(:name,:type,:pid,:data,:brief)");
         query.bindValue(":name", name);
         query.bindValue(":type", RawData::TypeComImgFile);
         query.bindValue(":pid", pid);
         query.bindValue(":data", QString(QJsonDocument(ciObj).toJson()).toUtf8());
+        query.bindValue(":brief", brief);
         query.exec();
 
         BmFile bi;
@@ -322,9 +323,10 @@ void RawData::createComImg(int id, QString name, QSize size)
         bi.pid = pid;
         bi.type = RawData::TypeComImgFile;
         bi.name = name;
+        bi.brief = brief;
 
         bi.image = QImage();
-        bi.comImg = ComImg(128, 64);
+        bi.comImg = ComImg(size.width(), size.height());
         dataMap.insert(bi.id, bi);
     }
 }

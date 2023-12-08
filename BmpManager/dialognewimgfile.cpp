@@ -64,6 +64,8 @@ void DialogNewImgFile::setSize(QSize size)
     ui->spinBoxHeight->setValue(size.height());
 }
 
+
+
 bool DialogNewImgFile::checkImgFileName()
 {
     if(existFile.contains(imgFileName()))
