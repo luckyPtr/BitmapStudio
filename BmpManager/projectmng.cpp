@@ -129,6 +129,9 @@ void ProjectMng::initActions()
 
     actImgGrpFolder = new QAction(tr("转换为图片组文件夹"), this);
     connect(actImgGrpFolder, SIGNAL(triggered()), this, SLOT(on_ActImgGrpFolder_Triggered()));
+
+    actRename = new QAction(tr("重命名"), this);
+    connect(actRename, SIGNAL(triggered()), this, SLOT(on_ActRename_Triggered()));
 }
 
 
@@ -374,6 +377,8 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
 
         menu.addAction(actDelete);
 
+        menu.addAction(actRename);
+
         menu.addAction(actImgGrpFolder);
 
         // 非最后一级菜单
@@ -437,7 +442,7 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
         menu.addMenu(&menuNew);
 
         menu.addSeparator();
-
+        menu.addAction(actRename);
         menu.addAction(actDelete);
 
         menu.addSeparator();
@@ -455,7 +460,7 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
         menu.addMenu(&menuNew);
 
         menu.addSeparator();
-
+        menu.addAction(actRename);
         menu.addAction(actDelete);
 
         menu.addSeparator();
@@ -553,7 +558,11 @@ void ProjectMng::on_ActDelete_Triggered()
 
 void ProjectMng::on_ActRename_Triggered()
 {
-qDebug() << "actRename";
+    QString name = QInputDialog::getText(this, tr("重命名"), tr("名称"));
+    if(!name.isEmpty())
+    {
+        rename(currentIndex, name);
+    }
 }
 
 void ProjectMng::on_ActProperties_Triggered()
