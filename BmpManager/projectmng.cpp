@@ -351,6 +351,16 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
         menu.exec(QCursor::pos());
     };
 
+    // 图片菜单
+    auto menuClassImg = [=]() {
+        QMenu menu;
+        QMenu menuNew(tr("新建"));
+        menuNew.addAction(actNewImgFile);
+        menuNew.addAction(actNewFolder);
+        menu.addMenu(&menuNew);
+        menu.exec(QCursor::pos());
+    };
+
     // 图片文件夹菜单
     auto menuImgFolder = [=]() {
         QMenu menu;
@@ -407,10 +417,38 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
         menu.exec(QCursor::pos());
     };
 
+    // 组合图
+    auto menuClassComImg = [=]() {
+        QMenu menu;
+        QMenu menuNew(tr("新建"));
+        menuNew.addAction(actNewComImgFile);
+        menuNew.addAction(actNewFolder);
+        menu.addMenu(&menuNew);
+        menu.exec(QCursor::pos());
+    };
+
     // 组合图文件夹菜单
     auto menuComImgFolder = [=]() {
         QMenu menu;
 
+        QMenu menuNew(tr("新建"));
+        menuNew.addAction(actNewComImgFile);
+        menuNew.addAction(actNewFolder);
+        menu.addMenu(&menuNew);
+
+        menu.addSeparator();
+
+        menu.addAction(actDelete);
+
+        menu.addSeparator();
+        menu.addAction(actProperties);
+
+        menu.exec(QCursor::pos());
+    };
+
+    // 组合图文件
+    auto menuComImgFile = [=]() {
+        QMenu menu;
         QMenu menuNew(tr("新建"));
         menuNew.addAction(actNewComImgFile);
         menuNew.addAction(actNewFolder);
@@ -432,6 +470,9 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
     case RawData::TypeProject:
         menuProject();
         break;
+    case RawData::TypeClassImg:
+        menuClassImg();
+        break;
     case RawData::TypeImgFolder:
     case RawData::TypeImgGrpFolder:
         menuImgFolder();
@@ -439,15 +480,18 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
     case RawData::TypeImgFile:
         menuImgFile();
         break;
+    case RawData::TypeClassComImg:
+        menuClassComImg();
+        break;
     case RawData::TypeComImgFolder:
         menuComImgFolder();
+        break;
+    case RawData::TypeComImgFile:
+        menuComImgFile();
         break;
     default:
         break;
     }
-
-
-
 }
 
 void ProjectMng::on_ActOpen_Triggered()
