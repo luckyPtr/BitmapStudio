@@ -4,6 +4,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <dialognewimgfile.h>
+#include <QFileDialog>
 #include <custom/dialognewfolder.h>
 
 void ProjectMng::addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, bool (*filter)(int))
@@ -103,6 +104,12 @@ void ProjectMng::restoreExpand()
 
 void ProjectMng::initActions()
 {
+    actNewProject = new QAction(tr("新建项目"), this);
+    connect(actNewProject, SIGNAL(triggered()), this, SLOT(on_ActNewProject_Triggered()));
+
+    actOpenProject = new QAction(tr("载入项目"), this);
+    connect(actOpenProject, SIGNAL(triggered()), this, SLOT(on_ActOpenProject_Triggered()));
+
     actNewImgFile = new QAction(tr("图片"), this);
     connect(actNewImgFile, SIGNAL(triggered()), this, SLOT(on_ActNewImg_Triggered()));
 
@@ -347,7 +354,8 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
     auto menuProject = [=]() {
         QMenu menu;
         menu.addAction(actCloseProject);
-
+        menu.addAction(actNewProject);
+        menu.addAction(actOpenProject);
         menu.addSeparator();
         menu.addAction(actProperties);
 
@@ -496,6 +504,26 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
         break;
     default:
         break;
+    }
+}
+
+void ProjectMng::on_ActNewProject_Triggered()
+{
+    QString aFile = QFileDialog::getSaveFileName(this, tr("保存工程"), "Untiled", tr("BmpManager工程(*.db)"));
+    if(!aFile.isEmpty())
+    {
+        openProject(aFile);
+        initModel();
+    }
+}
+
+void ProjectMng::on_ActOpenProject_Triggered()
+{
+    QString aFile = QFileDialog::getOpenFileName(this, tr("打开工程"), "", tr("BmpManager工程(*.db)"));
+    if(!aFile.isEmpty())
+    {
+        openProject(aFile);
+        initModel();
     }
 }
 

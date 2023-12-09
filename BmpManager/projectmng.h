@@ -23,6 +23,8 @@ private:
     QModelIndex currentIndex;
     CustomTabWidget *tabWidget;
 
+    QAction *actNewProject;
+    QAction *actOpenProject;
     QAction *actNewImgFile;
     QAction *actNewComImgFile;
     QAction *actNewFolder;
@@ -63,6 +65,8 @@ public:
 
 public slots:
     void on_CustomContextMenu(QPoint point);
+    void on_ActNewProject_Triggered();
+    void on_ActOpenProject_Triggered();
     void on_ActOpen_Triggered();
     void on_ActCloseProject_Triggered();
     void on_ActDelete_Triggered();
