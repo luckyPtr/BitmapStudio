@@ -51,10 +51,77 @@ QString ImgConvertor::getFullName(BmFile bf)
     return fullName;
 }
 
+
+void ImgConvertor::initFunc()
+{
+    auto ImgToByteArray_LH_MSB = [](QImage img) -> QByteArray {
+        QByteArray ba;
+        ba.resize(img.width() * ((img.height() + 7) / 8));
+
+        for(int y = 0; y < (img.height() + 7) / 8; y++)
+        {
+            for(int x = 0; x < img.width(); x++)
+            {
+                quint8 temp = 0;
+                for(int n = 0; n < 8; n++)
+                {
+                    QPoint point(x, y * 8 + n);
+                    if(!img.rect().contains(point))
+                    {
+                        break;
+                    }
+                    temp |= ((qGray(img.pixel(point)) < 128) << n);
+                }
+                ba[y * img.width() + x] = temp;
+            }
+        }
+        return ba;
+    };
+
+    auto ByteArrayToImg_LH_MSB = [](QByteArray ba, QSize size) -> QImage {
+        QImage img(size, QImage::Format_RGB888);
+        for(int y = 0; y < (img.height() + 7) / 8; y++)
+        {
+            for(int x = 0; x < img.width(); x++)
+            {
+                for(int n = 0; n < 8; n++)
+                {
+                    QPoint point(x, y * 8 + n);
+                    if(!img.rect().contains(point))
+                    {
+                        break;
+                    }
+                    if(ba[y * img.width() + x] & (1 << n))
+                    {
+                        img.setPixelColor(point, Qt::black);
+                    }
+                }
+            }
+        }
+        return img;
+    };
+
+    funcImgToByteArray.insert("LH-MSB", ImgToByteArray_LH_MSB);
+    funcByteArrayToImg.insert("LH-MSB", ByteArrayToImg_LH_MSB);
+}
+
 ImgConvertor::ImgConvertor(QVector<BmFile> dataMap)
 {
     this->dataList = dataMap;
+    initFunc();
 }
+
+QByteArray ImgConvertor::imgToByteArray(QImage &img, QString mode)
+{
+    QByteArray ba;
+    if(funcImgToByteArray.contains(mode))
+    {
+        ba = funcImgToByteArray.value(mode)(img);
+    }
+    return ba;
+}
+
+
 
 QByteArray ImgConvertor::imgToByteArray(QImage &img)
 {
@@ -81,6 +148,16 @@ QByteArray ImgConvertor::imgToByteArray(QImage &img)
     }
 
     return ba;
+}
+
+QImage ImgConvertor::byteArrayToImg(QByteArray ba, QSize size, QString mode)
+{
+    QImage img;
+    if(funcByteArrayToImg.contains(mode))
+    {
+        img = funcByteArrayToImg.value(mode)(ba, size);
+    }
+    return img;
 }
 
 QString ImgConvertor::encodeImgFile(BmFile bf)

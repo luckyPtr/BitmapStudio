@@ -6,6 +6,7 @@
 #include <dialognewimgfile.h>
 #include <QFileDialog>
 #include <custom/dialognewfolder.h>
+#include <custom/dialogprojectsettings.h>
 
 void ProjectMng::addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, bool (*filter)(int))
 {
@@ -139,6 +140,9 @@ void ProjectMng::initActions()
 
     actRename = new QAction(tr("重命名"), this);
     connect(actRename, SIGNAL(triggered()), this, SLOT(on_ActRename_Triggered()));
+
+    actSettings = new QAction(tr("设置"), this);
+    connect(actSettings, SIGNAL(triggered()), this, SLOT(on_ActSettings_Triggered()));
 }
 
 
@@ -356,6 +360,7 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
         menu.addAction(actCloseProject);
         menu.addAction(actNewProject);
         menu.addAction(actOpenProject);
+        menu.addAction(actSettings);
         menu.addSeparator();
         menu.addAction(actProperties);
 
@@ -648,4 +653,11 @@ void ProjectMng::on_ActImgGrpFolder_Triggered()
 {
     imgFolderConvert(currentIndex);
     initModel();
+}
+
+void ProjectMng::on_ActSettings_Triggered()
+{
+    DialogProjectSettings *dlgSettings = new DialogProjectSettings(this);
+    dlgSettings->exec();
+    delete dlgSettings;
 }

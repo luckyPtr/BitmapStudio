@@ -34,6 +34,7 @@ private:
     QAction *actImgGrpFolder; // 普通文件夹和图片组文件夹互相转换
     QAction *actRename;
     QAction *actProperties;
+    QAction *actSettings;
 
     void addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, bool(*filter)(int));
     void getExpandNode(QModelIndex root);      // 保存展开的节点
@@ -76,6 +77,7 @@ public slots:
     void on_ActNewComImg_Triggered();
     void on_ActNewFolder_Triggered();
     void on_ActImgGrpFolder_Triggered();
+    void on_ActSettings_Triggered();
 signals:
 
 };

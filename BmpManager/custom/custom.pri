@@ -1,7 +1,9 @@
 HEADERS += \
     $$PWD/customtab.h \
     $$PWD/dialognewfolder.h \
+    $$PWD/dialogprojectsettings.h \
     $$PWD/dialogresize.h \
+    $$PWD/latticeshow.h \
     $$PWD/qcustommenu.h \
     $$PWD/qgraphicscanvasitem.h \
     $$PWD/qgraphicscomimgcanvansitem.h \
@@ -12,7 +14,9 @@ HEADERS += \
 SOURCES += \
     $$PWD/customtab.cpp \
     $$PWD/dialognewfolder.cpp \
+    $$PWD/dialogprojectsettings.cpp \
     $$PWD/dialogresize.cpp \
+    $$PWD/latticeshow.cpp \
     $$PWD/qcustommenu.cpp \
     $$PWD/qgraphicscanvasitem.cpp \
     $$PWD/qgraphicscomimgcanvansitem.cpp \
@@ -22,4 +26,5 @@ SOURCES += \
 
 FORMS += \
     $$PWD/dialognewfolder.ui \
+    $$PWD/dialogprojectsettings.ui \
     $$PWD/dialogresize.ui

@@ -16,6 +16,7 @@ SOURCES += \
     formpixeleditor.cpp \
     global.cpp \
     imgconvertor.cpp \
+    imgencoderfactory.cpp \
     main.cpp \
     mainwindow.cpp \
     projectmng.cpp \
@@ -34,6 +35,7 @@ HEADERS += \
     formpixeleditor.h \
     global.h \
     imgconvertor.h \
+    imgencoderfactory.h \
     mainwindow.h \
     projectmng.h \
     qgraphicsitemruler.h \
