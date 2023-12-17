@@ -23,14 +23,72 @@ DialogProjectSettings::DialogProjectSettings(QWidget *parent) :
 
     connect(btnGroup1, SIGNAL(idToggled(int,bool)), this, SLOT(on_btnToggled(int,bool)));
     connect(btnGroup2, SIGNAL(idToggled(int,bool)), this, SLOT(on_btnToggled(int,bool)));
-
-    ui->radioButton_LSB->setChecked(true);
-    ui->radioButton_ZL->setChecked(true);
 }
 
 DialogProjectSettings::~DialogProjectSettings()
 {
     delete ui;
+}
+
+void DialogProjectSettings::init(RawData::Settings settings)
+{
+    switch(settings.mode)
+    {
+    case ImgEncoderFactory::ZH_LSB:
+        ui->radioButton_LSB->setChecked(true);
+        ui->radioButton_ZH->setChecked(true);
+        break;
+    case ImgEncoderFactory::ZH_MSB:
+        ui->radioButton_MSB->setChecked(true);
+        ui->radioButton_ZH->setChecked(true);
+        break;
+    case ImgEncoderFactory::ZL_LSB:
+        ui->radioButton_LSB->setChecked(true);
+        ui->radioButton_ZL->setChecked(true);
+        break;
+    case ImgEncoderFactory::ZL_MSB:
+        ui->radioButton_MSB->setChecked(true);
+        ui->radioButton_ZL->setChecked(true);
+        break;
+    case ImgEncoderFactory::LH_LSB:
+        ui->radioButton_LSB->setChecked(true);
+        ui->radioButton_LH->setChecked(true);
+        break;
+    case ImgEncoderFactory::LH_MSB:
+        ui->radioButton_MSB->setChecked(true);
+        ui->radioButton_LH->setChecked(true);
+        break;
+    case ImgEncoderFactory::HL_LSB:
+        ui->radioButton_LSB->setChecked(true);
+        ui->radioButton_HL->setChecked(true);
+        break;
+    case ImgEncoderFactory::HL_MSB:
+        ui->radioButton_MSB->setChecked(true);
+        ui->radioButton_HL->setChecked(true);
+        break;
+    default:
+        break;
+    }
+    mode = settings.mode;
+    ui->widget->setMode(mode);
+
+    ui->comboBox_Const->setCurrentText(settings.keywordConst);
+    ui->comboBox_PosTypedef->setCurrentText(settings.keywordImgPos);
+    ui->comboBox_SizeTypedef->setCurrentText(settings.keywordImgSize);
+    ui->lineEdit_Output->setText(settings.path);
+    ui->comboBox_Format->setCurrentText(settings.format);
+}
+
+RawData::Settings DialogProjectSettings::getResult()
+{
+    RawData::Settings settings;
+    settings.mode = mode;
+    settings.keywordConst = ui->comboBox_Const->currentText();
+    settings.keywordImgPos = ui->comboBox_PosTypedef->currentText();
+    settings.keywordImgSize = ui->comboBox_SizeTypedef->currentText();
+    settings.path = ui->lineEdit_Output->text();
+    settings.format = ui->comboBox_Format->currentText();
+    return settings;
 }
 
 QString DialogProjectSettings::getConst()

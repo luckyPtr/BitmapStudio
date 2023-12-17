@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QButtonGroup>
+#include <rawdata.h>
 
 namespace Ui {
 class DialogProjectSettings;
@@ -19,6 +20,8 @@ public:
     explicit DialogProjectSettings(QWidget *parent = nullptr);
     ~DialogProjectSettings();
 
+    void init(RawData::Settings settings);
+    RawData::Settings getResult();
     int getMode();
     QString getConst();
     QString getPosType();

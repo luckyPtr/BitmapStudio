@@ -17,7 +17,7 @@ ImgEncoder *ImgEncoderFactory::create(int mode)
     return nullptr;
 }
 
-QByteArray ImgEncoder_LH_MSB::encode(QImage img)
+QByteArray ImgEncoder_LH_LSB::encode(QImage img)
 {
     QByteArray ba;
     ba.resize(img.width() * ((img.height() + 7) / 8));
@@ -42,7 +42,7 @@ QByteArray ImgEncoder_LH_MSB::encode(QImage img)
     return ba;
 }
 
-QImage ImgEncoder_LH_MSB::decode(QByteArray ba, QSize size)
+QImage ImgEncoder_LH_LSB::decode(QByteArray ba, QSize size)
 {
     QImage img(size, QImage::Format_RGB888);
     img.fill(Qt::white);
@@ -67,7 +67,7 @@ QImage ImgEncoder_LH_MSB::decode(QByteArray ba, QSize size)
     return img;
 }
 
-QByteArray ImgEncoder_LH_LSB::encode(QImage img)
+QByteArray ImgEncoder_LH_MSB::encode(QImage img)
 {
     QByteArray ba;
     ba.resize(img.width() * ((img.height() + 7) / 8));
@@ -92,7 +92,7 @@ QByteArray ImgEncoder_LH_LSB::encode(QImage img)
     return ba;
 }
 
-QImage ImgEncoder_LH_LSB::decode(QByteArray ba, QSize size)
+QImage ImgEncoder_LH_MSB::decode(QByteArray ba, QSize size)
 {
     QImage img(size, QImage::Format_RGB888);
     img.fill(Qt::white);

@@ -84,11 +84,22 @@ public:
         TypeClassImg,
         TypeClassComImg,
     };
+    struct Settings
+    {
+        quint8 depth;           // 项目图片深度
+        QSize size;             // 项目屏幕大小(像素)
+        int mode;
+        QString keywordConst;
+        QString keywordImgPos;
+        QString keywordImgSize;
+        QString path;
+        QString format;
+    };
+
 private:
     QString project;        // 项目文件
     QSqlDatabase db;        // 项目数据库
-    quint8 depth;           // 项目图片深度
-    QSize size;             // 项目屏幕大小(像素)
+    Settings settings;
     QMap<quint16, BmFile> dataMap;
 
     void initDatabase();
@@ -125,6 +136,8 @@ public:
     static bool isClassImgType(int type) { return type == TypeImgFolder || type == TypeImgGrpFolder || type == TypeImgFile; }
     static bool isClassComImgType(int type) { return type == TypeComImgFolder || type == TypeComImgFile; }
 
+    Settings getSettings() { return settings; }
+    void saveSettings(Settings settings);
     QSize getSize();
     bool haveSubFolder(int id); // 是否还有子文件夹
 };

@@ -657,7 +657,12 @@ void ProjectMng::on_ActImgGrpFolder_Triggered()
 
 void ProjectMng::on_ActSettings_Triggered()
 {
+    TreeItem *item = theModel->itemFromIndex(currentIndex);
     DialogProjectSettings *dlgSettings = new DialogProjectSettings(this);
-    dlgSettings->exec();
+    dlgSettings->init(item->getRawData()->getSettings());
+    if(dlgSettings->exec() == QDialog::Accepted)
+    {
+        item->getRawData()->saveSettings(dlgSettings->getResult());
+    }
     delete dlgSettings;
 }

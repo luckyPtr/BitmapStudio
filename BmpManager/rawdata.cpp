@@ -8,10 +8,16 @@ void RawData::initDatabase()
     QSqlQuery query(db);
     // 创建settings表
     query.prepare("CREATE TABLE tbl_settings (\
-                  version INTEGER,\
-                  depth   INTEGER,\
-                  wide    INTEGER,\
-                  height  INTEGER\
+                  version  INTEGER,\
+                  depth    INTEGER,\
+                  width    INTEGER,\
+                  height   INTEGER,\
+                  mode     INTEGER,\
+                  const    TEXT,\
+                  img_pos  TEXT,\
+                  img_size TEXT,\
+                  path     TEXT,\
+                  format   TEXT\
                   );");
     query.exec();
     // 创建tbl_img
@@ -71,11 +77,17 @@ void RawData::load()
     query.exec();
     if(query.first())
     {
-        depth = query.value("depth").toInt();
+        settings.depth = query.value("depth").toInt();
         int width = query.value("width").toInt();
         int height = query.value("height").toInt();
-        size.setWidth(width);
-        size.setHeight(height);
+        settings.size.setWidth(width);
+        settings.size.setHeight(height);
+        settings.mode = query.value("mode").toInt();
+        settings.keywordConst = query.value("const").toString();
+        settings.keywordImgSize = query.value("img_size").toString();
+        settings.keywordImgPos = query.value("img_pos").toString();
+        settings.path = query.value("path").toString();
+        settings.format = query.value("format").toString();
     }
 
     query.prepare("SELECT * FROM tbl_img");
@@ -486,9 +498,27 @@ void RawData::setComImg(int id, ComImg ci)
     }
 }
 
+void RawData::saveSettings(Settings settings)
+{
+    this->settings = settings;
+
+    QSqlQuery query(db);
+    query.prepare("UPDATE tbl_settings SET depth=:depth, width=:width, height=:height, mode=:mode, const=:const, img_pos=:img_pos, img_size=:img_size, path=:path, format=:format");
+    query.bindValue(":depth", settings.depth);
+    query.bindValue(":width", settings.size.width());
+    query.bindValue(":height", settings.size.height());
+    query.bindValue(":mode", settings.mode);
+    query.bindValue(":const", settings.keywordConst);
+    query.bindValue(":img_pos", settings.keywordImgPos);
+    query.bindValue(":img_size", settings.keywordImgSize);
+    query.bindValue(":path", settings.path);
+    query.bindValue(":format", settings.format);
+    query.exec();
+}
+
 QSize RawData::getSize()
 {
-    return size;
+    return settings.size;
 }
 
 bool RawData::haveSubFolder(int id)
