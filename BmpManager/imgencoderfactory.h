@@ -12,7 +12,7 @@ public:
     ~ImgEncoder() {}
 };
 
-// 列行 逆向
+// 列行 顺向
 class ImgEncoder_LH_MSB : public ImgEncoder
 {
 public:
@@ -20,8 +20,24 @@ public:
     QImage decode(QByteArray, QSize);
 };
 
-// 列行 顺向
+// 列行 逆向
 class ImgEncoder_LH_LSB : public ImgEncoder
+{
+public:
+    QByteArray encode(QImage);
+    QImage decode(QByteArray, QSize);
+};
+
+// 行列 逆向
+class ImgEncoder_HL_LSB : public ImgEncoder
+{
+public:
+    QByteArray encode(QImage);
+    QImage decode(QByteArray, QSize);
+};
+
+// 行列 顺向
+class ImgEncoder_HL_MSB : public ImgEncoder
 {
 public:
     QByteArray encode(QImage);
