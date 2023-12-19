@@ -12,6 +12,40 @@ public:
     ~ImgEncoder() {}
 };
 
+// 逐列 逆向
+class ImgEncoder_ZL_LSB : public ImgEncoder
+{
+public:
+    QByteArray encode(QImage);
+    QImage decode(QByteArray, QSize);
+};
+
+// 逐列 顺向
+class ImgEncoder_ZL_MSB : public ImgEncoder
+{
+public:
+    QByteArray encode(QImage);
+    QImage decode(QByteArray, QSize);
+};
+
+
+// 逐行 逆向
+class ImgEncoder_ZH_LSB : public ImgEncoder
+{
+public:
+    QByteArray encode(QImage);
+    QImage decode(QByteArray, QSize);
+};
+
+// 逐行 顺向
+class ImgEncoder_ZH_MSB : public ImgEncoder
+{
+public:
+    QByteArray encode(QImage);
+    QImage decode(QByteArray, QSize);
+};
+
+
 // 列行 顺向
 class ImgEncoder_LH_MSB : public ImgEncoder
 {
@@ -35,6 +69,7 @@ public:
     QByteArray encode(QImage);
     QImage decode(QByteArray, QSize);
 };
+
 
 // 行列 顺向
 class ImgEncoder_HL_MSB : public ImgEncoder
