@@ -89,12 +89,7 @@ private:
 
     QModelIndex editedIndex;
 
-    enum
-    {
-        STACKED_WIDGET_DEFAULT,
-        STACKED_WIDGET_COMIMG,
-        STACKED_WIDGET_IMG,
-    };
+
 
     void setStackedWidget(int index);
 signals:

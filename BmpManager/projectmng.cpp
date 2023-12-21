@@ -7,6 +7,7 @@
 #include <QFileDialog>
 #include <custom/dialognewfolder.h>
 #include <custom/dialogprojectsettings.h>
+#include <imgconvertor.h>
 
 void ProjectMng::addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, bool (*filter)(int))
 {
@@ -143,6 +144,9 @@ void ProjectMng::initActions()
 
     actSettings = new QAction(tr("设置"), this);
     connect(actSettings, SIGNAL(triggered()), this, SLOT(on_ActSettings_Triggered()));
+
+    actRun = new QAction(tr("运行"), this);
+    connect(actRun, SIGNAL(triggered()), this, SLOT(on_ActRun_Triggered()));
 }
 
 
@@ -360,6 +364,7 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
         menu.addAction(actCloseProject);
         menu.addAction(actNewProject);
         menu.addAction(actOpenProject);
+        menu.addAction(actRun);
         menu.addAction(actSettings);
         menu.addSeparator();
         menu.addAction(actProperties);
@@ -665,4 +670,62 @@ void ProjectMng::on_ActSettings_Triggered()
         item->getRawData()->saveSettings(dlgSettings->getResult());
     }
     delete dlgSettings;
+}
+
+void ProjectMng::on_ActRun_Triggered()
+{
+    QString file_img_c;
+
+    TreeItem *item = theModel->itemFromIndex(currentIndex);
+    RawData::Settings settings = item->getRawData()->getSettings();
+    ImgConvertor ic(item->getRawData()->getDataMap().values().toVector(), settings);
+
+    QFileInfo fileInfo(item->getRawData()->getProject());
+    QString path = fileInfo.path() + "/" + settings.path;  // 输出目录;
+
+    if(!settings.path.isEmpty())
+    {
+        if(!QDir(path).exists())
+        {
+            QDir().mkdir(path);
+        }
+    }
+
+    QFile file(path + "/bm_typedef.h");
+    if(file.open(QIODevice::WriteOnly))
+    {
+        file.write(ic.generateTypedefH().toUtf8());
+        file.close();
+    }
+
+    file.setFileName(path + "/bm_img.c");
+    if(file.open(QIODevice::WriteOnly))
+    {
+        file.write(ic.generateImgC().toUtf8());
+        file.close();
+    }
+
+    file.setFileName(path + "/bm_img.h");
+    if(file.open(QIODevice::WriteOnly))
+    {
+        file.write(ic.generateImgH().toUtf8());
+        file.close();
+    }
+
+    file.setFileName(path + "/bm_com_img.c");
+    if(file.open(QIODevice::WriteOnly))
+    {
+
+        file.write(ic.generateComImgC().toUtf8());
+        file.close();
+    }
+
+    file.setFileName(path + "/bm_com_img.h");
+    if(file.open(QIODevice::WriteOnly))
+    {
+        file.write(ic.generateComImgH().toUtf8());
+        file.close();
+    }
+
+    QMessageBox::information(this, "","字模转换完成");
 }

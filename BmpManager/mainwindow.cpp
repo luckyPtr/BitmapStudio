@@ -256,7 +256,7 @@ void MainWindow::on_actRun_triggered()
 
     QModelIndex curIndex = ui->treeViewProject->currentIndex();
     TreeItem *item = pm.model()->itemFromIndex(curIndex);
-    ImgConvertor ic(item->getRawData()->getDataMap().values().toVector());
+    ImgConvertor ic(item->getRawData()->getDataMap().values().toVector(), item->getRawData()->getSettings());
 
     QString path = item->getRawData()->getProject();
     QFileInfo fileInfo(path);
@@ -330,7 +330,7 @@ void MainWindow::on_actCopyName_triggered()
 {
     QModelIndex curIndex = ui->treeViewProject->currentIndex();
     TreeItem *item = pm.model()->itemFromIndex(curIndex);
-    ImgConvertor ic(item->getRawData()->getDataMap().values().toVector());
+    ImgConvertor ic(item->getRawData()->getDataMap().values().toVector(), item->getRawData()->getSettings());
 
     QClipboard *clip = QApplication::clipboard();
     clip->setText(ic.getFullName(item->getRawData()->getDataMap()[item->getID()]));

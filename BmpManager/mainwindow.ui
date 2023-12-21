@@ -134,14 +134,14 @@ QTabBar::tab:selected,QTabBar::tab:hover
   <widget class="QDockWidget" name="dockProject">
    <property name="font">
     <font>
-     <family>Arial</family>
+     <family>Microsoft YaHei</family>
      <pointsize>10</pointsize>
     </font>
    </property>
    <property name="styleSheet">
     <string notr="true">QDockWidget::title
 {
-        padding: 7px;
+        padding: 5px;
 }</string>
    </property>
    <property name="floating">

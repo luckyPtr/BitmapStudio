@@ -5,22 +5,22 @@
 #include <QImage>
 #include <QHash>
 #include "rawdata.h"
-
+#include "imgencoderfactory.h"
 
 
 class ImgConvertor
 {
 private:
-    QVector<BmFile> dataList; 
-
+    QVector<BmFile> dataList;
+    RawData::Settings settings;
+    ImgEncoder *imgEncoder;
     QHash<QString, QByteArray (*)(QImage)> funcImgToByteArray;    // 取模名称与方法映射表
     QHash<QString, QImage (*)(QByteArray, QSize)> funcByteArrayToImg;
     void initFunc();
 public:
-    ImgConvertor(QVector<BmFile> dataMap);
+    ImgConvertor(QVector<BmFile> dataMap, RawData::Settings settings);
+    ~ImgConvertor();
 
-    QByteArray imgToByteArray(QImage &img, QString mode);
-    QByteArray imgToByteArray(QImage &img);
     QImage byteArrayToImg(QByteArray ba, QSize, QString mode);
 
     QString getFullName(BmFile bf); // 获取包含文件夹的完整名称
