@@ -7,6 +7,7 @@
 #include <QFileDialog>
 #include <custom/dialognewfolder.h>
 #include <custom/dialogprojectsettings.h>
+#include <dialogimportimg.h>
 #include <imgconvertor.h>
 
 void ProjectMng::addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, bool (*filter)(int))
@@ -117,6 +118,12 @@ void ProjectMng::initActions()
 
     actNewComImgFile = new QAction(tr("组合图"), this);
     connect(actNewComImgFile, SIGNAL(triggered()), this, SLOT(on_ActNewComImg_Triggered()));
+
+    actImportFromImg = new QAction(tr("图片"), this);
+    connect(actImportFromImg, SIGNAL(triggered()), this, SLOT(on_ActImportFromImg_Triggered()));
+
+    actImportFromHex = new QAction(tr("字模"), this);
+    connect(actImportFromHex, SIGNAL(triggered()), this, SLOT(on_ActImportFromHex_Triggered()));
 
     actNewFolder = new QAction(tr("文件夹"), this);
     connect(actNewFolder, SIGNAL(triggered()), this, SLOT(on_ActNewFolder_Triggered()));
@@ -379,6 +386,12 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
         menuNew.addAction(actNewImgFile);
         menuNew.addAction(actNewFolder);
         menu.addMenu(&menuNew);
+
+        QMenu menuImport(tr("导入"));
+        menuImport.addAction(actImportFromImg);
+        menuImport.addAction(actImportFromHex);
+        menu.addMenu(&menuImport);
+
         menu.exec(QCursor::pos());
     };
 
@@ -390,6 +403,11 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
         menuNew.addAction(actNewImgFile);
         menuNew.addAction(actNewFolder);
         menu.addMenu(&menuNew);
+
+        QMenu menuImport(tr("导入"));
+        menuImport.addAction(actImportFromImg);
+        menuImport.addAction(actImportFromHex);
+        menu.addMenu(&menuImport);
 
         menu.addSeparator();
 
@@ -433,6 +451,11 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
         menuNew.addAction(actNewImgFile);
         menuNew.addAction(actNewFolder);
         menu.addMenu(&menuNew);
+
+        QMenu menuImport(tr("导入"));
+        menuImport.addAction(actImportFromImg);
+        menuImport.addAction(actImportFromHex);
+        menu.addMenu(&menuImport);
 
         menu.addAction(actDelete);
         menu.addAction(actRename);
@@ -728,4 +751,29 @@ void ProjectMng::on_ActRun_Triggered()
     }
 
     QMessageBox::information(this, "","字模转换完成");
+}
+
+void ProjectMng::on_ActImportFromImg_Triggered()
+{
+    QString aFile = QFileDialog::getOpenFileName(this, tr("导入图片"), "", tr("图片(*.jpg *.png *.bmp);;JPEG(*.jpg *.jpeg);;PNG(*.png);;BMP(*.bmp)"));
+    if(!aFile.isEmpty())
+    {
+        QImage img(aFile);
+        DialogImportImg *dlgImportImg = new DialogImportImg(img, this);
+        dlgImportImg->setImgName(QFileInfo(aFile).baseName());
+        int ret = dlgImportImg->exec();
+        if(ret == QDialog::Accepted)
+        {
+            QImage img = dlgImportImg->getMonoImg();
+            qDebug() << img;
+            createImage(currentIndex, dlgImportImg->getImgName(), img);
+            initModel();
+        }
+        delete dlgImportImg;
+    }
+}
+
+void ProjectMng::on_ActImportFromHex_Triggered()
+{
+
 }

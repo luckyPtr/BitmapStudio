@@ -218,7 +218,7 @@ QString ImgConvertor::encodeComImgFile(BmFile bf)
     {
         array.append(QString("\t{%1, %2, %3, %4, %5},\n").arg(getFullName(getName(i.id))).arg(i.x).arg(i.y).arg(getName(i.id).image.width()).arg(getName(i.id).image.height()));
     }
-    array.append("\t{IMG_END}\n");
+    array.append("\t{END_OF_IMG}\n");
 
     res.append("// " + fullName + "\n");
     res.append(QString::asprintf("// %dx%d\n", bf.comImg.size.width(), bf.comImg.size.height()));
@@ -381,13 +381,13 @@ QString ImgConvertor::generateTypedefH()
 typedef %1 unsigned char Img_t;\r\n\
 typedef %1 struct\r\n\
 {\r\n\
-    unsigned char *img;\r\n\
+    Img_t *img;\r\n\
     %2 x;\r\n\
     %2 y;\r\n\
     %3 width;\r\n\
     %3 height;\r\n\
 }ComImg_t;\r\n\
-#define IMG_END (0)\r\n\
+#define END_OF_IMG (0)\r\n\
 #endif\r\n").arg(settings.keywordConst).arg(settings.keywordImgPos).arg(settings.keywordImgSize);
     return ret;
 }

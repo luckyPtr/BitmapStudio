@@ -28,6 +28,8 @@ private:
     QAction *actNewImgFile;
     QAction *actNewComImgFile;
     QAction *actNewFolder;
+    QAction *actImportFromImg;
+    QAction *actImportFromHex;
     QAction *actOpen;
     QAction *actCloseProject;
     QAction *actDelete;
@@ -80,6 +82,8 @@ public slots:
     void on_ActImgGrpFolder_Triggered();
     void on_ActSettings_Triggered();
     void on_ActRun_Triggered();
+    void on_ActImportFromImg_Triggered();
+    void on_ActImportFromHex_Triggered();
 signals:
 
 };

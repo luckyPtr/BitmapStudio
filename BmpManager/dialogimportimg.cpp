@@ -11,6 +11,9 @@ DialogImportImg::DialogImportImg(QImage &img, QWidget *parent) :
     ui(new Ui::DialogImportImg)
 {
     ui->setupUi(this);
+    setWindowFlag(Qt::MSWindowsFixedSizeDialogHint);        // 固定窗口
+    setWindowFlag(Qt::WindowContextHelpButtonHint, false);  // 取消Dialog的？
+
     rawImg = img;
 
     // 限制图片名称输入格式同C语言变量命名规则
@@ -23,6 +26,8 @@ DialogImportImg::DialogImportImg(QImage &img, QWidget *parent) :
         imgTransform();
         displayImg();
     });
+
+
 }
 
 DialogImportImg::~DialogImportImg()
@@ -57,17 +62,15 @@ void DialogImportImg::imgTransform()
             QColor color = monoImg.pixelColor(i, j);
             //quint8 grayscale = (quint8)(color.red() * 0.3f + color.green() * 0.59f + color.blue() * 0.11f);
             quint8 grayscale  = qGray(color.rgb());
-            monoImg.setPixelColor(i, j, QColor(((grayscale >= this->grayscale) ^ invert) ? 0xFFFFFF : 0x000000));
+            monoImg.setPixelColor(i, j, QColor((grayscale >= this->grayscale) ? 0xFFFFFF : 0x000000));
         }
     }
 }
 
 void DialogImportImg::displayImg()
 {
-
-    QImage resultImg = monoImg.scaled(ui->labelPreviewImg->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    QImage resultImg = monoImg.scaled(ui->labelPreviewImg->size(), Qt::KeepAspectRatio);
     ui->labelPreviewImg->setPixmap(QPixmap::fromImage(resultImg));
-    qDebug() << resultImg.size();
 }
 
 void DialogImportImg::on_sliderGrayscale_valueChanged(int value)
@@ -78,11 +81,4 @@ void DialogImportImg::on_sliderGrayscale_valueChanged(int value)
     displayImg();
 }
 
-
-void DialogImportImg::on_checkBoxInvert_toggled(bool checked)
-{
-    invert = checked;
-    imgTransform();
-    displayImg();
-}
 

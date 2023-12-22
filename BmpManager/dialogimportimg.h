@@ -15,7 +15,6 @@ private:
     QImage rawImg;      // 原始图片
     QImage monoImg;     // 二值化后的图片
     quint8 grayscale = 128;
-    bool invert = false;        // 取反
 
 public:
     explicit DialogImportImg(QImage &img, QWidget *parent = nullptr);
@@ -29,8 +28,6 @@ public:
     void displayImg();
 private slots:
     void on_sliderGrayscale_valueChanged(int value);
-
-    void on_checkBoxInvert_toggled(bool checked);
 
 private:
     Ui::DialogImportImg *ui;
