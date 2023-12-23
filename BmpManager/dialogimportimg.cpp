@@ -16,13 +16,9 @@ DialogImportImg::DialogImportImg(QImage &img, QWidget *parent) :
 
     rawImg = img;
 
-    // 限制图片名称输入格式同C语言变量命名规则
-    QRegExp regx("^[a-zA-Z_][a-zA-Z0-9_]+$");
-    QValidator *validator = new QRegExpValidator(regx, ui->lineEditName);
-    ui->lineEditName->setValidator(validator);
 
     // 这里直接显示的话图片大小不对，延迟一段时间后显示没有这个问题，奇怪
-    QTimer::singleShot(1, this, [=]{
+    QTimer::singleShot(0, this, [=]{
         imgTransform();
         displayImg();
     });
@@ -43,6 +39,11 @@ void DialogImportImg::setImgName(QString name)
 QString DialogImportImg::getImgName()
 {
     return ui->lineEditName->text();
+}
+
+QString DialogImportImg::getBrief()
+{
+    return ui->textEditBrief->toPlainText();
 }
 
 
@@ -81,4 +82,21 @@ void DialogImportImg::on_sliderGrayscale_valueChanged(int value)
     displayImg();
 }
 
+
+
+void DialogImportImg::on_lineEditName_textChanged(const QString &arg1)
+{
+    // 有字母数字下划线组成，长度不为0
+    QRegExp regx("^[a-zA-Z0-9_]+$");
+    if(regx.exactMatch(arg1))
+    {
+        ui->btnOK->setEnabled(true);
+        ui->lineEditName->setStyleSheet("color:black;");
+    }
+    else
+    {
+        ui->btnOK->setEnabled(false);
+        ui->lineEditName->setStyleSheet("color:#ff4040;");
+    }
+}
 

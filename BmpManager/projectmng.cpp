@@ -7,6 +7,7 @@
 #include <QFileDialog>
 #include <custom/dialognewfolder.h>
 #include <custom/dialogprojectsettings.h>
+#include <custom/dialogimporthex.h>
 #include <dialogimportimg.h>
 #include <imgconvertor.h>
 
@@ -263,11 +264,11 @@ void ProjectMng::createImage(QModelIndex &index, QString name, QSize size, QStri
     }
 }
 
-void ProjectMng::createImage(QModelIndex &index, QString name, QImage &img)
+void ProjectMng::createImage(QModelIndex &index, QString name, QImage &img, QString brief)
 {
     TreeItem *item = theModel->itemFromIndex(index);
     RawData *rd = item->getRawData();
-    rd->createBmp(item->getID(), name, img);
+    rd->createBmp(item->getID(), name, img, brief);
 }
 
 void ProjectMng::createComImg(QModelIndex &index, QString name, QSize size, QString brief)
@@ -765,8 +766,8 @@ void ProjectMng::on_ActImportFromImg_Triggered()
         if(ret == QDialog::Accepted)
         {
             QImage img = dlgImportImg->getMonoImg();
-            qDebug() << img;
-            createImage(currentIndex, dlgImportImg->getImgName(), img);
+            QString brief = dlgImportImg->getBrief();
+            createImage(currentIndex, dlgImportImg->getImgName(), img, brief);
             initModel();
         }
         delete dlgImportImg;
@@ -775,5 +776,7 @@ void ProjectMng::on_ActImportFromImg_Triggered()
 
 void ProjectMng::on_ActImportFromHex_Triggered()
 {
-
+    DialogImportHex *dlgImportHex = new DialogImportHex(this);
+    dlgImportHex->exec();
+    delete dlgImportHex;
 }

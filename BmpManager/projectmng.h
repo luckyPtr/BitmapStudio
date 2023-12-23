@@ -56,7 +56,7 @@ public:
     void setTabWidget(CustomTabWidget *tabWidget);
     void createFolder(QModelIndex index, QString name, QString brief = ""); // 新建文件夹
     void createImage(QModelIndex &index, QString name, QSize size, QString brief = "");
-    void createImage(QModelIndex &index, QString name, QImage &img);
+    void createImage(QModelIndex &index, QString name, QImage &img, QString brief = "");
     void createComImg(QModelIndex &index, QString name, QSize size, QString brief = "");
     void rename(QModelIndex &index, QString name);
     void remove(QModelIndex &index);

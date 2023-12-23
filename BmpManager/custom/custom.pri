@@ -1,5 +1,6 @@
 HEADERS += \
     $$PWD/customtab.h \
+    $$PWD/dialogimporthex.h \
     $$PWD/dialognewfolder.h \
     $$PWD/dialogprojectsettings.h \
     $$PWD/dialogresize.h \
@@ -14,6 +15,7 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/customtab.cpp \
+    $$PWD/dialogimporthex.cpp \
     $$PWD/dialognewfolder.cpp \
     $$PWD/dialogprojectsettings.cpp \
     $$PWD/dialogresize.cpp \
@@ -27,6 +29,7 @@ SOURCES += \
     $$PWD/treeitemdelegate.cpp
 
 FORMS += \
+    $$PWD/dialogimporthex.ui \
     $$PWD/dialognewfolder.ui \
     $$PWD/dialogprojectsettings.ui \
     $$PWD/dialogresize.ui

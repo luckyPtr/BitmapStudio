@@ -24,10 +24,13 @@ public:
     QImage getMonoImg() {return monoImg;}
     void setImgName(QString name);
     QString getImgName();
+    QString getBrief();
     void imgTransform();
     void displayImg();
 private slots:
     void on_sliderGrayscale_valueChanged(int value);
+
+    void on_lineEditName_textChanged(const QString &arg1);
 
 private:
     Ui::DialogImportImg *ui;
