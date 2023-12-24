@@ -776,7 +776,10 @@ void ProjectMng::on_ActImportFromImg_Triggered()
 
 void ProjectMng::on_ActImportFromHex_Triggered()
 {
+    TreeItem *item = theModel->itemFromIndex(currentIndex);
+    RawData::Settings settings = item->getRawData()->getSettings();
     DialogImportHex *dlgImportHex = new DialogImportHex(this);
+    dlgImportHex->setDefaultMode(settings.mode);
     dlgImportHex->exec();
     delete dlgImportHex;
 }
