@@ -14,6 +14,13 @@ DialogImportHex::DialogImportHex(QWidget *parent) :
     setWindowFlag(Qt::MSWindowsFixedSizeDialogHint);        // 固定窗口
     setWindowFlag(Qt::WindowContextHelpButtonHint, false);  // 取消Dialog的？
 
+    ui->plainTextEditBrief->setVisible(false);
+    ui->label_Brief->setVisible(false);
+
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("确定"));
+    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("取消"));
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+
     btnGroup1 = new QButtonGroup(this);
     btnGroup1->addButton(ui->radioButton_LSB, 0);
     btnGroup1->addButton(ui->radioButton_MSB, 1);
@@ -26,6 +33,7 @@ DialogImportHex::DialogImportHex(QWidget *parent) :
 
     connect(btnGroup1, SIGNAL(idToggled(int,bool)), this, SLOT(on_btnToggled(int,bool)));
     connect(btnGroup2, SIGNAL(idToggled(int,bool)), this, SLOT(on_btnToggled(int,bool)));
+
 }
 
 DialogImportHex::~DialogImportHex()
@@ -76,7 +84,64 @@ void DialogImportHex::setDefaultMode(int mode)
     ui->widget->setMode(mode);
 }
 
+QString DialogImportHex::getName()
+{
+    return ui->lineEditName->text();
+}
+
+QString DialogImportHex::getBrief()
+{
+    return ui->plainTextEditBrief->toPlainText();
+}
+
+QImage DialogImportHex::getImg()
+{
+    return outputImg;
+}
+
 void DialogImportHex::on_textEdit_textChanged()
+{
+    updateImg();
+    updateBtnOK();
+}
+
+void DialogImportHex::on_btnToggled(int btn, bool checked)
+{
+    Q_UNUSED(btn)
+    Q_UNUSED(checked)
+
+    switch(btnGroup2->checkedId())
+    {
+    case 0:
+        mode = btnGroup1->checkedId() == 0 ? ImgEncoderFactory::ZL_LSB : ImgEncoderFactory::ZL_MSB;
+        break;
+    case 1:
+        mode = btnGroup1->checkedId() == 0 ? ImgEncoderFactory::ZH_LSB : ImgEncoderFactory::ZH_MSB;
+        break;
+    case 2:
+        mode = btnGroup1->checkedId() == 0 ? ImgEncoderFactory::LH_LSB : ImgEncoderFactory::LH_MSB;
+        break;
+    case 3:
+        mode = btnGroup1->checkedId() == 0 ? ImgEncoderFactory::HL_LSB : ImgEncoderFactory::HL_MSB;
+        break;
+    }
+    ui->widget->setMode(mode);
+}
+
+
+
+void DialogImportHex::on_btnAddBrief_clicked()
+{
+    bool visible = !ui->plainTextEditBrief->isVisible();
+    ui->plainTextEditBrief->setVisible(visible);
+    ui->label_Brief->setVisible(visible);
+    if(!visible)
+    {
+        ui->plainTextEditBrief->clear();
+    }
+}
+
+void DialogImportHex::updateImg()
 {
     QString text = ui->textEdit->toPlainText();
     QRegExp rx("0(x|X)[0-9a-fA-F]{1,2}");
@@ -105,36 +170,56 @@ void DialogImportHex::on_textEdit_textChanged()
     ui->textEdit->blockSignals(false);
 
     ImgEncoder *imgEncoder = ImgEncoderFactory::create(mode);
-    QImage img = imgEncoder->decode(inputByteArray, QSize(ui->spinBoxWidth->value(), ui->spinBoxHeight->value()));
-    QImage resultImg = img.scaled(ui->labelPreview->size(), Qt::KeepAspectRatio);
+    outputImg = imgEncoder->decode(inputByteArray, QSize(ui->spinBoxWidth->value(), ui->spinBoxHeight->value()));
+    QImage resultImg = outputImg.scaled(ui->labelPreview->size(), Qt::KeepAspectRatio);
     ui->labelPreview->setPixmap(QPixmap::fromImage(resultImg));
 
     delete imgEncoder;
 }
 
-void DialogImportHex::on_btnToggled(int btn, bool checked)
+void DialogImportHex::updateBtnOK()
 {
-    Q_UNUSED(btn)
-    Q_UNUSED(checked)
-
-    qDebug() << mode;
-
-    switch(btnGroup2->checkedId())
+    if(!outputImg.isNull() && isNameLegal)
     {
-    case 0:
-        mode = btnGroup1->checkedId() == 0 ? ImgEncoderFactory::ZL_LSB : ImgEncoderFactory::ZL_MSB;
-        break;
-    case 1:
-        mode = btnGroup1->checkedId() == 0 ? ImgEncoderFactory::ZH_LSB : ImgEncoderFactory::ZH_MSB;
-        break;
-    case 2:
-        mode = btnGroup1->checkedId() == 0 ? ImgEncoderFactory::LH_LSB : ImgEncoderFactory::LH_MSB;
-        break;
-    case 3:
-        mode = btnGroup1->checkedId() == 0 ? ImgEncoderFactory::HL_LSB : ImgEncoderFactory::HL_MSB;
-        break;
+        ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
     }
-    ui->widget->setMode(mode);
+    else
+    {
+        ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+    }
 }
 
+
+void DialogImportHex::on_spinBoxWidth_valueChanged(int arg1)
+{
+    Q_UNUSED(arg1)
+    updateImg();
+    updateBtnOK();
+}
+
+
+void DialogImportHex::on_spinBoxHeight_valueChanged(int arg1)
+{
+    Q_UNUSED(arg1)
+    updateImg();
+    updateBtnOK();
+}
+
+
+void DialogImportHex::on_lineEditName_textChanged(const QString &arg1)
+{
+    // 有字母数字下划线组成，长度不为0
+    QRegExp regx("^[a-zA-Z0-9_]+$");
+    if(regx.exactMatch(arg1))
+    {
+        isNameLegal = true;
+        ui->lineEditName->setStyleSheet("color:black;");
+    }
+    else
+    {
+        isNameLegal = false;
+        ui->lineEditName->setStyleSheet("color:#ff4040;");
+    }
+    updateBtnOK();
+}
 

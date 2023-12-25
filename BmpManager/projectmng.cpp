@@ -780,6 +780,12 @@ void ProjectMng::on_ActImportFromHex_Triggered()
     RawData::Settings settings = item->getRawData()->getSettings();
     DialogImportHex *dlgImportHex = new DialogImportHex(this);
     dlgImportHex->setDefaultMode(settings.mode);
-    dlgImportHex->exec();
+    if(dlgImportHex->exec() == QDialog::Accepted)
+    {
+        QImage img = dlgImportHex->getImg();
+        QString brief = dlgImportHex->getBrief();
+        createImage(currentIndex, dlgImportHex->getName(), img, brief);
+        initModel();
+    }
     delete dlgImportHex;
 }
