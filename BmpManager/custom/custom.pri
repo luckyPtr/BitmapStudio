@@ -4,6 +4,7 @@ HEADERS += \
     $$PWD/dialognewfolder.h \
     $$PWD/dialogprojectsettings.h \
     $$PWD/dialogresize.h \
+    $$PWD/highlighter.h \
     $$PWD/imgprevirewer.h \
     $$PWD/latticeshow.h \
     $$PWD/qcustommenu.h \
@@ -19,6 +20,7 @@ SOURCES += \
     $$PWD/dialognewfolder.cpp \
     $$PWD/dialogprojectsettings.cpp \
     $$PWD/dialogresize.cpp \
+    $$PWD/highlighter.cpp \
     $$PWD/imgprevirewer.cpp \
     $$PWD/latticeshow.cpp \
     $$PWD/qcustommenu.cpp \

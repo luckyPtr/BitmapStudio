@@ -3,6 +3,8 @@
 #include "QDebug"
 #include <QRegExp>
 #include <QSet>
+#include <QSyntaxHighlighter>
+#include <custom/highlighter.h>
 #include "imgencoderfactory.h"
 
 DialogImportHex::DialogImportHex(QWidget *parent) :
@@ -34,6 +36,8 @@ DialogImportHex::DialogImportHex(QWidget *parent) :
     connect(btnGroup1, SIGNAL(idToggled(int,bool)), this, SLOT(on_btnToggled(int,bool)));
     connect(btnGroup2, SIGNAL(idToggled(int,bool)), this, SLOT(on_btnToggled(int,bool)));
 
+
+    Highlighter *h = new Highlighter(ui->textEdit->document());
 }
 
 DialogImportHex::~DialogImportHex()
@@ -101,8 +105,11 @@ QImage DialogImportHex::getImg()
 
 void DialogImportHex::on_textEdit_textChanged()
 {
+    QCursor cursor(ui->textEdit->cursor());
     updateImg();
     updateBtnOK();
+    cursor.setPos(100,100);
+    ui->textEdit->setCursor(cursor);
 }
 
 void DialogImportHex::on_btnToggled(int btn, bool checked)
@@ -147,27 +154,14 @@ void DialogImportHex::updateImg()
     QRegExp rx("0(x|X)[0-9a-fA-F]{1,2}");
 
     inputByteArray.clear();
-    QSet<QString> set;
     int pos = 0;
     while((pos = rx.indexIn(text, pos)) != -1)
     {
-        set << rx.cap(0);
         bool ok;
         quint8 hex = rx.cap(0).toInt(&ok, 16);
         inputByteArray.append(hex);
         pos += rx.matchedLength();
     }
-
-    foreach(auto s, set)
-    {
-        text.replace(s, QString("<font style='background-color: #cff5ff;'>%1</font>").arg(s));
-    }
-    text.replace("\n", "<br>");
-    text.replace("\t", "    ");
-
-    ui->textEdit->blockSignals(true);   // 防止textChanged被反复触发
-    ui->textEdit->setText(text);
-    ui->textEdit->blockSignals(false);
 
     ImgEncoder *imgEncoder = ImgEncoderFactory::create(mode);
     outputImg = imgEncoder->decode(inputByteArray, QSize(ui->spinBoxWidth->value(), ui->spinBoxHeight->value()));

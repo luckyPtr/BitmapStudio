@@ -21,6 +21,9 @@
        <family>Consolas</family>
       </font>
      </property>
+     <property name="lineWrapMode">
+      <enum>QTextEdit::WidgetWidth</enum>
+     </property>
      <property name="tabStopDistance">
       <double>40.000000000000000</double>
      </property>
