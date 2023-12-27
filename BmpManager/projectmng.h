@@ -30,6 +30,8 @@ private:
     QAction *actNewFolder;
     QAction *actImportFromImg;
     QAction *actImportFromHex;
+    QAction *actExportImg;
+    QAction *actCopyImg;
     QAction *actOpen;
     QAction *actCloseProject;
     QAction *actDelete;
@@ -84,6 +86,8 @@ public slots:
     void on_ActRun_Triggered();
     void on_ActImportFromImg_Triggered();
     void on_ActImportFromHex_Triggered();
+    void on_ActExportImg_Triggered();
+    void on_ActCopyImg_Triggered();
 signals:
 
 };

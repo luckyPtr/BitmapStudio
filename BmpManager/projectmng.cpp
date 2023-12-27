@@ -10,6 +10,8 @@
 #include <custom/dialogimporthex.h>
 #include <dialogimportimg.h>
 #include <imgconvertor.h>
+#include <QApplication>
+#include <QClipboard>
 
 void ProjectMng::addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, bool (*filter)(int))
 {
@@ -155,6 +157,12 @@ void ProjectMng::initActions()
 
     actRun = new QAction(tr("运行"), this);
     connect(actRun, SIGNAL(triggered()), this, SLOT(on_ActRun_Triggered()));
+
+    actExportImg = new QAction(tr("下载图片"));
+    connect(actExportImg, SIGNAL(triggered()), this, SLOT(on_ActExportImg_Triggered()));
+
+    actCopyImg = new QAction(tr("复制图片到剪贴板"));
+    connect(actCopyImg, SIGNAL(triggered()), this, SLOT(on_ActCopyImg_Triggered()));
 }
 
 
@@ -457,6 +465,11 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
         menuImport.addAction(actImportFromImg);
         menuImport.addAction(actImportFromHex);
         menu.addMenu(&menuImport);
+
+        QMenu menuExport(tr("导出"));
+        menuExport.addAction(actExportImg);
+        menuExport.addAction(actCopyImg);
+        menu.addMenu(&menuExport);
 
         menu.addAction(actDelete);
         menu.addAction(actRename);
@@ -788,4 +801,25 @@ void ProjectMng::on_ActImportFromHex_Triggered()
         initModel();
     }
     delete dlgImportHex;
+}
+
+void ProjectMng::on_ActExportImg_Triggered()
+{
+
+    TreeItem *item = theModel->itemFromIndex(currentIndex);
+    QImage img = item->getRawData()->getImage(item->getID());
+
+    QString fileName = QFileDialog::getSaveFileName(this, "保存图片", "./", "BMP(*.bmp);;PNG(*.png);;JPG(*jpg)");
+    if(!fileName.isEmpty())
+    {
+        img.save(fileName);
+    }
+}
+
+void ProjectMng::on_ActCopyImg_Triggered()
+{
+    TreeItem *item = theModel->itemFromIndex(currentIndex);
+    QImage img = item->getRawData()->getImage(item->getID());
+    QClipboard *clip = QApplication::clipboard();
+    clip->setImage(img);
 }

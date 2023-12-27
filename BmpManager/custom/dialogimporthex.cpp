@@ -133,6 +133,8 @@ void DialogImportHex::on_btnToggled(int btn, bool checked)
         break;
     }
     ui->widget->setMode(mode);
+
+    updateImg();
 }
 
 
