@@ -518,6 +518,11 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
         menu.addAction(actRename);
         menu.addAction(actDelete);
 
+        QMenu menuExport(tr("导出"));
+        menuExport.addAction(actExportImg);
+        menuExport.addAction(actCopyImg);
+        menu.addMenu(&menuExport);
+
         menu.addSeparator();
         menu.addAction(actProperties);
 
