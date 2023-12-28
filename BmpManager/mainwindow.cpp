@@ -204,13 +204,13 @@ void MainWindow::on_actDelete_triggered()
     }
 }
 
+#include "custom/dialognotice.h"
 #include "imgconvertor.h"
 void MainWindow::on_actTest_triggered()
 {
-    QModelIndex curIndex = ui->treeViewProject->currentIndex();
-    //TreeItem *item = pm.model()->itemFromIndex(curIndex);
-    //QModelIndex i = pm.getModelIndex(item->getRawData()->getProject(), item->getID());
-    qDebug() << curIndex.column();
+    DialogNotice *dlg = new DialogNotice(this);
+
+    dlg->exec();
 }
 
 void MainWindow::on_SaveImage(QImage image)

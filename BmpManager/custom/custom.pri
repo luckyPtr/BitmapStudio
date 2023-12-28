@@ -2,6 +2,7 @@ HEADERS += \
     $$PWD/customtab.h \
     $$PWD/dialogimporthex.h \
     $$PWD/dialognewfolder.h \
+    $$PWD/dialognotice.h \
     $$PWD/dialogprojectsettings.h \
     $$PWD/dialogresize.h \
     $$PWD/highlighter.h \
@@ -18,6 +19,7 @@ SOURCES += \
     $$PWD/customtab.cpp \
     $$PWD/dialogimporthex.cpp \
     $$PWD/dialognewfolder.cpp \
+    $$PWD/dialognotice.cpp \
     $$PWD/dialogprojectsettings.cpp \
     $$PWD/dialogresize.cpp \
     $$PWD/highlighter.cpp \
@@ -33,5 +35,6 @@ SOURCES += \
 FORMS += \
     $$PWD/dialogimporthex.ui \
     $$PWD/dialognewfolder.ui \
+    $$PWD/dialognotice.ui \
     $$PWD/dialogprojectsettings.ui \
     $$PWD/dialogresize.ui
