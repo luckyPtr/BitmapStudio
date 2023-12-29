@@ -6,11 +6,13 @@
 #include <QDesktopWidget>
 #include <QTimer>
 
-DialogNotice::DialogNotice(QWidget *parent) :
+DialogNotice::DialogNotice(QString text, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogNotice)
 {
     ui->setupUi(this);
+
+    ui->label->setText(text);
 
     this->setAttribute(Qt::WA_DeleteOnClose);
     this->setAttribute(Qt::WA_TranslucentBackground);
@@ -30,26 +32,32 @@ DialogNotice::DialogNotice(QWidget *parent) :
         //获取父窗口geometry
         QRect rect = widget->geometry();
         //计算显示原点
-        int x = rect.width()/2 - this->width() / 2;
-        int y = rect.height()/2 - this->height() / 2;
+
+        QFontMetrics fm = ui->label->fontMetrics();
+        int pixelsWide = fm.boundingRect(ui->label->text()).width() + 60;
+        this->setFixedWidth(pixelsWide);
+
+        int x = widget->x() + rect.width()/2 - this->width() / 2;
+        int y = widget->y() + rect.height()/2 - this->height() / 2;
         this->move(x, y);
     }
 
+    // ShowTime后开始每隔20ms降低一次透明度
     QTimer* t = new QTimer(this);//加入对象树
-    t->start(1000);
+    t->start(ShowTime);
     connect(t, &QTimer::timeout, [=]{
-        timer = startTimer(50);
+        timer = startTimer(20);
     });
+    alphaStepValue = (StartAlpha - EndAlpha) / (DisappearTime / 20);
 
-
-
-    backgroundColor = QColor("#dadada");
-    backgroundColor.setAlphaF(0.8);
+    // 初始化字体和背景颜色
+    backgroundColor = BackGroundColor;
+    backgroundColor.setAlphaF(StartAlpha);
+    ui->label->setStyleSheet(QString("color: rgba(255, 255, 255, %1);").arg(StartAlpha));
 }
 
 DialogNotice::~DialogNotice()
 {
-    qDebug() << "dlg delete";
     delete ui;
 }
 
@@ -76,10 +84,11 @@ void DialogNotice::timerEvent(QTimerEvent *event)
     {
         qreal alpha = backgroundColor.alphaF();
 
-        if(alpha > 0.1)
-        {
-            alpha -= 0.04;
+        alpha -= alphaStepValue;
+        if(alpha > EndAlpha)
+        { 
             backgroundColor.setAlphaF(alpha);
+            ui->label->setStyleSheet(QString("color: rgba(255, 255, 255, %1);").arg(alpha));
             repaint();
         }
         else

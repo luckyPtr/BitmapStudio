@@ -12,6 +12,7 @@
 #include <imgconvertor.h>
 #include <QApplication>
 #include <QClipboard>
+#include "custom/dialognotice.h"
 
 void ProjectMng::addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, bool (*filter)(int))
 {
@@ -769,7 +770,8 @@ void ProjectMng::on_ActRun_Triggered()
         file.close();
     }
 
-    QMessageBox::information(this, "","字模转换完成");
+    DialogNotice *dlg = new DialogNotice("字模转换完成!");
+    dlg->exec();
 }
 
 void ProjectMng::on_ActImportFromImg_Triggered()

@@ -208,7 +208,7 @@ void MainWindow::on_actDelete_triggered()
 #include "imgconvertor.h"
 void MainWindow::on_actTest_triggered()
 {
-    DialogNotice *dlg = new DialogNotice(this);
+    DialogNotice *dlg = new DialogNotice("字模转换完成!");
 
     dlg->exec();
 }
