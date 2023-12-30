@@ -289,7 +289,7 @@ QTabBar::tab:selected,QTabBar::tab:hover
   </widget>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
-    <string>toolBar</string>
+    <string>工具栏</string>
    </property>
    <property name="layoutDirection">
     <enum>Qt::LeftToRight</enum>

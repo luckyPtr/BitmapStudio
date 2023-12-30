@@ -205,10 +205,11 @@ void MainWindow::on_actDelete_triggered()
 }
 
 #include "custom/dialognotice.h"
+#include "custom/dialogloading.h"
 #include "imgconvertor.h"
 void MainWindow::on_actTest_triggered()
 {
-    DialogNotice *dlg = new DialogNotice("字模转换完成!");
+    DialogLoading *dlg = new DialogLoading;
 
     dlg->exec();
 }

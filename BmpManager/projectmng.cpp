@@ -13,6 +13,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include "custom/dialognotice.h"
+#include "custom/dialogloading.h"
 
 void ProjectMng::addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, bool (*filter)(int))
 {
@@ -717,6 +718,9 @@ void ProjectMng::on_ActSettings_Triggered()
 
 void ProjectMng::on_ActRun_Triggered()
 {
+    DialogLoading *dlgLoading = new DialogLoading;
+    dlgLoading->show();
+
     QString file_img_c;
 
     TreeItem *item = theModel->itemFromIndex(currentIndex);
@@ -770,6 +774,7 @@ void ProjectMng::on_ActRun_Triggered()
         file.close();
     }
 
+    dlgLoading->close();
     DialogNotice *dlg = new DialogNotice("字模转换完成!");
     dlg->exec();
 }

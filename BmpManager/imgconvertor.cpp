@@ -282,6 +282,7 @@ QString ImgConvertor::generateImgC()
             if(getParentType(i) != RawData::TypeImgGrpFolder)
             {
                 res.append(encode(i));
+                QCoreApplication::processEvents();
             }
         }
     }
@@ -291,6 +292,7 @@ QString ImgConvertor::generateImgC()
         if(i.type == RawData::TypeImgGrpFolder)
         {
             res.append(encode(i));
+            QCoreApplication::processEvents();
         }
     }
 
@@ -328,12 +330,14 @@ QString ImgConvertor::generateImgH()
             }
 
             res.append(QString("extern Img_t %2[][%3];\r\n").arg(getFullName(bf)).arg(n));
+            QCoreApplication::processEvents();
         }
         else if(bf.type == RawData::TypeImgFile)
         {
             if(getParentType(bf) != RawData::TypeImgGrpFolder)
             {
                 res.append(QString("extern Img_t %1[];\r\n").arg(getFullName(bf)));
+                QCoreApplication::processEvents();
             }
         }
     }
@@ -353,6 +357,7 @@ QString ImgConvertor::generateComImgC()
         if(i.type == RawData::TypeComImgFile)
         {
             res.append(encode(i));
+            QCoreApplication::processEvents();
         }
     }
     return res;

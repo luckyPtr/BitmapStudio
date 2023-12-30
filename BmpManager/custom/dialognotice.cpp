@@ -29,6 +29,9 @@ DialogNotice::DialogNotice(QString text, QWidget *parent) :
         }
     }
     if(widget){
+
+        QWidget::setParent(widget);
+
         //获取父窗口geometry
         QRect rect = widget->geometry();
         //计算显示原点
@@ -37,8 +40,8 @@ DialogNotice::DialogNotice(QString text, QWidget *parent) :
         int pixelsWide = fm.boundingRect(ui->label->text()).width() + 60;
         this->setFixedWidth(pixelsWide);
 
-        int x = widget->x() + rect.width()/2 - this->width() / 2;
-        int y = widget->y() + rect.height()/2 - this->height() / 2;
+        int x = rect.width()/2 - this->width() / 2;
+        int y = rect.height()/2 - this->height() / 2;
         this->move(x, y);
     }
 
