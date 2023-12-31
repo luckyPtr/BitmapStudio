@@ -125,6 +125,8 @@ public:
     void imgFolderConvert(int id);
     QImage getImage(int id);
     void setImage(int id, QImage image);
+    QString getBrief(int id);
+    void setBrief(int id, QString brief);
 
     ComImg getComImg(int id);
     void setComImg(int id, ComImg ci);

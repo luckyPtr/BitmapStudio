@@ -110,7 +110,7 @@ Highlighter::Highlighter(QTextDocument *parent)
     highlightingRules.append(rule);
     //! [5]
     hexFormat.setBackground(QColor(0xcff5ff));
-    rule.pattern = QRegularExpression(QStringLiteral("0(x|X)[0-9a-fA-F]{1,2}"));
+    rule.pattern = QRegularExpression(QStringLiteral("\\b0(x|X)[0-9a-fA-F]{1,2}"));
     rule.format = hexFormat;
     highlightingRules.append(rule);
 

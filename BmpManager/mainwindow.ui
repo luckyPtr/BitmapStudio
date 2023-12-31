@@ -125,10 +125,18 @@ QTabBar::tab:selected,QTabBar::tab:hover
     <property name="title">
      <string>帮助</string>
     </property>
+    <addaction name="action"/>
+    <addaction name="action_2"/>
+   </widget>
+   <widget class="QMenu" name="menu_4">
+    <property name="title">
+     <string>用户手册</string>
+    </property>
    </widget>
    <addaction name="menu"/>
    <addaction name="menu_2"/>
    <addaction name="menu_3"/>
+   <addaction name="menu_4"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dockProject">
@@ -305,8 +313,8 @@ QTabBar::tab:selected,QTabBar::tab:hover
    </property>
    <property name="iconSize">
     <size>
-     <width>40</width>
-     <height>40</height>
+     <width>20</width>
+     <height>20</height>
     </size>
    </property>
    <property name="toolButtonStyle">
@@ -323,17 +331,10 @@ QTabBar::tab:selected,QTabBar::tab:hover
    </attribute>
    <addaction name="actOpenProject"/>
    <addaction name="actNewProject"/>
-   <addaction name="actNewFolder"/>
    <addaction name="separator"/>
-   <addaction name="actNewImg"/>
-   <addaction name="actImportImg"/>
-   <addaction name="actRename"/>
-   <addaction name="actDelete"/>
-   <addaction name="actGrpImgTransform"/>
-   <addaction name="actRun"/>
    <addaction name="actCopyName"/>
    <addaction name="actReplaceImage"/>
-   <addaction name="actExport"/>
+   <addaction name="actRun"/>
    <addaction name="actEditMode"/>
    <addaction name="actTest"/>
   </widget>
@@ -373,69 +374,9 @@ QTabBar::tab:selected,QTabBar::tab:hover
     <string>新建工程</string>
    </property>
   </action>
-  <action name="actNewFolder">
-   <property name="icon">
-    <iconset resource="Img.qrc">
-     <normaloff>:/Image/Toolbar/NewFolder.svg</normaloff>:/Image/Toolbar/NewFolder.svg</iconset>
-   </property>
-   <property name="text">
-    <string>新建文件夹</string>
-   </property>
-  </action>
-  <action name="actRename">
-   <property name="icon">
-    <iconset resource="Img.qrc">
-     <normaloff>:/Image/Toolbar/Rename.svg</normaloff>:/Image/Toolbar/Rename.svg</iconset>
-   </property>
-   <property name="text">
-    <string>重命名</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::AboutQtRole</enum>
-   </property>
-  </action>
-  <action name="actNewImg">
-   <property name="icon">
-    <iconset resource="Img.qrc">
-     <normaloff>:/Image/Toolbar/NewImage.svg</normaloff>:/Image/Toolbar/NewImage.svg</iconset>
-   </property>
-   <property name="text">
-    <string>新建图片</string>
-   </property>
-   <property name="toolTip">
-    <string>新建图片</string>
-   </property>
-  </action>
-  <action name="actImportImg">
-   <property name="icon">
-    <iconset resource="Img.qrc">
-     <normaloff>:/Image/Toolbar/ImportFromImage.svg</normaloff>:/Image/Toolbar/ImportFromImage.svg</iconset>
-   </property>
-   <property name="text">
-    <string>导入图片</string>
-   </property>
-  </action>
-  <action name="actDelete">
-   <property name="icon">
-    <iconset resource="Img.qrc">
-     <normaloff>:/Image/Toolbar/Delete.svg</normaloff>:/Image/Toolbar/Delete.svg</iconset>
-   </property>
-   <property name="text">
-    <string>删除</string>
-   </property>
-  </action>
   <action name="actTest">
    <property name="text">
     <string>测试</string>
-   </property>
-  </action>
-  <action name="actGrpImgTransform">
-   <property name="icon">
-    <iconset resource="Img.qrc">
-     <normaloff>:/Image/Toolbar/Transform.svg</normaloff>:/Image/Toolbar/Transform.svg</iconset>
-   </property>
-   <property name="text">
-    <string>转为图片组</string>
    </property>
   </action>
   <action name="actRun">
@@ -465,15 +406,6 @@ QTabBar::tab:selected,QTabBar::tab:hover
     <string>替换图片</string>
    </property>
   </action>
-  <action name="actExport">
-   <property name="icon">
-    <iconset resource="Img.qrc">
-     <normaloff>:/Image/Toolbar/Export.svg</normaloff>:/Image/Toolbar/Export.svg</iconset>
-   </property>
-   <property name="text">
-    <string>导出图片</string>
-   </property>
-  </action>
   <action name="actEditMode">
    <property name="checkable">
     <bool>true</bool>
@@ -484,6 +416,16 @@ QTabBar::tab:selected,QTabBar::tab:hover
    </property>
    <property name="text">
     <string>编辑模式</string>
+   </property>
+  </action>
+  <action name="action">
+   <property name="text">
+    <string>用户手册</string>
+   </property>
+  </action>
+  <action name="action_2">
+   <property name="text">
+    <string>关于</string>
    </property>
   </action>
  </widget>

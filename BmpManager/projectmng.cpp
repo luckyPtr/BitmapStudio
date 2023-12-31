@@ -160,11 +160,17 @@ void ProjectMng::initActions()
     actRun = new QAction(tr("运行"), this);
     connect(actRun, SIGNAL(triggered()), this, SLOT(on_ActRun_Triggered()));
 
-    actExportImg = new QAction(tr("下载图片"));
+    actExportImg = new QAction(tr("保存到本地"));
     connect(actExportImg, SIGNAL(triggered()), this, SLOT(on_ActExportImg_Triggered()));
 
-    actCopyImg = new QAction(tr("复制图片到剪贴板"));
+    actCopyImg = new QAction(tr("复制到剪贴板"));
     connect(actCopyImg, SIGNAL(triggered()), this, SLOT(on_ActCopyImg_Triggered()));
+
+    actReplaceFromImg = new QAction(tr("从图片"));
+    connect(actReplaceFromImg, SIGNAL(triggered()), this, SLOT(on_ActReplaceFromImg_Triggered()));
+
+    actReplaceFromHex = new QAction(tr("从字模"));
+    connect(actReplaceFromHex, SIGNAL(triggered()), this, SLOT(on_ActReplaceFromHex_Triggered()));
 }
 
 
@@ -339,6 +345,20 @@ void ProjectMng::setComImg(QModelIndex index, ComImg &comImg)
     rd->setComImg(item->getID(), comImg);
 }
 
+QString ProjectMng::getBrief(QModelIndex index)
+{
+    TreeItem *item = theModel->itemFromIndex(index);
+    RawData *rd = item->getRawData();
+    return rd->getBrief(item->getID());
+}
+
+void ProjectMng::setBrief(QModelIndex index, QString brief)
+{
+    TreeItem *item = theModel->itemFromIndex(index);
+    RawData *rd = item->getRawData();
+    rd->setBrief(item->getID(), brief);
+}
+
 QModelIndex ProjectMng::getModelIndex(QString project, int id)
 {
     QModelIndex retIndex;
@@ -467,6 +487,11 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
         menuImport.addAction(actImportFromImg);
         menuImport.addAction(actImportFromHex);
         menu.addMenu(&menuImport);
+
+        QMenu menuReplace(tr("替换"));
+        menuReplace.addAction(actReplaceFromImg);
+        menuReplace.addAction(actReplaceFromHex);
+        menu.addMenu(&menuReplace);
 
         QMenu menuExport(tr("导出"));
         menuExport.addAction(actExportImg);
@@ -815,6 +840,50 @@ void ProjectMng::on_ActImportFromHex_Triggered()
     delete dlgImportHex;
 }
 
+void ProjectMng::on_ActReplaceFromImg_Triggered()
+{
+    QString aFile = QFileDialog::getOpenFileName(this, tr("导入图片"), "", tr("图片(*.jpg *.png *.bmp);;JPEG(*.jpg *.jpeg);;PNG(*.png);;BMP(*.bmp)"));
+    if(!aFile.isEmpty())
+    {
+        QImage img(aFile);
+        DialogImportImg *dlgImportImg = new DialogImportImg(img, this);
+        dlgImportImg->setImgName(QFileInfo(aFile).baseName());
+        int ret = dlgImportImg->exec();
+        if(ret == QDialog::Accepted)
+        {
+            QImage img = dlgImportImg->getMonoImg();
+            QString brief = dlgImportImg->getBrief();
+            setImage(currentIndex, img);
+            if(!brief.isEmpty())
+            {
+                setBrief(currentIndex, brief);
+            }
+            on_ActOpen_Triggered();
+        }
+        delete dlgImportImg;
+    }
+}
+
+void ProjectMng::on_ActReplaceFromHex_Triggered()
+{
+    TreeItem *item = theModel->itemFromIndex(currentIndex);
+    RawData::Settings settings = item->getRawData()->getSettings();
+    DialogImportHex *dlgImportHex = new DialogImportHex(this);
+    dlgImportHex->setDefaultMode(settings.mode);
+    if(dlgImportHex->exec() == QDialog::Accepted)
+    {
+        QImage img = dlgImportHex->getImg();
+        QString brief = dlgImportHex->getBrief();
+        setImage(currentIndex, img);
+        if(!brief.isEmpty())
+        {
+            setBrief(currentIndex, brief);
+        }
+        on_ActOpen_Triggered();
+    }
+    delete dlgImportHex;
+}
+
 void ProjectMng::on_ActExportImg_Triggered()
 {
 
@@ -834,4 +903,7 @@ void ProjectMng::on_ActCopyImg_Triggered()
     QImage img = item->getRawData()->getImage(item->getID());
     QClipboard *clip = QApplication::clipboard();
     clip->setImage(img);
+
+    DialogNotice *dlgNotice = new DialogNotice("已复制到剪贴板");
+    dlgNotice->exec();
 }

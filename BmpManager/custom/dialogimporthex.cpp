@@ -153,7 +153,7 @@ void DialogImportHex::on_btnAddBrief_clicked()
 void DialogImportHex::updateImg()
 {
     QString text = ui->textEdit->toPlainText();
-    QRegExp rx("0(x|X)[0-9a-fA-F]{1,2}");
+    QRegExp rx("\\b0(x|X)[0-9a-fA-F]{1,2}");
 
     inputByteArray.clear();
     int pos = 0;

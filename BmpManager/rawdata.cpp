@@ -459,6 +459,25 @@ void RawData::setImage(int id, QImage image)
     }
 }
 
+QString RawData::getBrief(int id)
+{
+    return dataMap[id].brief;
+}
+
+void RawData::setBrief(int id, QString brief)
+{
+    if(dataMap.contains(id))
+    {
+        dataMap[id].brief = brief;
+
+        QSqlQuery query(db);
+        query.prepare("UPDATE tbl_img SET brief=:brief WHERE id=:id");
+        query.bindValue(":brief", brief);
+        query.bindValue(":id", id);
+        query.exec();
+    }
+}
+
 ComImg RawData::getComImg(int id)
 {
     return dataMap[id].comImg;

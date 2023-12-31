@@ -30,6 +30,8 @@ private:
     QAction *actNewFolder;
     QAction *actImportFromImg;
     QAction *actImportFromHex;
+    QAction *actReplaceFromImg;
+    QAction *actReplaceFromHex;
     QAction *actExportImg;
     QAction *actCopyImg;
     QAction *actOpen;
@@ -67,6 +69,8 @@ public:
     void setImage(QModelIndex index, QImage &image);
     ComImg getComImg(QModelIndex index);
     void setComImg(QModelIndex index, ComImg &comImg);
+    QString getBrief(QModelIndex index);
+    void setBrief(QModelIndex index, QString brief);
     QModelIndex getModelIndex(QString project, int id);   // 从项目名称和id获取ModelIndex
 
 public slots:
@@ -86,6 +90,8 @@ public slots:
     void on_ActRun_Triggered();
     void on_ActImportFromImg_Triggered();
     void on_ActImportFromHex_Triggered();
+    void on_ActReplaceFromImg_Triggered();
+    void on_ActReplaceFromHex_Triggered();
     void on_ActExportImg_Triggered();
     void on_ActCopyImg_Triggered();
 signals:

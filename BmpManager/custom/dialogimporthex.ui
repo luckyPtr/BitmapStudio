@@ -253,6 +253,9 @@
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <property name="spacing">
+        <number>4</number>
+       </property>
        <item>
         <widget class="QLabel" name="label_7">
          <property name="minimumSize">
@@ -288,15 +291,44 @@
        </item>
        <item>
         <widget class="QPushButton" name="btnAddBrief">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="baseSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>Microsoft YaHei</family>
+          </font>
+         </property>
          <property name="toolTip">
           <string>添加备注</string>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
          </property>
          <property name="text">
           <string/>
          </property>
          <property name="icon">
           <iconset resource="../Img.qrc">
-           <normaloff>:/Image/TreeIco/Setting.svg</normaloff>:/Image/TreeIco/Setting.svg</iconset>
+           <normaloff>:/Image/Others/Brief.svg</normaloff>:/Image/Others/Brief.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>16</width>
+           <height>17</height>
+          </size>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
