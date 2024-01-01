@@ -93,9 +93,19 @@ QString DialogImportHex::getName()
     return ui->lineEditName->text();
 }
 
+void DialogImportHex::setName(QString name)
+{
+    ui->lineEditName->setText(name);
+}
+
 QString DialogImportHex::getBrief()
 {
     return ui->plainTextEditBrief->toPlainText();
+}
+
+void DialogImportHex::setBrief(QString brief)
+{
+    ui->plainTextEditBrief->setPlainText(brief);
 }
 
 QImage DialogImportHex::getImg()

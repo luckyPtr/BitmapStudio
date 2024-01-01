@@ -301,6 +301,13 @@ void ProjectMng::rename(QModelIndex &index, QString name)
     rd->rename(item->getID(), name);
 }
 
+QString ProjectMng::getName(QModelIndex &index)
+{
+    TreeItem *item = theModel->itemFromIndex(index);
+    RawData *rd = item->getRawData();
+    return rd->getName(item->getID());
+}
+
 void ProjectMng::remove(QModelIndex &index)
 {
     TreeItem *item = theModel->itemFromIndex(index);
@@ -482,11 +489,6 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
         menuNew.addAction(actNewImgFile);
         menuNew.addAction(actNewFolder);
         menu.addMenu(&menuNew);
-
-        QMenu menuImport(tr("导入"));
-        menuImport.addAction(actImportFromImg);
-        menuImport.addAction(actImportFromHex);
-        menu.addMenu(&menuImport);
 
         QMenu menuReplace(tr("替换"));
         menuReplace.addAction(actReplaceFromImg);
@@ -847,7 +849,12 @@ void ProjectMng::on_ActReplaceFromImg_Triggered()
     {
         QImage img(aFile);
         DialogImportImg *dlgImportImg = new DialogImportImg(img, this);
-        dlgImportImg->setImgName(QFileInfo(aFile).baseName());
+        dlgImportImg->setImgName(getName(currentIndex));
+        QString brief = getBrief(currentIndex);
+        if(!brief.isEmpty())
+        {
+            dlgImportImg->setBrief(brief);
+        }
         int ret = dlgImportImg->exec();
         if(ret == QDialog::Accepted)
         {
@@ -870,6 +877,8 @@ void ProjectMng::on_ActReplaceFromHex_Triggered()
     RawData::Settings settings = item->getRawData()->getSettings();
     DialogImportHex *dlgImportHex = new DialogImportHex(this);
     dlgImportHex->setDefaultMode(settings.mode);
+    dlgImportHex->setName(getName(currentIndex));
+    dlgImportHex->setBrief(getBrief(currentIndex));
     if(dlgImportHex->exec() == QDialog::Accepted)
     {
         QImage img = dlgImportHex->getImg();

@@ -16,14 +16,11 @@ DialogImportImg::DialogImportImg(QImage &img, QWidget *parent) :
 
     rawImg = img;
 
-
     // 这里直接显示的话图片大小不对，延迟一段时间后显示没有这个问题，奇怪
     QTimer::singleShot(0, this, [=]{
         imgTransform();
         displayImg();
     });
-
-
 }
 
 DialogImportImg::~DialogImportImg()
@@ -34,6 +31,11 @@ DialogImportImg::~DialogImportImg()
 void DialogImportImg::setImgName(QString name)
 {
     ui->lineEditName->setText(name);
+}
+
+void DialogImportImg::setBrief(QString breif)
+{
+    ui->textEditBrief->setText(breif);
 }
 
 QString DialogImportImg::getImgName()

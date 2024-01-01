@@ -358,6 +358,11 @@ void RawData::rename(int id, QString name)
     }
 }
 
+QString RawData::getName(int id)
+{
+    return dataMap[id].name;
+}
+
 void RawData::remove(int id)
 {
     // 删除对应id

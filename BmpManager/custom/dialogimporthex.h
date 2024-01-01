@@ -24,7 +24,9 @@ public:
 
     void setDefaultMode(int mode);
     QString getName();
+    void setName(QString name);
     QString getBrief();
+    void setBrief(QString brief);
     QImage getImg();
 
 private slots:

@@ -23,6 +23,7 @@ public:
     void setRawImg(QImage &img) {rawImg = img;}
     QImage getMonoImg() {return monoImg;}
     void setImgName(QString name);
+    void setBrief(QString breif);
     QString getImgName();
     QString getBrief();
     void imgTransform();

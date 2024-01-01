@@ -63,6 +63,7 @@ public:
     void createImage(QModelIndex &index, QString name, QImage &img, QString brief = "");
     void createComImg(QModelIndex &index, QString name, QSize size, QString brief = "");
     void rename(QModelIndex &index, QString name);
+    QString getName(QModelIndex &index);
     void remove(QModelIndex &index);
     void imgFolderConvert(QModelIndex &index);
     QImage getImage(QModelIndex index);

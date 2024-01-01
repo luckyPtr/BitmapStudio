@@ -121,6 +121,7 @@ public:
     void createBmp(int id, QString name, QSize size, const QString brief = "");
     void createComImg(int id, QString name, QSize size, const QString brief = "");
     void rename(int id, QString name);
+    QString getName(int id);
     void remove(int id);
     void imgFolderConvert(int id);
     QImage getImage(int id);
