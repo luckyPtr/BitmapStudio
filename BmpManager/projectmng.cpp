@@ -160,11 +160,15 @@ void ProjectMng::initActions()
     actRun = new QAction(tr("运行"), this);
     connect(actRun, SIGNAL(triggered()), this, SLOT(on_ActRun_Triggered()));
 
-    actExportImg = new QAction(tr("保存到本地"));
+    actExportImg = new QAction(tr("保存图片到本地"));
     connect(actExportImg, SIGNAL(triggered()), this, SLOT(on_ActExportImg_Triggered()));
 
-    actCopyImg = new QAction(tr("复制到剪贴板"));
+    actCopyImg = new QAction(tr("复制图片到剪贴板"));
     connect(actCopyImg, SIGNAL(triggered()), this, SLOT(on_ActCopyImg_Triggered()));
+
+    actCopyName = new QAction(tr("复制名称到剪贴板"));
+    connect(actCopyName, SIGNAL(triggered()), this, SLOT(on_ActCopyName_Triggeded()));
+
 
     actReplaceFromImg = new QAction(tr("从图片"));
     connect(actReplaceFromImg, SIGNAL(triggered()), this, SLOT(on_ActReplaceFromImg_Triggered()));
@@ -498,6 +502,7 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
         QMenu menuExport(tr("导出"));
         menuExport.addAction(actExportImg);
         menuExport.addAction(actCopyImg);
+        menuExport.addAction(actCopyName);
         menu.addMenu(&menuExport);
 
         menu.addAction(actDelete);
@@ -550,6 +555,7 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
         QMenu menuExport(tr("导出"));
         menuExport.addAction(actExportImg);
         menuExport.addAction(actCopyImg);
+        menuExport.addAction(actCopyName);
         menu.addMenu(&menuExport);
 
         menu.addSeparator();
@@ -915,4 +921,20 @@ void ProjectMng::on_ActCopyImg_Triggered()
 
     DialogNotice *dlgNotice = new DialogNotice("已复制到剪贴板");
     dlgNotice->exec();
+}
+
+void ProjectMng::on_ActCopyName_Triggeded()
+{
+    TreeItem *item = theModel->itemFromIndex(currentIndex);
+    ImgConvertor ic(item->getRawData()->getDataMap().values().toVector(), item->getRawData()->getSettings());
+
+    QString name = ic.getFullName(item->getRawData()->getDataMap()[item->getID()]);
+    if(!name.isEmpty())
+    {
+        QClipboard* clipboard = QApplication::clipboard();
+        clipboard->setText(name);
+
+        DialogNotice *dlg = new DialogNotice("图片名称已复制到剪贴板");
+        dlg->exec();
+    }
 }

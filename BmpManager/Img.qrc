@@ -59,5 +59,7 @@
         <file>Image/Toolbar/Export.svg</file>
         <file>Image/Toolbar/Replace.svg</file>
         <file>Image/Others/Brief.svg</file>
+        <file>Image/Toolbar/About.svg</file>
+        <file>Image/Toolbar/Edit.svg</file>
     </qresource>
 </RCC>

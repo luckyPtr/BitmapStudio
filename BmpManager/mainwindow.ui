@@ -23,7 +23,7 @@
    </size>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout_2">
+   <layout class="QHBoxLayout" name="horizontalLayout">
     <property name="leftMargin">
      <number>2</number>
     </property>
@@ -36,7 +36,7 @@
     <property name="bottomMargin">
      <number>2</number>
     </property>
-    <item row="0" column="0">
+    <item>
      <widget class="CustomTabWidget" name="tabWidget">
       <property name="acceptDrops">
        <bool>true</bool>
@@ -128,15 +128,9 @@ QTabBar::tab:selected,QTabBar::tab:hover
     <addaction name="action"/>
     <addaction name="action_2"/>
    </widget>
-   <widget class="QMenu" name="menu_4">
-    <property name="title">
-     <string>用户手册</string>
-    </property>
-   </widget>
    <addaction name="menu"/>
    <addaction name="menu_2"/>
    <addaction name="menu_3"/>
-   <addaction name="menu_4"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dockProject">
@@ -286,6 +280,9 @@ QTabBar::tab:selected,QTabBar::tab:hover
            <property name="text">
             <string/>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
           </widget>
          </item>
         </layout>
@@ -329,14 +326,13 @@ QTabBar::tab:selected,QTabBar::tab:hover
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actOpenProject"/>
    <addaction name="actNewProject"/>
+   <addaction name="actOpenProject"/>
    <addaction name="separator"/>
-   <addaction name="actCopyName"/>
-   <addaction name="actReplaceImage"/>
-   <addaction name="actRun"/>
    <addaction name="actEditMode"/>
-   <addaction name="actTest"/>
+   <addaction name="actRun"/>
+   <addaction name="actSettings"/>
+   <addaction name="actAbout"/>
   </widget>
   <action name="actOpenProject">
    <property name="icon">
@@ -388,31 +384,13 @@ QTabBar::tab:selected,QTabBar::tab:hover
     <string>运行</string>
    </property>
   </action>
-  <action name="actCopyName">
-   <property name="icon">
-    <iconset resource="Img.qrc">
-     <normaloff>:/Image/Toolbar/Copy.svg</normaloff>:/Image/Toolbar/Copy.svg</iconset>
-   </property>
-   <property name="text">
-    <string>复制名称</string>
-   </property>
-  </action>
-  <action name="actReplaceImage">
-   <property name="icon">
-    <iconset resource="Img.qrc">
-     <normaloff>:/Image/Toolbar/Replace.svg</normaloff>:/Image/Toolbar/Replace.svg</iconset>
-   </property>
-   <property name="text">
-    <string>替换图片</string>
-   </property>
-  </action>
   <action name="actEditMode">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="Img.qrc">
-     <normaloff>:/Image/PixelEditor/Edit.svg</normaloff>:/Image/PixelEditor/Edit.svg</iconset>
+     <normaloff>:/Image/Toolbar/Edit.svg</normaloff>:/Image/Toolbar/Edit.svg</iconset>
    </property>
    <property name="text">
     <string>编辑模式</string>
@@ -425,6 +403,30 @@ QTabBar::tab:selected,QTabBar::tab:hover
   </action>
   <action name="action_2">
    <property name="text">
+    <string>关于</string>
+   </property>
+  </action>
+  <action name="actSettings">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/TreeIco/Setting.svg</normaloff>:/Image/TreeIco/Setting.svg</iconset>
+   </property>
+   <property name="text">
+    <string>设置</string>
+   </property>
+   <property name="toolTip">
+    <string>设置</string>
+   </property>
+  </action>
+  <action name="actAbout">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/Toolbar/About.svg</normaloff>:/Image/Toolbar/About.svg</iconset>
+   </property>
+   <property name="text">
+    <string>关于</string>
+   </property>
+   <property name="toolTip">
     <string>关于</string>
    </property>
   </action>

@@ -157,7 +157,7 @@ void MainWindow::on_splitter_splitterMoved(int pos, int index)
         TreeItem *item = pm.model()->itemFromIndex(curIndex);
  //       BmFile bi = item->getRawData()->getBmFile(item->getID());
         QImage img = item->getRawData()->getImage(item->getID());
-        QImage resultImg = img.scaled(ui->labelPreview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        QImage resultImg = img.scaled(ui->labelPreview->size(), Qt::KeepAspectRatio);
         ui->labelPreview->setPixmap(QPixmap::fromImage(resultImg));
     }
 }

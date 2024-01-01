@@ -4,8 +4,24 @@
 #include <QRegExp>
 #include <QSet>
 #include <QSyntaxHighlighter>
+#include <QClipboard>
 #include <custom/highlighter.h>
 #include "imgencoderfactory.h"
+
+void DialogImportHex::initClipboardText()
+{
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    QString text = clipboard->text();
+    qDebug() << text;
+    if(!text.isEmpty())
+    {
+        QRegExp rx("\\b0(x|X)[0-9a-fA-F]{1,2}");
+        if(rx.indexIn(text) != -1)
+        {
+            ui->textEdit->setText(text);
+        }
+    }
+}
 
 DialogImportHex::DialogImportHex(QWidget *parent) :
     QDialog(parent),
@@ -38,6 +54,8 @@ DialogImportHex::DialogImportHex(QWidget *parent) :
 
 
     Highlighter *h = new Highlighter(ui->textEdit->document());
+
+    initClipboardText();
 }
 
 DialogImportHex::~DialogImportHex()

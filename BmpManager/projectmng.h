@@ -34,6 +34,7 @@ private:
     QAction *actReplaceFromHex;
     QAction *actExportImg;
     QAction *actCopyImg;
+    QAction *actCopyName;
     QAction *actOpen;
     QAction *actCloseProject;
     QAction *actDelete;
@@ -95,6 +96,7 @@ public slots:
     void on_ActReplaceFromHex_Triggered();
     void on_ActExportImg_Triggered();
     void on_ActCopyImg_Triggered();
+    void on_ActCopyName_Triggeded();
 signals:
 
 };

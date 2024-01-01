@@ -18,6 +18,7 @@ class DialogImportHex : public QDialog
     QByteArray inputByteArray;
     QImage outputImg;
     bool isNameLegal = false;
+    void initClipboardText();
 public:
     explicit DialogImportHex(QWidget *parent = nullptr);
     ~DialogImportHex();
