@@ -40,6 +40,7 @@ MainWindow::~MainWindow()
 void MainWindow::init()
 {
     initStatusBar();
+    initAction();
     treeItemDelegate = new TreeItemDelegate();
     ui->treeViewProject->setItemDelegate(treeItemDelegate);
     pm.blindTreeView(ui->treeViewProject);
@@ -63,6 +64,11 @@ void MainWindow::initStatusBar()
 
     labelPosition->setMinimumWidth(120);
     labelSize->setMinimumWidth(120);
+}
+
+void MainWindow::initAction()
+{
+    connect(ui->actRun, SIGNAL(triggered()), &pm, SLOT(on_ActRun_Triggered()));
 }
 void MainWindow::setStackedWidget(int index)
 {
@@ -250,57 +256,6 @@ void MainWindow::on_actGrpImgTransform_triggered()
     pm.initModel();
 }
 
-
-void MainWindow::on_actRun_triggered()
-{
-    QString file_img_c;
-
-    QModelIndex curIndex = ui->treeViewProject->currentIndex();
-    TreeItem *item = pm.model()->itemFromIndex(curIndex);
-    ImgConvertor ic(item->getRawData()->getDataMap().values().toVector(), item->getRawData()->getSettings());
-
-    QString path = item->getRawData()->getProject();
-    QFileInfo fileInfo(path);
-    path = fileInfo.path();
-
-    if(!QDir(fileInfo.path() + "/Assets").exists())
-    {
-        QDir().mkdir(fileInfo.path() + "/Assets");
-        qDebug() << fileInfo.path() + "/Assets";
-    }
-
-
-    QFile file(path + "/bm_img.c");
-    if(file.open(QIODevice::WriteOnly))
-    {
-        file.write(ic.generateImgC().toUtf8());
-        file.close();
-    }
-
-    file.setFileName(path + "/bm_img.h");
-    if(file.open(QIODevice::WriteOnly))
-    {
-        file.write(ic.generateImgH().toUtf8());
-        file.close();
-    }
-
-    file.setFileName(path + "/bm_com_img.c");
-    if(file.open(QIODevice::WriteOnly))
-    {
-
-        file.write(ic.generateComImgC().toUtf8());
-        file.close();
-    }
-
-    file.setFileName(path + "/bm_com_img.h");
-    if(file.open(QIODevice::WriteOnly))
-    {
-        file.write(ic.generateComImgH().toUtf8());
-        file.close();
-    }
-
-    QMessageBox::information(this, "","字模转换完成");
-}
 
 void MainWindow::on_UpdateStatusBarPos(QPoint point)
 {

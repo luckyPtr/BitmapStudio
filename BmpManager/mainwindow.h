@@ -47,8 +47,6 @@ private slots:
 
     void on_actGrpImgTransform_triggered();
 
-    void on_actRun_triggered();
-
     void on_actReplaceImage_triggered();
 
     void on_actExport_triggered();
@@ -86,6 +84,7 @@ private:
     TreeItemDelegate *treeItemDelegate;
     void init();
     void initStatusBar();   // 初始化
+    void initAction();
 
     QModelIndex editedIndex;
 
