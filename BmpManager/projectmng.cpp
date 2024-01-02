@@ -12,6 +12,7 @@
 #include <imgconvertor.h>
 #include <QApplication>
 #include <QClipboard>
+#include <QMouseEvent>
 #include "custom/dialognotice.h"
 #include "custom/dialogloading.h"
 
@@ -245,6 +246,7 @@ void ProjectMng::blindTreeView(QTreeView *treeView)
     treeView->setModel(theModel);
     treeView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(treeView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(on_CustomContextMenu(QPoint)));
+    connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(on_Clicked_Triggered(QModelIndex)));
 }
 
 void ProjectMng::setTabWidget(CustomTabWidget *tabWidget)
@@ -402,9 +404,18 @@ QModelIndex ProjectMng::getModelIndex(QString project, int id)
     return retIndex;
 }
 
+void ProjectMng::on_Clicked_Triggered(QModelIndex index)
+{
+    currentIndex = index;
+}
+
+
+
+
 void ProjectMng::on_CustomContextMenu(QPoint point)
 {
     currentIndex = treeView->indexAt(point);
+    qDebug() << currentIndex;
     TreeItem *item = theModel->itemFromIndex(currentIndex);
 
     // 项目工程菜单

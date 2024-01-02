@@ -75,7 +75,9 @@ public:
     void setBrief(QModelIndex index, QString brief);
     QModelIndex getModelIndex(QString project, int id);   // 从项目名称和id获取ModelIndex
 
+
 public slots:
+    void on_Clicked_Triggered(QModelIndex index);
     void on_CustomContextMenu(QPoint point);
     void on_ActNewProject_Triggered();
     void on_ActOpenProject_Triggered();
