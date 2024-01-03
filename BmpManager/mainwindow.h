@@ -57,6 +57,7 @@ private slots:
 
     void on_selectedProject_Changed(QString project);
 
+
 public slots:
     void on_UpdateStatusBarPos(QPoint point);
 

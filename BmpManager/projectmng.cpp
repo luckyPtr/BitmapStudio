@@ -215,11 +215,11 @@ void ProjectMng::initModel()
         proItem->setID(-1);
         theModel->root()->addChild(proItem);
 
-        TreeItem *itemSettings = new TreeItem();
-        itemSettings->setType(RawData::TypeClassSettings);
-        itemSettings->setRawData(&projList[i]);
-        itemSettings->setID(-2);
-        proItem->addChild(itemSettings);
+//        TreeItem *itemSettings = new TreeItem();
+//        itemSettings->setType(RawData::TypeClassSettings);
+//        itemSettings->setRawData(&projList[i]);
+//        itemSettings->setID(-2);
+//        proItem->addChild(itemSettings);
 
         TreeItem *itemImage = new TreeItem();
         itemImage->setType(RawData::TypeClassImg);
@@ -419,6 +419,10 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
 {
     currentIndex = treeView->indexAt(point);
 
+    if(!currentIndex.isValid())
+    {
+        return;
+    }
     TreeItem *item = theModel->itemFromIndex(currentIndex);
     emit updateSelectProject(item->getRawData()->getProject());
     // 项目工程菜单

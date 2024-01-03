@@ -347,6 +347,9 @@ QTabBar::tab:selected,QTabBar::tab:hover
    <property name="text">
     <string>打开项目</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
    <property name="priority">
     <enum>QAction::NormalPriority</enum>
    </property>
@@ -374,6 +377,9 @@ QTabBar::tab:selected,QTabBar::tab:hover
    <property name="text">
     <string>新建工程</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
   </action>
   <action name="actTest">
    <property name="text">
@@ -391,6 +397,9 @@ QTabBar::tab:selected,QTabBar::tab:hover
    <property name="text">
     <string>运行</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
   </action>
   <action name="actEditMode">
    <property name="checkable">
@@ -402,6 +411,9 @@ QTabBar::tab:selected,QTabBar::tab:hover
    </property>
    <property name="text">
     <string>编辑模式</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
    </property>
   </action>
   <action name="action">

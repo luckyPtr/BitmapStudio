@@ -341,6 +341,8 @@ void MainWindow::on_actExport_triggered()
 void MainWindow::on_actEditMode_triggered(bool checked)
 {
     Global::editMode = checked;
+    DialogNotice *dlg = new DialogNotice(checked ? "像素编辑模式" : "普通模式");
+    dlg->exec();
 }
 
 
@@ -366,4 +368,6 @@ void MainWindow::on_selectedProject_Changed(QString project)
         this->setWindowTitle("BmpManager");
     }
 }
+
+
 
