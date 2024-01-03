@@ -10,6 +10,11 @@
     <height>579</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Microsoft YaHei</family>
+   </font>
+  </property>
   <property name="acceptDrops">
    <bool>false</bool>
   </property>
@@ -108,7 +113,7 @@ QTabBar::tab:selected,QTabBar::tab:hover
      <x>0</x>
      <y>0</y>
      <width>1109</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -376,6 +381,9 @@ QTabBar::tab:selected,QTabBar::tab:hover
    </property>
   </action>
   <action name="actRun">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="Img.qrc">
      <normaloff>:/Image/Toolbar/Run.svg</normaloff>:/Image/Toolbar/Run.svg</iconset>

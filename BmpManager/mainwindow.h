@@ -55,6 +55,8 @@ private slots:
 
     void on_treeViewProject_doubleClicked(const QModelIndex &index);
 
+    void on_selectedProject_Changed(QString project);
+
 public slots:
     void on_UpdateStatusBarPos(QPoint point);
 

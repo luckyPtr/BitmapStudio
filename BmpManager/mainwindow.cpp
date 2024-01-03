@@ -69,6 +69,7 @@ void MainWindow::initStatusBar()
 void MainWindow::initAction()
 {
     connect(ui->actRun, SIGNAL(triggered()), &pm, SLOT(on_ActRun_Triggered()));
+    connect(&pm, SIGNAL(updateSelectProject(QString)), this, SLOT(on_selectedProject_Changed(QString)));
 }
 void MainWindow::setStackedWidget(int index)
 {
@@ -347,5 +348,22 @@ void MainWindow::on_treeViewProject_doubleClicked(const QModelIndex &index)
 {
     TreeItem *item = pm.model()->itemFromIndex(index);
     ui->tabWidget->openTab(item);
+}
+
+void MainWindow::on_selectedProject_Changed(QString project)
+{
+    if(!project.isEmpty())
+    {
+        QFileInfo fileInfo(project);
+        ui->actRun->setEnabled(true);
+        ui->actRun->setToolTip(QString("运行项目\"%1\"").arg(fileInfo.baseName()));
+        this->setWindowTitle(QString("BmpManager - %1").arg(fileInfo.baseName()));
+    }
+    else
+    {
+        ui->actRun->setEnabled(false);
+        ui->actRun->setToolTip(tr("运行"));
+        this->setWindowTitle("BmpManager");
+    }
 }
 

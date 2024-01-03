@@ -99,8 +99,9 @@ public slots:
     void on_ActExportImg_Triggered();
     void on_ActCopyImg_Triggered();
     void on_ActCopyName_Triggeded();
-signals:
 
+signals:
+    void updateSelectProject(QString);
 };
 
 #endif // PROJECTMNG_H

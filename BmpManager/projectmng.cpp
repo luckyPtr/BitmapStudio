@@ -407,6 +407,9 @@ QModelIndex ProjectMng::getModelIndex(QString project, int id)
 void ProjectMng::on_Clicked_Triggered(QModelIndex index)
 {
     currentIndex = index;
+    TreeItem *item = theModel->itemFromIndex(currentIndex);
+
+    emit updateSelectProject(item->getRawData()->getProject());
 }
 
 
@@ -415,9 +418,9 @@ void ProjectMng::on_Clicked_Triggered(QModelIndex index)
 void ProjectMng::on_CustomContextMenu(QPoint point)
 {
     currentIndex = treeView->indexAt(point);
-    qDebug() << currentIndex;
-    TreeItem *item = theModel->itemFromIndex(currentIndex);
 
+    TreeItem *item = theModel->itemFromIndex(currentIndex);
+    emit updateSelectProject(item->getRawData()->getProject());
     // 项目工程菜单
     auto menuProject = [=]() {
         QMenu menu;
@@ -649,6 +652,7 @@ void ProjectMng::on_ActCloseProject_Triggered()
         {
             closeProjcet(currentIndex);
             initModel();
+            emit updateSelectProject(nullptr);  // 关闭后选中的工程为空
         }
     }
 
@@ -949,3 +953,5 @@ void ProjectMng::on_ActCopyName_Triggeded()
         dlg->exec();
     }
 }
+
+
