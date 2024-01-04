@@ -6,18 +6,30 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>556</width>
-    <height>375</height>
+    <width>487</width>
+    <height>316</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
-   <item row="1" column="0">
+  <layout class="QGridLayout" name="gridLayout_3">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="page">
       <layout class="QGridLayout" name="gridLayout">
@@ -65,13 +77,30 @@
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QLabel" name="label_2">
+           <property name="minimumSize">
+            <size>
+             <width>64</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei</family>
+            </font>
+           </property>
            <property name="text">
             <string>项目名称：</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEditProjectName"/>
+          <widget class="QLineEdit" name="lineEditProjectName">
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei</family>
+            </font>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -79,16 +108,41 @@
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QLabel" name="label_3">
+           <property name="minimumSize">
+            <size>
+             <width>64</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei</family>
+            </font>
+           </property>
            <property name="text">
             <string>项目路径：</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEditProjectPath"/>
+          <widget class="QLineEdit" name="lineEditProjectPath">
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei</family>
+            </font>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QPushButton" name="btnBrowse">
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei</family>
+            </font>
+           </property>
            <property name="text">
             <string>浏览...</string>
            </property>
@@ -112,14 +166,27 @@
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="btnSelect">
+          <widget class="QPushButton" name="btnOK1">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei</family>
+            </font>
+           </property>
            <property name="text">
-            <string>选择</string>
+            <string>下一步 &gt;</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="btnCancel">
+          <widget class="QPushButton" name="btnCancel1">
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei</family>
+            </font>
+           </property>
            <property name="text">
             <string>取消</string>
            </property>
@@ -130,8 +197,29 @@
       </layout>
      </widget>
      <widget class="QWidget" name="page_2">
-      <layout class="QGridLayout" name="gridLayout_3">
+      <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="font">
+          <font>
+           <family>Microsoft YaHei</family>
+           <pointsize>11</pointsize>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>屏幕尺寸</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="Line" name="line_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
         <widget class="QLabel" name="label_4">
          <property name="font">
           <font>
@@ -145,15 +233,167 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item row="4" column="0" colspan="2">
         <widget class="Line" name="line_2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <spacer name="verticalSpacer_2">
+       <item row="5" column="0">
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QLabel" name="label_5">
+             <property name="maximumSize">
+              <size>
+               <width>64</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <family>Microsoft YaHei</family>
+              </font>
+             </property>
+             <property name="text">
+              <string>取模走向：</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButton_LSB">
+             <property name="font">
+              <font>
+               <family>Microsoft YaHei</family>
+              </font>
+             </property>
+             <property name="text">
+              <string>逆向(LSB)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButton_MSB">
+             <property name="font">
+              <font>
+               <family>Microsoft YaHei</family>
+              </font>
+             </property>
+             <property name="text">
+              <string>顺向(MSB)</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_6">
+           <item>
+            <widget class="QLabel" name="label_6">
+             <property name="maximumSize">
+              <size>
+               <width>64</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <family>Microsoft YaHei</family>
+              </font>
+             </property>
+             <property name="text">
+              <string>取模方式：</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButton_ZL">
+             <property name="font">
+              <font>
+               <family>Microsoft YaHei</family>
+              </font>
+             </property>
+             <property name="text">
+              <string>逐列</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButton_ZH">
+             <property name="font">
+              <font>
+               <family>Microsoft YaHei</family>
+              </font>
+             </property>
+             <property name="text">
+              <string>逐行</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButton_LH">
+             <property name="font">
+              <font>
+               <family>Microsoft YaHei</family>
+              </font>
+             </property>
+             <property name="text">
+              <string>列行</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButton_HL">
+             <property name="font">
+              <font>
+               <family>Microsoft YaHei</family>
+              </font>
+             </property>
+             <property name="text">
+              <string>行列</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="verticalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item row="5" column="1">
+        <widget class="LatticeShow" name="widget" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>115</width>
+           <height>115</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>115</width>
+           <height>115</height>
+          </size>
+         </property>
+         <property name="cursor">
+          <cursorShape>ArrowCursor</cursorShape>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <spacer name="verticalSpacer_4">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -165,7 +405,95 @@
          </property>
         </spacer>
        </item>
-       <item row="3" column="0">
+       <item row="2" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QLabel" name="label_8">
+           <property name="minimumSize">
+            <size>
+             <width>48</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>宽度：</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QUnitSpinBox" name="spinBoxwidth">
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei</family>
+            </font>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>1024</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Minimum</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>30</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_9">
+           <property name="minimumSize">
+            <size>
+             <width>48</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>高度：</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QUnitSpinBox" name="spinBoxHeight">
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei</family>
+            </font>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>1024</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="7" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
           <spacer name="horizontalSpacer_2">
@@ -181,21 +509,39 @@
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton">
+          <widget class="QPushButton" name="btnLastStep">
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei</family>
+            </font>
+           </property>
            <property name="text">
             <string>&lt; 上一步</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_2">
+          <widget class="QPushButton" name="btnOK2">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei</family>
+            </font>
+           </property>
            <property name="text">
             <string>确定</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_3">
+          <widget class="QPushButton" name="btnCancel2">
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei</family>
+            </font>
+           </property>
            <property name="text">
             <string>取消</string>
            </property>
@@ -209,6 +555,68 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LatticeShow</class>
+   <extends>QWidget</extends>
+   <header location="global">custom/latticeshow.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QUnitSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header location="global">qunitspinbox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>btnCancel1</sender>
+   <signal>clicked()</signal>
+   <receiver>DialogNewProject</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>445</x>
+     <y>328</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>247</x>
+     <y>174</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnCancel2</sender>
+   <signal>clicked()</signal>
+   <receiver>DialogNewProject</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>445</x>
+     <y>328</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>247</x>
+     <y>174</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnOK2</sender>
+   <signal>clicked()</signal>
+   <receiver>DialogNewProject</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>359</x>
+     <y>328</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>247</x>
+     <y>174</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

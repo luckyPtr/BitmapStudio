@@ -61,5 +61,6 @@
         <file>Image/Others/Brief.svg</file>
         <file>Image/Toolbar/About.svg</file>
         <file>Image/Toolbar/Edit.svg</file>
+        <file>Image/TreeIco/Delete.svg</file>
     </qresource>
 </RCC>

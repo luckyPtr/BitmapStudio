@@ -120,11 +120,14 @@ QTabBar::tab:selected,QTabBar::tab:hover
     <property name="title">
      <string>文件</string>
     </property>
+    <addaction name="actNewProject"/>
+    <addaction name="actOpenProject"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
      <string>运行</string>
     </property>
+    <addaction name="actRun"/>
    </widget>
    <widget class="QMenu" name="menu_3">
     <property name="title">

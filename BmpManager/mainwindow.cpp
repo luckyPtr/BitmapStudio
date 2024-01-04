@@ -69,6 +69,8 @@ void MainWindow::initStatusBar()
 void MainWindow::initAction()
 {
     connect(ui->actRun, SIGNAL(triggered()), &pm, SLOT(on_ActRun_Triggered()));
+    connect(ui->actNewProject, SIGNAL(triggered()), &pm, SLOT(on_ActNewProject_Triggered()));
+    connect(ui->actOpenProject, SIGNAL(triggered()), &pm, SLOT(on_ActOpenProject_Triggered()));
     connect(&pm, SIGNAL(updateSelectProject(QString)), this, SLOT(on_selectedProject_Changed(QString)));
 }
 void MainWindow::setStackedWidget(int index)
@@ -82,12 +84,12 @@ void MainWindow::setStackedWidget(int index)
 
 void MainWindow::on_actOpenProject_triggered()
 {
-    QString aFile = QFileDialog::getOpenFileName(this, tr("打开工程"), "", tr("BmpManager工程(*.db)"));
-    if(!aFile.isEmpty())
-    {
-        pm.openProject(aFile);
-        pm.initModel();
-    }
+//    QString aFile = QFileDialog::getOpenFileName(this, tr("打开工程"), "", tr("BmpManager工程(*.db)"));
+//    if(!aFile.isEmpty())
+//    {
+//        pm.openProject(aFile);
+//        pm.initModel();
+//    }
 }
 
 
@@ -128,12 +130,12 @@ void MainWindow::on_actRename_triggered()
 
 void MainWindow::on_actNewProject_triggered()
 {
-    QString aFile = QFileDialog::getSaveFileName(this, tr("保存工程"), "Untiled", tr("BmpManager工程(*.db)"));
-    if(!aFile.isEmpty())
-    {
-        pm.openProject(aFile);
-        pm.initModel();
-    }
+//    QString aFile = QFileDialog::getSaveFileName(this, tr("保存工程"), "Untiled", tr("BmpManager工程(*.db)"));
+//    if(!aFile.isEmpty())
+//    {
+//        pm.openProject(aFile);
+//        pm.initModel();
+//    }
 }
 
 

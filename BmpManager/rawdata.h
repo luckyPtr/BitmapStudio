@@ -94,6 +94,18 @@ public:
         QString keywordImgSize;
         QString path;
         QString format;
+
+        Settings()
+        {
+            depth = 1;
+            size = QSize(128, 64);
+            mode = 0;
+            keywordConst = "const";
+            keywordImgPos = "unsigned char";
+            keywordImgSize = "unsigned char";
+            path = nullptr;
+            format = "C文件";
+        }
     };
 
 private:

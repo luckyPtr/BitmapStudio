@@ -15,6 +15,7 @@
 #include <QMouseEvent>
 #include "custom/dialognotice.h"
 #include "custom/dialogloading.h"
+#include "custom/dialognewproject.h"
 
 void ProjectMng::addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, bool (*filter)(int))
 {
@@ -140,7 +141,7 @@ void ProjectMng::initActions()
     actCloseProject = new QAction(tr("关闭项目"), this);
     connect(actCloseProject, SIGNAL(triggered()), this, SLOT(on_ActCloseProject_Triggered()));
 
-    actDelete = new QAction(QIcon(":/Image/Toolbar/Delete.svg"), tr("删除"), this);
+    actDelete = new QAction(QIcon(":/Image/TreeIco/Delete.svg"), tr("删除"), this);
     connect(actDelete, SIGNAL(triggered()), this, SLOT(on_ActDelete_Triggered()));
 
     actRename = new QAction(tr("重命名"), this);
@@ -192,6 +193,13 @@ void ProjectMng::openProject(QString pro)
     // proList的类型从QVector更换为QList，打开三个工程崩溃的问题就没有出现
     // 但是可能并没有真正解决问题，可参考 https://zhidao.baidu.com/question/367115219524964612.html
     projList << pro;        // 惊，还可以这样？？？
+}
+
+void ProjectMng::newProject(QString pro, RawData::Settings settings)
+{
+    RawData newProject(pro);
+    newProject.saveSettings(settings);
+    projList << newProject;
 }
 
 void ProjectMng::closeProjcet(QModelIndex &index)
@@ -614,12 +622,19 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
 
 void ProjectMng::on_ActNewProject_Triggered()
 {
-    QString aFile = QFileDialog::getSaveFileName(this, tr("保存工程"), "Untiled", tr("BmpManager工程(*.db)"));
-    if(!aFile.isEmpty())
+    DialogNewProject *dlg = new DialogNewProject(this);
+    if(dlg->exec() == QDialog::Accepted)
     {
-        openProject(aFile);
-        initModel();
+        QString projectFile = dlg->getNewProject();
+        RawData::Settings settings = dlg->getSettings();
+        if(!projectFile.isEmpty())
+        {
+            newProject(projectFile, settings);
+            initModel();
+        }
     }
+
+    delete dlg;
 }
 
 void ProjectMng::on_ActOpenProject_Triggered()

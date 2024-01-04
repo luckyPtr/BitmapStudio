@@ -54,6 +54,7 @@ private:
 public:
     explicit ProjectMng(QWidget *parent = nullptr);
     void openProject(QString pro);
+    void newProject(QString pro, RawData::Settings settings);
     void closeProjcet(QModelIndex &index);
     void initModel();   // 根据数据库重新初始化模型
     TreeModel* model() { return theModel; }
