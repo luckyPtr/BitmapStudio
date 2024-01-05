@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>FormPixelEditor</class>
+ <widget class="QWidget" name="FormPixelEditor">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>754</width>
+    <height>461</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <property name="horizontalSpacing">
+    <number>4</number>
+   </property>
+   <property name="verticalSpacing">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QWGraphicsView" name="graphicsView">
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+  <action name="actFlipHorizontal">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/FlipHorizontal.svg</normaloff>:/Image/PixelEditor/FlipHorizontal.svg</iconset>
+   </property>
+   <property name="text">
+    <string>水平翻转</string>
+   </property>
+   <property name="toolTip">
+    <string>水平翻转图片或选定内容</string>
+   </property>
+  </action>
+  <action name="actFlipVerital">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/FlipVertical.svg</normaloff>:/Image/PixelEditor/FlipVertical.svg</iconset>
+   </property>
+   <property name="text">
+    <string>垂直翻转</string>
+   </property>
+   <property name="toolTip">
+    <string>垂直翻转</string>
+   </property>
+  </action>
+  <action name="actRotateLeft">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/RotateLeft.svg</normaloff>:/Image/PixelEditor/RotateLeft.svg</iconset>
+   </property>
+   <property name="text">
+    <string>向左旋转</string>
+   </property>
+   <property name="toolTip">
+    <string>向左旋转</string>
+   </property>
+  </action>
+  <action name="actRotateRight">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/RotateRight.svg</normaloff>:/Image/PixelEditor/RotateRight.svg</iconset>
+   </property>
+   <property name="text">
+    <string>向右旋转</string>
+   </property>
+   <property name="toolTip">
+    <string>向右旋转</string>
+   </property>
+  </action>
+  <action name="actMoveUp">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/MoveUp.svg</normaloff>:/Image/PixelEditor/MoveUp.svg</iconset>
+   </property>
+   <property name="text">
+    <string>上移</string>
+   </property>
+   <property name="shortcut">
+    <string>Up</string>
+   </property>
+  </action>
+  <action name="actMoveDown">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/MoveDown.svg</normaloff>:/Image/PixelEditor/MoveDown.svg</iconset>
+   </property>
+   <property name="text">
+    <string>下移</string>
+   </property>
+   <property name="shortcut">
+    <string>Down</string>
+   </property>
+  </action>
+  <action name="actMoveLeft">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/MoveLeft.svg</normaloff>:/Image/PixelEditor/MoveLeft.svg</iconset>
+   </property>
+   <property name="text">
+    <string>左移</string>
+   </property>
+   <property name="shortcut">
+    <string>Left</string>
+   </property>
+  </action>
+  <action name="actMoveRight">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/MoveRight.svg</normaloff>:/Image/PixelEditor/MoveRight.svg</iconset>
+   </property>
+   <property name="text">
+    <string>右移</string>
+   </property>
+   <property name="shortcut">
+    <string>Right</string>
+   </property>
+  </action>
+  <action name="actMove">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/Move.svg</normaloff>:/Image/PixelEditor/Move.svg</iconset>
+   </property>
+   <property name="text">
+    <string>移动</string>
+   </property>
+  </action>
+  <action name="actReserve">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/Reverse.svg</normaloff>:/Image/PixelEditor/Reverse.svg</iconset>
+   </property>
+   <property name="text">
+    <string>反色</string>
+   </property>
+   <property name="toolTip">
+    <string>反色</string>
+   </property>
+  </action>
+  <action name="actAutoResize">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/Resize.svg</normaloff>:/Image/PixelEditor/Resize.svg</iconset>
+   </property>
+   <property name="text">
+    <string>自适应大小</string>
+   </property>
+   <property name="toolTip">
+    <string>自适应大小</string>
+   </property>
+  </action>
+  <action name="actCenter">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/Center.svg</normaloff>:/Image/PixelEditor/Center.svg</iconset>
+   </property>
+   <property name="text">
+    <string>居中</string>
+   </property>
+   <property name="toolTip">
+    <string>居中</string>
+   </property>
+  </action>
+  <action name="actLockAuxiliaryLine">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/Lock.svg</normaloff>:/Image/PixelEditor/Lock.svg</iconset>
+   </property>
+   <property name="text">
+    <string>锁定</string>
+   </property>
+   <property name="toolTip">
+    <string>锁定辅助线</string>
+   </property>
+  </action>
+  <action name="actHideAuxiliaryLine">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/Invisible.svg</normaloff>:/Image/PixelEditor/Invisible.svg</iconset>
+   </property>
+   <property name="text">
+    <string>隐藏</string>
+   </property>
+   <property name="toolTip">
+    <string>隐藏辅助线</string>
+   </property>
+  </action>
+  <action name="actClearAuxiliaryLines">
+   <property name="text">
+    <string>清除</string>
+   </property>
+   <property name="toolTip">
+    <string>清除全部辅助线</string>
+   </property>
+  </action>
+  <action name="actAlignHCenter">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/ComImgEditor/HCenter.svg</normaloff>:/Image/ComImgEditor/HCenter.svg</iconset>
+   </property>
+   <property name="text">
+    <string>水平居中</string>
+   </property>
+  </action>
+  <action name="actAlignVCenter">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/ComImgEditor/VCenter.svg</normaloff>:/Image/ComImgEditor/VCenter.svg</iconset>
+   </property>
+   <property name="text">
+    <string>垂直居中</string>
+   </property>
+  </action>
+  <action name="actResize">
+   <property name="text">
+    <string>重新调整大小</string>
+   </property>
+  </action>
+  <action name="actSave">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/PixelEditor/Save.svg</normaloff>:/Image/PixelEditor/Save.svg</iconset>
+   </property>
+   <property name="text">
+    <string>保存</string>
+   </property>
+   <property name="toolTip">
+    <string>保存</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QWGraphicsView</class>
+   <extends>QGraphicsView</extends>
+   <header location="global">qwgraphicsview.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="Img.qrc"/>
+ </resources>
+ <connections/>
+</ui>
