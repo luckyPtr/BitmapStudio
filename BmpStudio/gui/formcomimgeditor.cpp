@@ -5,7 +5,7 @@
 #include <QDragEnterEvent>
 #include <QMenu>
 #include <custom/qcustommenu.h>
-#include <custom/dialogresize.h>
+#include <gui/dialogresize.h>
 
 
 FormComImgEditor::FormComImgEditor(QWidget *parent) :

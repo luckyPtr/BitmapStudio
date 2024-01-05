@@ -48,7 +48,7 @@
   </layout>
   <action name="actDelete">
    <property name="icon">
-    <iconset resource="Img.qrc">
+    <iconset resource="../Img.qrc">
      <normaloff>:/Image/ComImgEditor/Delete.svg</normaloff>:/Image/ComImgEditor/Delete.svg</iconset>
    </property>
    <property name="text">
@@ -60,7 +60,7 @@
   </action>
   <action name="actSave">
    <property name="icon">
-    <iconset resource="Img.qrc">
+    <iconset resource="../Img.qrc">
      <normaloff>:/Image/PixelEditor/Save.svg</normaloff>:/Image/PixelEditor/Save.svg</iconset>
    </property>
    <property name="text">
@@ -72,7 +72,7 @@
   </action>
   <action name="actForward">
    <property name="icon">
-    <iconset resource="Img.qrc">
+    <iconset resource="../Img.qrc">
      <normaloff>:/Image/ComImgEditor/MoveUp.svg</normaloff>:/Image/ComImgEditor/MoveUp.svg</iconset>
    </property>
    <property name="text">
@@ -84,7 +84,7 @@
   </action>
   <action name="actBackward">
    <property name="icon">
-    <iconset resource="Img.qrc">
+    <iconset resource="../Img.qrc">
      <normaloff>:/Image/ComImgEditor/MoveDown.svg</normaloff>:/Image/ComImgEditor/MoveDown.svg</iconset>
    </property>
    <property name="text">
@@ -96,7 +96,7 @@
   </action>
   <action name="actTop">
    <property name="icon">
-    <iconset resource="Img.qrc">
+    <iconset resource="../Img.qrc">
      <normaloff>:/Image/ComImgEditor/MoveTop.svg</normaloff>:/Image/ComImgEditor/MoveTop.svg</iconset>
    </property>
    <property name="text">
@@ -108,7 +108,7 @@
   </action>
   <action name="actBottom">
    <property name="icon">
-    <iconset resource="Img.qrc">
+    <iconset resource="../Img.qrc">
      <normaloff>:/Image/ComImgEditor/MoveButtom.svg</normaloff>:/Image/ComImgEditor/MoveButtom.svg</iconset>
    </property>
    <property name="text">
@@ -120,7 +120,7 @@
   </action>
   <action name="actAlignVCenter">
    <property name="icon">
-    <iconset resource="Img.qrc">
+    <iconset resource="../Img.qrc">
      <normaloff>:/Image/ComImgEditor/HCenter.svg</normaloff>:/Image/ComImgEditor/HCenter.svg</iconset>
    </property>
    <property name="text">
@@ -132,7 +132,7 @@
   </action>
   <action name="actAlignHCenter">
    <property name="icon">
-    <iconset resource="Img.qrc">
+    <iconset resource="../Img.qrc">
      <normaloff>:/Image/ComImgEditor/VCenter.svg</normaloff>:/Image/ComImgEditor/VCenter.svg</iconset>
    </property>
    <property name="text">
@@ -144,7 +144,7 @@
   </action>
   <action name="actMoveUp">
    <property name="icon">
-    <iconset resource="Img.qrc">
+    <iconset resource="../Img.qrc">
      <normaloff>:/Image/PixelEditor/MoveUp.svg</normaloff>:/Image/PixelEditor/MoveUp.svg</iconset>
    </property>
    <property name="text">
@@ -159,7 +159,7 @@
   </action>
   <action name="actMoveDown">
    <property name="icon">
-    <iconset resource="Img.qrc">
+    <iconset resource="../Img.qrc">
      <normaloff>:/Image/PixelEditor/MoveDown.svg</normaloff>:/Image/PixelEditor/MoveDown.svg</iconset>
    </property>
    <property name="text">
@@ -174,7 +174,7 @@
   </action>
   <action name="actMoveLeft">
    <property name="icon">
-    <iconset resource="Img.qrc">
+    <iconset resource="../Img.qrc">
      <normaloff>:/Image/PixelEditor/MoveLeft.svg</normaloff>:/Image/PixelEditor/MoveLeft.svg</iconset>
    </property>
    <property name="text">
@@ -189,7 +189,7 @@
   </action>
   <action name="actMoveRight">
    <property name="icon">
-    <iconset resource="Img.qrc">
+    <iconset resource="../Img.qrc">
      <normaloff>:/Image/PixelEditor/MoveRight.svg</normaloff>:/Image/PixelEditor/MoveRight.svg</iconset>
    </property>
    <property name="text">
@@ -204,7 +204,7 @@
   </action>
   <action name="actAlignCenter">
    <property name="icon">
-    <iconset resource="Img.qrc">
+    <iconset resource="../Img.qrc">
      <normaloff>:/Image/PixelEditor/Center.svg</normaloff>:/Image/PixelEditor/Center.svg</iconset>
    </property>
    <property name="text">
@@ -232,11 +232,11 @@
   <customwidget>
    <class>QWGraphicsView</class>
    <extends>QGraphicsView</extends>
-   <header location="global">qwgraphicsview.h</header>
+   <header location="global">custom/qwgraphicsview.h</header>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="Img.qrc"/>
+  <include location="../Img.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -2,7 +2,7 @@
 #define QGRAPHICSCOMIMGCANVANSITEM_H
 
 #include <custom/qgraphicsitembase.h>
-#include "rawdata.h"
+#include "core/rawdata.h"
 
 class QGraphicsComImgCanvansItem : public QGraphicsItemBase
 {

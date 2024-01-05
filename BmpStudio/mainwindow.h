@@ -5,7 +5,7 @@
 #include <QtSql>
 #include <QStandardItem>
 #include <QVector>
-#include <projectmng.h>
+#include <core/projectmng.h>
 #include <QLabel>
 #include <custom/treeitemdelegate.h>
 

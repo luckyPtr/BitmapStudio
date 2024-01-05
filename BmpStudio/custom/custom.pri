@@ -1,13 +1,6 @@
 HEADERS += \
     $$PWD/customtab.h \
-    $$PWD/dialogimporthex.h \
-    $$PWD/dialogloading.h \
-    $$PWD/dialognewfolder.h \
-    $$PWD/dialognewproject.h \
-    $$PWD/dialognotice.h \
-    $$PWD/dialogprojectsettings.h \
-    $$PWD/dialogresize.h \
-    $$PWD/dialogsyssettings.h \
+    $$PWD/customtabwidget.h \
     $$PWD/highlighter.h \
     $$PWD/imgprevirewer.h \
     $$PWD/latticeshow.h \
@@ -15,19 +8,18 @@ HEADERS += \
     $$PWD/qgraphicscanvasitem.h \
     $$PWD/qgraphicscomimgcanvansitem.h \
     $$PWD/qgraphicsitembase.h \
+    $$PWD/qgraphicsitemruler.h \
     $$PWD/qgraphicsscaleitem.h \
-    $$PWD/treeitemdelegate.h
+    $$PWD/qunitspinbox.h \
+    $$PWD/qwgraphicsview.h \
+    $$PWD/treeitem.h \
+    $$PWD/treeitemdelegate.h \
+    $$PWD/treemodel.h
 
 SOURCES += \
     $$PWD/customtab.cpp \
-    $$PWD/dialogimporthex.cpp \
-    $$PWD/dialogloading.cpp \
-    $$PWD/dialognewfolder.cpp \
-    $$PWD/dialognewproject.cpp \
-    $$PWD/dialognotice.cpp \
-    $$PWD/dialogprojectsettings.cpp \
-    $$PWD/dialogresize.cpp \
-    $$PWD/dialogsyssettings.cpp \
+    $$PWD/customtabwidget.cpp \
+    $$PWD/formpixeleditor.cpp \
     $$PWD/highlighter.cpp \
     $$PWD/imgprevirewer.cpp \
     $$PWD/latticeshow.cpp \
@@ -35,15 +27,12 @@ SOURCES += \
     $$PWD/qgraphicscanvasitem.cpp \
     $$PWD/qgraphicscomimgcanvansitem.cpp \
     $$PWD/qgraphicsitembase.cpp \
+    $$PWD/qgraphicsitemruler.cpp \
     $$PWD/qgraphicsscaleitem.cpp \
-    $$PWD/treeitemdelegate.cpp
+    $$PWD/qunitspinbox.cpp \
+    $$PWD/qwgraphicsview.cpp \
+    $$PWD/treeitem.cpp \
+    $$PWD/treeitemdelegate.cpp \
+    $$PWD/treemodel.cpp
 
-FORMS += \
-    $$PWD/dialogimporthex.ui \
-    $$PWD/dialogloading.ui \
-    $$PWD/dialognewfolder.ui \
-    $$PWD/dialognewproject.ui \
-    $$PWD/dialognotice.ui \
-    $$PWD/dialogprojectsettings.ui \
-    $$PWD/dialogresize.ui \
-    $$PWD/dialogsyssettings.ui
+FORMS +=

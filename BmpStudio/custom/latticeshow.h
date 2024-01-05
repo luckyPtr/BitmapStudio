@@ -2,7 +2,7 @@
 #define LATTICESHOW_H
 
 #include <QWidget>
-#include "imgencoderfactory.h"
+#include "core/imgencoderfactory.h"
 
 class LatticeShow : public QWidget
 {

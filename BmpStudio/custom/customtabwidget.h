@@ -5,7 +5,7 @@
 #include <QObject>
 #include <QWidget>
 #include <QMenu>
-#include "treeitem.h"
+#include "custom/treeitem.h"
 #include <QPoint>
 
 class CustomTabWidget : public QTabWidget

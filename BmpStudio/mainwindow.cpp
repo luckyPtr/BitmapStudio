@@ -3,17 +3,17 @@
 #include "global.h"
 #include <QFileDialog>
 #include <QMessageBox>
-#include <treemodel.h>
-#include <treeitem.h>
-#include <rawdata.h>
+#include <custom/treemodel.h>
+#include <custom/treeitem.h>
+#include <core/rawdata.h>
 #include <QDialog>
 #include <QInputDialog>
 #include <QPainter>
 #include <QToolButton>
-#include <dialognewimgfile.h>
-#include <dialogimportimg.h>
-#include <formpixeleditor.h>
-#include <formcomimgeditor.h>
+#include <gui/dialognewimgfile.h>
+#include <gui/dialogimportimg.h>
+#include <gui/formpixeleditor.h>
+#include <gui/formcomimgeditor.h>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonValue>
@@ -213,9 +213,9 @@ void MainWindow::on_actDelete_triggered()
     }
 }
 
-#include "custom/dialognotice.h"
-#include "custom/dialogloading.h"
-#include "imgconvertor.h"
+#include "gui/dialognotice.h"
+#include "gui/dialogloading.h"
+#include "core/imgconvertor.h"
 void MainWindow::on_actTest_triggered()
 {
     DialogLoading *dlg = new DialogLoading;

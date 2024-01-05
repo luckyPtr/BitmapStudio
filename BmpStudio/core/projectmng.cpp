@@ -3,19 +3,19 @@
 #include <QInputDialog>
 #include <QMenu>
 #include <QMessageBox>
-#include <dialognewimgfile.h>
+#include <gui/dialognewimgfile.h>
 #include <QFileDialog>
-#include <custom/dialognewfolder.h>
-#include <custom/dialogprojectsettings.h>
-#include <custom/dialogimporthex.h>
-#include <dialogimportimg.h>
-#include <imgconvertor.h>
+#include <gui/dialognewfolder.h>
+#include <gui/dialogprojectsettings.h>
+#include <gui/dialogimporthex.h>
+#include <gui/dialogimportimg.h>
+#include <core/imgconvertor.h>
 #include <QApplication>
 #include <QClipboard>
 #include <QMouseEvent>
-#include "custom/dialognotice.h"
-#include "custom/dialogloading.h"
-#include "custom/dialognewproject.h"
+#include "gui/dialognotice.h"
+#include "gui/dialogloading.h"
+#include "gui/dialognewproject.h"
 
 void ProjectMng::addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, bool (*filter)(int))
 {

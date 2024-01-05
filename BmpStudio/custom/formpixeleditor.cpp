@@ -1,4 +1,4 @@
-#include "formpixeleditor.h"
+#include "gui/formpixeleditor.h"
 #include "ui_formpixeleditor.h"
 #include <QGraphicsRectItem>
 #include <QDebug>
@@ -6,7 +6,7 @@
 #include <QScrollBar>
 #include <QCursor>
 #include <custom/qcustommenu.h>
-#include "custom/dialogresize.h"
+#include "gui/dialogresize.h"
 
 
 FormPixelEditor::FormPixelEditor(QWidget *parent) :

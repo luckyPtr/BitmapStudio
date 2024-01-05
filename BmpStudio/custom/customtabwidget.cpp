@@ -1,9 +1,9 @@
 #include "customtabwidget.h"
-#include "formpixeleditor.h"
-#include "formcomimgeditor.h"
+#include "gui/formpixeleditor.h"
+#include "gui/formcomimgeditor.h"
 #include <QTabBar>
 #include <QContextMenuEvent>
-#include "imgconvertor.h"
+#include "core/imgconvertor.h"
 #include "custom/customtab.h"
 
 

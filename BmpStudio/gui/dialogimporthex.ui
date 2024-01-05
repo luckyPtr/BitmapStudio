@@ -488,15 +488,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>QUnitSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header location="global">custom/qunitspinbox.h</header>
+  </customwidget>
+  <customwidget>
    <class>LatticeShow</class>
    <extends>QWidget</extends>
    <header location="global">custom/latticeshow.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QUnitSpinBox</class>
-   <extends>QSpinBox</extends>
-   <header location="global">qunitspinbox.h</header>
   </customwidget>
  </customwidgets>
  <resources>

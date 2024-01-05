@@ -6,7 +6,7 @@
 #include <QSyntaxHighlighter>
 #include <QClipboard>
 #include <custom/highlighter.h>
-#include "imgencoderfactory.h"
+#include "core/imgencoderfactory.h"
 
 void DialogImportHex::initClipboardText()
 {

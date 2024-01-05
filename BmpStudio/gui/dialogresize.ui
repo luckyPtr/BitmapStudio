@@ -166,7 +166,7 @@
   <customwidget>
    <class>QUnitSpinBox</class>
    <extends>QSpinBox</extends>
-   <header location="global">qunitspinbox.h</header>
+   <header location="global">custom/qunitspinbox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

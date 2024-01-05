@@ -9,47 +9,15 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    customtabwidget.cpp \
-    dialogimportimg.cpp \
-    dialognewimgfile.cpp \
-    formcomimgeditor.cpp \
-    formpixeleditor.cpp \
     global.cpp \
-    imgconvertor.cpp \
-    imgencoderfactory.cpp \
     main.cpp \
-    mainwindow.cpp \
-    projectmng.cpp \
-    qgraphicsitemruler.cpp \
-    qunitspinbox.cpp \
-    qwgraphicsview.cpp \
-    rawdata.cpp \
-    treeitem.cpp \
-    treemodel.cpp
+    mainwindow.cpp
 
 HEADERS += \
-    customtabwidget.h \
-    dialogimportimg.h \
-    dialognewimgfile.h \
-    formcomimgeditor.h \
-    formpixeleditor.h \
     global.h \
-    imgconvertor.h \
-    imgencoderfactory.h \
-    mainwindow.h \
-    projectmng.h \
-    qgraphicsitemruler.h \
-    qunitspinbox.h \
-    qwgraphicsview.h \
-    rawdata.h \
-    treeitem.h \
-    treemodel.h
+    mainwindow.h
 
 FORMS += \
-    dialogimportimg.ui \
-    dialognewimgfile.ui \
-    formcomimgeditor.ui \
-    formpixeleditor.ui \
     mainwindow.ui
 
 TRANSLATIONS += \
@@ -70,6 +38,8 @@ msvc{
 }
 
 include(./custom/custom.pri)
+include(./gui/gui.pri)
+include(./core/core.pri)
 
 RESOURCES += \
     Img.qrc

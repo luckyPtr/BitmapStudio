@@ -4,7 +4,7 @@
 #include <QVariant>
 #include <QPixmap>
 #include <QIcon>
-#include "rawdata.h"
+#include "core/rawdata.h"
 
 // 工程配置信息
 

@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include <QButtonGroup>
-#include "rawdata.h"
+#include "core/rawdata.h"
 
 namespace Ui {
 class DialogNewProject;

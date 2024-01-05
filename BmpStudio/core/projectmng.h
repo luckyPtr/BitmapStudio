@@ -7,10 +7,10 @@
 #include <QTreeView>
 #include <QVector>
 #include <QSet>
-#include <rawdata.h>
-#include <treemodel.h>
-#include <treeitem.h>
-#include <customtabwidget.h>
+#include <core/rawdata.h>
+#include <custom/treemodel.h>
+#include <custom/treeitem.h>
+#include <custom/customtabwidget.h>
 
 
 class ProjectMng : public QWidget
