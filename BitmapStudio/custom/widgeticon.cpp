@@ -56,15 +56,14 @@ void WidgetIcon::setImage(QImage img)
 
 void WidgetIcon::on_Timeout()
 {
-    repaint();
-
-    if(drawedCnt < drawPixel.size())
+    if(drawedCnt < drawPixel.size() - 30)
     {
-        drawedCnt+= QRandomGenerator::global()->bounded(10) + 15;
+        drawedCnt += QRandomGenerator::global()->bounded(10) + 15;
     }
     else
     {
-        drawedCnt = drawPixel.size();
+        drawedCnt = drawPixel.size() - 1;
         timer->stop();
     }
+    repaint();
 }

@@ -187,6 +187,9 @@ QTabBar::tab:selected,QTabBar::tab:hover
      </property>
      <item>
       <widget class="QLineEdit" name="lineEditSearch">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="autoFillBackground">
         <bool>false</bool>
        </property>
@@ -338,7 +341,6 @@ QTabBar::tab:selected,QTabBar::tab:hover
    <addaction name="separator"/>
    <addaction name="actEditMode"/>
    <addaction name="actRun"/>
-   <addaction name="actSettings"/>
    <addaction name="actAbout"/>
   </widget>
   <action name="actOpenProject">

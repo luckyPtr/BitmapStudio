@@ -362,25 +362,23 @@ void MainWindow::on_selectedProject_Changed(QString project)
         QFileInfo fileInfo(project);
         ui->actRun->setEnabled(true);
         ui->actRun->setToolTip(QString("运行项目\"%1\"").arg(fileInfo.baseName()));
-        this->setWindowTitle(QString("BmpStudio - %1").arg(fileInfo.baseName()));
+        this->setWindowTitle(QString("%1 - %2").arg(qApp->applicationName()).arg(fileInfo.baseName()));
     }
     else
     {
         ui->actRun->setEnabled(false);
         ui->actRun->setToolTip(tr("运行"));
-        this->setWindowTitle("BmpStudio");
+        this->setWindowTitle(qApp->applicationName());
     }
 }
 
 
 
-#include <QtCore/qglobal.h>
-#include <QDesktopServices>
+
 void MainWindow::on_actAbout_triggered()
 {
     DialogAbout *dlg = new DialogAbout(this);
     dlg->exec();
     delete dlg;
-    //qApp->aboutQt();
 }
 

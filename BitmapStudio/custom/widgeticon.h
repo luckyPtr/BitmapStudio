@@ -13,7 +13,7 @@ class WidgetIcon : public QWidget
     QVector<int> drawPixel;
     int drawedCnt;
     QTimer *timer;
-    QRandomGenerator generator;
+
 public:
     explicit WidgetIcon(QWidget *parent = nullptr);
 

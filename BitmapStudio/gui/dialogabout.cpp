@@ -4,6 +4,7 @@
 #include <QPushButton>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QDebug>
 
 DialogAbout::DialogAbout(QWidget *parent) :
     QDialog(parent),

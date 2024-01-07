@@ -21,7 +21,7 @@ FORMS += \
     mainwindow.ui
 
 TRANSLATIONS += \
-    BmpStudio_zh_CN.ts
+    BitmapStudio_zh_CN.ts
 CONFIG += lrelease
 CONFIG += embed_translations
 
@@ -39,6 +39,8 @@ msvc{
 
 VERSION = 0.1.0
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
+TARGET = "Bitmap Studio"
+
 
 include(./custom/custom.pri)
 include(./gui/gui.pri)
