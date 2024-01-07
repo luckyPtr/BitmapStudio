@@ -37,6 +37,9 @@ msvc{
     QMAKE_CXXFLAGS += /utf-8
 }
 
+VERSION = 0.1.0
+DEFINES += APP_VERSION=\\\"$$VERSION\\\"
+
 include(./custom/custom.pri)
 include(./gui/gui.pri)
 include(./core/core.pri)

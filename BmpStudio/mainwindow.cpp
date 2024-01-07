@@ -14,6 +14,7 @@
 #include <gui/dialogimportimg.h>
 #include <gui/formpixeleditor.h>
 #include <gui/formcomimgeditor.h>
+#include <gui/dialogabout.h>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonValue>
@@ -372,4 +373,14 @@ void MainWindow::on_selectedProject_Changed(QString project)
 }
 
 
+
+#include <QtCore/qglobal.h>
+#include <QDesktopServices>
+void MainWindow::on_actAbout_triggered()
+{
+    DialogAbout *dlg = new DialogAbout(this);
+    dlg->exec();
+    delete dlg;
+    //qApp->aboutQt();
+}
 

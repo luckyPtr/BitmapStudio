@@ -62,5 +62,7 @@
         <file>Image/Toolbar/About.svg</file>
         <file>Image/Toolbar/Edit.svg</file>
         <file>Image/TreeIco/Delete.svg</file>
+        <file>Image/Others/QtIcon.png</file>
+        <file>Image/Others/GitHub.svg</file>
     </qresource>
 </RCC>

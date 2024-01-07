@@ -19,7 +19,7 @@
    <bool>false</bool>
   </property>
   <property name="windowTitle">
-   <string>BmpStudio</string>
+   <string>Bitmap Studio</string>
   </property>
   <property name="iconSize">
    <size>
@@ -133,8 +133,7 @@ QTabBar::tab:selected,QTabBar::tab:hover
     <property name="title">
      <string>帮助</string>
     </property>
-    <addaction name="action"/>
-    <addaction name="action_2"/>
+    <addaction name="actAbout"/>
    </widget>
    <addaction name="menu"/>
    <addaction name="menu_2"/>

@@ -1,4 +1,5 @@
 SOURCES += \
+    $$PWD/dialogabout.cpp \
     $$PWD/dialogimporthex.cpp \
     $$PWD/dialogimportimg.cpp \
     $$PWD/dialogloading.cpp \
@@ -12,6 +13,7 @@ SOURCES += \
     $$PWD/formcomimgeditor.cpp
 
 HEADERS += \
+    $$PWD/dialogabout.h \
     $$PWD/dialogimporthex.h \
     $$PWD/dialogimportimg.h \
     $$PWD/dialogloading.h \
@@ -26,6 +28,7 @@ HEADERS += \
     $$PWD/formpixeleditor.h
 
 FORMS += \
+    $$PWD/dialogabout.ui \
     $$PWD/dialogimporthex.ui \
     $$PWD/dialogimportimg.ui \
     $$PWD/dialogloading.ui \

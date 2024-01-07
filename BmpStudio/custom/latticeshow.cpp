@@ -11,7 +11,6 @@ LatticeShow::LatticeShow(QWidget *parent)
     QTimer *t = new QTimer(this);
     t->start(50);
     connect(t, &QTimer::timeout, this, [=]{
-
         if(++showStep > muduleSize * muduleSize)
         {
             showStep = 0;

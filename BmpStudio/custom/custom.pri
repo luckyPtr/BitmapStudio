@@ -14,7 +14,8 @@ HEADERS += \
     $$PWD/qwgraphicsview.h \
     $$PWD/treeitem.h \
     $$PWD/treeitemdelegate.h \
-    $$PWD/treemodel.h
+    $$PWD/treemodel.h \
+    $$PWD/widgeticon.h
 
 SOURCES += \
     $$PWD/customtab.cpp \
@@ -33,6 +34,7 @@ SOURCES += \
     $$PWD/qwgraphicsview.cpp \
     $$PWD/treeitem.cpp \
     $$PWD/treeitemdelegate.cpp \
-    $$PWD/treemodel.cpp
+    $$PWD/treemodel.cpp \
+    $$PWD/widgeticon.cpp
 
 FORMS +=
