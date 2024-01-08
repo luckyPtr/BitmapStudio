@@ -11,6 +11,7 @@ class DialogAbout : public QDialog
 {
     Q_OBJECT
 
+    QString buildTime();
 public:
     explicit DialogAbout(QWidget *parent = nullptr);
     ~DialogAbout();
