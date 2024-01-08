@@ -639,7 +639,7 @@ void ProjectMng::on_ActNewProject_Triggered()
 
 void ProjectMng::on_ActOpenProject_Triggered()
 {
-    QString aFile = QFileDialog::getOpenFileName(this, tr("打开工程"), "", tr("Bitmap Studio工程(*.db)"));
+    QString aFile = QFileDialog::getOpenFileName(this, tr("打开工程"), "", tr("Bitmap Studio工程(*.bs)"));
     if(!aFile.isEmpty())
     {
         openProject(aFile);

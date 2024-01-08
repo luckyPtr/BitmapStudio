@@ -64,5 +64,6 @@
         <file>Image/TreeIco/Delete.svg</file>
         <file>Image/Others/QtIcon.png</file>
         <file>Image/Others/GitHub.svg</file>
+        <file>Image/ico.png</file>
     </qresource>
 </RCC>

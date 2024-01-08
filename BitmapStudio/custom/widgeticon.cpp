@@ -5,7 +5,7 @@
 WidgetIcon::WidgetIcon(QWidget *parent)
     : QWidget{parent}
 {
-    setImage(QImage(":/Image/ico.svg"));
+    setImage(QImage(":/Image/ico.png"));
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(on_Timeout()));

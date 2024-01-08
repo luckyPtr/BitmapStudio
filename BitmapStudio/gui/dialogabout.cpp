@@ -18,12 +18,12 @@ DialogAbout::DialogAbout(QWidget *parent) :
     ui->buttonBox->button(QDialogButtonBox::Close)->setText(tr("关闭"));
 
     ui->labelProject->setText(qApp->applicationName());
-    ui->labelVersion->setText(APP_VERSION);
-    ui->labelBuildTime->setText(QString("%1 %2").arg(__DATE__).arg(__TIME__));
+    ui->labelVersion->setText(QString(tr("版本：%1")).arg(APP_VERSION));
+    ui->labelBuildTime->setText(QString(tr("%1 %2")).arg(__DATE__).arg(__TIME__));
 
     connect(ui->toolButtonAboutQt, SIGNAL(clicked()), qApp, SLOT(aboutQt()));
     connect(ui->toolButtonGitHub, &QToolButton::clicked, [](){
-        QDesktopServices::openUrl(QUrl("https://github.com/luckyPtr/BmpStudio"));
+        QDesktopServices::openUrl(QUrl("https://github.com/luckyPtr/BitmapStudio"));
     });
 }
 

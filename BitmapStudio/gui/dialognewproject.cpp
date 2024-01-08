@@ -33,7 +33,7 @@ DialogNewProject::~DialogNewProject()
 
 QString DialogNewProject::getNewProject()
 {
-    return QString("%1/%2.db").arg(ui->lineEditProjectPath->text()).arg(ui->lineEditProjectName->text());
+    return QString("%1/%2.bs").arg(ui->lineEditProjectPath->text()).arg(ui->lineEditProjectName->text());
 }
 
 RawData::Settings DialogNewProject::getSettings()
