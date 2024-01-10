@@ -438,6 +438,7 @@ void QGraphicsCanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
 
     paintAuxiliaryLines(painter);
 
+    emit updatePreview(image);
 }
 
 void QGraphicsCanvasItem::setImage(QImage &image)
@@ -532,17 +533,17 @@ void QGraphicsCanvasItem::on_MouseMove(QPoint point)
     else if(action == ActionResizeFDiag)
     {
         newSize = QSize(currentPixel.x(), currentPixel.y());
-        emit updataStatusBarSize(newSize);
+        emit updateStatusBarSize(newSize);
     }
     else if(action == ActionResizeVer)
     {
         newSize = QSize(image.size().width(), currentPixel.y());
-        emit updataStatusBarSize(newSize);
+        emit updateStatusBarSize(newSize);
     }
     else if(action == ActionResizeHor)
     {
         newSize = QSize(currentPixel.x(), image.size().height());
-        emit updataStatusBarSize(newSize);
+        emit updateStatusBarSize(newSize);
     }
     else if(action == ActionSelectAuxiliaryLine)
     {
@@ -556,7 +557,7 @@ void QGraphicsCanvasItem::on_MouseMove(QPoint point)
         auxLineMove();
     }
 
-    emit updataStatusBarPos(currentPixel);
+    emit updateStatusBarPos(currentPixel);
 }
 
 void QGraphicsCanvasItem::on_MousePressLeft(QPoint point)

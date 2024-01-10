@@ -40,7 +40,7 @@ public slots:
     void on_actSave_triggered();
 
 signals:
-    void updataStatusBarPos(QPoint);
+    void updateStatusBarPos(QPoint);
     void saveImage(QImage image);
     void saveImage(QString, int, QImage);
 private slots:

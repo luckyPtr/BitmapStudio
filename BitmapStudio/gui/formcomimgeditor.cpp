@@ -92,7 +92,7 @@ void FormComImgEditor::initScrollerPos()
 
 void FormComImgEditor::leaveEvent(QEvent *event)
 {
-    emit updataStatusBarPos(QPoint(-1, -1));
+    emit updateStatusBarPos(QPoint(-1, -1));
 }
 
 void FormComImgEditor::contextMenuEvent(QContextMenuEvent *event)

@@ -171,10 +171,10 @@ QTabBar::tab:selected,QTabBar::tab:hover
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout">
      <property name="spacing">
-      <number>0</number>
+      <number>1</number>
      </property>
      <property name="leftMargin">
-      <number>0</number>
+      <number>2</number>
      </property>
      <property name="topMargin">
       <number>0</number>
@@ -282,7 +282,7 @@ QTabBar::tab:selected,QTabBar::tab:hover
        </widget>
        <widget class="QGroupBox" name="groupBox">
         <property name="title">
-         <string>预览</string>
+         <string/>
         </property>
         <layout class="QGridLayout" name="gridLayout">
          <item row="0" column="0">

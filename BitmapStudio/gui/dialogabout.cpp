@@ -40,7 +40,7 @@ DialogAbout::DialogAbout(QWidget *parent) :
 
     ui->labelProject->setText(qApp->applicationName());
     ui->labelVersion->setText(QString(tr("版本：%1")).arg(APP_VERSION));
-    ui->labelBuildTime->setText(buildTime());
+    ui->labelBuildTime->setText(QString(tr("构建：%1").arg(buildTime())));
 
     connect(ui->toolButtonAboutQt, SIGNAL(clicked()), qApp, SLOT(aboutQt()));
     connect(ui->toolButtonGitHub, &QToolButton::clicked, [](){

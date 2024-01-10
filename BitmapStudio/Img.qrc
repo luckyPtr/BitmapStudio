@@ -5,7 +5,6 @@
         <file>Image/TreeIco/Setting.svg</file>
         <file>Image/Toolbar/OpenProject.svg</file>
         <file>Image/TreeIco/Project.svg</file>
-        <file>Image/ico.svg</file>
         <file>Image/TreeIco/Folder.svg</file>
         <file>Image/TreeIco/ImageFile.svg</file>
         <file>Image/TreeIco/Search.svg</file>
@@ -64,6 +63,5 @@
         <file>Image/TreeIco/Delete.svg</file>
         <file>Image/Others/QtIcon.png</file>
         <file>Image/Others/GitHub.svg</file>
-        <file>Image/ico.png</file>
     </qresource>
 </RCC>

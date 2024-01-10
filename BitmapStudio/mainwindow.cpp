@@ -285,6 +285,18 @@ void MainWindow::on_UpdateStatusBarSize(QSize size)
     }
 }
 
+void MainWindow::on_UpdatePreview(QImage image)
+{
+    if(!image.isNull())
+    {
+        QImage resultImg = image.scaled(ui->labelPreview->size(), Qt::KeepAspectRatio);
+        ui->labelPreview->setPixmap(QPixmap::fromImage(resultImg));
+
+        static int a;
+        qDebug() << "refresh" << a++;
+    }
+}
+
 
 void MainWindow::on_actCopyName_triggered()
 {

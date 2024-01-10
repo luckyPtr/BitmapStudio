@@ -65,6 +65,8 @@ public slots:
 
     void on_UpdateStatusBarSize(QSize size);
 
+    void on_UpdatePreview(QImage Image);
+
     void on_actCopyName_triggered();
 
     void on_tabWidget_tabCloseRequested(int index);

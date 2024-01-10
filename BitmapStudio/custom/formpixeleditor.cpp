@@ -50,8 +50,9 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
     connect(ui->actRotateLeft, SIGNAL(triggered()), scanvasItem, SLOT(on_RotateLeft()));
     connect(ui->actRotateRight, SIGNAL(triggered()), scanvasItem, SLOT(on_RotateRight()));
 
-    connect(this->scanvasItem, SIGNAL(updataStatusBarPos(QPoint)), this->parent()->parent()->parent(), SLOT(on_UpdateStatusBarPos(QPoint)));
-    connect(this->scanvasItem, SIGNAL(updataStatusBarSize(QSize)), this->parent()->parent()->parent(), SLOT(on_UpdateStatusBarSize(QSize)));
+    connect(this->scanvasItem, SIGNAL(updateStatusBarPos(QPoint)), this->parent()->parent()->parent(), SLOT(on_UpdateStatusBarPos(QPoint)));
+    connect(this->scanvasItem, SIGNAL(updateStatusBarSize(QSize)), this->parent()->parent()->parent(), SLOT(on_UpdateStatusBarSize(QSize)));
+    connect(this->scanvasItem, SIGNAL(updatePreview(QImage)), this->parent()->parent()->parent(), SLOT(on_UpdatePreview(QImage)));
 
     connect(this, SIGNAL(saveImage(QString,int,QImage)), this->parent()->parent()->parent(), SLOT(on_SaveImage(QString, int, QImage)));
 
@@ -118,7 +119,7 @@ void FormPixelEditor::initAction()
 
 void FormPixelEditor::leaveEvent(QEvent *event)
 {
-    emit updataStatusBarPos(QPoint(-1, -1));
+    emit updateStatusBarPos(QPoint(-1, -1));
 }
 
 void FormPixelEditor::contextMenuEvent(QContextMenuEvent *event)

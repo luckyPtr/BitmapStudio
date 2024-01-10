@@ -89,8 +89,9 @@ public slots:
     void on_CreateAuxLine(Qt::Orientation dir);
 
 signals:
-    void updataStatusBarPos(QPoint);
-    void updataStatusBarSize(QSize);
+    void updateStatusBarPos(QPoint);
+    void updateStatusBarSize(QSize);
+    void updatePreview(QImage);
 };
 
 #endif // QGRAPHICSCANVASITEM_H
