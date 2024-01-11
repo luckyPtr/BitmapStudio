@@ -10,7 +10,8 @@ SOURCES += \
     $$PWD/dialogprojectsettings.cpp \
     $$PWD/dialogresize.cpp \
     $$PWD/dialogsyssettings.cpp \
-    $$PWD/formcomimgeditor.cpp
+    $$PWD/formcomimgeditor.cpp \
+    $$PWD/formpixeleditor.cpp
 
 HEADERS += \
     $$PWD/dialogabout.h \

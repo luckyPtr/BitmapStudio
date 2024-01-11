@@ -55,6 +55,8 @@ class QGraphicsComImgCanvansItem : public QGraphicsItemBase
 
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
+    void emitUpdatePreview();   // 更新预览显示显示
+
 public:
     explicit QGraphicsComImgCanvansItem(QObject *parent = nullptr);
     ~QGraphicsComImgCanvansItem() { rd = nullptr; }
@@ -97,7 +99,7 @@ public slots:
 signals:
     void updateStatusBarPos(QPoint);
     void updateStatusBarSize(QSize);
-    void updatePreview(ComImg);
+    void updatePreview(QImage);
 };
 
 #endif // QGRAPHICSCOMIMGCANVANSITEM_H

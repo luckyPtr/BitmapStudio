@@ -67,8 +67,6 @@ public slots:
 
     void on_UpdatePreview(QImage Image);
 
-    void on_UpdatePreivew(ComImg ci);
-
     void on_actCopyName_triggered();
 
     void on_tabWidget_tabCloseRequested(int index);

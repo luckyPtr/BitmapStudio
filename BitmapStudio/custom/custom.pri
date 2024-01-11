@@ -20,7 +20,6 @@ HEADERS += \
 SOURCES += \
     $$PWD/customtab.cpp \
     $$PWD/customtabwidget.cpp \
-    $$PWD/formpixeleditor.cpp \
     $$PWD/highlighter.cpp \
     $$PWD/imgprevirewer.cpp \
     $$PWD/latticeshow.cpp \

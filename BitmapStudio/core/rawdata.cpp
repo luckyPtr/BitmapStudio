@@ -522,6 +522,8 @@ void RawData::setComImg(int id, ComImg ci)
     }
 }
 
+
+
 void RawData::saveSettings(Settings settings)
 {
     this->settings = settings;

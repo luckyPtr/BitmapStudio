@@ -314,6 +314,35 @@ void QGraphicsComImgCanvansItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event
     emit updateStatusBarPos(QPoint(-1, -1));
 }
 
+void QGraphicsComImgCanvansItem::emitUpdatePreview()
+{
+    // 将img2合并到img1，img2的位置在x,y
+    auto merge = [](QImage &img1, QImage &img2, int x, int y) ->void {
+        for(int i = x; i < img1.width() && i < x + img2.width(); i++)
+        {
+            for(int j = y; j < img1.height() && j < y + img2.height(); j++)
+            {
+                img1.setPixelColor(i, j, img2.pixelColor(i-x, j-y));
+            }
+        }
+    };
+
+    auto comImgToImage = [=](){
+        QImage image(comImg.size, QImage::Format_RGB888);
+        image.fill(Qt::white);
+        foreach(auto item, comImg.items)
+        {
+            if(rd->getDataMap().contains(item.id))
+            {
+                merge(image, rd->getDataMap()[item.id].image, item.x, item.y);
+            }
+        }
+        return image;
+    };
+
+    emit updatePreview(comImgToImage());
+}
+
 void QGraphicsComImgCanvansItem::setComImg(ComImg &comImg)
 {
     this->comImg = comImg;
@@ -691,6 +720,8 @@ void QGraphicsComImgCanvansItem::on_MouseRelease(QPoint point)
         view->setCursor(Qt::ArrowCursor);
     }
     view->viewport()->update();
+
+    emitUpdatePreview();
 }
 
 void QGraphicsComImgCanvansItem::on_CreateAuxLine(Qt::Orientation dir)
@@ -740,4 +771,5 @@ void QGraphicsComImgCanvansItem::paint(QPainter *painter, const QStyleOptionGrap
     paintDragItem(painter);
     paintAuxiliaryLines(painter);
     paintResizePoint(painter);
+    emitUpdatePreview();
 }

@@ -297,10 +297,7 @@ void MainWindow::on_UpdatePreview(QImage image)
     }
 }
 
-void MainWindow::on_UpdatePreivew(ComImg ci)
-{
 
-}
 
 
 void MainWindow::on_actCopyName_triggered()
