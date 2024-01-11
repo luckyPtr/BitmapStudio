@@ -30,7 +30,7 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-RC_ICONS = yaya.ico
+RC_ICONS = appico.ico
 # 解决MSVC编译中文乱码问题
 msvc{
     QMAKE_CFLAGS += /utf-8

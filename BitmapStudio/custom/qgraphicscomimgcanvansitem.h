@@ -97,6 +97,7 @@ public slots:
 signals:
     void updateStatusBarPos(QPoint);
     void updateStatusBarSize(QSize);
+    void updatePreview(ComImg);
 };
 
 #endif // QGRAPHICSCOMIMGCANVANSITEM_H

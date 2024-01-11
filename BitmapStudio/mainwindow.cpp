@@ -297,6 +297,11 @@ void MainWindow::on_UpdatePreview(QImage image)
     }
 }
 
+void MainWindow::on_UpdatePreivew(ComImg ci)
+{
+
+}
+
 
 void MainWindow::on_actCopyName_triggered()
 {
@@ -356,7 +361,7 @@ void MainWindow::on_actExport_triggered()
 void MainWindow::on_actEditMode_triggered(bool checked)
 {
     Global::editMode = checked;
-    DialogNotice *dlg = new DialogNotice(checked ? "像素编辑模式" : "普通模式");
+    DialogNotice *dlg = new DialogNotice(checked ? tr("像素编辑模式") : tr("普通模式"));
     dlg->exec();
 }
 
@@ -374,7 +379,7 @@ void MainWindow::on_selectedProject_Changed(QString project)
         QFileInfo fileInfo(project);
         ui->actRun->setEnabled(true);
         ui->actRun->setToolTip(QString("运行项目\"%1\"").arg(fileInfo.baseName()));
-        this->setWindowTitle(QString("%1 - %2").arg(qApp->applicationName()).arg(fileInfo.baseName()));
+        this->setWindowTitle(QString("%1 - %2").arg(fileInfo.baseName()).arg(qApp->applicationName()));
     }
     else
     {
