@@ -313,6 +313,8 @@ int QGraphicsCanvasItem::getPointAuxLineIndex(QPoint point)
     return index;
 }
 
+
+
 QGraphicsCanvasItem::QGraphicsCanvasItem(QWidget *parent)
 {
     view = static_cast<QWGraphicsView*>(parent);

@@ -51,6 +51,7 @@ private:
 
     void paintAuxiliaryLines(QPainter *painter);
     int getPointAuxLineIndex(QPoint point);
+
 public:
     enum Mode
     {

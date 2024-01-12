@@ -346,7 +346,7 @@ QTabBar::tab:selected,QTabBar::tab:hover
   <action name="actOpenProject">
    <property name="icon">
     <iconset resource="Img.qrc">
-     <normaloff>:/Image/Toolbar/OpenProject.svg</normaloff>:/Image/Toolbar/OpenProject.svg</iconset>
+     <normaloff>:/Image/Toolbar/OpenProject.png</normaloff>:/Image/Toolbar/OpenProject.png</iconset>
    </property>
    <property name="text">
     <string>打开项目</string>
@@ -376,7 +376,7 @@ QTabBar::tab:selected,QTabBar::tab:hover
   <action name="actNewProject">
    <property name="icon">
     <iconset resource="Img.qrc">
-     <normaloff>:/Image/Toolbar/NewProject.svg</normaloff>:/Image/Toolbar/NewProject.svg</iconset>
+     <normaloff>:/Image/Toolbar/NewProject.png</normaloff>:/Image/Toolbar/NewProject.png</iconset>
    </property>
    <property name="text">
     <string>新建工程</string>
