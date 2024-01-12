@@ -358,21 +358,6 @@ QTabBar::tab:selected,QTabBar::tab:hover
     <enum>QAction::NormalPriority</enum>
    </property>
   </action>
-  <action name="actNew">
-   <property name="icon">
-    <iconset>
-     <normaloff>:/Image/TreeIco/Project.png</normaloff>:/Image/TreeIco/Project.png</iconset>
-   </property>
-   <property name="text">
-    <string>新建</string>
-   </property>
-   <property name="toolTip">
-    <string>新建...</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::TextHeuristicRole</enum>
-   </property>
-  </action>
   <action name="actNewProject">
    <property name="icon">
     <iconset resource="Img.qrc">
@@ -383,11 +368,6 @@ QTabBar::tab:selected,QTabBar::tab:hover
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
-   </property>
-  </action>
-  <action name="actTest">
-   <property name="text">
-    <string>测试</string>
    </property>
   </action>
   <action name="actRun">

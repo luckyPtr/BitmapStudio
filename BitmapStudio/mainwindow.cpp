@@ -15,6 +15,7 @@
 #include <gui/formpixeleditor.h>
 #include <gui/formcomimgeditor.h>
 #include <gui/dialogabout.h>
+#include <gui/dialognotice.h>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonValue>
@@ -74,155 +75,25 @@ void MainWindow::initAction()
     connect(ui->actOpenProject, SIGNAL(triggered()), &pm, SLOT(on_ActOpenProject_Triggered()));
     connect(&pm, SIGNAL(updateSelectProject(QString)), this, SLOT(on_selectedProject_Changed(QString)));
 }
-void MainWindow::setStackedWidget(int index)
-{
-    //ui->stackedWidget->setCurrentIndex(index);
-}
 
 
 
-
-
-void MainWindow::on_actOpenProject_triggered()
-{
-//    QString aFile = QFileDialog::getOpenFileName(this, tr("打开工程"), "", tr("BmpManager工程(*.db)"));
-//    if(!aFile.isEmpty())
-//    {
-//        pm.openProject(aFile);
-//        pm.initModel();
-//    }
-}
-
-
-void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
-{
-//    TreeItem *item = pm.model()->itemFromIndex(index);
-//    if(item->getType() == RawData::TypeImgFile)
-//    {
-//        ui->tabWidget->addImgTab(item);
-//    }
-//    else if(item->getType() == RawData::TypeComImgFile)
-//    {
-//        ui->tabWidget->addComImgTab(item);
-
-    return;
-}
-
-
-void MainWindow::on_actNewFolder_triggered()
-{
-//    QModelIndex curIndex = ui->treeViewProject->currentIndex();
-//    pm.createFolder(curIndex);
-//    ui->treeViewProject->expand(curIndex);
-//    pm.initModel();
-}
-
-void MainWindow::on_actRename_triggered()
-{
-    QString name = QInputDialog::getText(this, tr("重命名"), tr("名称"));
-    if(!name.isEmpty())
-    {
-        QModelIndex curIndex = ui->treeViewProject->currentIndex();
-        pm.rename(curIndex, name);
-        on_treeViewProject_clicked(curIndex);
-    }
-}
-
-
-void MainWindow::on_actNewProject_triggered()
-{
-//    QString aFile = QFileDialog::getSaveFileName(this, tr("保存工程"), "Untiled", tr("BmpManager工程(*.db)"));
-//    if(!aFile.isEmpty())
-//    {
-//        pm.openProject(aFile);
-//        pm.initModel();
-//    }
-}
-
-
-void MainWindow::on_actNewImg_triggered()
-{
-    DialogNewImgFile *dlgNewImg = new DialogNewImgFile(this);
-    Qt::WindowFlags flags = dlgNewImg->windowFlags();
-    dlgNewImg->setWindowFlags(flags | Qt::MSWindowsFixedSizeDialogHint);
-    int ret = dlgNewImg->exec();
-    if(ret == QDialog::Accepted)
-    {
-//        QModelIndex curIndex = ui->treeViewProject->currentIndex();
-//        pm.createImage(curIndex, dlgNewImg->imgFileName(), dlgNewImg->width(), dlgNewImg->height());
-//        pm.initModel();
-    }
-    delete dlgNewImg;
-}
 
 
 void MainWindow::on_splitter_splitterMoved(int pos, int index)
 {
     Q_UNUSED(pos)
     Q_UNUSED(index)
-    ui->labelPreview->clear();
-    QModelIndex curIndex = ui->treeViewProject->currentIndex();
-    if(curIndex.isValid())
+
+    if(!imagePreview.isNull())
     {
-        TreeItem *item = pm.model()->itemFromIndex(curIndex);
- //       BmFile bi = item->getRawData()->getBmFile(item->getID());
-        QImage img = item->getRawData()->getImage(item->getID());
-        QImage resultImg = img.scaled(ui->labelPreview->size(), Qt::KeepAspectRatio);
+        ui->labelPreview->clear();
+        QImage resultImg = imagePreview.scaled(ui->labelPreview->size(), Qt::KeepAspectRatio);
         ui->labelPreview->setPixmap(QPixmap::fromImage(resultImg));
     }
 }
 
 
-
-void MainWindow::on_actImportImg_triggered()
-{
-    QString aFile = QFileDialog::getOpenFileName(this, tr("导入图片"), "", tr("图片(*.jpg *.png *.bmp);;JPEG(*.jpg *.jpeg);;PNG(*.png);;BMP(*.bmp)"));
-    if(!aFile.isEmpty())
-    {
-        QImage img(aFile);
-        DialogImportImg *dlgImportImg = new DialogImportImg(img, this);
-        dlgImportImg->setImgName(QFileInfo(aFile).baseName());
-        int ret = dlgImportImg->exec();
-        if(ret == QDialog::Accepted)
-        {
-            QModelIndex curIndex = ui->treeViewProject->currentIndex();
-            QImage img = dlgImportImg->getMonoImg();
-            pm.createImage(curIndex, dlgImportImg->getImgName(), img);
-            pm.initModel();
-        }
-        delete dlgImportImg;
-    }
-}
-
-
-void MainWindow::on_actDelete_triggered()
-{
-    QModelIndex curIndex = ui->treeViewProject->currentIndex();
-    if(curIndex.isValid())
-    {
-        TreeItem *item = pm.model()->itemFromIndex(curIndex);
-        if(item->getType() == RawData::TypeProject)
-        {
-            pm.closeProjcet(curIndex);
-            pm.initModel();
-        }
-        else
-        {
-            pm.remove(curIndex);
-            pm.initModel();
-        }
-    }
-}
-
-#include "gui/dialognotice.h"
-#include "gui/dialogloading.h"
-#include "core/imgconvertor.h"
-void MainWindow::on_actTest_triggered()
-{
-    DialogLoading *dlg = new DialogLoading;
-
-    dlg->exec();
-}
 
 void MainWindow::on_SaveImage(QImage image)
 {
@@ -289,26 +160,13 @@ void MainWindow::on_UpdatePreview(QImage image)
 {
     if(!image.isNull())
     {
+        imagePreview = image;
         QImage resultImg = image.scaled(ui->labelPreview->size(), Qt::KeepAspectRatio);
         ui->labelPreview->setPixmap(QPixmap::fromImage(resultImg));
-
-        static int a;
-        qDebug() << "refresh" << a++;
     }
 }
 
 
-
-
-void MainWindow::on_actCopyName_triggered()
-{
-    QModelIndex curIndex = ui->treeViewProject->currentIndex();
-    TreeItem *item = pm.model()->itemFromIndex(curIndex);
-    ImgConvertor ic(item->getRawData()->getDataMap().values().toVector(), item->getRawData()->getSettings());
-
-    QClipboard *clip = QApplication::clipboard();
-    clip->setText(ic.getFullName(item->getRawData()->getDataMap()[item->getID()]));
-}
 
 
 void MainWindow::on_tabWidget_tabCloseRequested(int index)
@@ -317,42 +175,6 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index)
 }
 
 
-void MainWindow::on_actReplaceImage_triggered()
-{
-    QString aFile = QFileDialog::getOpenFileName(this, tr("导入图片"), "", tr("图片(*.jpg *.png *.bmp);;JPEG(*.jpg *.jpeg);;PNG(*.png);;BMP(*.bmp)"));
-    if(!aFile.isEmpty())
-    {
-        QImage img(aFile);
-        DialogImportImg *dlgImportImg = new DialogImportImg(img, this);
-        dlgImportImg->setImgName(QFileInfo(aFile).baseName());
-        int ret = dlgImportImg->exec();
-        if(ret == QDialog::Accepted)
-        {
-            QModelIndex curIndex = ui->treeViewProject->currentIndex();
-            QImage img = dlgImportImg->getMonoImg();
-            pm.setImage(curIndex, img);
-        }
-        delete dlgImportImg;
-        on_treeViewProject_clicked(ui->treeViewProject->currentIndex());
-    }
-}
-
-
-void MainWindow::on_actExport_triggered()
-{
-    QModelIndex curIndex = ui->treeViewProject->currentIndex();
-    if(curIndex.isValid())
-    {
-        TreeItem *item = pm.model()->itemFromIndex(curIndex);
-        QImage img = item->getRawData()->getImage(item->getID());
-
-        QString fileName = QFileDialog::getSaveFileName(this, "保存图片", "./", "BMP(*.bmp);;PNG(*.png)");
-        if(!fileName.isEmpty())
-        {
-            img.save(fileName);
-        }
-    }
-}
 
 
 void MainWindow::on_actEditMode_triggered(bool checked)
@@ -388,11 +210,12 @@ void MainWindow::on_selectedProject_Changed(QString project)
 
 
 
-
 void MainWindow::on_actAbout_triggered()
 {
     DialogAbout *dlg = new DialogAbout(this);
     dlg->exec();
     delete dlg;
 }
+
+
 

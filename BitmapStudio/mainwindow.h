@@ -23,33 +23,12 @@ public:
 
 
 private slots:
-    void on_actOpenProject_triggered();
-
-    void on_treeViewProject_clicked(const QModelIndex &index);
-
-    void on_actNewFolder_triggered();
-
-    void on_actRename_triggered();
-
-    void on_actNewProject_triggered();
-
-    void on_actNewImg_triggered();
 
     void on_splitter_splitterMoved(int pos, int index);
-
-    void on_actImportImg_triggered();
-
-    void on_actDelete_triggered();
-
-    void on_actTest_triggered();
 
     void on_SaveImage(QImage image);
 
     void on_actGrpImgTransform_triggered();
-
-    void on_actReplaceImage_triggered();
-
-    void on_actExport_triggered();
 
     void on_actEditMode_triggered(bool checked);
 
@@ -57,8 +36,8 @@ private slots:
 
     void on_selectedProject_Changed(QString project);
 
-
     void on_actAbout_triggered();
+
 
 public slots:
     void on_UpdateStatusBarPos(QPoint point);
@@ -66,8 +45,6 @@ public slots:
     void on_UpdateStatusBarSize(QSize size);
 
     void on_UpdatePreview(QImage Image);
-
-    void on_actCopyName_triggered();
 
     void on_tabWidget_tabCloseRequested(int index);
 
@@ -94,8 +71,7 @@ private:
     void initAction();
 
     QModelIndex editedIndex;
-
-
+    QImage imagePreview;
 
     void setStackedWidget(int index);
 signals:
