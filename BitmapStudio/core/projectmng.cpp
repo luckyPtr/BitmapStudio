@@ -16,6 +16,7 @@
 #include "gui/dialognotice.h"
 #include "gui/dialogloading.h"
 #include "gui/dialognewproject.h"
+#include "custom/customtab.h"
 
 void ProjectMng::addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, bool (*filter)(int))
 {
@@ -664,17 +665,31 @@ void ProjectMng::on_ActOpen_Triggered()
 void ProjectMng::on_ActCloseProject_Triggered()
 {
     TreeItem *item = theModel->itemFromIndex(currentIndex);
+
     if(item->getType() == RawData::TypeProject)
     {
         QString s = QString(tr("关闭项目%1?")).arg(item->getText());
         if(QMessageBox::question(this, tr("关闭项目"), s) == QMessageBox::Yes)
         {
+            // 关闭所有该工程的tab
+            for(int i = tabWidget->count() - 1; i >= 0; i--)
+            {
+                if(item->getRawData()->getProject() == static_cast<CustomTab *>(tabWidget->widget(i))->getProject())
+                {
+                    if(tabWidget->currentIndex() == 1)
+                    {
+                        // 清除预览图片
+                    }
+                    tabWidget->removeTab(i);
+                }
+            }
+
+            // 关闭项目管理器的项目
             closeProjcet(currentIndex);
             initModel();
             emit updateSelectProject(nullptr);  // 关闭后选中的工程为空
         }
     }
-
 }
 
 void ProjectMng::on_ActDelete_Triggered()

@@ -125,6 +125,7 @@ int CustomTabWidget::addImgTab(TreeItem *treeItem)
     tb->setTabToolTip(index, ic.getFullName(bf).replace("_", "\\"));
     tb->setTabIcon(index, QIcon(":/Image/TreeIco/ImageFile.svg"));
 
+
     setCurrentIndex(index);
 
     return index;

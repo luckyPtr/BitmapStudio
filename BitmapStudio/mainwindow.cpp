@@ -37,8 +37,6 @@ MainWindow::~MainWindow()
 
 
 
-
-
 void MainWindow::init()
 {
     initStatusBar();
@@ -75,8 +73,6 @@ void MainWindow::initAction()
     connect(ui->actOpenProject, SIGNAL(triggered()), &pm, SLOT(on_ActOpenProject_Triggered()));
     connect(&pm, SIGNAL(updateSelectProject(QString)), this, SLOT(on_selectedProject_Changed(QString)));
 }
-
-
 
 
 
