@@ -71,7 +71,7 @@ void MainWindow::initAction()
     connect(ui->actRun, SIGNAL(triggered()), &pm, SLOT(on_ActRun_Triggered()));
     connect(ui->actNewProject, SIGNAL(triggered()), &pm, SLOT(on_ActNewProject_Triggered()));
     connect(ui->actOpenProject, SIGNAL(triggered()), &pm, SLOT(on_ActOpenProject_Triggered()));
-    connect(&pm, SIGNAL(updateSelectProject(QString)), this, SLOT(on_selectedProject_Changed(QString)));
+    connect(&pm, SIGNAL(updateSelectProject(QString)), this, SLOT(on_SelectedProjectChanged(QString)));
 }
 
 
@@ -119,13 +119,6 @@ void MainWindow::on_SaveComImg(QString project, int id, ComImg comImg)
     }
 }
 
-
-void MainWindow::on_actGrpImgTransform_triggered()
-{
-    QModelIndex curIndex = ui->treeViewProject->currentIndex();
-    pm.imgFolderConvert(curIndex);
-    pm.initModel();
-}
 
 
 void MainWindow::on_UpdateStatusBarPos(QPoint point)
@@ -187,7 +180,7 @@ void MainWindow::on_treeViewProject_doubleClicked(const QModelIndex &index)
     ui->tabWidget->openTab(item);
 }
 
-void MainWindow::on_selectedProject_Changed(QString project)
+void MainWindow::on_SelectedProjectChanged(QString project)
 {
     if(!project.isEmpty())
     {

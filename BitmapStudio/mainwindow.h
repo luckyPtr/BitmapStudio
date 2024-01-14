@@ -28,18 +28,16 @@ private slots:
 
     void on_SaveImage(QImage image);
 
-    void on_actGrpImgTransform_triggered();
-
     void on_actEditMode_triggered(bool checked);
 
     void on_treeViewProject_doubleClicked(const QModelIndex &index);
-
-    void on_selectedProject_Changed(QString project);
 
     void on_actAbout_triggered();
 
 
 public slots:
+    void on_SelectedProjectChanged(QString project);
+
     void on_UpdateStatusBarPos(QPoint point);
 
     void on_UpdateStatusBarSize(QSize size);
