@@ -317,7 +317,10 @@ QTabBar::tab:selected,QTabBar::tab:hover
     <bool>false</bool>
    </property>
    <property name="movable">
-    <bool>true</bool>
+    <bool>false</bool>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::TopToolBarArea</set>
    </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
@@ -330,9 +333,6 @@ QTabBar::tab:selected,QTabBar::tab:hover
    </property>
    <property name="toolButtonStyle">
     <enum>Qt::ToolButtonIconOnly</enum>
-   </property>
-   <property name="floatable">
-    <bool>true</bool>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
