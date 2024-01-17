@@ -56,6 +56,9 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
 
     connect(this, SIGNAL(saveImage(QString,int,QImage)), this->parent()->parent()->parent(), SLOT(on_SaveImage(QString, int, QImage)));
 
+    connect(ui->actSave, &QAction::triggered,  [=](){
+        emit changed(getProject(), getId(), false);
+    });
     connect(this->scanvasItem, &QGraphicsCanvasItem::changed,  [=](bool unsaved){
         emit changed(getProject(), getId(), unsaved);
     });

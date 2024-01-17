@@ -210,12 +210,22 @@ void CustomTabWidget::on_Changed(QString project, int id, bool unsaved)
         CustomTab *widget = static_cast<CustomTab *>(this->widget(i));
         if(widget->getProject() == project && widget->getId() == id)
         {
-            if(!widget->isChanged())
+            if(unsaved)
             {
-                widget->setChanged(true);
-                //this->tabBar()->setTabTextColor(i, Qt::red);
-                this->tabBar()->setTabText(i, this->tabBar()->tabText(i) + "*");
+                if(!widget->isChanged())
+                {
+                    //this->tabBar()->setTabTextColor(i, Qt::red);
+                    this->tabBar()->setTabText(i, this->tabBar()->tabText(i) + "*");
+                }
             }
+            else
+            {
+                if(widget->isChanged())
+                {
+                    this->tabBar()->setTabText(i, this->tabBar()->tabText(i).remove('*'));
+                }
+            }
+            widget->setChanged(unsaved);
             break;
         }
     }

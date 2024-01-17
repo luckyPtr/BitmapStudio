@@ -54,6 +54,7 @@ void QGraphicsCanvasItem::resizeImage(QImage &img, QSize size)
     }
 
     img = newImage;
+    emit changed(true);
 }
 
 void QGraphicsCanvasItem::moveImage(QImage &img, int OffsetX, int OffsetY)
@@ -77,6 +78,7 @@ void QGraphicsCanvasItem::moveImage(QImage &img, int OffsetX, int OffsetY)
         }
     }
     img = newImg;
+    emit changed(true);
 }
 
 void QGraphicsCanvasItem::reserveImage(QImage &img)
@@ -92,6 +94,7 @@ void QGraphicsCanvasItem::reserveImage(QImage &img)
         }
     }
     img = newImg;
+    emit changed(true);
 }
 
 void QGraphicsCanvasItem::flipHor(QImage &img)
@@ -105,6 +108,7 @@ void QGraphicsCanvasItem::flipHor(QImage &img)
         }
     }
     img = newImg;
+    emit changed(true);
 }
 
 void QGraphicsCanvasItem::flipVer(QImage &img)
@@ -118,6 +122,7 @@ void QGraphicsCanvasItem::flipVer(QImage &img)
         }
     }
     img = newImg;
+    emit changed(true);
 }
 
 void QGraphicsCanvasItem::rotateLeft(QImage &img)
@@ -131,6 +136,7 @@ void QGraphicsCanvasItem::rotateLeft(QImage &img)
         }
     }
     img = newImg;
+    emit changed(true);
 }
 
 void QGraphicsCanvasItem::rotateRight(QImage &img)
@@ -144,6 +150,7 @@ void QGraphicsCanvasItem::rotateRight(QImage &img)
         }
     }
     img = newImg;
+    emit changed(true);
 }
 
 void QGraphicsCanvasItem::getMargin(int &up, int &down, int &left, int &right)
@@ -214,6 +221,7 @@ void QGraphicsCanvasItem::drawPoint(QImage &img, int x, int y, bool dot)
     if(x < img.width() && y < img.height())
     {
         img.setPixelColor(x, y, QColor(dot ? Qt::black : Qt::white));
+        emit changed(true);
     }
 }
 
@@ -222,6 +230,7 @@ void QGraphicsCanvasItem::drawPoint(QImage &img, QPoint point, bool dot)
     if(point.x() < img.width() && point.y() < img.height())
     {
         img.setPixelColor(point, QColor(dot ? Qt::black : Qt::white));
+        emit changed(true);
     }
 }
 
@@ -701,7 +710,6 @@ void QGraphicsCanvasItem::on_MoveUp()
 {
     moveImage(image, 0, -1);
     view->viewport()->update();
-    emit changed(true);
 }
 
 void QGraphicsCanvasItem::on_MoveDown()
