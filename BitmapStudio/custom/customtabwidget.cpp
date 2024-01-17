@@ -125,7 +125,6 @@ int CustomTabWidget::addImgTab(TreeItem *treeItem)
     tb->setTabToolTip(index, ic.getFullName(bf).replace("_", "\\"));
     tb->setTabIcon(index, QIcon(":/Image/TreeIco/ImageFile.svg"));
 
-
     setCurrentIndex(index);
 
     return index;
@@ -169,6 +168,7 @@ int CustomTabWidget::addComImgTab(TreeItem *treeItem)
 
 void CustomTabWidget::removeTab(int index)
 {
+    qDebug() << "delete" << index;
     QWidget *removeWidget = widget(index);
     QTabWidget::removeTab(index);
     delete removeWidget;
@@ -195,6 +195,29 @@ void CustomTabWidget::removeOtherTabs(int index)
     while(count() > 1)
     {
         removeTab(1);
+    }
+}
+
+void CustomTabWidget::setSaveStatus(int index, bool unsaved)
+{
+
+}
+
+void CustomTabWidget::on_Changed(QString project, int id, bool unsaved)
+{
+    for(int i = 0; i < count(); i++)
+    {
+        CustomTab *widget = static_cast<CustomTab *>(this->widget(i));
+        if(widget->getProject() == project && widget->getId() == id)
+        {
+            if(!widget->isChanged())
+            {
+                widget->setChanged(true);
+                //this->tabBar()->setTabTextColor(i, Qt::red);
+                this->tabBar()->setTabText(i, this->tabBar()->tabText(i) + "*");
+            }
+            break;
+        }
     }
 }
 

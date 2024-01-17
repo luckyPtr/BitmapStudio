@@ -701,6 +701,7 @@ void QGraphicsCanvasItem::on_MoveUp()
 {
     moveImage(image, 0, -1);
     view->viewport()->update();
+    emit changed(true);
 }
 
 void QGraphicsCanvasItem::on_MoveDown()

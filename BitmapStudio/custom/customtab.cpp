@@ -26,6 +26,11 @@ void CustomTab::setSize(QSize size)
     this->size = size;
 }
 
+void CustomTab::setChanged(bool changed)
+{
+    this->iscChanged = changed;
+}
+
 QString CustomTab::getProject()
 {
     return project;
@@ -44,4 +49,9 @@ int CustomTab::getId()
 QSize CustomTab::getSize()
 {
     return size;
+}
+
+bool CustomTab::isChanged()
+{
+    return iscChanged;
 }

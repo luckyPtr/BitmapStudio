@@ -11,6 +11,7 @@ class CustomTab : public QWidget
     int type;
     int id;
     QSize size;
+    bool iscChanged = false;
 public:
     explicit CustomTab(QWidget *parent = nullptr);
 
@@ -18,13 +19,15 @@ public:
     void setType(int type);
     void setId(int id);
     void setSize(QSize size);
+    void setChanged(bool changed);
 
     QString getProject();
     int getType();
     int getId();
     QSize getSize();
+    bool isChanged();
 signals:
-
+    void changed(QString, int, bool);
 };
 
 #endif // CUSTOMTAB_H

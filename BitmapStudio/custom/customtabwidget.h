@@ -47,12 +47,14 @@ public:
 
     int addImgTab(TreeItem *treeItem);
     int addComImgTab(TreeItem *treeItem);
-//    void removeTab(int index);
     void removeTab(int index);
     void removeAll();
     void removeOtherTabs(int index);
+    void setSaveStatus(int index, bool unsaved);
 signals:
     void updateSize(QSize);
+public slots:
+    void on_Changed(QString, int, bool);
 };
 
 #endif // CUSTOMTABWIDGET_H

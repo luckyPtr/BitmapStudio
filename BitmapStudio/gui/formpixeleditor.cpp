@@ -56,6 +56,11 @@ FormPixelEditor::FormPixelEditor(QWidget *parent) :
 
     connect(this, SIGNAL(saveImage(QString,int,QImage)), this->parent()->parent()->parent(), SLOT(on_SaveImage(QString, int, QImage)));
 
+    connect(this->scanvasItem, &QGraphicsCanvasItem::changed,  [=](bool unsaved){
+        emit changed(getProject(), getId(), unsaved);
+    });
+    connect(this, SIGNAL(changed(QString,int,bool)), this->parent(), SLOT(on_Changed(QString,int,bool)));
+
     addAction(ui->actSave);
     addAction(ui->actMoveUp);
     addAction(ui->actMoveDown);
