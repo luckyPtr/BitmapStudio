@@ -352,9 +352,13 @@ QTabBar::tab:selected
    <addaction name="actNewProject"/>
    <addaction name="actOpenProject"/>
    <addaction name="separator"/>
+   <addaction name="actSave"/>
+   <addaction name="actSaveAll"/>
+   <addaction name="separator"/>
    <addaction name="actEditMode"/>
    <addaction name="actRun"/>
    <addaction name="actAbout"/>
+   <addaction name="separator"/>
   </widget>
   <action name="actOpenProject">
    <property name="icon">
@@ -445,6 +449,36 @@ QTabBar::tab:selected
    </property>
    <property name="toolTip">
     <string>关于</string>
+   </property>
+  </action>
+  <action name="actSave">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/Toolbar/Save.svg</normaloff>:/Image/Toolbar/Save.svg</iconset>
+   </property>
+   <property name="text">
+    <string>保存</string>
+   </property>
+   <property name="toolTip">
+    <string>保存</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actSaveAll">
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/Toolbar/SaveAll.svg</normaloff>:/Image/Toolbar/SaveAll.svg</iconset>
+   </property>
+   <property name="text">
+    <string>保存全部</string>
+   </property>
+   <property name="toolTip">
+    <string>保存全部</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+S</string>
    </property>
   </action>
  </widget>

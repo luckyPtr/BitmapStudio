@@ -75,6 +75,11 @@ FormComImgEditor::~FormComImgEditor()
     delete ui;
 }
 
+void FormComImgEditor::save()
+{
+
+}
+
 void FormComImgEditor::initScrollerPos()
 {
     // 将scene的初始滚动条位置设置为左上角

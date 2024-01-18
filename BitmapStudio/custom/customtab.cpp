@@ -55,3 +55,8 @@ bool CustomTab::isChanged()
 {
     return iscChanged;
 }
+
+void CustomTab::save()
+{
+
+}

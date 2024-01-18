@@ -55,6 +55,8 @@ signals:
     void updateSize(QSize);
 public slots:
     void on_Changed(QString, int, bool);
+    void on_ActSave_Triggered();
+    void on_ActSaveAll_Triggered();
 };
 
 #endif // CUSTOMTABWIDGET_H

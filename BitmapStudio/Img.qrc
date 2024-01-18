@@ -65,5 +65,7 @@
         <file>Image/Others/GitHub.svg</file>
         <file>Image/Toolbar/NewProject.png</file>
         <file>Image/Toolbar/OpenProject.png</file>
+        <file>Image/Toolbar/Save.svg</file>
+        <file>Image/Toolbar/SaveAll.svg</file>
     </qresource>
 </RCC>

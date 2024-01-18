@@ -26,6 +26,8 @@ public:
     int getId();
     QSize getSize();
     bool isChanged();
+
+    virtual void save();
 signals:
     void changed(QString, int, bool);
 };

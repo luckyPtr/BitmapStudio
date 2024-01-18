@@ -231,4 +231,22 @@ void CustomTabWidget::on_Changed(QString project, int id, bool unsaved)
     }
 }
 
+void CustomTabWidget::on_ActSave_Triggered()
+{
+    if(this->count() > 0)
+    {
+        CustomTab *widget = static_cast<CustomTab *>(this->currentWidget());
+        widget->save();
+    }
+}
+
+void CustomTabWidget::on_ActSaveAll_Triggered()
+{
+    for(int i = 0; i < count(); i++)
+    {
+        CustomTab *widget = static_cast<CustomTab *>(this->widget(i));
+        widget->save();
+    }
+}
+
 

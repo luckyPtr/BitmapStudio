@@ -72,6 +72,8 @@ void MainWindow::initAction()
     connect(ui->actNewProject, SIGNAL(triggered()), &pm, SLOT(on_ActNewProject_Triggered()));
     connect(ui->actOpenProject, SIGNAL(triggered()), &pm, SLOT(on_ActOpenProject_Triggered()));
     connect(&pm, SIGNAL(updateSelectProject(QString)), this, SLOT(on_SelectedProjectChanged(QString)));
+    connect(ui->actSave, SIGNAL(triggered()), ui->tabWidget, SLOT(on_ActSave_Triggered()));
+    connect(ui->actSaveAll, SIGNAL(triggered()), ui->tabWidget, SLOT(on_ActSaveAll_Triggered()));
 }
 
 

@@ -20,6 +20,8 @@ public:
     explicit FormPixelEditor(QWidget *parent = nullptr);
     ~FormPixelEditor();
     QGraphicsCanvasItem *scanvasItem;
+
+    void save() override;
 private:
     Ui::FormPixelEditor *ui;
 

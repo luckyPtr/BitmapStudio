@@ -21,6 +21,7 @@ public:
     ~FormComImgEditor();
     QGraphicsComImgCanvansItem * comImgCanvansItem;
 
+    void save() override;
 private:
     Ui::FormComImgEditor *ui;
 
