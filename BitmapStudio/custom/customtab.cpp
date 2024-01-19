@@ -3,7 +3,7 @@
 CustomTab::CustomTab(QWidget *parent)
     : QWidget{parent}
 {
-
+    connect(this, SIGNAL(changed(QString,int,bool)), this->parent(), SLOT(on_Changed(QString,int,bool)));
 }
 
 void CustomTab::setProjct(QString project)

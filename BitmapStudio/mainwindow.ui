@@ -57,7 +57,7 @@
 	height:26;
     padding-left:2;
     padding-right:2;
-	border:1px solid #DADADA;
+	border:1px solid #AAAAAA;
 	background-color: #DADADA;
     border-top-left-radius:4px;
     border-top-right-radius:4px;
@@ -131,6 +131,8 @@ QTabBar::tab:selected
     </property>
     <addaction name="actNewProject"/>
     <addaction name="actOpenProject"/>
+    <addaction name="actSave"/>
+    <addaction name="actSaveAll"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
@@ -357,8 +359,8 @@ QTabBar::tab:selected
    <addaction name="separator"/>
    <addaction name="actEditMode"/>
    <addaction name="actRun"/>
-   <addaction name="actAbout"/>
    <addaction name="separator"/>
+   <addaction name="actAbout"/>
   </widget>
   <action name="actOpenProject">
    <property name="icon">

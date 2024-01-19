@@ -368,6 +368,7 @@ void QGraphicsComImgCanvansItem::deleteSelectItem()
         comImg.items.removeAt(selectedItemIndex);
         selectedItemIndex = -1;
         view->viewport()->update();
+        emit changed(true);
     }
 }
 
@@ -376,6 +377,7 @@ void QGraphicsComImgCanvansItem::deleteAll()
     comImg.items.clear();
     selectedItemIndex = -1;
     view->viewport()->update();
+    emit changed(true);
 }
 
 void QGraphicsComImgCanvansItem::on_Forward()
@@ -387,6 +389,7 @@ void QGraphicsComImgCanvansItem::on_Forward()
             comImg.items.swapItemsAt(selectedItemIndex, selectedItemIndex + 1);
             selectedItemIndex++;
             view->viewport()->update();
+            emit changed(true);
         }
     }
 }
@@ -400,6 +403,7 @@ void QGraphicsComImgCanvansItem::on_Backward()
             comImg.items.swapItemsAt(selectedItemIndex, selectedItemIndex - 1);
             selectedItemIndex--;
             view->viewport()->update();
+            emit changed(true);
         }
     }
 }
@@ -414,6 +418,7 @@ void QGraphicsComImgCanvansItem::on_Top()
             selectedItemIndex++;
         }
         view->viewport()->update();
+        emit changed(true);
     }
 }
 
@@ -427,6 +432,7 @@ void QGraphicsComImgCanvansItem::on_Bottom()
             selectedItemIndex--;
         }
         view->viewport()->update();
+        emit changed(true);
     }
 }
 
@@ -438,6 +444,7 @@ void QGraphicsComImgCanvansItem::on_AlignVCenter()
         QImage img = rd->getImage(ci->id);
         ci->x = (comImg.size.width() - img.width()) / 2;
         view->viewport()->update();
+        emit changed(true);
     }
 }
 
@@ -449,6 +456,7 @@ void QGraphicsComImgCanvansItem::on_AlignHCenter()
         QImage img = rd->getImage(ci->id);
         ci->y = (comImg.size.height() - img.height()) / 2;
         view->viewport()->update();
+        emit changed(true);
     }
 }
 
@@ -461,6 +469,7 @@ void QGraphicsComImgCanvansItem::on_AlignCenter()
         ci->x = (comImg.size.width() - img.width()) / 2;
         ci->y = (comImg.size.height() - img.height()) / 2;
         view->viewport()->update();
+        emit changed(true);
     }
 }
 
@@ -472,6 +481,7 @@ void QGraphicsComImgCanvansItem::on_MoveUp()
         QImage img = rd->getImage(ci->id);
         ci->y--;
         view->viewport()->update();
+        emit changed(true);
     }
 }
 
@@ -483,6 +493,7 @@ void QGraphicsComImgCanvansItem::on_MoveDown()
         QImage img = rd->getImage(ci->id);
         ci->y++;
         view->viewport()->update();
+        emit changed(true);
     }
 }
 
@@ -494,6 +505,7 @@ void QGraphicsComImgCanvansItem::on_MoveLeft()
         QImage img = rd->getImage(ci->id);
         ci->x--;
         view->viewport()->update();
+        emit changed(true);
     }
 }
 
@@ -505,6 +517,7 @@ void QGraphicsComImgCanvansItem::on_MoveRight()
         QImage img = rd->getImage(ci->id);
         ci->x++;
         view->viewport()->update();
+        emit changed(true);
     }
 }
 
@@ -539,6 +552,7 @@ void QGraphicsComImgCanvansItem::dropEvent(QGraphicsSceneDragDropEvent *event)
     QImage img = rd->getImage(dragImgId);
     ComImgItem item(currentPixel.x() - img.width() / 2, currentPixel .y() - img.height() / 2, dragImgId);
     comImg.items << item;
+    emit changed(true);
 }
 
 void QGraphicsComImgCanvansItem::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
@@ -715,6 +729,10 @@ void QGraphicsComImgCanvansItem::on_MouseRelease(QPoint point)
     }
     else if(action == ActionSelect || action == ActionMove || action == ActionSelectAuxiliaryLine || action == ActionMoveAuxiliaryLine)
     {
+        if(action == ActionMove)
+        {
+            emit changed(true);
+        }
         action = ActionNull;
         selectedAuxiliaryLine = -1;
         view->setCursor(Qt::ArrowCursor);

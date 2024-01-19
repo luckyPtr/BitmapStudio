@@ -100,6 +100,7 @@ signals:
     void updateStatusBarPos(QPoint);
     void updateStatusBarSize(QSize);
     void updatePreview(QImage);
+    void changed(bool);
 };
 
 #endif // QGRAPHICSCOMIMGCANVANSITEM_H

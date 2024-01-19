@@ -37,9 +37,9 @@ FormComImgEditor::FormComImgEditor(QWidget *parent) :
     connect(scaleItem, SIGNAL(createAuxLine(Qt::Orientation)), comImgCanvansItem, SLOT(on_CreateAuxLine(Qt::Orientation)));
     connect(ui->actDelete, SIGNAL(triggered()), comImgCanvansItem, SLOT(deleteSelectItem()));
     connect(ui->actClean, SIGNAL(triggered()), comImgCanvansItem, SLOT(deleteAll()));
-    connect(ui->actSave, &QAction::triggered, this, [=]{
-        emit saveComImg(comImgCanvansItem->getComImg());
-    });
+//    connect(ui->actSave, &QAction::triggered, this, [=]{
+//        emit saveComImg(comImgCanvansItem->getComImg());
+//    });
     connect(ui->actForward, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_Forward()));
     connect(ui->actBackward, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_Backward()));
     connect(ui->actTop, SIGNAL(triggered()), comImgCanvansItem, SLOT(on_Top()));
@@ -59,7 +59,10 @@ FormComImgEditor::FormComImgEditor(QWidget *parent) :
 
     connect(this, SIGNAL(saveComImg(QString,int,ComImg)), this->parent()->parent()->parent(), SLOT(on_SaveComImg(QString,int,ComImg)));
 
-    addAction(ui->actSave);
+    connect(this->comImgCanvansItem, &QGraphicsComImgCanvansItem::changed,  [=](bool unsaved){
+        emit changed(getProject(), getId(), unsaved);
+    });
+
     addAction(ui->actMoveUp);
     addAction(ui->actMoveDown);
     addAction(ui->actMoveLeft);
@@ -77,7 +80,8 @@ FormComImgEditor::~FormComImgEditor()
 
 void FormComImgEditor::save()
 {
-
+    emit saveComImg(getProject(), getId(), comImgCanvansItem->getComImg());
+    emit changed(getProject(), getId(), false);
 }
 
 void FormComImgEditor::initScrollerPos()
