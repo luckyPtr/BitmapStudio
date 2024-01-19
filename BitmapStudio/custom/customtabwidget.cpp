@@ -3,6 +3,7 @@
 #include "gui/formcomimgeditor.h"
 #include <QTabBar>
 #include <QContextMenuEvent>
+#include <QMessageBox>
 #include "core/imgconvertor.h"
 #include "custom/customtab.h"
 
@@ -165,13 +166,29 @@ int CustomTabWidget::addComImgTab(TreeItem *treeItem)
 
     return index;
 }
-
+#include <QStyle>
 void CustomTabWidget::removeTab(int index)
 {
-    qDebug() << "delete" << index;
-    QWidget *removeWidget = widget(index);
+    CustomTab *widget = static_cast<CustomTab *>(this->widget(index));
+    if(widget->isChanged())
+    {
+        QMessageBox *saveDialog = new QMessageBox;
+        saveDialog->setText(QString(tr("是否保存%1？")).arg(this->tabBar()->tabText(index)));
+        saveDialog->setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+        saveDialog->setDefaultButton(QMessageBox::Save);
+        saveDialog->setIcon(QMessageBox::Question);
+        int ret = saveDialog->exec();
+        if(ret == QMessageBox::Save)
+        {
+            widget->save();
+        }
+        else if(ret == QMessageBox::Cancel)
+        {
+            return;
+        }
+    }
     QTabWidget::removeTab(index);
-    delete removeWidget;
+    delete widget;
 }
 
 void CustomTabWidget::removeAll()
