@@ -149,13 +149,6 @@ void FormComImgEditor::on_LoadComImg(ComImg &comImg, RawData *rd)
 
 
 
-
-void FormComImgEditor::on_actSave_triggered()
-{
-    emit saveComImg(getProject(), getId(), comImgCanvansItem->getComImg());
-}
-
-
 void FormComImgEditor::on_actResize_triggered()
 {
     DialogResize *dlgResize = new DialogResize(this);

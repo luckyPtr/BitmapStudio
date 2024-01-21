@@ -39,7 +39,6 @@ protected:
 public slots:
     void paintView();
     void on_LoadImage(QImage &image);
-    void on_actSave_triggered();
 
 signals:
     void updateStatusBarPos(QPoint);

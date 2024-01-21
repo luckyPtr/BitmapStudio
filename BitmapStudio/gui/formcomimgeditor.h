@@ -42,7 +42,6 @@ signals:
     void saveComImg(QString, int, ComImg);
     void updateStatusBarPos(QPoint);
 private slots:
-    void on_actSave_triggered();
     void on_actResize_triggered();
 };
 

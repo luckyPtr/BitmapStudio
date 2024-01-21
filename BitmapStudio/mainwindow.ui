@@ -89,7 +89,8 @@ QTabBar::tab:selected
 	padding-top:0;
 	height:26;
 	background-color:  #F1F3F8;
-	border-top:2px solid #21A4F1;
+	/*border-top:2px solid #21A4F1;*/
+	border-top:2px solid #F1F3F8;
 	border-bottom:1px solid #F1F3F8;
 	color:#000000 ;
 }

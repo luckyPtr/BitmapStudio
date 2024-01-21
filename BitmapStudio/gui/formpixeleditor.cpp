@@ -192,14 +192,6 @@ void FormPixelEditor::on_LoadImage(QImage &image)
 
 
 
-void FormPixelEditor::on_actSave_triggered()
-{
-    emit saveImage(getProject(), getId(), scanvasItem->getImage());
-}
-
-
-
-
 void FormPixelEditor::on_actLockAuxiliaryLine_triggered()
 {
     QGraphicsCanvasItem::AuxiliaryLine::lock = !QGraphicsCanvasItem::AuxiliaryLine::lock;
