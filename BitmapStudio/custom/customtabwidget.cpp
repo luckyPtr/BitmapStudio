@@ -18,6 +18,34 @@ void CustomTabWidget::initMenu()
     tb->setContextMenuPolicy(Qt::ActionsContextMenu);
 }
 
+void CustomTabWidget::checkActSaveStatus()
+{
+    bool enableSave = false, enableSaveAll = false;
+
+    if(this->count() > 0)
+    {
+        CustomTab *widget = static_cast<CustomTab *>(this->widget(currentIndex()));
+        if(widget->isChanged())
+        {
+            enableSave = enableSaveAll = true;
+        }
+    }
+
+    if(!enableSaveAll)
+    {
+        for(int i = 0; i < count(); i++)
+        {
+            CustomTab *widget = static_cast<CustomTab *>(this->widget(i));
+            if(widget->isChanged())
+            {
+                enableSaveAll = true;
+                break;
+            }
+        }
+    }
+    emit updateSaveStatus(enableSave, enableSaveAll);
+}
+
 
 void CustomTabWidget::contextMenuEvent(QContextMenuEvent *event)
 {
@@ -60,6 +88,10 @@ CustomTabWidget::CustomTabWidget(QWidget *parent) : QTabWidget(parent)
         CustomTab *tab = static_cast<CustomTab *>(currentWidget());
         if(tab != nullptr)
             emit updateSize(tab->getSize());
+    });
+    connect(this, SIGNAL(updateSaveStatus(bool, bool)), this->parent()->parent(), SLOT(on_UpdateSaveStatus(bool, bool)));
+    connect(this, &QTabWidget::currentChanged, [=]() {
+        checkActSaveStatus();
     });
 }
 
@@ -186,7 +218,7 @@ void CustomTabWidget::removeTab(int index)
     if(widget->isChanged())
     {
         QMessageBox *saveDialog = new QMessageBox;
-        saveDialog->setText(QString(tr("是否保存%1？")).arg(this->tabBar()->tabText(index)));
+        saveDialog->setText(QString(tr("是否保存%1？")).arg(this->tabBar()->tabText(index)).remove("*"));
         saveDialog->setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
         saveDialog->setDefaultButton(QMessageBox::Save);
         saveDialog->setIcon(QMessageBox::Question);
@@ -248,7 +280,6 @@ void CustomTabWidget::on_Changed(QString project, int id, bool unsaved)
             {
                 if(!widget->isChanged())
                 {
-                    //this->tabBar()->setTabTextColor(i, Qt::red);
                     this->tabBar()->setTabText(i, this->tabBar()->tabText(i) + "*");
                 }
             }
@@ -263,6 +294,7 @@ void CustomTabWidget::on_Changed(QString project, int id, bool unsaved)
             break;
         }
     }
+    checkActSaveStatus();
 }
 
 void CustomTabWidget::on_ActSave_Triggered()

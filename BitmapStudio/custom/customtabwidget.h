@@ -35,6 +35,7 @@ private:
     QVector<TabWidgetItem *> tabWidgetItems;
     QMenu *menu;
     void initMenu();
+    void checkActSaveStatus();
 //    void openImgTab(TreeItem *treeItem);
 //    void openComImgTab(TreeItem *treeItem);
 protected:
@@ -53,6 +54,7 @@ public:
     void setSaveStatus(int index, bool unsaved);
 signals:
     void updateSize(QSize);
+    void updateSaveStatus(bool, bool);  // save和saveAll的状态
 public slots:
     void on_Changed(QString, int, bool);
     void on_ActSave_Triggered();

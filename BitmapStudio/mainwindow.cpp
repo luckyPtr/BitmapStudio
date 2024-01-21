@@ -199,6 +199,12 @@ void MainWindow::on_SelectedProjectChanged(QString project)
     }
 }
 
+void MainWindow::on_UpdateSaveStatus(bool enableSave, bool enableSaveAll)
+{
+    ui->actSave->setEnabled(enableSave);
+    ui->actSaveAll->setEnabled(enableSaveAll);
+}
+
 
 
 void MainWindow::on_actAbout_triggered()

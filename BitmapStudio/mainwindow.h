@@ -38,6 +38,8 @@ private slots:
 public slots:
     void on_SelectedProjectChanged(QString project);
 
+    void on_UpdateSaveStatus(bool enableSave, bool enableSaveAll);
+
     void on_UpdateStatusBarPos(QPoint point);
 
     void on_UpdateStatusBarSize(QSize size);
