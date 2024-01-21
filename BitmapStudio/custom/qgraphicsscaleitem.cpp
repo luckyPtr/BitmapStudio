@@ -26,8 +26,8 @@ void QGraphicsScaleItem::drawScale(QPainter *painter)
     int height = qMax(view->height(), (int)view->scene()->height());
 
     QPoint points[] = {
-        QPoint(-1, -1),
-        QPoint(width, 0),
+        QPoint(-1, -4),
+        QPoint(width, -4),
         QPoint(width, Global::scaleWidth),
         QPoint(Global::scaleWidth, Global::scaleWidth),
         QPoint(Global::scaleWidth, height),
@@ -86,6 +86,8 @@ QGraphicsScaleItem::QGraphicsScaleItem(QWidget *parent)
 {
     view = static_cast<QWGraphicsView*>(parent);
     connect(view, SIGNAL(mouseMovePoint(QPoint)), this, SLOT(mouseMove(QPoint)));
+
+    view->setStyleSheet("QGraphicsView {border:1px solid #A0A0A0; border-top:none}");
 }
 
 QGraphicsScaleItem::~QGraphicsScaleItem()

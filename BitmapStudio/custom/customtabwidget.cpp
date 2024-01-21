@@ -107,6 +107,7 @@ int CustomTabWidget::addImgTab(TreeItem *treeItem)
     for(int i = 0; i < count(); i++)
     {
         CustomTab *widget = static_cast<CustomTab *>(this->widget(i));
+
         if(widget->getProject() == project && widget->getId() == id)
         {
             (static_cast<FormPixelEditor *>(widget))->on_LoadImage(bf.image);
@@ -166,7 +167,7 @@ int CustomTabWidget::addComImgTab(TreeItem *treeItem)
 
     return index;
 }
-#include <QStyle>
+
 void CustomTabWidget::removeTab(int index)
 {
     CustomTab *widget = static_cast<CustomTab *>(this->widget(index));
@@ -177,7 +178,11 @@ void CustomTabWidget::removeTab(int index)
         saveDialog->setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
         saveDialog->setDefaultButton(QMessageBox::Save);
         saveDialog->setIcon(QMessageBox::Question);
+        saveDialog->setButtonText(QMessageBox::Save, tr("保存"));
+        saveDialog->setButtonText(QMessageBox::Discard, tr("不保存"));
+        saveDialog->setButtonText(QMessageBox::Cancel, tr("取消"));
         int ret = saveDialog->exec();
+        delete saveDialog;
         if(ret == QMessageBox::Save)
         {
             widget->save();
