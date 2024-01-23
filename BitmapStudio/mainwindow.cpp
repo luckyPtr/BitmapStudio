@@ -45,6 +45,7 @@ void MainWindow::init()
     ui->treeViewProject->setItemDelegate(treeItemDelegate);
     pm.blindTreeView(ui->treeViewProject);
     pm.setTabWidget(ui->tabWidget);
+    ui->lineEditSearch->setVisible(false);
 }
 
 void MainWindow::initStatusBar()

@@ -443,7 +443,7 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
         menu.addAction(actRun);
         menu.addAction(actSettings);
         menu.addSeparator();
-        menu.addAction(actProperties);
+//        menu.addAction(actProperties);
 
         menu.exec(QCursor::pos());
     };
@@ -505,7 +505,7 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
         }
 
         menu.addSeparator();
-        menu.addAction(actProperties);
+//        menu.addAction(actProperties);
 
         menu.exec(QCursor::pos());
     };
@@ -534,7 +534,7 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
 
         menu.addAction(actDelete);
         menu.addAction(actRename);
-        menu.addAction(actProperties);
+//        menu.addAction(actProperties);
         menu.exec(QCursor::pos());
     };
 
@@ -562,7 +562,7 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
         menu.addAction(actDelete);
 
         menu.addSeparator();
-        menu.addAction(actProperties);
+//        menu.addAction(actProperties);
 
         menu.exec(QCursor::pos());
     };
@@ -586,7 +586,7 @@ void ProjectMng::on_CustomContextMenu(QPoint point)
         menu.addMenu(&menuExport);
 
         menu.addSeparator();
-        menu.addAction(actProperties);
+//        menu.addAction(actProperties);
 
         menu.exec(QCursor::pos());
     };
