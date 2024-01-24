@@ -7,8 +7,8 @@ void RawData::initDatabase()
     db.transaction();
     QSqlQuery query(db);
     // 创建settings表
-    query.prepare("CREATE TABLE tbl_settings (\
-                  version  INTEGER,\
+    query.prepare(QString("CREATE TABLE tbl_settings (\
+                  version  TEXT DEFAULT ('BitmapStudio v%1'),\
                   depth    INTEGER,\
                   width    INTEGER,\
                   height   INTEGER,\
@@ -18,7 +18,7 @@ void RawData::initDatabase()
                   img_size TEXT,\
                   path     TEXT,\
                   format   TEXT\
-                  );");
+                  );").arg(APP_VERSION));
     query.exec();
     // 创建tbl_img
     query.prepare("CREATE TABLE tbl_img (\
@@ -31,7 +31,9 @@ void RawData::initDatabase()
                   );");
     query.exec();
 
-    query.prepare("INSERT INTO tbl_settings (version) VALUES (1);");
+    query.prepare("INSERT INTO tbl_settings DEFAULT VALUES;");
+    //query.prepare("INSERT INTO tbl_settings (version) VALUES (:version);");
+    //query.bindValue(":version", QString("BitmapStudio v%1").arg(APP_VERSION));
     query.exec();
     db.commit();
 }

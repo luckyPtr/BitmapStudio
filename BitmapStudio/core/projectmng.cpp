@@ -104,8 +104,6 @@ void ProjectMng::saveExpand()
 
 void ProjectMng::restoreExpand()
 {
-    qDebug() << theModel->rowCount(treeView->rootIndex());
-
     for(int i = 0; i < theModel->rowCount(treeView->rootIndex()); i++)
     {
         QModelIndex root = theModel->index(i, 0, treeView->rootIndex());
