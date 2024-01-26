@@ -1,2 +1,4 @@
-# BmpManager
-OLED位图生成和管理软件
+# Bitmap Studio
+
+![bitmapstudio](Docs/Images/bitmapstudio.png)
+
