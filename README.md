@@ -28,7 +28,7 @@
 - clone项目工程
 
   ```git
-  clone git@github.com:luckyPtr/BitmapStudio.git
+  git clone git@github.com:luckyPtr/BitmapStudio.git
   ```
 
 - 使用Qt Creator打开工程并编译
