@@ -43,6 +43,7 @@ signals:
     void updateStatusBarPos(QPoint);
 private slots:
     void on_actResize_triggered();
+    void on_actPosition_triggered();
 };
 
 #endif // FORMCOMIMGEDITOR_H

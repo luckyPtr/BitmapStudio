@@ -215,6 +215,21 @@
     <string>清空画布</string>
    </property>
   </action>
+  <action name="actPosition">
+   <property name="icon">
+    <iconset resource="../Img.qrc">
+     <normaloff>:/Image/PixelEditor/Move.svg</normaloff>:/Image/PixelEditor/Move.svg</iconset>
+   </property>
+   <property name="text">
+    <string>设置坐标</string>
+   </property>
+   <property name="toolTip">
+    <string>设置坐标</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::TextHeuristicRole</enum>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

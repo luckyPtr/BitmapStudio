@@ -68,6 +68,7 @@ public:
     void setRawData(RawData *rd);
     ComImg getComImg() { return comImg; }
     void resize(QSize size);
+    void setItemPos(QPoint);
 
 protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event) override;
@@ -95,6 +96,7 @@ public slots:
     void on_MoveDown();
     void on_MoveLeft();
     void on_MoveRight();
+
 
 signals:
     void updateStatusBarPos(QPoint);

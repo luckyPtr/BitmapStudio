@@ -67,5 +67,6 @@
         <file>Image/Toolbar/OpenProject.png</file>
         <file>Image/Toolbar/Save.svg</file>
         <file>Image/Toolbar/SaveAll.svg</file>
+        <file>Image/PixelEditor/Position.svg</file>
     </qresource>
 </RCC>

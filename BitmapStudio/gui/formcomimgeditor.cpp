@@ -6,6 +6,7 @@
 #include <QMenu>
 #include <custom/qcustommenu.h>
 #include <gui/dialogresize.h>
+#include <gui/dialogposition.h>
 
 
 FormComImgEditor::FormComImgEditor(QWidget *parent) :
@@ -109,6 +110,8 @@ void FormComImgEditor::contextMenuEvent(QContextMenuEvent *event)
 {
     QMenu menu;
 
+    menu.addAction(ui->actPosition);
+
     QCustomMenu menuMove;
     menuMove.setTitle(tr("移动"));
     menuMove.addAction(ui->actMoveUp);
@@ -161,5 +164,19 @@ void FormComImgEditor::on_actResize_triggered()
         comImgCanvansItem->resize(size);
     }
     delete dlgResize;
+}
+
+
+void FormComImgEditor::on_actPosition_triggered()
+{
+    DialogPosition *dlgPosition = new DialogPosition(this);
+
+    int ret = dlgPosition->exec();
+    if (ret == QDialog::Accepted)
+    {
+        QPoint pos = dlgPosition->getPos();
+        comImgCanvansItem->setItemPos(pos);
+    }
+    delete dlgPosition;
 }
 

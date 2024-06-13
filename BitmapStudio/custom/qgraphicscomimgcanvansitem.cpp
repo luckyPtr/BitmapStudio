@@ -361,6 +361,18 @@ void QGraphicsComImgCanvansItem::resize(QSize size)
     view->scene()->setSceneRect(QRectF(0, 0, comImg.size.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, comImg.size.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
 }
 
+void QGraphicsComImgCanvansItem::setItemPos(QPoint pos)
+{
+    if (selectedItemIndex != -1)
+    {
+        ComImgItem *ci = &comImg.items[selectedItemIndex];
+        ci->x = pos.x();
+        ci->y = pos.y();
+        view->viewport()->update();
+        emit changed(true);
+    }
+}
+
 void QGraphicsComImgCanvansItem::deleteSelectItem()
 {
     if(selectedItemIndex != -1)
@@ -520,7 +532,6 @@ void QGraphicsComImgCanvansItem::on_MoveRight()
         emit changed(true);
     }
 }
-
 
 void QGraphicsComImgCanvansItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
