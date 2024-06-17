@@ -1,5 +1,6 @@
 #include "dialogposition.h"
 #include "ui_dialogposition.h"
+#include <QPushButton>
 
 DialogPosition::DialogPosition(QWidget *parent)
     : QDialog(parent)
@@ -9,6 +10,9 @@ DialogPosition::DialogPosition(QWidget *parent)
 
     setWindowFlag(Qt::MSWindowsFixedSizeDialogHint);        // 固定窗口
     setWindowFlag(Qt::WindowContextHelpButtonHint, false);  // 取消Dialog的？
+
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("确定"));
+    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("取消"));
 }
 
 DialogPosition::~DialogPosition()
