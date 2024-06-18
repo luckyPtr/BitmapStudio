@@ -69,6 +69,7 @@ public:
     ComImg getComImg() { return comImg; }
     void resize(QSize size);
     void setItemPos(QPoint);
+    QPoint getSelectedItemPos();
 
 protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event) override;

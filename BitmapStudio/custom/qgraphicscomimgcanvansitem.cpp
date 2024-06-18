@@ -373,6 +373,16 @@ void QGraphicsComImgCanvansItem::setItemPos(QPoint pos)
     }
 }
 
+QPoint QGraphicsComImgCanvansItem::getSelectedItemPos()
+{
+    if (selectedItemIndex != -1)
+    {
+        ComImgItem *ci = &comImg.items[selectedItemIndex];
+        return QPoint(ci->x, ci->y);
+    }
+    return QPoint(0, 0);
+}
+
 void QGraphicsComImgCanvansItem::deleteSelectItem()
 {
     if(selectedItemIndex != -1)

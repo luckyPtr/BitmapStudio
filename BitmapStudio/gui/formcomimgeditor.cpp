@@ -170,7 +170,8 @@ void FormComImgEditor::on_actResize_triggered()
 void FormComImgEditor::on_actPosition_triggered()
 {
     DialogPosition *dlgPosition = new DialogPosition(this);
-
+    QPoint pos = comImgCanvansItem->getSelectedItemPos();
+    dlgPosition->setDefaultPos(pos);
     int ret = dlgPosition->exec();
     if (ret == QDialog::Accepted)
     {

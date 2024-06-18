@@ -1,6 +1,8 @@
 #include "dialogposition.h"
 #include "ui_dialogposition.h"
 #include <QPushButton>
+#include <QTimer>
+#include <QKeyEvent>
 
 DialogPosition::DialogPosition(QWidget *parent)
     : QDialog(parent)
