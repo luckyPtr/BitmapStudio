@@ -262,6 +262,37 @@ void QGraphicsComImgCanvansItem::paintResizePoint(QPainter *painter)
     }
 }
 
+void QGraphicsComImgCanvansItem::paintItemInfo(QPainter *painter)
+{
+    if (selectedItemIndex != -1)
+    {
+        painter->setRenderHints(QPainter::Antialiasing);    // 开启抗锯齿
+        QPen pen(QColor(247, 247, 247, 220));
+        QBrush brush;
+        brush.setColor(QColor(247, 247, 247, 220));
+        brush.setStyle(Qt::SolidPattern);
+        painter->setBrush(brush);
+        painter->setPen(pen);
+        QPoint p(startPoint.x() + 8, view->height() - 60);
+
+        QRect rect(p, QSize(60, 40));
+        painter->drawRoundedRect(rect, 3, 3);
+        pen.setColor(Global::gridColor);
+        painter->setPen(pen);
+        ComImgItem item = comImg.items[selectedItemIndex];
+        QImage img = rd->getImage(item.id);
+        QString name = rd->getName(item.id);
+        QString text = QString("%1\nX:%2 Y:%3\nW:%4 H:%5")
+                           .arg(name)
+                           .arg(item.x)
+                           .arg(item.y)
+                           .arg(img.width())
+                           .arg(img.height());
+        painter->drawText(rect, Qt::AlignCenter, text);
+        painter->setRenderHints(QPainter::Antialiasing, false);
+    }
+}
+
 QPoint QGraphicsComImgCanvansItem::pointToPixel(QPoint point)
 {
     return QPoint((point.x() - startPoint.x()) / Global::pixelSize,
@@ -810,5 +841,6 @@ void QGraphicsComImgCanvansItem::paint(QPainter *painter, const QStyleOptionGrap
     paintDragItem(painter);
     paintAuxiliaryLines(painter);
     paintResizePoint(painter);
+    paintItemInfo(painter);
     emitUpdatePreview();
 }

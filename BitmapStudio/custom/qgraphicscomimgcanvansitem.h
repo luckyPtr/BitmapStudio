@@ -49,6 +49,7 @@ class QGraphicsComImgCanvansItem : public QGraphicsItemBase
     void paintDragItem(QPainter *painter);      // 绘制拖入的图片
     void paintAuxiliaryLines(QPainter *painter);    // 绘制辅助线
     void paintResizePoint(QPainter *painter);  // 绘制调整画布大小的点
+    void paintItemInfo(QPainter *painter);      // 绘制选择的图形的名称、位置等信息
     QPoint pointToPixel(QPoint point);  // 坐标转换为画布上的像素坐标
     int getPointImgIndex(QPoint point);
     int getPointAuxLineIndex(QPoint point);
