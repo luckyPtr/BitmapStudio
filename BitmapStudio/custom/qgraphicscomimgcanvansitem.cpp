@@ -2,6 +2,7 @@
 #include "qwgraphicsview.h"
 #include "global.h"
 #include <QGraphicsSceneDragDropEvent>
+#include <QScrollBar>
 
 
 bool QGraphicsComImgCanvansItem::isInSizeVerArea(QPoint point)
@@ -266,30 +267,51 @@ void QGraphicsComImgCanvansItem::paintItemInfo(QPainter *painter)
 {
     if (selectedItemIndex != -1)
     {
-        painter->setRenderHints(QPainter::Antialiasing);    // 开启抗锯齿
-        QPen pen(QColor(247, 247, 247, 220));
-        QBrush brush;
-        brush.setColor(QColor(247, 247, 247, 220));
-        brush.setStyle(Qt::SolidPattern);
-        painter->setBrush(brush);
-        painter->setPen(pen);
-        QPoint p(startPoint.x() + 8, view->height() - 60);
-
-        QRect rect(p, QSize(60, 40));
-        painter->drawRoundedRect(rect, 3, 3);
-        pen.setColor(Global::gridColor);
-        painter->setPen(pen);
         ComImgItem item = comImg.items[selectedItemIndex];
         QImage img = rd->getImage(item.id);
         QString name = rd->getName(item.id);
-        QString text = QString("%1\nX:%2 Y:%3\nW:%4 H:%5")
+        QString text = QString(" %1\n X:%2  Y:%3\n W:%4  H:%5")
                            .arg(name)
                            .arg(item.x)
                            .arg(item.y)
                            .arg(img.width())
                            .arg(img.height());
-        painter->drawText(rect, Qt::AlignCenter, text);
-        painter->setRenderHints(QPainter::Antialiasing, false);
+        QFont font;
+        font.setFamily("Microsoft YaHei");    // Set the font family
+        font.setPointSize(11);      // Set the font size
+        // Set the font on the painter
+        painter->setFont(font);
+        // 将文本分成多行
+        QStringList lines = text.split('\n');
+
+        // 获取每一行的宽度并找出最宽的那一行
+        QFontMetrics metrics(font);
+        int maxWidth = 0;
+        for (const QString &line : lines) {
+            int lineWidth = metrics.boundingRect(line).width();
+            if (lineWidth > maxWidth) {
+                maxWidth = lineWidth;
+            }
+        }
+
+        QPen pen(QColor(207, 207, 207, 200));
+        QBrush brush;
+        brush.setColor(QColor(247, 247, 247, 200));
+        brush.setStyle(Qt::SolidPattern);
+        painter->setBrush(brush);
+        painter->setPen(pen);
+        QPoint rectStartPoint(startPoint.x() + 9, view->height() - 70);
+        if (view->horizontalScrollBar()->isVisible())   // 有水平滚动条时上移，防止被滚动条挡住
+        {
+            rectStartPoint.setY(rectStartPoint.y() - 19);
+        }
+
+        QRect rect(rectStartPoint, QSize(maxWidth + 8, 60));
+        painter->drawRect(rect);
+        pen.setColor(Global::gridColor);
+        painter->setPen(pen);
+
+        painter->drawText(rect, Qt::AlignLeft, text);
     }
 }
 
