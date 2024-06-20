@@ -182,7 +182,7 @@ void QGraphicsComImgCanvansItem::paintAuxiliaryLines(QPainter *painter)
 
 #if AUX_LINE_SCALE
     auto paintLinePos = [=](AuxiliaryLine line) {
-        painter->setRenderHints(QPainter::Antialiasing);    // 开启抗锯齿
+        // painter->setRenderHints(QPainter::Antialiasing);    // 开启抗锯齿
         if(line.scale >= 0)
         {
             QPen pen(QColor(247, 247, 247, 200));
@@ -191,6 +191,11 @@ void QGraphicsComImgCanvansItem::paintAuxiliaryLines(QPainter *painter)
             brush.setStyle(Qt::SolidPattern);
             painter->setBrush(brush);
             painter->setPen(pen);
+            QFont font;
+            font.setFamily("Microsoft YaHei");
+            font.setPointSize(9);
+            painter->setFont(font);
+
             QPoint p;
             if(line.dir == Qt::Horizontal)
             {
@@ -202,12 +207,12 @@ void QGraphicsComImgCanvansItem::paintAuxiliaryLines(QPainter *painter)
             }
 
             QRect rect(p, QSize(30, 16));
-            painter->drawRoundedRect(rect, 3, 3);
+            painter->drawRect(rect);
             pen.setColor(Global::gridColor);
             painter->setPen(pen);
             painter->drawText(rect, Qt::AlignCenter, QString::asprintf("%d", line.scale));
         }
-        painter->setRenderHints(QPainter::Antialiasing, false);
+        // painter->setRenderHints(QPainter::Antialiasing, false);
     };
 
     if(selectedAuxiliaryLine != -1)
@@ -294,19 +299,48 @@ void QGraphicsComImgCanvansItem::paintItemInfo(QPainter *painter)
             }
         }
 
-        QPen pen(QColor(207, 207, 207, 200));
+        QPen pen(QColor(207, 207, 207, 220));
         QBrush brush;
-        brush.setColor(QColor(247, 247, 247, 200));
+        brush.setColor(QColor(247, 247, 247, 220));
         brush.setStyle(Qt::SolidPattern);
         painter->setBrush(brush);
         painter->setPen(pen);
+        QSize size = QSize(maxWidth + 8, 60);
+
+#if ITEM_INFO_FOLLOW
+        QPoint rectStartPoint;
+        rectStartPoint.setX(startPoint.x() + item.x * Global::pixelSize);
+        rectStartPoint.setY(startPoint.y() + (item.y + img.size().height()) * Global::pixelSize + 6);
+        if (rectStartPoint.x() < 25)
+        {
+            rectStartPoint.setX(25);
+        }
+        if (rectStartPoint.y() < 25)
+        {
+            rectStartPoint.setY(25);
+        }
+        int offset = view->verticalScrollBar()->isVisible() ? 25 : 6;
+        if (rectStartPoint.x() > view->width() - size.width() - offset)
+        {
+            rectStartPoint.setX(view->width() - size.width() - offset);
+        }
+
+        offset = view->horizontalScrollBar()->isVisible() ? 25 : 6;
+        if (rectStartPoint.y() > view->height() - size.height() - offset)
+        {
+            rectStartPoint.setY(view->height() - size.height() - offset);
+        }
+#else
         QPoint rectStartPoint(startPoint.x() + 9, view->height() - 70);
         if (view->horizontalScrollBar()->isVisible())   // 有水平滚动条时上移，防止被滚动条挡住
         {
             rectStartPoint.setY(rectStartPoint.y() - 19);
         }
+#endif
 
-        QRect rect(rectStartPoint, QSize(maxWidth + 8, 60));
+
+
+        QRect rect(rectStartPoint, size);
         painter->drawRect(rect);
         pen.setColor(Global::gridColor);
         painter->setPen(pen);
