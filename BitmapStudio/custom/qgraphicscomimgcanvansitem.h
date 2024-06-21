@@ -27,7 +27,6 @@ class QGraphicsComImgCanvansItem : public QGraphicsItemBase
     QPoint startPoint;  // 左上角起始位置坐标
     ComImg comImg;
     RawData *rd = nullptr;
-//    int dummy;  // RawData看起来有问题，程序关闭后会报错，可能是数组越界，这里添加应该变量后无报错 ？？？？？？？
 
     Action action = ActionNull;
     QSize newSize;
@@ -71,6 +70,8 @@ public:
     void resize(QSize size);
     void setItemPos(QPoint);
     QPoint getSelectedItemPos();
+    ComImgItem getSelectedItem();
+    QString getProject() { return rd->getProject(); }
 
 protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event) override;

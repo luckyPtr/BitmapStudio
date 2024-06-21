@@ -230,6 +230,14 @@
     <enum>QAction::TextHeuristicRole</enum>
    </property>
   </action>
+  <action name="actOpen">
+   <property name="text">
+    <string>打开图片</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

@@ -40,10 +40,12 @@ public slots:
 signals:
     void saveComImg(ComImg comImg);
     void saveComImg(QString, int, ComImg);
+    void openImgTab(QString, int);
     void updateStatusBarPos(QPoint);
 private slots:
     void on_actResize_triggered();
     void on_actPosition_triggered();
+    void on_actOpen_triggered();
 };
 
 #endif // FORMCOMIMGEDITOR_H

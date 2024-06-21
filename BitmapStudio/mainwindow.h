@@ -54,6 +54,7 @@ public slots:
 
     void on_SaveComImg(QString project, int id, ComImg comImg);
 
+    void on_OpenImgTab(QString project, int id);
 
 private:
     Ui::MainWindow *ui;

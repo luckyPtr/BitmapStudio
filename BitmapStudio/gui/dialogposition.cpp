@@ -15,6 +15,8 @@ DialogPosition::DialogPosition(QWidget *parent)
 
     ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("确定"));
     ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("取消"));
+
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setFocus(Qt::ActiveWindowFocusReason); // 打开窗口后设置焦点
 }
 
 DialogPosition::~DialogPosition()

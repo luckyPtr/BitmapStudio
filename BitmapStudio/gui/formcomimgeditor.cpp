@@ -59,6 +59,7 @@ FormComImgEditor::FormComImgEditor(QWidget *parent) :
     connect(this->comImgCanvansItem, SIGNAL(updatePreview(QImage)), this->parent()->parent()->parent(), SLOT(on_UpdatePreview(QImage)));
 
     connect(this, SIGNAL(saveComImg(QString,int,ComImg)), this->parent()->parent()->parent(), SLOT(on_SaveComImg(QString,int,ComImg)));
+    connect(this, SIGNAL(openImgTab(QString, int)), this->parent()->parent()->parent(), SLOT(on_OpenImgTab(QString, int)));
 
     connect(this->comImgCanvansItem, &QGraphicsComImgCanvansItem::changed,  [=](bool unsaved){
         emit changed(getProject(), getId(), unsaved);
@@ -110,6 +111,7 @@ void FormComImgEditor::contextMenuEvent(QContextMenuEvent *event)
 {
     QMenu menu;
 
+    menu.addAction(ui->actOpen);
     menu.addAction(ui->actPosition);
 
     QCustomMenu menuMove;
@@ -179,5 +181,13 @@ void FormComImgEditor::on_actPosition_triggered()
         comImgCanvansItem->setItemPos(pos);
     }
     delete dlgPosition;
+}
+
+
+void FormComImgEditor::on_actOpen_triggered()
+{
+    QString project = comImgCanvansItem->getProject();
+    int id = comImgCanvansItem->getSelectedItem().id;
+    emit openImgTab(project, id);
 }
 

@@ -122,6 +122,16 @@ void MainWindow::on_SaveComImg(QString project, int id, ComImg comImg)
     }
 }
 
+void MainWindow::on_OpenImgTab(QString project, int id)
+{
+    QModelIndex index = pm.getModelIndex(project, id);
+    if (index.isValid())
+    {
+        TreeItem *item = pm.model()->itemFromIndex(index);
+        ui->tabWidget->openTab(item);
+    }
+}
+
 
 
 void MainWindow::on_UpdateStatusBarPos(QPoint point)

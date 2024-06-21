@@ -185,9 +185,9 @@ void QGraphicsComImgCanvansItem::paintAuxiliaryLines(QPainter *painter)
         // painter->setRenderHints(QPainter::Antialiasing);    // 开启抗锯齿
         if(line.scale >= 0)
         {
-            QPen pen(QColor(247, 247, 247, 200));
+            QPen pen(QColor(240, 240, 240, 220));
             QBrush brush;
-            brush.setColor(QColor(247, 247, 247, 200));
+            brush.setColor(QColor(240, 240, 240, 220));
             brush.setStyle(Qt::SolidPattern);
             painter->setBrush(brush);
             painter->setPen(pen);
@@ -299,9 +299,9 @@ void QGraphicsComImgCanvansItem::paintItemInfo(QPainter *painter)
             }
         }
 
-        QPen pen(QColor(207, 207, 207, 220));
+        QPen pen(QColor(240, 240, 240, 220));
         QBrush brush;
-        brush.setColor(QColor(247, 247, 247, 220));
+        brush.setColor(QColor(240, 240, 240, 220));
         brush.setStyle(Qt::SolidPattern);
         painter->setBrush(brush);
         painter->setPen(pen);
@@ -469,6 +469,17 @@ QPoint QGraphicsComImgCanvansItem::getSelectedItemPos()
     }
     return QPoint(0, 0);
 }
+
+ComImgItem QGraphicsComImgCanvansItem::getSelectedItem()
+{
+    if (selectedItemIndex != -1)
+    {
+        return comImg.items[selectedItemIndex];
+    }
+    return ComImgItem();
+}
+
+
 
 void QGraphicsComImgCanvansItem::deleteSelectItem()
 {
