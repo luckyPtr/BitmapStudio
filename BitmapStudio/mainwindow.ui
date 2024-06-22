@@ -195,6 +195,9 @@ QTabBar::tab:selected
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
+    <property name="acceptDrops">
+     <bool>false</bool>
+    </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <property name="spacing">
       <number>1</number>
@@ -216,6 +219,9 @@ QTabBar::tab:selected
        <property name="enabled">
         <bool>true</bool>
        </property>
+       <property name="acceptDrops">
+        <bool>false</bool>
+       </property>
        <property name="autoFillBackground">
         <bool>false</bool>
        </property>
@@ -232,6 +238,9 @@ QTabBar::tab:selected
      </item>
      <item>
       <widget class="QSplitter" name="splitter">
+       <property name="acceptDrops">
+        <bool>false</bool>
+       </property>
        <property name="layoutDirection">
         <enum>Qt::LeftToRight</enum>
        </property>
@@ -253,7 +262,7 @@ QTabBar::tab:selected
        <property name="childrenCollapsible">
         <bool>true</bool>
        </property>
-       <widget class="QTreeView" name="treeViewProject">
+       <widget class="TreeView" name="treeViewProject">
         <property name="font">
          <font>
           <family>微软雅黑</family>
@@ -289,7 +298,7 @@ QTabBar::tab:selected
          <enum>QAbstractItemView::DragDrop</enum>
         </property>
         <property name="defaultDropAction">
-         <enum>Qt::CopyAction</enum>
+         <enum>Qt::LinkAction</enum>
         </property>
         <property name="alternatingRowColors">
          <bool>false</bool>
@@ -505,6 +514,11 @@ QTabBar::tab:selected
    <extends>QTabWidget</extends>
    <header location="global">custom/customtabwidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TreeView</class>
+   <extends>QTreeView</extends>
+   <header location="global">custom/treeview.h</header>
   </customwidget>
  </customwidgets>
  <resources>

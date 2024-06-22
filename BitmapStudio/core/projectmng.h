@@ -100,6 +100,7 @@ public slots:
     void on_ActExportImg_Triggered();
     void on_ActCopyImg_Triggered();
     void on_ActCopyName_Triggeded();
+    void on_OpenProjectUrl(QString);
 
 signals:
     void updateSelectProject(QString);

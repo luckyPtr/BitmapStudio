@@ -986,4 +986,13 @@ void ProjectMng::on_ActCopyName_Triggeded()
     }
 }
 
+void ProjectMng::on_OpenProjectUrl(QString url)
+{
+    if(!url.isEmpty())
+    {
+        openProject(url);
+        initModel();
+    }
+}
+
 

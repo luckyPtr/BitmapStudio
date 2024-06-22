@@ -15,6 +15,7 @@ HEADERS += \
     $$PWD/treeitem.h \
     $$PWD/treeitemdelegate.h \
     $$PWD/treemodel.h \
+    $$PWD/treeview.h \
     $$PWD/widgeticon.h
 
 SOURCES += \
@@ -34,6 +35,7 @@ SOURCES += \
     $$PWD/treeitem.cpp \
     $$PWD/treeitemdelegate.cpp \
     $$PWD/treemodel.cpp \
+    $$PWD/treeview.cpp \
     $$PWD/widgeticon.cpp
 
 FORMS +=
