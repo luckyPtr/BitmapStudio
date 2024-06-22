@@ -101,6 +101,7 @@ public slots:
     void on_ActCopyImg_Triggered();
     void on_ActCopyName_Triggeded();
     void on_OpenProjectUrl(QString);
+    void on_ImportImg(QModelIndex, QString);
 
 signals:
     void updateSelectProject(QString);

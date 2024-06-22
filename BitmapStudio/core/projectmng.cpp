@@ -861,7 +861,7 @@ void ProjectMng::on_ActRun_Triggered()
 
 void ProjectMng::on_ActImportFromImg_Triggered()
 {
-    QString aFile = QFileDialog::getOpenFileName(this, tr("导入图片"), "", tr("图片(*.jpg *.png *.bmp);;JPEG(*.jpg *.jpeg);;PNG(*.png);;BMP(*.bmp)"));
+    QString aFile = QFileDialog::getOpenFileName(this, tr("导入图片"), "", tr("图片(*.jpg *.jpeg *.png *.bmp);;JPEG(*.jpg *.jpeg);;PNG(*.png);;BMP(*.bmp)"));
     if(!aFile.isEmpty())
     {
         QImage img(aFile);
@@ -992,6 +992,38 @@ void ProjectMng::on_OpenProjectUrl(QString url)
     {
         openProject(url);
         initModel();
+    }
+}
+
+void ProjectMng::on_ImportImg(QModelIndex index, QString file)
+{
+    TreeItem *item = theModel->itemFromIndex(index);
+    int type = item->getType();
+    if (type == RawData::TypeImgFile || type == RawData::TypeImgFolder || type == RawData::TypeImgGrpFolder || type == RawData::TypeClassImg)
+    {
+        QImage img(file);
+        DialogImportImg *dlgImportImg = new DialogImportImg(img, this);
+        dlgImportImg->setImgName(QFileInfo(file).baseName());
+        int ret = dlgImportImg->exec();
+        if(ret == QDialog::Accepted)
+        {
+            QImage img = dlgImportImg->getMonoImg();
+            QString brief = dlgImportImg->getBrief();
+            createImage(index, dlgImportImg->getImgName(), img, brief);
+            initModel();
+        }
+        delete dlgImportImg;
+    }
+    else
+    {
+        QMessageBox warningBox;
+        warningBox.setIcon(QMessageBox::Critical); // 设置图标为警告
+        warningBox.setWindowTitle(tr("错误")); // 设置窗口标题
+        warningBox.setText(tr("无法导入图片")); // 设置主要文本内容
+        // 添加按钮并设置文本为中文
+        QPushButton *okButton = warningBox.addButton(QObject::tr("确定"), QMessageBox::AcceptRole);
+
+        warningBox.exec();
     }
 }
 
