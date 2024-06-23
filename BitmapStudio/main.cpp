@@ -17,7 +17,14 @@ int main(int argc, char *argv[])
             break;
         }
     }
-    MainWindow w;
+
+    QString filePath = nullptr;
+    if (argc >= 2)
+    {
+        filePath = QString::fromUtf8(argv[1]);
+    }
+
+    MainWindow w(filePath);
     w.show();
     return a.exec();
 }

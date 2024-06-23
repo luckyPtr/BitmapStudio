@@ -22,12 +22,15 @@
 #include <QClipboard>
 
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(const QString &filePath, QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     init();
+
+    if (filePath != nullptr)
+        pm.on_OpenProjectUrl(filePath);
 }
 
 MainWindow::~MainWindow()
