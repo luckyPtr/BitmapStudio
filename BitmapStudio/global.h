@@ -1,6 +1,6 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
-
+#include <QString>
 
 
 
@@ -21,6 +21,14 @@ public:
     static int itemBoundColor;
     static int selectedItemBoundColor;
     static bool editMode;           // 编辑模式
+
+    static int exportImgColor_0;    // 导出图片的像素颜色
+    static int exportImgColor_1;
+
+    static void initSettings();
+private:
+    static void createDefaultSettings(const QString &filePath);
+    static void readSettings(const QString &filePath);
 };
 
 #endif // GLOBAL_H

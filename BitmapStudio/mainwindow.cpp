@@ -46,6 +46,8 @@ void MainWindow::init()
     pm.blindTreeView(ui->treeViewProject);
     pm.setTabWidget(ui->tabWidget);
     ui->lineEditSearch->setVisible(false);
+
+    Global::initSettings();
 }
 
 void MainWindow::initStatusBar()

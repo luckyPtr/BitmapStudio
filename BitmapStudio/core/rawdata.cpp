@@ -1,6 +1,7 @@
 #include "rawdata.h"
 #include <QByteArray>
 #include <QImage>
+#include "global.h"
 
 void RawData::initDatabase()
 {
@@ -443,6 +444,32 @@ QImage RawData::getImage(int id)
         }
     }
     return QImage();
+}
+
+// 获取导出的图片
+QImage RawData::getExportImage(int id)
+{
+    QImage image = getImage(id);
+    if (image.isNull())
+        return image;
+
+    // 遍历图片的每一个像素
+    for (int y = 0; y < image.height(); ++y) {
+        for (int x = 0; x < image.width(); ++x) {
+            QColor color = image.pixelColor(x, y);
+
+            // 计算像素的亮度
+            int brightness = (color.red() + color.green() + color.blue()) / 3;
+
+            if (brightness < 128) {
+                image.setPixelColor(x, y, QColor(Global::exportImgColor_1));
+            } else {
+                image.setPixelColor(x, y, QColor(Global::exportImgColor_0));
+            }
+        }
+    }
+
+    return image;
 }
 
 void RawData::setImage(int id, QImage image)

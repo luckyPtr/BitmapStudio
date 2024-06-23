@@ -950,9 +950,11 @@ void ProjectMng::on_ActExportImg_Triggered()
 {
 
     TreeItem *item = theModel->itemFromIndex(currentIndex);
-    QImage img = item->getRawData()->getImage(item->getID());
+    int id = item->getID();
+    QImage img = item->getRawData()->getExportImage(id);
+    QString name = item->getRawData()->getName(id);
 
-    QString fileName = QFileDialog::getSaveFileName(this, "保存图片", "./", "BMP(*.bmp);;PNG(*.png);;JPG(*jpg)");
+    QString fileName = QFileDialog::getSaveFileName(this, "保存图片", name, "BMP(*.bmp);;PNG(*.png);;JPG(*jpg)");
     if(!fileName.isEmpty())
     {
         img.save(fileName);
@@ -962,7 +964,7 @@ void ProjectMng::on_ActExportImg_Triggered()
 void ProjectMng::on_ActCopyImg_Triggered()
 {
     TreeItem *item = theModel->itemFromIndex(currentIndex);
-    QImage img = item->getRawData()->getImage(item->getID());
+    QImage img = item->getRawData()->getExportImage(item->getID());
     QClipboard *clip = QApplication::clipboard();
     clip->setImage(img);
 
