@@ -37,7 +37,7 @@ msvc{
     QMAKE_CXXFLAGS += /utf-8
 }
 
-VERSION = 0.1.0
+VERSION = 0.2.0
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 TARGET = "Bitmap Studio"
 

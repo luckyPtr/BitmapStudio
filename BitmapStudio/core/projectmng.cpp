@@ -990,6 +990,22 @@ void ProjectMng::on_OpenProjectUrl(QString url)
 {
     if(!url.isEmpty())
     {
+        foreach (auto i, projList)
+        {
+            if (i.getProject() == url)
+            {
+                QMessageBox infoBox;
+                infoBox.setIcon(QMessageBox::Information); // 设置图标为警告
+                infoBox.setWindowTitle(tr("提示")); // 设置窗口标题
+                infoBox.setText(tr("工程已打开")); // 设置主要文本内容
+                // 添加按钮并设置文本为中文
+                infoBox.addButton(QObject::tr("确定"), QMessageBox::AcceptRole);
+                infoBox.exec();
+
+                return;
+            }
+        }
+
         openProject(url);
         initModel();
     }
@@ -1021,7 +1037,7 @@ void ProjectMng::on_ImportImg(QModelIndex index, QString file)
         warningBox.setWindowTitle(tr("错误")); // 设置窗口标题
         warningBox.setText(tr("无法导入图片")); // 设置主要文本内容
         // 添加按钮并设置文本为中文
-        QPushButton *okButton = warningBox.addButton(QObject::tr("确定"), QMessageBox::AcceptRole);
+        warningBox.addButton(QObject::tr("确定"), QMessageBox::AcceptRole);
 
         warningBox.exec();
     }
