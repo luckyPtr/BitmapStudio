@@ -31,6 +31,8 @@ MainWindow::MainWindow(const QString &filePath, QWidget *parent)
 
     if (filePath != nullptr)
         pm.on_OpenProjectUrl(filePath);
+
+    connect(QApplication::instance(), SIGNAL(importFile(QString)), SLOT(on_ImportFile(QString)));
 }
 
 MainWindow::~MainWindow()
@@ -136,6 +138,14 @@ void MainWindow::on_OpenImgTab(QString project, int id)
     {
         TreeItem *item = pm.model()->itemFromIndex(index);
         ui->tabWidget->openTab(item);
+    }
+}
+
+void MainWindow::on_ImportFile(QString filePath)
+{
+    if (!filePath.isEmpty())
+    {
+        pm.on_OpenProjectUrl(filePath);
     }
 }
 

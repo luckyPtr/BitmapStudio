@@ -56,6 +56,8 @@ public slots:
 
     void on_OpenImgTab(QString project, int id);
 
+    void on_ImportFile(QString);
+
 private:
     Ui::MainWindow *ui;
 

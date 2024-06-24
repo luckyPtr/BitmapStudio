@@ -1,12 +1,12 @@
 #include "mainwindow.h"
-
+#include "singleapplication.h"
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    SingleApplication a(argc, argv);
 
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
@@ -24,7 +24,10 @@ int main(int argc, char *argv[])
         filePath = QString::fromUtf8(argv[1]);
     }
 
-    MainWindow w(filePath);
-    w.show();
-    return a.exec();
+    if (!a.isRunning())
+    {
+        MainWindow w(filePath);
+        w.show();
+        return a.exec();
+    }
 }
