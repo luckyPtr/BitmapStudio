@@ -1,6 +1,7 @@
 #include "global.h"
 #include <QSettings>
 #include <QFile>
+#include <QCoreApplication>
 #include <QDebug>
 
 int Global::pixelSize = 8;
@@ -21,8 +22,7 @@ int Global::exportImgColor_1 = 0x000000;
 
 void Global::initSettings()
 {
-    QString iniFilePath = "config.ini";
-
+    QString iniFilePath = QCoreApplication::applicationDirPath() + "/config.ini";
     // 判断文件是否存在
     if (!QFile::exists(iniFilePath)) {
         // 文件不存在，创建默认配置
