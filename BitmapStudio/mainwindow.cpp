@@ -22,15 +22,12 @@
 #include <QClipboard>
 
 
-MainWindow::MainWindow(const QString &filePath, QWidget *parent)
+MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     init();
-
-    if (filePath != nullptr)
-        pm.on_OpenProjectUrl(filePath);
 
     connect(QApplication::instance(), SIGNAL(importFile(QString)), SLOT(on_ImportFile(QString)));
 }
@@ -146,6 +143,9 @@ void MainWindow::on_ImportFile(QString filePath)
     if (!filePath.isEmpty())
     {
         pm.on_OpenProjectUrl(filePath);
+
+        this->setWindowState(Qt::WindowActive);
+        this->raise();
     }
 }
 

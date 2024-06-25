@@ -13,6 +13,7 @@ public:
     bool isRunning();
 
 private:
+    const QString serverName = "BitmapStudioServer";
     bool m_IsRunning = false;
     QLocalServer *m_server;
     QString filePath = nullptr;

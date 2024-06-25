@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 
     if (!a.isRunning())
     {
-        MainWindow w(filePath);
+        MainWindow w;
         w.show();
         return a.exec();
     }

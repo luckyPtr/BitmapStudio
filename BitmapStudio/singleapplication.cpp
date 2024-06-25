@@ -1,6 +1,7 @@
 #include "singleapplication.h"
 #include <QLocalSocket>
-#include <QDebug>
+#include <QTimer>
+
 
 SingleApplication::SingleApplication(int &argc, char **argv)
     :QApplication(argc, argv)
@@ -8,9 +9,11 @@ SingleApplication::SingleApplication(int &argc, char **argv)
     if (argc > 1)
     {
         filePath = QString::fromUtf8(argv[1]);
+        QTimer::singleShot(10, this, [=]() {
+            emit importFile(filePath);
+        });
     }
 
-    // m_server_name = QFileInfo(QCoreApplication::applicationFilePath()).fileName();
     initConnect();
 }
 
@@ -23,7 +26,7 @@ void SingleApplication::initConnect()
 {
     m_IsRunning = false;
     QLocalSocket socket;
-    socket.connectToServer("BitmapStudio");
+    socket.connectToServer(serverName);
     bool ret = socket.waitForConnected(500);
     if (ret)
     {
@@ -31,7 +34,6 @@ void SingleApplication::initConnect()
         socket.write(filePath.toUtf8());
         socket.waitForBytesWritten();
         socket.disconnectFromServer();
-        qDebug() << "running...";
         return;
     }
 
@@ -40,22 +42,18 @@ void SingleApplication::initConnect()
 
 void SingleApplication::newLocalServer()
 {
-    qDebug() << "newLocalServer";
-
     m_server = new QLocalServer(this);
     connect(m_server, &QLocalServer::newConnection, this, &SingleApplication::newLocalConnect);
-    if (!m_server->listen("BitmapStudio")) {
+    if (!m_server->listen(serverName)) {
         if (m_server->serverError() == QAbstractSocket::AddressInUseError) {
-            QLocalServer::removeServer("BitmapStudio");
-            m_server->listen("BitmapStudio");
+            QLocalServer::removeServer(serverName);
+            m_server->listen(serverName);
         }
     }
 }
 
 void SingleApplication::newLocalConnect()
 {
-    qDebug() << "newLocalConnect";
-
     QLocalSocket *socket = m_server->nextPendingConnection();
     if (socket)
     {
