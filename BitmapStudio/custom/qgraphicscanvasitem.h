@@ -18,6 +18,7 @@ private:
         ActionMove,
         ActionWrite,
         ActionErase,
+        ActionSelect,
     };
 
     QGraphicsView *view;
@@ -30,6 +31,7 @@ private:
     QSize newSize;          // 调整画布大小的新的大小
     QCursor cursorPencil;
     QCursor cursorEraser;
+    QRect selectionBox;       // 选择的矩形框
 
     QPoint pointToPixel(QPoint point);  // 坐标转换为画布上的像素坐标
     bool isInSizeVerArea(QPoint point); // 是否处于垂直调整画布大小的区域内
@@ -47,7 +49,7 @@ private:
     void getMargin(int &up, int &down, int &left, int &right);  // 获取四周的距离
     void drawPoint(QImage &img, QPoint point, bool dot);
     void drawLine(QImage &img, QPoint point1, QPoint point2, bool dot);
-
+    void paintSelectionBox(QPainter *painter);
 
 public:
     enum Mode
