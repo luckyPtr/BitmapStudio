@@ -41,6 +41,16 @@ bool QGraphicsCanvasItem::isInImgArea(QPoint point)
     return rect.contains(point);
 }
 
+bool QGraphicsCanvasItem::isInSelectionBox(QPoint point)
+{
+    QPoint p = pointToPixel(point);
+    if (selectionBox.contains(p))
+    {
+        return true;
+    }
+    return false;
+}
+
 void QGraphicsCanvasItem::resizeImage(QImage &img, QSize size)
 {
     QImage newImage(size.width(), size.height(), QImage::Format_RGB888);
@@ -488,6 +498,10 @@ void QGraphicsCanvasItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             {
                 action = ActionResizeHor;
             }
+            else if (isInSelectionBox(point))
+            {
+                action = ActionMoveSelection;
+            }
             else
             {
                 if(Global::editMode)
@@ -699,7 +713,10 @@ void QGraphicsCanvasItem::on_MouseMove(QPoint point)
         }
         view->setCursor(cursor);
     }
-
+    else if (action == ActionMoveSelection)
+    {
+        view->setCursor(Qt::SizeAllCursor);
+    }
 
     emit updateStatusBarPos(currentPixel);
 }

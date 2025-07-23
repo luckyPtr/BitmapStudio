@@ -19,6 +19,7 @@ private:
         ActionWrite,
         ActionErase,
         ActionSelect,
+        ActionMoveSelection,
     };
 
     QGraphicsView *view;
@@ -38,6 +39,7 @@ private:
     bool isInSizeHorArea(QPoint point); // 是否处于水平调整画布大小的区域内
     bool isInSizeFDiagArea(QPoint point);
     bool isInImgArea(QPoint point);     // 是否在图片的区域内
+    bool isInSelectionBox(QPoint point);	// 是否在选择框内
     quint8 action = ActionNull;  // 调整画布大小的步骤 0-初始状态 1-按下
     void resizeImage(QImage &img, QSize size);
     void moveImage(QImage &img,  int OffsetX, int OffsetY);
