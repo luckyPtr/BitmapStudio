@@ -102,6 +102,11 @@ public slots:
     void on_FlipVer();
     void on_RotateLeft();
     void on_RotateRight();
+    void on_SelectionMoveUp();
+    void on_SelectionMoveDown();
+    void on_SelectionMoveLeft();
+    void on_SelectionMoveRight();
+
 
 signals:
     void updateStatusBarPos(QPoint);

@@ -558,6 +558,7 @@ void QGraphicsCanvasItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 mergeSelection();
                 action = ActionNull;
                 selectionBox = QRect();
+                emit changed(true);
             }
         }
         else if (action == ActionEdit)
@@ -694,15 +695,24 @@ void QGraphicsCanvasItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void QGraphicsCanvasItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
-    if (Global::editMode)
+    bool selectionMenu = false;		// 是否是选择框内图形右键
+
+    if (action == ActionEdit)
     {
         return;
     }
-
     // 如果在非选择框外右键，则退出选择
-    if (!isInSelectionBox(event->pos().toPoint()))
+    else if (action == ActionSelected)
     {
-        selectionBox = QRect();
+        if (!isInSelectionBox(event->pos().toPoint()))
+        {
+            mergeSelection();
+            action = ActionNull;
+        }
+        else
+        {
+            selectionMenu = true;
+        }
     }
 
 
@@ -714,32 +724,44 @@ void QGraphicsCanvasItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event
 
     QMenu menu;
 
-    QCustomMenu *menuMove = new QCustomMenu(tr("移动"));
-    createAction(menuMove, tr("上"), "Up", &QGraphicsCanvasItem::on_MoveUp);
-    createAction(menuMove, tr("下"), "Down", &QGraphicsCanvasItem::on_MoveDown);
-    createAction(menuMove, tr("左"), "Left", &QGraphicsCanvasItem::on_MoveLeft);
-    createAction(menuMove, tr("右"), "Right", &QGraphicsCanvasItem::on_MoveRight);
-    menu.addMenu(menuMove);
+    if (selectionMenu)
+    {
+        QCustomMenu *menuMove = new QCustomMenu(tr("移动"));
+        createAction(menuMove, tr("上"), "Up", &QGraphicsCanvasItem::on_SelectionMoveUp);
+        createAction(menuMove, tr("下"), "Down", &QGraphicsCanvasItem::on_SelectionMoveDown);
+        createAction(menuMove, tr("左"), "Left", &QGraphicsCanvasItem::on_SelectionMoveLeft);
+        createAction(menuMove, tr("右"), "Right", &QGraphicsCanvasItem::on_SelectionMoveRight);
+        menu.addMenu(menuMove);
+    }
+    else
+    {
+        QCustomMenu *menuMove = new QCustomMenu(tr("移动"));
+        createAction(menuMove, tr("上"), "Up", &QGraphicsCanvasItem::on_MoveUp);
+        createAction(menuMove, tr("下"), "Down", &QGraphicsCanvasItem::on_MoveDown);
+        createAction(menuMove, tr("左"), "Left", &QGraphicsCanvasItem::on_MoveLeft);
+        createAction(menuMove, tr("右"), "Right", &QGraphicsCanvasItem::on_MoveRight);
+        menu.addMenu(menuMove);
 
-    QMenu *menuTransform = new QMenu(tr("变换"));
-    createAction(menuTransform, tr("逆时针旋转90°"), "Ctrl+[", &QGraphicsCanvasItem::on_RotateLeft);
-    createAction(menuTransform, tr("顺时针旋转90°"), "Ctrl+]", &QGraphicsCanvasItem::on_RotateRight);
-    createAction(menuTransform, tr("水平翻转"), "H", &QGraphicsCanvasItem::on_FlipHor);
-    createAction(menuTransform, tr("垂直翻转"), "V", &QGraphicsCanvasItem::on_FlipVer);
-    menu.addMenu(menuTransform);
+        QMenu *menuTransform = new QMenu(tr("变换"));
+        createAction(menuTransform, tr("逆时针旋转90°"), "Ctrl+[", &QGraphicsCanvasItem::on_RotateLeft);
+        createAction(menuTransform, tr("顺时针旋转90°"), "Ctrl+]", &QGraphicsCanvasItem::on_RotateRight);
+        createAction(menuTransform, tr("水平翻转"), "H", &QGraphicsCanvasItem::on_FlipHor);
+        createAction(menuTransform, tr("垂直翻转"), "V", &QGraphicsCanvasItem::on_FlipVer);
+        menu.addMenu(menuTransform);
 
-    QMenu *menuAlgin = new QMenu(tr("对齐"));
-    createAction(menuAlgin, tr("水平对齐"), "Ctrl+Alt+H", &QGraphicsCanvasItem::on_AlignHCenter);
-    createAction(menuAlgin, tr("垂直对齐"), "Ctrl+Alt+V", &QGraphicsCanvasItem::on_AlignVCenter);
-    createAction(menuAlgin, tr("中心对齐"), "Ctrl+Alt+C", &QGraphicsCanvasItem::on_AlignCenter);
-    menu.addMenu(menuAlgin);
+        QMenu *menuAlgin = new QMenu(tr("对齐"));
+        createAction(menuAlgin, tr("水平对齐"), "Ctrl+Alt+H", &QGraphicsCanvasItem::on_AlignHCenter);
+        createAction(menuAlgin, tr("垂直对齐"), "Ctrl+Alt+V", &QGraphicsCanvasItem::on_AlignVCenter);
+        createAction(menuAlgin, tr("中心对齐"), "Ctrl+Alt+C", &QGraphicsCanvasItem::on_AlignCenter);
+        menu.addMenu(menuAlgin);
 
-    QMenu *menuSize = new QMenu(tr("画面尺寸"));
-    createAction(menuSize, tr("调整大小"), "", &QGraphicsCanvasItem::on_Resize);
-    createAction(menuSize, tr("自适应"), "", &QGraphicsCanvasItem::on_AutoResize);
-    menu.addMenu(menuSize);
+        QMenu *menuSize = new QMenu(tr("画面尺寸"));
+        createAction(menuSize, tr("调整大小"), "", &QGraphicsCanvasItem::on_Resize);
+        createAction(menuSize, tr("自适应"), "", &QGraphicsCanvasItem::on_AutoResize);
+        menu.addMenu(menuSize);
 
-    createAction(&menu, tr("反色"), "", &QGraphicsCanvasItem::on_Reserve);
+        createAction(&menu, tr("反色"), "", &QGraphicsCanvasItem::on_Reserve);
+    }
 
     menu.exec(event->screenPos());
 }
@@ -793,6 +815,7 @@ void QGraphicsCanvasItem::on_EditModeChanged()
         {
             mergeSelection();
             selectionBox = QRect();
+            emit changed(true);
             view->viewport()->update();
         }
         action = ActionEdit;
@@ -898,6 +921,30 @@ void QGraphicsCanvasItem::on_RotateRight()
 {
     rotateRight(image);
     view->scene()->setSceneRect(QRectF(0, 0, image.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
+    view->viewport()->update();
+}
+
+void QGraphicsCanvasItem::on_SelectionMoveUp()
+{
+    selectionBox.translate(0, -1);
+    view->viewport()->update();
+}
+
+void QGraphicsCanvasItem::on_SelectionMoveDown()
+{
+    selectionBox.translate(0, 1);
+    view->viewport()->update();
+}
+
+void QGraphicsCanvasItem::on_SelectionMoveLeft()
+{
+    selectionBox.translate(-1, 0);
+    view->viewport()->update();
+}
+
+void QGraphicsCanvasItem::on_SelectionMoveRight()
+{
+    selectionBox.translate(1, 0);
     view->viewport()->update();
 }
 
