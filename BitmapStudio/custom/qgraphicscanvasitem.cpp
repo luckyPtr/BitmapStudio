@@ -41,6 +41,16 @@ bool QGraphicsCanvasItem::isInImgArea(QPoint point)
     return rect.contains(point);
 }
 
+bool QGraphicsCanvasItem::isInSelectionBox(QPoint point)
+{
+    QPoint p = pointToPixel(point);
+    if (selectionBox.contains(p))
+    {
+        return true;
+    }
+    return false;
+}
+
 void QGraphicsCanvasItem::resizeImage(QImage &img, QSize size)
 {
     QImage newImage(size.width(), size.height(), QImage::Format_RGB888);
@@ -270,9 +280,8 @@ void QGraphicsCanvasItem::drawLine(QImage &img, QPoint point1, QPoint point2, bo
 
 void QGraphicsCanvasItem::paintSelectionBox(QPainter *painter)
 {
-    if (action == ActionSelect)
+    if (action == ActionSelect || action == ActionSelected || action == ActionMoveSelection)
     {
-        selectionBox = QRect(moveStartPixel, currentPixel);
         QColor color(Global::selectionBoxColor);
         QPen pen(color);
         pen.setWidth(1);
@@ -282,21 +291,60 @@ void QGraphicsCanvasItem::paintSelectionBox(QPainter *painter)
                     QPoint(startPoint.x() + (selectionBox.right() + 1) * Global::pixelSize, startPoint.y() + (selectionBox.bottom() + 1) * Global::pixelSize));
         painter->drawRect(rect);
     }
-    else
+}
+
+void QGraphicsCanvasItem::splitSelection()
+{
+    if (selectionBox.width() == 0 || selectionBox.height() == 0)
     {
-        if (!selectionBox.isNull() && selectionBox.width() != 0 && selectionBox.height() != 0)
+        return;
+    }
+
+    selectedImage = image.copy(selectionBox);
+    for (int y = selectionBox.top(); y <= selectionBox.bottom(); y++)
+    {
+        for (int x = selectionBox.left(); x <= selectionBox.right(); x++)
         {
-            QColor color(Global::selectionBoxColor);
-            QPen pen(color);
-            pen.setWidth(1);
-            pen.setStyle(Qt::DashLine);
-            painter->setPen(pen);
-            painter->setBrush(Qt::NoBrush);
-            QRectF rect(QPoint(startPoint.x() + selectionBox.left() * Global::pixelSize, startPoint.y() + selectionBox.top() * Global::pixelSize),
-                        QPoint(startPoint.x() + (selectionBox.right() + 1) * Global::pixelSize, startPoint.y() + (selectionBox.bottom() + 1) * Global::pixelSize));
-            painter->drawRect(rect);
+            image.setPixelColor(x, y, QColor(Qt::white));
         }
     }
+}
+
+void QGraphicsCanvasItem::mergeSelection()
+{
+    if (selectionBox.width() == 0 || selectionBox.height() == 0)
+    {
+        return;
+    }
+
+    QPainter painter(&image);
+    painter.drawImage(selectionBox.topLeft(), selectedImage);
+    painter.end();
+}
+
+QRect QGraphicsCanvasItem::selectionBoxNormalized(QRect rect)
+{
+    QRect newRect = rect;
+    if (rect.width() < 0)
+    {
+        newRect.setX(rect.x() + rect.width());
+        newRect.setWidth(abs(rect.width()));
+    }
+    if (rect.height() < 0)
+    {
+        newRect.setY(rect.y() + rect.height());
+        newRect.setHeight(abs(rect.height()));
+    }
+    if (newRect.right() > image.width() - 1)
+    {
+        newRect.setRight(image.width() - 1);
+    }
+    if (newRect.bottom() > image.height() - 1)
+    {
+        newRect.setBottom(image.height() - 1);
+    }
+
+    return newRect;
 }
 
 
@@ -360,6 +408,15 @@ void QGraphicsCanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
     if(action == ActionMove)   // 如果是移动画布，对图片位置进行移动
     {
         moveImage(imageShow, currentPixel.x() - moveStartPixel.x(), currentPixel.y() - moveStartPixel.y());
+    }
+
+    if (action == ActionSelected || action == ActionMoveSelection)
+    {
+        if (!selectionBox.isNull())
+        {
+            QPainter mergePainter(&imageShow);
+            mergePainter.drawImage(selectionBox.topLeft(), selectedImage);
+        }
     }
 
     for(int x = 0; x < imageShow.width(); x++)
@@ -488,25 +545,32 @@ void QGraphicsCanvasItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             {
                 action = ActionResizeHor;
             }
+        }
+        else if (action == ActionSelected)
+        {
+            if (isInSelectionBox(point))
+            {
+                action = ActionMoveSelection;
+                moveLastPixel = currentPixel;
+            }
             else
             {
-                if(Global::editMode)
-                {
-                    action = ActionWrite;
-                    drawPoint(image, pointToPixel(point), true);
-                }
-                else
-                {
-                    selectionBox = QRect(); // 清除选择框
-                }
+                mergeSelection();
+                action = ActionNull;
+                selectionBox = QRect();
             }
+        }
+        else if (action == ActionEdit)
+        {
+            editType = EditWrite;
+            drawPoint(image, pointToPixel(point), true);
         }
     };
 
     auto rightPressEvent = [=]() {
-        if(Global::editMode)
+        if(action == ActionEdit)
         {
-            action = ActionErase;
+            editType = EditErase;
             view->setCursor(cursorEraser);
             drawPoint(image, pointToPixel(point), false);
         }
@@ -541,26 +605,15 @@ void QGraphicsCanvasItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QPoint point = pointToPixel(event->pos().toPoint());
     QPoint lastPoint = pointToPixel(event->lastPos().toPoint());
-    if(action == ActionWrite)
+    if(action == ActionEdit)
     {
         if (lastPoint == point)
         {
-            drawPoint(image, point, true);
+            drawPoint(image, point, editType == EditWrite);
         }
         else
         {
-            drawLine(image, lastPoint, point, true);
-        }
-    }
-    else if(action == ActionErase)
-    {
-        if (lastPoint == point)
-        {
-            drawPoint(image, point, false);
-        }
-        else
-        {
-            drawLine(image, lastPoint, point, false);
+            drawLine(image, lastPoint, point, editType == EditWrite);
         }
     }
     else if(action == ActionResizeFDiag)
@@ -578,13 +631,26 @@ void QGraphicsCanvasItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         newSize = QSize(currentPixel.x(), image.size().height());
         emit updateStatusBarSize(newSize);
     }
+    else if (action == ActionSelect)
+    {
+        selectionBox = selectionBoxNormalized(QRect(moveStartPixel, currentPixel));
+    }
+    else if (action == ActionMoveSelection)
+    {
+        if (currentPixel != moveLastPixel)  // 拖动选择框图片
+        {
+            int deltaX = currentPixel.x() - moveLastPixel.x();
+            int deltaY = currentPixel.y() - moveLastPixel.y();
+            selectionBox.translate(deltaX, deltaY);
+            moveLastPixel = currentPixel;
+        }
+    }
     else if (action == ActionNull)
     {
         if (event->buttons() == Qt::LeftButton)
         {
             action = ActionSelect;
             moveStartPixel = currentPixel;
-            selectionBox = QRect();
         }
     }
 }
@@ -600,20 +666,28 @@ void QGraphicsCanvasItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             resizeImage(image, newSize);
             view->scene()->setSceneRect(QRectF(0, 0, image.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
             view->setCursor(Qt::ArrowCursor);
+            action = ActionNull;
         }
         else if(action == ActionMove)
         {
             moveImage(image, currentPixel.x() - moveStartPixel.x(), currentPixel.y() - moveStartPixel.y());
             view->setCursor(Qt::ArrowCursor);
+            action = ActionNull;
         }
-        else if (action == ActionErase)
+        else if (action == ActionEdit)
         {
             view->setCursor(cursorPencil);
         }
-
-        action = ActionNull;
+        else if (action == ActionSelect)
+        {
+            action = ActionSelected;
+            splitSelection();
+        }
+        else if (action == ActionMoveSelection)
+        {
+            action = ActionSelected;
+        }
     }
-
 
     view->viewport()->update();
 }
@@ -624,6 +698,13 @@ void QGraphicsCanvasItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event
     {
         return;
     }
+
+    // 如果在非选择框外右键，则退出选择
+    if (!isInSelectionBox(event->pos().toPoint()))
+    {
+        selectionBox = QRect();
+    }
+
 
     auto createAction = [=](QMenu *menu, QString name, QString key, void (QGraphicsCanvasItem::*method)()) {
         QAction *action = menu->addAction(name);
@@ -671,18 +752,7 @@ void QGraphicsCanvasItem::on_MouseMove(QPoint point)
     currentPixel.setX((currentPoint.x() - startPoint.x()) / Global::pixelSize);
     currentPixel.setY((currentPoint.y() - startPoint.y()) / Global::pixelSize);
 
-    if (Global::editMode)
-    {
-        if (action == ActionErase)
-        {
-            view->setCursor(cursorEraser);
-        }
-        else
-        {
-            view->setCursor(cursorPencil);
-        }
-    }
-    else if(action == ActionNull)
+    if(action == ActionNull)
     {
         Qt::CursorShape cursor = Qt::ArrowCursor;
         if(isInSizeFDiagArea(point))
@@ -699,7 +769,17 @@ void QGraphicsCanvasItem::on_MouseMove(QPoint point)
         }
         view->setCursor(cursor);
     }
-
+    else if (action == ActionSelected)
+    {
+        if (isInSelectionBox(point))
+        {
+            view->setCursor(Qt::SizeAllCursor);
+        }
+        else
+        {
+            view->setCursor(Qt::ArrowCursor);
+        }
+    }
 
     emit updateStatusBarPos(currentPixel);
 }
@@ -709,10 +789,18 @@ void QGraphicsCanvasItem::on_EditModeChanged()
     if (Global::editMode)
     {
         view->setCursor(cursorPencil);
+        if (action == ActionSelected)
+        {
+            mergeSelection();
+            selectionBox = QRect();
+            view->viewport()->update();
+        }
+        action = ActionEdit;
     }
     else
     {
         view->setCursor(Qt::ArrowCursor);
+        action = ActionNull;
     }
 }
 

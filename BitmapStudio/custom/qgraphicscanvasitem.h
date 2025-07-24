@@ -16,9 +16,16 @@ private:
         ActionResizeHor,
         ActionResizeFDiag,
         ActionMove,
-        ActionWrite,
-        ActionErase,
-        ActionSelect,
+        ActionEdit,
+        ActionSelect,           // 选择中
+        ActionSelected,         // 选择后松手
+        ActionMoveSelection,    // 拖动选择图形
+    };
+
+    enum EditType
+    {
+        EditWrite,
+        EditErase,
     };
 
     QGraphicsView *view;
@@ -32,13 +39,16 @@ private:
     QCursor cursorPencil;
     QCursor cursorEraser;
     QRect selectionBox;       // 选择的矩形框
+    QImage selectedImage;       // 选择的图形
 
     QPoint pointToPixel(QPoint point);  // 坐标转换为画布上的像素坐标
     bool isInSizeVerArea(QPoint point); // 是否处于垂直调整画布大小的区域内
     bool isInSizeHorArea(QPoint point); // 是否处于水平调整画布大小的区域内
     bool isInSizeFDiagArea(QPoint point);
     bool isInImgArea(QPoint point);     // 是否在图片的区域内
+    bool isInSelectionBox(QPoint point);	// 是否在选择框内
     quint8 action = ActionNull;  // 调整画布大小的步骤 0-初始状态 1-按下
+    quint8 editType = EditWrite;       // 编辑类型
     void resizeImage(QImage &img, QSize size);
     void moveImage(QImage &img,  int OffsetX, int OffsetY);
     void reserveImage(QImage &img);
@@ -50,6 +60,9 @@ private:
     void drawPoint(QImage &img, QPoint point, bool dot);
     void drawLine(QImage &img, QPoint point1, QPoint point2, bool dot);
     void paintSelectionBox(QPainter *painter);
+    void splitSelection();     // 把选择框的图像和原图分离
+    void mergeSelection();      // 把选择框的图像和原图合并
+    QRect selectionBoxNormalized(QRect rect);   // 计算标准化矩形，即width>0&&height>0
 
 public:
     enum Mode

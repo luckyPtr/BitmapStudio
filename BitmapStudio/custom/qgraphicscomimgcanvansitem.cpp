@@ -240,7 +240,7 @@ void QGraphicsComImgCanvansItem::paintSelectionBox(QPainter *painter)
         QColor color(Global::selectionBoxColor);
         QPen pen(color);
         pen.setWidth(1);
-        pen.setStyle(Qt::DotLine);
+        pen.setStyle(Qt::DashLine);
         painter->setPen(pen);
         QRectF rect(QPoint(startPoint.x() + moveStartPixel.x() * Global::pixelSize, startPoint.y() + moveStartPixel.y() * Global::pixelSize),
                     QPoint(startPoint.x() + currentPixel.x() * Global::pixelSize, startPoint.y() + currentPixel.y() * Global::pixelSize));
@@ -805,10 +805,13 @@ void QGraphicsComImgCanvansItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     {
         if (getPointImgIndex(currentPoint) == -1)
         {
-            if (currentPoint.x() > startPoint.x() && currentPoint.y() > startPoint.y())
+            if (event->buttons() == Qt::LeftButton)
             {
-                action = ActionMultiSelect;
-                moveStartPixel = currentPixel;
+                if (currentPoint.x() > startPoint.x() && currentPoint.y() > startPoint.y())
+                {
+                    action = ActionMultiSelect;
+                    moveStartPixel = currentPixel;
+                }
             }
         }
         else
