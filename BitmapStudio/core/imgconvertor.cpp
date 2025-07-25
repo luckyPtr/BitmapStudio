@@ -163,7 +163,8 @@ QString ImgConvertor::encodeImgArray(BmFile bf)
     QString fullName = getFullName(bf);
     QString res;
     QString imgArray;
-    int size;
+    int count;
+    QSize imgSize;
 
 
     auto imgByteArrayToString = [](QByteArray ba){
@@ -172,7 +173,7 @@ QString ImgConvertor::encodeImgArray(BmFile bf)
         {
             if(i % 32 == 0)
             {
-                str.append("\r\n\t");
+                str.append("\r\n\t\t");
             }
             str.append(QString::asprintf("0x%02X, ", (quint8)ba[i]));
         }
@@ -184,14 +185,15 @@ QString ImgConvertor::encodeImgArray(BmFile bf)
         if(i.pid == bf.id)
         {
             QByteArray ba = imgEncoder->encode(i.image);
-            imgArray.append(QString("{//%1%2\n},\n").arg(i.name).arg(imgByteArrayToString(ba)));
-            size = ba.size();
+            imgArray.append(QString("\t{// %1%2\n\t},\n").arg(i.name).arg(imgByteArrayToString(ba)));
+            count = ba.size();
+            imgSize = i.image.size();
         }
     }
 
     res.append("// " + fullName + "\n");
-    res.append(QString::asprintf("// %dx%d\n", bf.image.width(), bf.image.height()));
-    res.append(QString("Img_t %1[][%2] = \n{\n%3};\n").arg(fullName).arg(size).arg(imgArray));
+    res.append(QString::asprintf("// %dx%d\n", imgSize.width(), imgSize.height()));
+    res.append(QString("Img_t %1[][%2] = \n{\n%3};\n").arg(fullName).arg(count).arg(imgArray));
 
 
     return res;
