@@ -40,6 +40,7 @@ private:
     QCursor cursorEraser;
     QRect selectionBox;       // 选择的矩形框
     QImage selectedImage;       // 选择的图形
+    QImage copyImage;         // 复制到剪切板的图片
 
     QPoint pointToPixel(QPoint point);  // 坐标转换为画布上的像素坐标
     bool isInSizeVerArea(QPoint point); // 是否处于垂直调整画布大小的区域内
@@ -102,6 +103,10 @@ public slots:
     void on_FlipVer();
     void on_RotateLeft();
     void on_RotateRight();
+    void on_Delete();
+    void on_Copy();
+    void on_Cut();
+    void on_Paste();
 
 signals:
     void updateStatusBarPos(QPoint);

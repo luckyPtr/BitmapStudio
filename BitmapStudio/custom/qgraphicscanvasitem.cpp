@@ -726,6 +726,9 @@ void QGraphicsCanvasItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event
 
     if (selectionMenu)
     {
+        createAction(&menu, tr("剪切"), "", &QGraphicsCanvasItem::on_Cut);
+        createAction(&menu, tr("复制"), "", &QGraphicsCanvasItem::on_Copy);
+
         QCustomMenu *menuMove = new QCustomMenu(tr("移动"));
         createAction(menuMove, tr("上"), "Up", &QGraphicsCanvasItem::on_MoveUp);
         createAction(menuMove, tr("下"), "Down", &QGraphicsCanvasItem::on_MoveDown);
@@ -740,10 +743,13 @@ void QGraphicsCanvasItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event
         createAction(menuTransform, tr("垂直翻转"), "V", &QGraphicsCanvasItem::on_FlipVer);
         menu.addMenu(menuTransform);
 
+        createAction(&menu, tr("删除"), "", &QGraphicsCanvasItem::on_Delete);
         createAction(&menu, tr("反色"), "", &QGraphicsCanvasItem::on_Reserve);
     }
     else
     {
+        createAction(&menu, tr("粘贴"), "", &QGraphicsCanvasItem::on_Paste);
+
         QCustomMenu *menuMove = new QCustomMenu(tr("移动"));
         createAction(menuMove, tr("上"), "Ctrl+Up", &QGraphicsCanvasItem::on_MoveUp);
         createAction(menuMove, tr("下"), "Ctrl+Down", &QGraphicsCanvasItem::on_MoveDown);
@@ -983,6 +989,43 @@ void QGraphicsCanvasItem::on_RotateRight()
         selectionBox = selectionBox.transposed();
     }
     view->viewport()->update();
+}
+
+void QGraphicsCanvasItem::on_Delete()
+{
+    if (action == ActionSelected)
+    {
+        selectionBox = QRect();
+        action = ActionNull;
+    }
+}
+
+void QGraphicsCanvasItem::on_Copy()
+{
+    if (action == ActionSelected)
+    {
+        copyImage = selectedImage;
+    }
+}
+
+void QGraphicsCanvasItem::on_Cut()
+{
+    if (action == ActionSelected)
+    {
+        copyImage = selectedImage;
+        action = ActionNull;
+    }
+}
+
+void QGraphicsCanvasItem::on_Paste()
+{
+    if (!copyImage.isNull())
+    {
+        selectedImage = copyImage;
+        selectionBox.setTopLeft(QPoint(0, 0));
+        selectionBox.setSize(selectedImage.size());
+        action = ActionSelected;
+    }
 }
 
 
