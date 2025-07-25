@@ -261,6 +261,11 @@ QString ImgConvertor::encode(BmFile bf)
 
 QString ImgConvertor::generateImgC()
 {
+    // 按名称进行排序
+    std::sort(dataList.begin(), dataList.end(), [=](BmFile a, BmFile b){
+        return a.name.toLower() < b.name.toLower();
+    });
+
     auto getParentType = [=](BmFile bf){
         foreach(auto data, dataList)
         {
