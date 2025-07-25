@@ -100,7 +100,7 @@ void QGraphicsCanvasItem::reserveImage(QImage &img)
     {
         for(int y = 0; y < img.height(); y++)
         {
-            QColor color = image.pixelColor(x, y);
+            QColor color = img.pixelColor(x, y);
             color.setRgb(0xff - color.red(), 0xff - color.green(), 0xff - color.blue());
             newImg.setPixelColor(x, y, color);
         }
@@ -727,19 +727,28 @@ void QGraphicsCanvasItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event
     if (selectionMenu)
     {
         QCustomMenu *menuMove = new QCustomMenu(tr("移动"));
-        createAction(menuMove, tr("上"), "Up", &QGraphicsCanvasItem::on_SelectionMoveUp);
-        createAction(menuMove, tr("下"), "Down", &QGraphicsCanvasItem::on_SelectionMoveDown);
-        createAction(menuMove, tr("左"), "Left", &QGraphicsCanvasItem::on_SelectionMoveLeft);
-        createAction(menuMove, tr("右"), "Right", &QGraphicsCanvasItem::on_SelectionMoveRight);
-        menu.addMenu(menuMove);
-    }
-    else
-    {
-        QCustomMenu *menuMove = new QCustomMenu(tr("移动"));
         createAction(menuMove, tr("上"), "Up", &QGraphicsCanvasItem::on_MoveUp);
         createAction(menuMove, tr("下"), "Down", &QGraphicsCanvasItem::on_MoveDown);
         createAction(menuMove, tr("左"), "Left", &QGraphicsCanvasItem::on_MoveLeft);
         createAction(menuMove, tr("右"), "Right", &QGraphicsCanvasItem::on_MoveRight);
+        menu.addMenu(menuMove);
+
+        QMenu *menuTransform = new QMenu(tr("变换"));
+        createAction(menuTransform, tr("逆时针旋转90°"), "Ctrl+[", &QGraphicsCanvasItem::on_RotateLeft);
+        createAction(menuTransform, tr("顺时针旋转90°"), "Ctrl+]", &QGraphicsCanvasItem::on_RotateRight);
+        createAction(menuTransform, tr("水平翻转"), "H", &QGraphicsCanvasItem::on_FlipHor);
+        createAction(menuTransform, tr("垂直翻转"), "V", &QGraphicsCanvasItem::on_FlipVer);
+        menu.addMenu(menuTransform);
+
+        createAction(&menu, tr("反色"), "", &QGraphicsCanvasItem::on_Reserve);
+    }
+    else
+    {
+        QCustomMenu *menuMove = new QCustomMenu(tr("移动"));
+        createAction(menuMove, tr("上"), "Ctrl+Up", &QGraphicsCanvasItem::on_MoveUp);
+        createAction(menuMove, tr("下"), "Ctrl+Down", &QGraphicsCanvasItem::on_MoveDown);
+        createAction(menuMove, tr("左"), "Ctrl+Left", &QGraphicsCanvasItem::on_MoveLeft);
+        createAction(menuMove, tr("右"), "Ctrl+Right", &QGraphicsCanvasItem::on_MoveRight);
         menu.addMenu(menuMove);
 
         QMenu *menuTransform = new QMenu(tr("变换"));
@@ -831,7 +840,14 @@ void QGraphicsCanvasItem::on_EditModeChanged()
 
 void QGraphicsCanvasItem::on_Reserve()
 {
-    reserveImage(image);
+    if (action != ActionSelected)
+    {
+        reserveImage(image);
+    }
+    else
+    {
+        reserveImage(selectedImage);
+    }
     view->viewport()->update();
 }
 
@@ -876,77 +892,99 @@ void QGraphicsCanvasItem::on_Resize()
 
 void QGraphicsCanvasItem::on_MoveUp()
 {
-    moveImage(image, 0, -1);
+    // 如果有选择框框选，移动选择框的图形，否则移动画布
+    if (action != ActionSelected)
+    {
+        moveImage(image, 0, -1);
+    }
+    else
+    {
+        selectionBox.translate(0, -1);
+    }
     view->viewport()->update();
 }
 
 void QGraphicsCanvasItem::on_MoveDown()
 {
-    moveImage(image, 0, 1);
+    if (action != ActionSelected)
+    {
+        moveImage(image, 0, 1);
+    }
+    else
+    {
+        selectionBox.translate(0, 1);
+    }
     view->viewport()->update();
 }
 
 void QGraphicsCanvasItem::on_MoveLeft()
 {
-    moveImage(image, -1, 0);
+    if (action != ActionSelected)
+    {
+        moveImage(image, -1, 0);
+    }
+    else
+    {
+        selectionBox.translate(-1, 0);
+    }
     view->viewport()->update();
 }
 
 void QGraphicsCanvasItem::on_MoveRight()
 {
-    moveImage(image, 1, 0);
+    if (action != ActionSelected)
+    {
+        moveImage(image, 1, 0);
+    }
+    else
+    {
+        selectionBox.translate(1, 0);
+    }
     view->viewport()->update();
 }
 
 void QGraphicsCanvasItem::on_FlipHor()
 {
-    flipHor(image);
+    flipHor(action != ActionSelected ? image : selectedImage);
     view->viewport()->update();
 }
 
 void QGraphicsCanvasItem::on_FlipVer()
 {
-    flipVer(image);
+    flipVer(action != ActionSelected ? image : selectedImage);
     view->viewport()->update();
 }
 
 void QGraphicsCanvasItem::on_RotateLeft()
 {
-    rotateLeft(image);
-    view->scene()->setSceneRect(QRectF(0, 0, image.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
+    if (action != ActionSelected)
+    {
+        rotateLeft(image);
+        view->scene()->setSceneRect(QRectF(0, 0, image.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
+    }
+    else
+    {
+        rotateLeft(selectedImage);
+        selectionBox = selectionBox.transposed();
+    }
     view->viewport()->update();
 }
 
 void QGraphicsCanvasItem::on_RotateRight()
 {
-    rotateRight(image);
-    view->scene()->setSceneRect(QRectF(0, 0, image.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
+    if (action != ActionSelected)
+    {
+        rotateRight(image);
+        view->scene()->setSceneRect(QRectF(0, 0, image.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
+    }
+    else
+    {
+        rotateRight(selectedImage);
+        selectionBox = selectionBox.transposed();
+    }
     view->viewport()->update();
 }
 
-void QGraphicsCanvasItem::on_SelectionMoveUp()
-{
-    selectionBox.translate(0, -1);
-    view->viewport()->update();
-}
-
-void QGraphicsCanvasItem::on_SelectionMoveDown()
-{
-    selectionBox.translate(0, 1);
-    view->viewport()->update();
-}
-
-void QGraphicsCanvasItem::on_SelectionMoveLeft()
-{
-    selectionBox.translate(-1, 0);
-    view->viewport()->update();
-}
-
-void QGraphicsCanvasItem::on_SelectionMoveRight()
-{
-    selectionBox.translate(1, 0);
-    view->viewport()->update();
-}
 
 
 
