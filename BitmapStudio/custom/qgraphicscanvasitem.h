@@ -107,6 +107,7 @@ public slots:
     void on_Copy();
     void on_Cut();
     void on_Paste();
+    void on_Crop();
 
 signals:
     void updateStatusBarPos(QPoint);
