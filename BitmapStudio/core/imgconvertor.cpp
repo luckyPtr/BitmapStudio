@@ -23,7 +23,7 @@ ImgConvertor::~ImgConvertor()
 
 
 
-QString ImgConvertor::encodeImgFile(BmFile bf)
+QString ImgConvertor::ImgFileToString(BmFile bf)
 {
     QString fullName = bf.fullName;
     QString res;
@@ -51,7 +51,7 @@ QString ImgConvertor::encodeImgFile(BmFile bf)
     return res;
 }
 
-QString ImgConvertor::encodeImgArray(BmFile bf)
+QString ImgConvertor::ImgArrayToString(BmFile bf)
 {
     QString fullName = bf.fullName;
     QString res;
@@ -92,7 +92,7 @@ QString ImgConvertor::encodeImgArray(BmFile bf)
     return res;
 }
 
-QString ImgConvertor::encodeComImgFile(BmFile bf)
+QString ImgConvertor::ComImgFileToString(BmFile bf)
 {
     QString res;
     QString fullName = bf.fullName;
@@ -122,37 +122,7 @@ QString ImgConvertor::encodeComImgFile(BmFile bf)
     return res;
 }
 
-QString ImgConvertor::encode(BmFile bf)
-{
-    auto getParentType = [=](){
-        foreach(auto data, dataList)
-        {
-            if(bf.pid == data.id)
-            {
-                return data.type;
-            }
-        }
-        return bf.type;
-    };
 
-    if(bf.type == RawData::TypeImgGrpFolder)
-    {
-        return encodeImgArray(bf);
-    }
-    else if(bf.type == RawData::TypeImgFile)
-    {
-        if(getParentType() != RawData::TypeImgGrpFolder)
-        {
-            return encodeImgFile(bf);
-        }
-    }
-    else if(bf.type == RawData::TypeComImgFile)
-    {
-        return encodeComImgFile(bf);
-    }
-
-    return NULL;
-}
 
 bool ImgConvertor::generateImgC(const QString &outputPath)
 {
@@ -181,7 +151,7 @@ bool ImgConvertor::generateImgC(const QString &outputPath)
         {
             if(getParentType(i) != RawData::TypeImgGrpFolder)
             {
-                out << encode(i);
+                out << ImgFileToString(i);
                 QCoreApplication::processEvents();
             }
         }
@@ -191,7 +161,7 @@ bool ImgConvertor::generateImgC(const QString &outputPath)
     {
         if(i.type == RawData::TypeImgGrpFolder)
         {
-            out << encode(i);
+            out << ImgArrayToString(i);
             QCoreApplication::processEvents();
         }
     }
@@ -274,7 +244,7 @@ bool ImgConvertor::generateComImgC(const QString &outputPath)
     {
         if(i.type == RawData::TypeComImgFile)
         {
-            out << encode(i);
+            out << ComImgFileToString(i);
             QCoreApplication::processEvents();
         }
     }

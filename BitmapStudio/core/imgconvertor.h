@@ -16,14 +16,14 @@ private:
     ImgEncoder *imgEncoder;
     QHash<QString, QByteArray (*)(QImage)> funcImgToByteArray;    // 取模名称与方法映射表
     QHash<QString, QImage (*)(QByteArray, QSize)> funcByteArrayToImg;
+
+    QString ImgFileToString(BmFile bf);
+    QString ImgArrayToString(BmFile bf);
+    QString ComImgFileToString(BmFile bf);
 public:
     ImgConvertor(QVector<BmFile> dataMap, RawData::Settings settings);
     ~ImgConvertor();
 
-    QString encodeImgFile(BmFile bf);
-    QString encodeImgArray(BmFile bf);
-    QString encodeComImgFile(BmFile bf);
-    QString encode(BmFile bf);
     bool generateImgC(const QString &outputPath);
     bool generateImgH(const QString &outputPath);
     bool generateComImgC(const QString &outputPath);
