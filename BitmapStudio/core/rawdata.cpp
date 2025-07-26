@@ -62,6 +62,48 @@ int RawData::getTypeFromId(int id)
     }
 }
 
+QString RawData::calFullName(int id)
+{
+    QString fullName;
+    if (dataMap.contains(id))
+    {
+        if(RawData::isClassImgType(dataMap[id].type))
+        {
+            fullName = "IMG";
+        }
+        else if(RawData::isClassComImgType(dataMap[id].type))
+        {
+            fullName = "CI";
+        }
+
+        auto appendParentName = [&](auto&& self, int id)->void {
+            if(dataMap[id].pid != 0)
+            {
+                self(self, dataMap[id].pid);
+            }
+            if(dataMap[dataMap[id].pid].type == RawData::TypeImgGrpFolder)
+            {
+                fullName.append("[" + dataMap[id].name + "]");
+            }
+            else
+            {
+                fullName.append("_" + dataMap[id].name);
+            }
+        };
+
+        appendParentName(appendParentName, id);
+    }
+
+    return fullName;
+}
+
+void RawData::updateFullName()
+{
+    for (auto it = dataMap.begin(); it != dataMap.end(); ++it) {
+        it.value().fullName = calFullName(it.value().id);
+    }
+}
+
 void RawData::load()
 {
     // QString转QJsonObject
@@ -128,14 +170,10 @@ void RawData::load()
         }
         dataMap.insert(bi.id, bi);
     }
+
+    updateFullName();
 }
 
-void RawData::sortDataMap()
-{
-    QMap<quint16, BmFile> newMap;
-    QVector<BmFile> temp = dataMap.values().toVector();
-
-}
 
 RawData::RawData(const QString path)
 {
@@ -224,6 +262,8 @@ void RawData::createFolder(int id, QString name, QString brief)
         bi.brief = brief;
         dataMap.insert(bi.id, bi);
     }
+
+    updateFullName();
 }
 
 void RawData::createBmp(int id, QString name, const QImage &img, const QString brief)
@@ -281,6 +321,8 @@ void RawData::createBmp(int id, QString name, const QImage &img, const QString b
         bi.brief = brief;
         dataMap.insert(bi.id, bi);
     }
+
+    updateFullName();
 }
 
 void RawData::createBmp(int id, QString name, QSize size, const QString brief)
@@ -344,6 +386,7 @@ void RawData::createComImg(int id, QString name, QSize size, const QString brief
         bi.comImg = ComImg(size);
         dataMap.insert(bi.id, bi);
     }
+    updateFullName();
 }
 
 void RawData::rename(int id, QString name)
@@ -359,6 +402,7 @@ void RawData::rename(int id, QString name)
     {
         dataMap[id].name = name;
     }
+    updateFullName();
 }
 
 QString RawData::getName(int id)
@@ -383,6 +427,8 @@ void RawData::remove(int id)
         int childId = query.value("id").toInt();
         remove(childId);
     }
+
+    updateFullName();
 }
 
 void RawData::imgFolderConvert(int id)
@@ -401,6 +447,7 @@ void RawData::imgFolderConvert(int id)
             query.exec();
         }
     }
+    updateFullName();
 }
 
 

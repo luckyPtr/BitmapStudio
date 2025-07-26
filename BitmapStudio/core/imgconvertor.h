@@ -20,18 +20,17 @@ public:
     ImgConvertor(QVector<BmFile> dataMap, RawData::Settings settings);
     ~ImgConvertor();
 
-    QString getFullName(BmFile bf); // 获取包含文件夹的完整名称
     QString encodeImgFile(BmFile bf);
     QString encodeImgArray(BmFile bf);
     QString encodeComImgFile(BmFile bf);
     QString encode(BmFile bf);
-    QString generateImgC();
-    QString generateImgH();
-    QString generateComImgC();
-    QString generateComImgH();
-    QString generateTypedefH();
+    bool generateImgC(const QString &outputPath);
+    bool generateImgH(const QString &outputPath);
+    bool generateComImgC(const QString &outputPath);
+    bool generateComImgH(const QString &outputPath);
+    bool generateTypedefH(const QString &outputPath);
     QString generateDeclareH();
-    void test();
+
 
 };
 

@@ -32,6 +32,8 @@ void ProjectMng::addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, 
         }
     }
 
+
+
     // 按照文件夹>文件，名称字母正序进行排序
     std::sort(imgList.begin(), imgList.end(), [](const BmFile &file1, const BmFile &file2){
         if(file1.type > file2.type) {
@@ -818,41 +820,11 @@ void ProjectMng::on_ActRun_Triggered()
         }
     }
 
-    QFile file(path + "/bm_typedef.h");
-    if(file.open(QIODevice::WriteOnly))
-    {
-        file.write(ic.generateTypedefH().toUtf8());
-        file.close();
-    }
 
-    file.setFileName(path + "/bm_img.c");
-    if(file.open(QIODevice::WriteOnly))
-    {
-        file.write(ic.generateImgC().toUtf8());
-        file.close();
-    }
-
-    file.setFileName(path + "/bm_img.h");
-    if(file.open(QIODevice::WriteOnly))
-    {
-        file.write(ic.generateImgH().toUtf8());
-        file.close();
-    }
-
-    file.setFileName(path + "/bm_com_img.c");
-    if(file.open(QIODevice::WriteOnly))
-    {
-
-        file.write(ic.generateComImgC().toUtf8());
-        file.close();
-    }
-
-    file.setFileName(path + "/bm_com_img.h");
-    if(file.open(QIODevice::WriteOnly))
-    {
-        file.write(ic.generateComImgH().toUtf8());
-        file.close();
-    }
+    ic.generateImgC(path + "/bm_img.c");
+    ic.generateImgH(path + "/bm_img.h");
+    ic.generateComImgC(path + "/bm_com_img.c");
+    ic.generateComImgH(path + "/bm_com_img.h");
 
     dlgLoading->close();
     DialogNotice *dlg = new DialogNotice("字模转换完成!");
@@ -975,9 +947,7 @@ void ProjectMng::on_ActCopyImg_Triggered()
 void ProjectMng::on_ActCopyName_Triggeded()
 {
     TreeItem *item = theModel->itemFromIndex(currentIndex);
-    ImgConvertor ic(item->getRawData()->getDataMap().values().toVector(), item->getRawData()->getSettings());
-
-    QString name = ic.getFullName(item->getRawData()->getDataMap()[item->getID()]);
+    QString name = item->getRawData()->getDataMap()[item->getID()].fullName;
     if(!name.isEmpty())
     {
         QClipboard* clipboard = QApplication::clipboard();

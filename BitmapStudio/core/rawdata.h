@@ -57,6 +57,7 @@ struct BmFile
     quint8 isFolder;    // 0-文件 1-文件夹 2-图片组文件夹
     int type;
     QString name;
+    QString fullName;
     QString brief;
     QImage image;
     ComImg comImg;
@@ -118,6 +119,8 @@ private:
     void convertComImgToImage(BmFile &file);
 
     int getTypeFromId(int id);
+    QString calFullName(int id);
+    void updateFullName();
 public:
     RawData(const QString path);
     ~RawData();
@@ -127,7 +130,6 @@ public:
     QMap<quint16, BmFile> getDataMap() const {return dataMap;}
     BmFile getBmFile(quint16 id) const { return dataMap[id]; }
     void load();    // 加载数据库数据
-    void sortDataMap(); // 按名称字母顺序排列
     void createFolder(int id, QString name = "Untitled", QString brief = "");
     void createBmp(int id, QString name, const QImage &img, const QString brief = "");
     void createBmp(int id, QString name, QSize size, const QString brief = "");
@@ -157,6 +159,7 @@ public:
     void saveSettings(Settings settings);
     QSize getSize();
     bool haveSubFolder(int id); // 是否还有子文件夹
+
 };
 
 #endif // RAWDATA_H

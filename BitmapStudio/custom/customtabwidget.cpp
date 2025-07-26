@@ -156,13 +156,13 @@ int CustomTabWidget::addImgTab(TreeItem *treeItem)
     int index = this->addTab(window, bf.name);
 
     QTabBar *tb = this->tabBar();
-    QString fullName = ic.getFullName(bf);
+    QString fullName = bf.fullName;
     int indexName = fullName.lastIndexOf(bf.name);
     if(indexName != -1)
     {
         fullName = fullName.remove(indexName, bf.name.size());
     }
-    tb->setTabToolTip(index, treeItem->getRawData()->getProject() + "/" + fullName.replace("_", "/").replace("[]", "/") + bf.name);
+    tb->setTabToolTip(index, treeItem->getRawData()->getProject() + ": " + fullName.replace("_", "\\").replace("[]", "\\") + bf.name);
     tb->setTabIcon(index, QIcon(":/Image/TreeIco/ImageFile.svg"));
 
     setCurrentIndex(index);
@@ -198,13 +198,13 @@ int CustomTabWidget::addComImgTab(TreeItem *treeItem)
     int index = this->addTab(window, bf.name);
 
     QTabBar *tb = this->tabBar();
-    QString fullName = ic.getFullName(bf);
+    QString fullName = bf.fullName;
     int indexName = fullName.lastIndexOf(bf.name);
     if(indexName != -1)
     {
         fullName = fullName.remove(indexName, bf.name.size());
     }
-    tb->setTabToolTip(index, treeItem->getRawData()->getProject() + "/" + fullName.replace("_", "/").replace("[]", "/") + bf.name);
+    tb->setTabToolTip(index, treeItem->getRawData()->getProject() + ": " + fullName.replace("_", "\\").replace("[]", "\\") + bf.name);
     tb->setTabIcon(index, QIcon(":/Image/TreeIco/ComImgFile.svg"));
 
     setCurrentIndex(index);

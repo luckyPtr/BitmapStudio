@@ -1,55 +1,8 @@
-
 #include "imgconvertor.h"
 #include <QPoint>
 #include <QRgb>
 #include <QDebug>
-
-
-
-QString ImgConvertor::getFullName(BmFile bf)
-{
-    QString fullName;
-    if(RawData::isClassImgType(bf.type))
-    {
-        fullName = "IMG";
-    }
-    else if(RawData::isClassComImgType(bf.type))
-    {
-        fullName = "CI";
-    }
-
-    auto getParent = [this](BmFile data)
-    {
-        foreach(auto i, dataList)
-        {
-            if(i.id == data.pid)
-            {
-                return i;
-            }
-        }
-        return BmFile();
-    };
-
-    auto appendParentName = [&](auto&& self, BmFile data)->void {
-        if(data.pid != 0)
-        {
-            self(self, getParent(data));
-        }
-        if(getParent(data).type == RawData::TypeImgGrpFolder)
-        {
-            fullName.append("[" + data.name + "]");
-        }
-        else
-        {
-            fullName.append("_" + data.name);
-        }
-
-    };
-
-    appendParentName(appendParentName, bf);
-
-    return fullName;
-}
+#include <QTextStream>
 
 
 
@@ -58,6 +11,9 @@ ImgConvertor::ImgConvertor(QVector<BmFile> dataMap, RawData::Settings settings)
     this->dataList = dataMap;
     this->settings = settings;
     imgEncoder = ImgEncoderFactory::create(settings.mode);
+    std::sort(dataList.begin(), dataList.end(), [=](BmFile a, BmFile b){
+        return a.fullName.toLower() < b.fullName.toLower();
+    });
 }
 
 ImgConvertor::~ImgConvertor()
@@ -69,9 +25,9 @@ ImgConvertor::~ImgConvertor()
 
 QString ImgConvertor::encodeImgFile(BmFile bf)
 {
-    QString fullName = getFullName(bf);
+    QString fullName = bf.fullName;
     QString res;
-    res.append("// " + fullName + "\r\n");
+    res.append("// " + fullName + "\n");
 
     auto imgByteArrayToString = [](QByteArray ba){
         QString str;
@@ -79,7 +35,7 @@ QString ImgConvertor::encodeImgFile(BmFile bf)
         {
             if(i % 32 == 0)
             {
-                str.append("\r\n\t");
+                str.append("\n\t");
             }
             str.append(QString::asprintf("0x%02X, ", (quint8)ba[i]));
         }
@@ -97,7 +53,7 @@ QString ImgConvertor::encodeImgFile(BmFile bf)
 
 QString ImgConvertor::encodeImgArray(BmFile bf)
 {
-    QString fullName = getFullName(bf);
+    QString fullName = bf.fullName;
     QString res;
     QString imgArray;
     int count;
@@ -110,7 +66,7 @@ QString ImgConvertor::encodeImgArray(BmFile bf)
         {
             if(i % 32 == 0)
             {
-                str.append("\r\n\t\t");
+                str.append("\n\t\t");
             }
             str.append(QString::asprintf("0x%02X, ", (quint8)ba[i]));
         }
@@ -139,10 +95,10 @@ QString ImgConvertor::encodeImgArray(BmFile bf)
 QString ImgConvertor::encodeComImgFile(BmFile bf)
 {
     QString res;
-    QString fullName = getFullName(bf);
+    QString fullName = bf.fullName;
     QString array;
 
-    auto getName = [=](int id){
+    auto getBmFile = [=](int id){
         foreach(auto i, dataList)
         {
             if(i.id == id)
@@ -155,7 +111,7 @@ QString ImgConvertor::encodeComImgFile(BmFile bf)
 
     foreach(auto i, bf.comImg.items)
     {
-        array.append(QString("\t{%1, %2, %3, %4, %5},\n").arg(getFullName(getName(i.id))).arg(i.x).arg(i.y).arg(getName(i.id).image.width()).arg(getName(i.id).image.height()));
+        array.append(QString("\t{%1, %2, %3, %4, %5},\n").arg(getBmFile(i.id).fullName).arg(i.x).arg(i.y).arg(getBmFile(i.id).image.width()).arg(getBmFile(i.id).image.height()));
     }
     array.append("\t{END_OF_IMG}\n");
 
@@ -198,13 +154,8 @@ QString ImgConvertor::encode(BmFile bf)
     return NULL;
 }
 
-QString ImgConvertor::generateImgC()
+bool ImgConvertor::generateImgC(const QString &outputPath)
 {
-    // 按名称进行排序
-    std::sort(dataList.begin(), dataList.end(), [=](BmFile a, BmFile b){
-        return a.name.toLower() < b.name.toLower();
-    });
-
     auto getParentType = [=](BmFile bf){
         foreach(auto data, dataList)
         {
@@ -216,8 +167,13 @@ QString ImgConvertor::generateImgC()
         return bf.type;
     };
 
-    QString res;
-    res.append("#include \"bm_img.h\"\r\n\r\n");
+    QFile file(outputPath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return false;
+    }
+    QTextStream out(&file);
+
+    out << "#include \"bm_img.h\"\n\n";
 
     foreach(auto i, dataList)
     {
@@ -225,7 +181,7 @@ QString ImgConvertor::generateImgC()
         {
             if(getParentType(i) != RawData::TypeImgGrpFolder)
             {
-                res.append(encode(i));
+                out << encode(i);
                 QCoreApplication::processEvents();
             }
         }
@@ -235,18 +191,28 @@ QString ImgConvertor::generateImgC()
     {
         if(i.type == RawData::TypeImgGrpFolder)
         {
-            res.append(encode(i));
+            out << encode(i);
             QCoreApplication::processEvents();
         }
     }
 
-    return res;
+    out.flush();
+    file.close();
+
+    return out.status() == QTextStream::Ok;
 }
 
-QString ImgConvertor::generateImgH()
+bool ImgConvertor::generateImgH(const QString &outputPath)
 {
-    QString res = "#ifndef __INC_BM_IMG_H__\r\n#define __INC_BM_IMG_H__\r\n";
-    res.append("#include \"bm_typedef.h\"\r\n\r\n");
+    QFile file(outputPath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return false;
+    }
+    QTextStream out(&file);
+
+    out << "#ifndef __INC_BITMAPSTUDIO_IMG_H__\n";
+    out << "#define __INC_BITMAPSTUDIO_IMG_H__\n";
+    out << "#include \"bm_typedef.h\"\n\n";
 
     auto getParentType = [=](BmFile bf){
         foreach(auto data, dataList)
@@ -273,77 +239,119 @@ QString ImgConvertor::generateImgH()
                 }
             }
 
-            res.append(QString("extern Img_t %2[][%3];\r\n").arg(getFullName(bf)).arg(n));
+            out << QString("extern Img_t %2[][%3];\n").arg(bf.fullName).arg(n);
             QCoreApplication::processEvents();
         }
         else if(bf.type == RawData::TypeImgFile)
         {
             if(getParentType(bf) != RawData::TypeImgGrpFolder)
             {
-                res.append(QString("extern Img_t %1[];\r\n").arg(getFullName(bf)));
+                out << QString("extern Img_t %1[];\n").arg(bf.fullName);
                 QCoreApplication::processEvents();
             }
         }
     }
 
-    res.append("#endif\r\n");
+    out << "#endif\n";
 
-    return res;
+    out.flush();
+    file.close();
+
+    return out.status() == QTextStream::Ok;
 }
 
-QString ImgConvertor::generateComImgC()
+bool ImgConvertor::generateComImgC(const QString &outputPath)
 {
-    QString res;
-    res.append("#include \"bm_img.h\"\r\n\r\n");
+    QFile file(outputPath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return false;
+    }
+    QTextStream out(&file);
+
+    out << "#include \"bm_img.h\"\n\n";
 
     foreach(auto i, dataList)
     {
         if(i.type == RawData::TypeComImgFile)
         {
-            res.append(encode(i));
+            out << encode(i);
             QCoreApplication::processEvents();
         }
     }
-    return res;
+
+    out.flush();
+    file.close();
+
+    return out.status() == QTextStream::Ok;
 }
 
-QString ImgConvertor::generateComImgH()
+bool ImgConvertor::generateComImgH(const QString &outputPath)
 {
-    QString res = "#ifndef __INC_BM_COM_IMG_H__\n#define __INC_BM_COM_IMG_H__\r\n";
-    res.append("#include \"bm_typedef.h\"\r\n\r\n");
+    QFile file(outputPath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return false;
+    }
+
+    QTextStream out(&file);
+    out << "#ifndef __INC_BITMAPSTUDIO_COM_IMG_H__\n#define __INC_BITMAPSTUDIO_COM_IMG_H__\n";
+    out << "#include \"bm_typedef.h\"\n\n";
 
     foreach(auto i, dataList)
     {
         if(i.type == RawData::TypeComImgFile)
         {
-            res.append(QString("extern ComImg_t %1[];\r\n").arg(getFullName(i)));
+            out << QString("extern ComImg_t %1[];\n").arg(i.fullName);
         }
     }
-    res.append("#endif\r\n");
+    out << "#endif\n";
 
-    return res;
+    out.flush();
+    file.close();
+
+    return out.status() == QTextStream::Ok;
 }
 
-QString ImgConvertor::generateTypedefH()
+
+bool ImgConvertor::generateTypedefH(const QString &outputPath)
 {
-    QString ret = QString("#ifndef __INC_BM_TYPEDEF_H__\r\n#define __INC_BM_TYPEDEF_H__\r\n\
-typedef %1 unsigned char Img_t;\r\n\
-typedef %1 struct\r\n\
-{\r\n\
-    Img_t *img;\r\n\
-    %2 x;\r\n\
-    %2 y;\r\n\
-    %3 width;\r\n\
-    %3 height;\r\n\
-}ComImg_t;\r\n\
-#define END_OF_IMG (0)\r\n\
-#endif\r\n").arg(settings.keywordConst).arg(settings.keywordImgPos).arg(settings.keywordImgSize);
-    return ret;
+    QFile file(outputPath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return false;
+    }
+
+    const QString content =
+        "#ifndef __INC_BITMAPSTUDIO_TYPEDEF_H__\n"
+        "#define __INC_BITMAPSTUDIO_TYPEDEF_H__\n"
+        "\n"
+        "typedef %1 unsigned char Img_t;\n"
+        "\n"
+        "typedef %1 struct\n"
+        "{\n"
+        "    Img_t *img;\n"
+        "    %2 x;\n"
+        "    %2 y;\n"
+        "    %3 width;\n"
+        "    %3 height;\n"
+        "} ComImg_t;\n"
+        "\n"
+        "#define END_OF_IMG ((Img_t*)-1)\n"
+        "\n"
+        "#endif\n";
+
+    const QString formattedContent = content
+                                     .arg(settings.keywordConst)
+                                     .arg(settings.keywordImgPos)
+                                     .arg(settings.keywordImgSize);
+
+    QTextStream out(&file);
+    out << formattedContent;
+    out.flush();
+    file.close();
+
+    // 检查是否写入成功
+    return out.status() == QTextStream::Ok;
 }
 
-void ImgConvertor::test()
-{
 
-}
 
 
