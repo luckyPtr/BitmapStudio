@@ -3,7 +3,8 @@
 #include <QRgb>
 #include <QDebug>
 #include <QTextStream>
-
+#include <QRegularExpression>
+#include <QDateTime>
 
 
 ImgConvertor::ImgConvertor(QVector<BmFile> dataMap, RawData::Settings settings)
@@ -122,21 +123,22 @@ QString ImgConvertor::ComImgFileToString(BmFile bf)
     return res;
 }
 
+int ImgConvertor::getParentType(BmFile bf)
+{
+    foreach(auto data, dataList)
+    {
+        if(bf.pid == data.id)
+        {
+            return data.type;
+        }
+    }
+    return bf.type;
+}
+
 
 
 bool ImgConvertor::generateImgC(const QString &outputPath)
 {
-    auto getParentType = [=](BmFile bf){
-        foreach(auto data, dataList)
-        {
-            if(bf.pid == data.id)
-            {
-                return data.type;
-            }
-        }
-        return bf.type;
-    };
-
     QFile file(outputPath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         return false;
@@ -184,18 +186,6 @@ bool ImgConvertor::generateImgH(const QString &outputPath)
     out << "#define __INC_BITMAPSTUDIO_IMG_H__\n";
     out << "#include \"bm_typedef.h\"\n\n";
 
-    auto getParentType = [=](BmFile bf){
-        foreach(auto data, dataList)
-        {
-            if(bf.pid == data.id)
-            {
-                return data.type;
-            }
-        }
-        return bf.type;
-    };
-
-
     foreach(auto bf, dataList)
     {
         if(bf.type == RawData::TypeImgGrpFolder)
@@ -228,6 +218,105 @@ bool ImgConvertor::generateImgH(const QString &outputPath)
     file.close();
 
     return out.status() == QTextStream::Ok;
+}
+
+bool ImgConvertor::generateImgBin(const QString &outputPath)
+{
+    auto writeToByteArray = [](auto value) -> QByteArray {
+        QByteArray byteArray;
+        QDataStream stream(&byteArray, QIODevice::WriteOnly);
+        stream.setByteOrder(QDataStream::BigEndian);
+        stream << value;
+        return byteArray;
+    };
+
+    auto versionToU32 = [](const QString &version) -> quint32 {
+        QRegularExpression regex(R"(^(\d+)\.(\d+)\.(\d+)$)");
+        QRegularExpressionMatch match = regex.match(version);
+        if (!match.hasMatch()) {
+            return 0;
+        }
+        quint8 major = match.captured(1).toUShort();
+        quint8 minor = match.captured(2).toUShort();
+        quint8 patch = match.captured(3).toUShort();
+        return (major << 16) | (minor << 8) | patch;
+    };
+
+    QFile file(outputPath + "bm_img.bin");
+    if (!file.open(QIODevice::WriteOnly)) {
+        return false;
+    }
+
+    QFile headerFile(outputPath + "bm_img_bin.h");
+    if (!headerFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return false;
+    }
+    QTextStream outHeaderFile(&headerFile);
+
+    // 1. 0-11 "BitmapStudio"头
+    QByteArray magic = "BitmapStudio";
+    file.write(magic);
+
+    // 2. 12-15 版本号
+    file.seek(12);
+    quint32 version = versionToU32(APP_VERSION);
+    file.write(writeToByteArray(version));
+
+    // 3. 16-23 校验码
+    quint16 sum16 = 0x55AA;
+    quint16 crc16 = 0x1122;
+    quint32 crc32 = 0x33445566;
+    file.write(writeToByteArray(sum16));
+    file.write(writeToByteArray(crc16));
+    file.write(writeToByteArray(crc32));
+
+    // 4. 24-63 brief
+    QByteArray brief = "Demo 1234";
+    file.write(brief);
+
+    file.seek(64);
+    foreach(auto i, dataList)
+    {
+        if(i.type == RawData::TypeImgFile)
+        {
+            if(getParentType(i) != RawData::TypeImgGrpFolder)
+            {
+                outHeaderFile << QString("#define %1    0x%2\n").arg(i.fullName).arg(file.pos(), 8, 16, QChar('0'));
+                file.write(imgEncoder->encode(i.image));
+                QCoreApplication::processEvents();
+            }
+        }
+    }
+
+    foreach(auto i, dataList)
+    {
+        if(i.type == RawData::TypeImgGrpFolder)
+        {
+            outHeaderFile << QString("#define %1    0x%2\n").arg(i.fullName).arg(file.pos(), 8, 16, QChar('0'));
+            quint32 startPos = file.pos();
+            bool getOffsetFlag = false;
+            foreach (auto j, dataList)
+            {
+                if (j.pid == i.id)
+                {
+                    file.write(imgEncoder->encode(j.image));
+                    if (!getOffsetFlag)   // 取第一个图片尺寸作为大小
+                    {
+                        getOffsetFlag = true;
+                        outHeaderFile << QString("#define %1_OFFSET    0x%2\n").arg(i.fullName).arg(file.pos() - startPos, 8, 16, QChar('0'));
+                    }
+                }
+            }
+            QCoreApplication::processEvents();
+        }
+    }
+
+    file.close();
+
+    outHeaderFile.flush();
+    headerFile.close();
+
+    return true;
 }
 
 bool ImgConvertor::generateComImgC(const QString &outputPath)

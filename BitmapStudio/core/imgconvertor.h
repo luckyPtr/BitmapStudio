@@ -20,12 +20,15 @@ private:
     QString ImgFileToString(BmFile bf);
     QString ImgArrayToString(BmFile bf);
     QString ComImgFileToString(BmFile bf);
+    int getParentType(BmFile bf);
 public:
     ImgConvertor(QVector<BmFile> dataMap, RawData::Settings settings);
     ~ImgConvertor();
 
     bool generateImgC(const QString &outputPath);
     bool generateImgH(const QString &outputPath);
+    bool generateImgBin(const QString &outputPath);     // 生成图片字模Bin文件
+    bool generateImgBinH(const QString &outoutPath);    // 生成图片字模Bin文件的地址描述头文件
     bool generateComImgC(const QString &outputPath);
     bool generateComImgH(const QString &outputPath);
     bool generateTypedefH(const QString &outputPath);
