@@ -61,6 +61,7 @@ struct BmFile
     QString brief;
     QImage image;
     ComImg comImg;
+    quint32 offset;
 
     bool isExpand;
     BmFile() {}
@@ -105,7 +106,7 @@ public:
             keywordImgPos = "unsigned char";
             keywordImgSize = "unsigned char";
             path = nullptr;
-            format = "C文件";
+            format = "C";
         }
     };
 

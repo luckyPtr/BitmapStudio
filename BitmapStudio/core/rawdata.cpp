@@ -28,7 +28,8 @@ void RawData::initDatabase()
                   type    INTEGER DEFAULT (0),\
                   name    TEXT,\
                   brief   TEXT,\
-                  data    BLOB\
+                  data    BLOB,\
+                  offset  INTEGER DEFAULT (0)\
                   );");
     query.exec();
 
@@ -145,6 +146,7 @@ void RawData::load()
         bi.type = query.value("type").toInt();
         bi.name = query.value("name").toString();
         bi.brief = query.value("brief").toString();
+        bi.offset = query.value("offset").toInt();
         if(bi.type == RawData::TypeImgFile)
         {
             QByteArray ba = query.value("data").toByteArray();

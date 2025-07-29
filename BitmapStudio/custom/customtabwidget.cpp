@@ -133,7 +133,7 @@ int CustomTabWidget::addImgTab(TreeItem *treeItem)
     int id = treeItem->getID();
     QString project = treeItem->getRawData()->getProject();
     BmFile bf = treeItem->getRawData()->getBmFile(id);
-    ImgConvertor ic(treeItem->getRawData()->getDataMap().values().toVector(), treeItem->getRawData()->getSettings());
+    //ImgConvertor ic(treeItem->getRawData()->getDataMap().values().toVector(), treeItem->getRawData()->getSettings());
 
     // 如果已经存在，不新增，直接选中相应的tabWidget
     for(int i = 0; i < count(); i++)
@@ -175,7 +175,7 @@ int CustomTabWidget::addComImgTab(TreeItem *treeItem)
     int id = treeItem->getID();
     QString project = treeItem->getRawData()->getProject();
     BmFile bf = treeItem->getRawData()->getBmFile(id);
-    ImgConvertor ic(treeItem->getRawData()->getDataMap().values().toVector(), treeItem->getRawData()->getSettings());
+    //ImgConvertor ic(treeItem->getRawData()->getDataMap().values().toVector(), treeItem->getRawData()->getSettings());
 
     // 如果已存在直接切换到相应的界面
     for(int i = 0; i < count(); i++)

@@ -821,11 +821,10 @@ void ProjectMng::on_ActRun_Triggered()
     }
 
 
-    ic.generateImgC(path + "/bm_img.c");
-    ic.generateImgH(path + "/bm_img.h");
+    ic.generateImgC(path);
     ic.generateImgBin(path);
-    ic.generateComImgC(path + "/bm_com_img.c");
-    ic.generateComImgH(path + "/bm_com_img.h");
+    ic.generateComImgC(path);
+    ic.generateTypedefH(path);
 
     dlgLoading->close();
     DialogNotice *dlg = new DialogNotice("字模转换完成!");
