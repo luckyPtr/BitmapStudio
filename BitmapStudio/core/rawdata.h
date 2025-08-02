@@ -96,6 +96,7 @@ public:
         QString keywordImgSize;
         QString path;
         QString format;
+        QString brief;
 
         Settings()
         {

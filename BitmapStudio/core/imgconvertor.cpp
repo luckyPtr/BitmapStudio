@@ -5,6 +5,7 @@
 #include <QTextStream>
 #include <QRegularExpression>
 #include <QDateTime>
+#include "checksumutility.h"
 
 
 ImgConvertor::ImgConvertor(QVector<BmFile> dataMap, RawData::Settings settings)
@@ -15,6 +16,11 @@ ImgConvertor::ImgConvertor(QVector<BmFile> dataMap, RawData::Settings settings)
     std::sort(dataList.begin(), dataList.end(), [=](BmFile a, BmFile b){
         return a.fullName.toLower() < b.fullName.toLower();
     });
+
+    foreach (auto i, dataList)
+    {
+        this->dataMap.insert(i.id, i);
+    }
 }
 
 ImgConvertor::~ImgConvertor()
@@ -135,6 +141,34 @@ int ImgConvertor::getParentType(BmFile bf)
     return bf.type;
 }
 
+quint32 ImgConvertor::getOffset(BmFile bf)
+{
+    QSet<int> visited;
+
+    while (1)
+    {
+        // 防止无限循环
+        if (visited.contains(bf.id)) {
+            // 检测到循环引用，返回错误值或抛出异常
+            return 0; // 或者其他合适的默认值
+        }
+        visited.insert(bf.id);
+
+        if (bf.pid == 0)
+        {
+            return bf.offset;
+        }
+
+        // 检查父节点是否存在
+        if (!dataMap.contains(bf.pid)) {
+            // 父节点不存在，返回错误值
+            return 0; // 或者其他合适的默认值
+        }
+
+        bf = dataMap[bf.pid];
+    }
+}
+
 
 
 bool ImgConvertor::generateImgC(const QString &outputPath)
@@ -181,7 +215,7 @@ bool ImgConvertor::generateImgC(const QString &outputPath)
         }
     }
 
-    outH << "#endif\n";
+    outH << "\n#endif\n";
 
     outC.flush();
     fileC.close();
@@ -215,48 +249,47 @@ bool ImgConvertor::generateImgBin(const QString &outputPath)
         return (major << 16) | (minor << 8) | patch;
     };
 
-    QFile file(outputPath + "bm_img.bin");
-    if (!file.open(QIODevice::WriteOnly)) {
-        return false;
+    QMap<quint32, quint32> offsetMap;
+
+    foreach (auto i, dataList)
+    {
+        quint32 offset = getOffset(i);
+        if (!offsetMap.contains(offset))
+        {
+            offsetMap[offset] = offset + 64;
+        }
     }
 
-    QFile headerFile(outputPath + "bm_img_bin.h");
+    QFile file(outputPath + "bm_img.bin");
+    if (!file.open(QIODevice::ReadWrite)) {
+        return false;
+    }
+    file.resize(0);     // 删除原本内容
+
+    QFile headerFile(outputPath + "bm_img.h");
     if (!headerFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
         return false;
     }
     QTextStream outHeaderFile(&headerFile);
 
-    // 1. 0-11 "BitmapStudio"头
-    QByteArray magic = "BitmapStudio";
-    file.write(magic);
+    outHeaderFile << "#ifndef __INC_BITMAPSTUDIO_IMG_H__\n";
+    outHeaderFile << "#define __INC_BITMAPSTUDIO_IMG_H__\n";
+    outHeaderFile << "#include \"bm_typedef.h\"\n\n";
 
-    // 2. 12-15 版本号
-    file.seek(12);
-    quint32 version = versionToU32(APP_VERSION);
-    file.write(writeToByteArray(version));
 
-    // 3. 16-23 校验码
-    quint16 sum16 = 0;
-    quint16 crc16 = 0;
-    quint32 crc32 = 0;
-    file.write(writeToByteArray(sum16));
-    file.write(writeToByteArray(crc16));
-    file.write(writeToByteArray(crc32));
-
-    // 4. 24-63 brief
-    file.seek(24);
-    QByteArray brief = "Demo 1234";
-    file.write(brief);
-
-    file.seek(64);
     foreach(auto i, dataList)
     {
         if(i.type == RawData::TypeImgFile)
         {
             if(getParentType(i) != RawData::TypeImgGrpFolder)
             {
-                outHeaderFile << QString("#define %1    0x%2\n").arg(i.fullName).arg(file.pos(), 8, 16, QChar('0'));
+                quint32 offset = getOffset(i);
+                quint32 addr = offsetMap[offset];
+                outHeaderFile << QString("#define %1    0x%2\n").arg(i.fullName).arg(addr, 8, 16, QChar('0'));
+                file.seek(addr);
                 file.write(imgEncoder->encode(i.image));
+                offsetMap[offset] = file.pos();
+                qDebug() << i.name << offset << addr;
                 QCoreApplication::processEvents();
             }
         }
@@ -266,25 +299,64 @@ bool ImgConvertor::generateImgBin(const QString &outputPath)
     {
         if(i.type == RawData::TypeImgGrpFolder)
         {
+            quint32 offset = getOffset(i);
+            quint32 addr = offsetMap[offset];
+            file.seek(addr);
             outHeaderFile << QString("#define %1    0x%2\n").arg(i.fullName).arg(file.pos(), 8, 16, QChar('0'));
-            quint32 startPos = file.pos();
-            bool getOffsetFlag = false;
             foreach (auto j, dataList)
             {
                 if (j.pid == i.id)
                 {
+
                     file.write(imgEncoder->encode(j.image));
-                    if (!getOffsetFlag)   // 取第一个图片尺寸作为大小
-                    {
-                        getOffsetFlag = true;
-                        outHeaderFile << QString("#define %1_OFFSET    0x%2\n").arg(i.fullName).arg(file.pos() - startPos, 8, 16, QChar('0'));
-                    }
                 }
             }
+            offsetMap[offset] = file.pos();
             QCoreApplication::processEvents();
         }
     }
 
+
+    // 1. 0-11 "BitmapStudio"头
+    file.seek(0);
+    QByteArray magic = "BitmapStudio";
+    file.write(magic);
+
+    // 2. 12-15 版本号
+    file.seek(12);
+    quint32 version = versionToU32(APP_VERSION);
+    file.write(writeToByteArray(version));
+
+    // 3. 16-23 校验码
+    file.flush();
+    file.seek(64);
+    QByteArray data = file.readAll();
+    quint16 sum16 = ChecksumUtility::SUM16(data);
+    quint16 crc16 = ChecksumUtility::CRC16(data);
+    quint32 crc32 = ChecksumUtility::CRC32(data);
+
+    outHeaderFile << "\n";
+    outHeaderFile << QString("#define BS_SUM16_ADDR    %1\n").arg(16);
+    outHeaderFile << QString("#define BS_CRC16_ADDR    %1\n").arg(18);
+    outHeaderFile << QString("#define BS_CRC32_ADDR    %1\n").arg(20);
+    outHeaderFile << QString("#define BS_SUM16         0x%1\n").arg(sum16, 4, 16, QChar('0'));
+    outHeaderFile << QString("#define BS_CRC16         0x%1\n").arg(crc16, 4, 16, QChar('0'));
+    outHeaderFile << QString("#define BS_CRC32         0x%1\n").arg(crc32, 4, 16, QChar('0'));
+
+    file.seek(16);
+    file.write(writeToByteArray(sum16));
+    file.write(writeToByteArray(crc16));
+    file.write(writeToByteArray(crc32));
+
+    // 4. 24-63 brief
+    file.seek(24);
+    QByteArray brief = settings.brief.toUtf8().left(40);
+    file.write(brief);
+
+
+    outHeaderFile << "\n#endif\n";
+
+    file.flush();
     file.close();
 
     outHeaderFile.flush();
@@ -293,7 +365,7 @@ bool ImgConvertor::generateImgBin(const QString &outputPath)
     return true;
 }
 
-bool ImgConvertor::generateComImgC(const QString &outputPath)
+bool ImgConvertor::generateComImg(const QString &outputPath)
 {
     QFile fileC(outputPath + "/bm_com_img.c");
     if (!fileC.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -321,6 +393,8 @@ bool ImgConvertor::generateComImgC(const QString &outputPath)
         }
     }
 
+    outH << "\n#endif\n";
+
     outC.flush();
     fileC.close();
 
@@ -332,7 +406,7 @@ bool ImgConvertor::generateComImgC(const QString &outputPath)
 
 
 
-bool ImgConvertor::generateTypedefH(const QString &outputPath)
+bool ImgConvertor::generateTypedef(const QString &outputPath)
 {
     QFile file(outputPath + "bm_typedef.h");
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {

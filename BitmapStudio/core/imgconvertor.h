@@ -12,6 +12,7 @@ class ImgConvertor
 {
 private:
     QVector<BmFile> dataList;
+    QMap<int, BmFile> dataMap;
     RawData::Settings settings;
     ImgEncoder *imgEncoder;
 
@@ -19,14 +20,15 @@ private:
     QPair<QString, int> ImgArrayToString(BmFile bf);
     QString ComImgFileToString(BmFile bf);
     int getParentType(BmFile bf);
+    quint32 getOffset(BmFile bf);
 public:
     ImgConvertor(QVector<BmFile> dataMap, RawData::Settings settings);
     ~ImgConvertor();
 
     bool generateImgC(const QString &outputPath);
     bool generateImgBin(const QString &outputPath);     // 生成图片字模Bin文件
-    bool generateComImgC(const QString &outputPath);
-    bool generateTypedefH(const QString &outputPath);
+    bool generateComImg(const QString &outputPath);
+    bool generateTypedef(const QString &outputPath);
     QString generateDeclareH();
 
 

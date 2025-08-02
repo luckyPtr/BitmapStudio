@@ -1,6 +1,7 @@
 #include "dialogprojectsettings.h"
 #include "ui_dialogprojectsettings.h"
 #include <QDebug>
+#include <QPushButton>
 
 DialogProjectSettings::DialogProjectSettings(QWidget *parent) :
     QDialog(parent),
@@ -23,6 +24,11 @@ DialogProjectSettings::DialogProjectSettings(QWidget *parent) :
 
     connect(btnGroup1, SIGNAL(idToggled(int,bool)), this, SLOT(on_btnToggled(int,bool)));
     connect(btnGroup2, SIGNAL(idToggled(int,bool)), this, SLOT(on_btnToggled(int,bool)));
+
+
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("确定"));
+    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("取消"));
+
 }
 
 DialogProjectSettings::~DialogProjectSettings()

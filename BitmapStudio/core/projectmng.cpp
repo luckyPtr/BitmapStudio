@@ -820,11 +820,12 @@ void ProjectMng::on_ActRun_Triggered()
         }
     }
 
-
-    ic.generateImgC(path);
-    ic.generateImgBin(path);
-    ic.generateComImgC(path);
-    ic.generateTypedefH(path);
+    if (settings.format == "Bin")
+        ic.generateImgBin(path);
+    else
+        ic.generateImgC(path);
+    ic.generateComImg(path);
+    ic.generateTypedef(path);
 
     dlgLoading->close();
     DialogNotice *dlg = new DialogNotice("字模转换完成!");
