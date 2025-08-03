@@ -295,6 +295,7 @@ bool ImgConvertor::generateImgBin(const QString &outputPath)
         }
     }
 
+    outHeaderFile << "\n";
     foreach(auto i, dataList)
     {
         if(i.type == RawData::TypeImgGrpFolder)
@@ -303,12 +304,17 @@ bool ImgConvertor::generateImgBin(const QString &outputPath)
             quint32 addr = offsetMap[offset];
             file.seek(addr);
             outHeaderFile << QString("#define %1    0x%2\n").arg(i.fullName).arg(file.pos(), 8, 16, QChar('0'));
+            bool gotOFrameSize = false;
             foreach (auto j, dataList)
             {
                 if (j.pid == i.id)
                 {
-
-                    file.write(imgEncoder->encode(j.image));
+                    QByteArray data = imgEncoder->encode(j.image);
+                    file.write(data);
+                    if (!gotOFrameSize) {
+                        gotOFrameSize = true;
+                        outHeaderFile << QString("#define %1_OFFSET    0x%2\n").arg(i.fullName).arg(data.size(), 8, 16, QChar('0'));
+                    }
                 }
             }
             offsetMap[offset] = file.pos();
@@ -414,31 +420,31 @@ bool ImgConvertor::generateTypedef(const QString &outputPath)
     }
 
     const QString content =
-        "#ifndef __INC_BITMAPSTUDIO_TYPEDEF_H__\n"
-        "#define __INC_BITMAPSTUDIO_TYPEDEF_H__\n"
-        "\n"
-        "typedef %1 unsigned char Img_t;\n"
-        "\n"
         "typedef %1 struct\n"
         "{\n"
-        "    Img_t *img;\n"
-        "    %2 x;\n"
-        "    %2 y;\n"
-        "    %3 width;\n"
-        "    %3 height;\n"
-        "} ComImg_t;\n"
-        "\n"
-        "#define END_OF_IMG ((Img_t*)-1)\n"
-        "\n"
-        "#endif\n";
+        "    %2 img;\n"
+        "    %3 x;\n"
+        "    %3 y;\n"
+        "    %4 width;\n"
+        "    %4 height;\n"
+        "} ComImg_t;\n\n";
 
     const QString formattedContent = content
                                      .arg(settings.keywordConst)
+                                     .arg(settings.format == "Bin" ? "unsigned int" : "Img_t *")
                                      .arg(settings.keywordImgPos)
                                      .arg(settings.keywordImgSize);
 
     QTextStream out(&file);
+    out << "#ifndef __INC_BITMAPSTUDIO_TYPEDEF_H__\n"
+           "#define __INC_BITMAPSTUDIO_TYPEDEF_H__\n\n";
+    if (settings.format != "Bin") {
+        out << QString("typedef %1 %2 Img_t;\n\n").arg(settings.keywordConst).arg(settings.keywordImgPos);
+    }
     out << formattedContent;
+    out << QString("#define END_OF_IMG ((%1)-1)\n").arg(settings.format == "Bin" ? "unsigned int" : "Img_t *");
+    out << "\n#endif\n";
+
     out.flush();
     file.close();
 
