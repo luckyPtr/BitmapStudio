@@ -820,7 +820,7 @@ void ProjectMng::on_ActRun_Triggered()
         }
     }
 
-    if (settings.format == "Bin")
+    if (settings.format == "bin")
         ic.generateImgBin(path);
     else
         ic.generateImgC(path);

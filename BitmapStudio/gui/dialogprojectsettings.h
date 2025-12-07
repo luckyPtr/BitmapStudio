@@ -25,7 +25,6 @@ public:
     int getMode();
     QString getConst();
     QString getPosType();
-    QString getSizeType();
     QString getOutputPath();
     QString getOutputFormat();
 

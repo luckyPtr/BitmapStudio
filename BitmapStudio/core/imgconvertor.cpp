@@ -6,6 +6,8 @@
 #include <QRegularExpression>
 #include <QDateTime>
 #include "checksumutility.h"
+#include "qchar.h"
+#include "qglobal.h"
 
 
 ImgConvertor::ImgConvertor(QVector<BmFile> dataMap, RawData::Settings settings)
@@ -289,7 +291,6 @@ bool ImgConvertor::generateImgBin(const QString &outputPath)
                 file.seek(addr);
                 file.write(imgEncoder->encode(i.image));
                 offsetMap[offset] = file.pos();
-                qDebug() << i.name << offset << addr;
                 QCoreApplication::processEvents();
             }
         }
@@ -307,7 +308,6 @@ bool ImgConvertor::generateImgBin(const QString &outputPath)
             {
                 if (j.pid == i.id)
                 {
-
                     file.write(imgEncoder->encode(j.image));
                 }
             }
@@ -327,32 +327,52 @@ bool ImgConvertor::generateImgBin(const QString &outputPath)
     quint32 version = versionToU32(APP_VERSION);
     file.write(writeToByteArray(version));
 
-    // 3. 16-23 校验码
+    // 3. 16-19 数据长度(不包括64字节数据头)
+    quint32 dataLength = file.size() - 64;
+    file.seek(16);
+    file.write(writeToByteArray(dataLength));
+
+    // 4. 20-31 校验码
     file.flush();
     file.seek(64);
     QByteArray data = file.readAll();
-    quint16 sum16 = ChecksumUtility::SUM16(data);
-    quint16 crc16 = ChecksumUtility::CRC16(data);
+    quint32 sum32 = ChecksumUtility::SUM32(data);
     quint32 crc32 = ChecksumUtility::CRC32(data);
+    quint16 crc16 = ChecksumUtility::CRC16(data);
+    quint8 crc8 = ChecksumUtility::CRC8(data);
+    quint8 xor8 = ChecksumUtility::XOR8(data);
+
 
     outHeaderFile << "\n";
-    outHeaderFile << QString("#define BS_SUM16_ADDR    %1\n").arg(16);
-    outHeaderFile << QString("#define BS_CRC16_ADDR    %1\n").arg(18);
-    outHeaderFile << QString("#define BS_CRC32_ADDR    %1\n").arg(20);
-    outHeaderFile << QString("#define BS_SUM16         0x%1\n").arg(sum16, 4, 16, QChar('0'));
-    outHeaderFile << QString("#define BS_CRC16         0x%1\n").arg(crc16, 4, 16, QChar('0'));
-    outHeaderFile << QString("#define BS_CRC32         0x%1\n").arg(crc32, 4, 16, QChar('0'));
+    outHeaderFile << QString("#define BS_SIZE_ADDR    0x%1\n").arg(16, 8, 16, QChar('0'));
+    outHeaderFile << QString("#define BS_SUM32_ADDR   0x%1\n").arg(20, 8, 16, QChar('0'));
+    outHeaderFile << QString("#define BS_CRC32_ADDR   0x%1\n").arg(24, 8, 16, QChar('0'));
+    outHeaderFile << QString("#define BS_CRC16_ADDR   0x%1\n").arg(28, 8, 16, QChar('0'));
+    outHeaderFile << QString("#define BS_CRC8_ADDR    0x%1\n").arg(30, 8, 16, QChar('0'));
+    outHeaderFile << QString("#define BS_XOR8_ADDR    0x%1\n").arg(31, 8, 16, QChar('0'));
 
-    file.seek(16);
-    file.write(writeToByteArray(sum16));
-    file.write(writeToByteArray(crc16));
+    outHeaderFile << QString("#define BS_SIZE         0x%1\n").arg(dataLength, 8, 16, QChar('0'));
+    outHeaderFile << QString("#define BS_SUM32        0x%1\n").arg(sum32, 8, 16, QChar('0'));
+    outHeaderFile << QString("#define BS_CRC32        0x%1\n").arg(crc32, 8, 16, QChar('0'));
+    outHeaderFile << QString("#define BS_CRC16        0x%1\n").arg(crc16, 4, 16, QChar('0'));
+    outHeaderFile << QString("#define BS_CRC8         0x%1\n").arg(crc8, 2, 16, QChar('0'));
+    outHeaderFile << QString("#define BS_XOR8         0x%1\n").arg(xor8, 2, 16, QChar('0'));
+
+
+    file.seek(20);
+    file.write(writeToByteArray(sum32));
     file.write(writeToByteArray(crc32));
+    file.write(writeToByteArray(crc16));
+    file.write(writeToByteArray(crc8));
+    file.write(writeToByteArray(xor8));
+
 
     // 4. 24-63 brief
-    file.seek(24);
-    QByteArray brief = settings.brief.toUtf8().left(40);
-    file.write(brief);
+    outHeaderFile << QString("#define BS_BRIEF	    \"%1\"\n").arg(settings.brief);
 
+    file.seek(32);
+    QByteArray brief = settings.brief.toUtf8().left(32);
+    file.write(brief);
 
     outHeaderFile << "\n#endif\n";
 
@@ -413,7 +433,7 @@ bool ImgConvertor::generateTypedef(const QString &outputPath)
         return false;
     }
 
-    const QString content =
+    const QString contentC =
         "#ifndef __INC_BITMAPSTUDIO_TYPEDEF_H__\n"
         "#define __INC_BITMAPSTUDIO_TYPEDEF_H__\n"
         "\n"
@@ -428,14 +448,39 @@ bool ImgConvertor::generateTypedef(const QString &outputPath)
         "    %3 height;\n"
         "} ComImg_t;\n"
         "\n"
-        "#define END_OF_IMG ((Img_t*)-1)\n"
+        "#define END_OF_IMG ((Img_t*)0)\n"
         "\n"
         "#endif\n";
 
-    const QString formattedContent = content
-                                     .arg(settings.keywordConst)
-                                     .arg(settings.keywordImgPos)
-                                     .arg(settings.keywordImgSize);
+    const QString contentBin =
+        "#ifndef __INC_BITMAPSTUDIO_TYPEDEF_H__\n"
+        "#define __INC_BITMAPSTUDIO_TYPEDEF_H__\n"
+        "\n"
+        "typedef %1 %2 img_t;\n"
+        "\n"
+        "typedef %1 struct\n"
+        "{\n"
+        "    Img_t img;\n"
+        "    %3 x;\n"
+        "    %3 y;\n"
+        "    %4 width;\n"
+        "    %4 height;\n"
+        "} ComImg_t;\n"
+        "\n"
+        "#define END_OF_IMG ((Img_t)0)\n"
+        "\n"
+        "#endif\n";
+
+    const QString formattedContent = settings.format == "bin"
+                                    ? contentBin
+                                        .arg(settings.keywordConst)
+                                        .arg(settings.keywordImgAddr)
+                                        .arg(settings.keywordImgPos)
+                                        .arg(settings.keywordImgSize)
+                                    : contentC
+                                        .arg(settings.keywordConst)
+                                        .arg(settings.keywordImgPos)
+                                        .arg(settings.keywordImgSize);
 
     QTextStream out(&file);
     out << formattedContent;
@@ -445,7 +490,3 @@ bool ImgConvertor::generateTypedef(const QString &outputPath)
     // 检查是否写入成功
     return out.status() == QTextStream::Ok;
 }
-
-
-
-

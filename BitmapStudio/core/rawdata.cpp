@@ -17,8 +17,10 @@ void RawData::initDatabase()
                   const    TEXT,\
                   img_pos  TEXT,\
                   img_size TEXT,\
+                  img_addr TEXT,\
                   path     TEXT,\
-                  format   TEXT\
+                  format   TEXT,\
+                  brief    TEXT\
                   );").arg(APP_VERSION));
     query.exec();
     // 创建tbl_img
@@ -132,8 +134,10 @@ void RawData::load()
         settings.keywordConst = query.value("const").toString();
         settings.keywordImgSize = query.value("img_size").toString();
         settings.keywordImgPos = query.value("img_pos").toString();
+        settings.keywordImgAddr = query.value("img_addr").toString();
         settings.path = query.value("path").toString();
         settings.format = query.value("format").toString();
+        settings.brief = query.value("brief").toString();
     }
 
     query.prepare("SELECT * FROM tbl_img");
@@ -607,7 +611,7 @@ void RawData::saveSettings(Settings settings)
     this->settings = settings;
 
     QSqlQuery query(db);
-    query.prepare("UPDATE tbl_settings SET depth=:depth, width=:width, height=:height, mode=:mode, const=:const, img_pos=:img_pos, img_size=:img_size, path=:path, format=:format");
+    query.prepare("UPDATE tbl_settings SET depth=:depth, width=:width, height=:height, mode=:mode, const=:const, img_pos=:img_pos, img_size=:img_size, img_addr=:img_addr, path=:path, format=:format, brief=:brief");
     query.bindValue(":depth", settings.depth);
     query.bindValue(":width", settings.size.width());
     query.bindValue(":height", settings.size.height());
@@ -615,8 +619,10 @@ void RawData::saveSettings(Settings settings)
     query.bindValue(":const", settings.keywordConst);
     query.bindValue(":img_pos", settings.keywordImgPos);
     query.bindValue(":img_size", settings.keywordImgSize);
+    query.bindValue(":img_addr", settings.keywordImgAddr);
     query.bindValue(":path", settings.path);
     query.bindValue(":format", settings.format);
+    query.bindValue(":brief", settings.brief);
     query.exec();
 }
 
@@ -635,7 +641,3 @@ bool RawData::haveSubFolder(int id)
     }
     return false;
 }
-
-
-
-

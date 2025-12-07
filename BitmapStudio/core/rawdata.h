@@ -94,6 +94,7 @@ public:
         QString keywordConst;
         QString keywordImgPos;
         QString keywordImgSize;
+        QString keywordImgAddr;
         QString path;
         QString format;
         QString brief;
@@ -106,6 +107,7 @@ public:
             keywordConst = "const";
             keywordImgPos = "unsigned char";
             keywordImgSize = "unsigned char";
+            keywordImgAddr = "unsigned int";
             path = nullptr;
             format = "C";
         }

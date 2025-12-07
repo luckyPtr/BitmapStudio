@@ -73,4 +73,6 @@ CMakeLists.txt.user*
 *.exe
 
 .vscode/
+.zed/
+.cache/
 build/

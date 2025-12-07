@@ -1,0 +1,14 @@
+CompileFlags:
+  Add:
+    - -Wno-builtin-macro-redefined
+    - -D__builtin_ia32_pause=_mm_pause
+  Remove:
+    - -fno-delayed-template-parsing
+  CompilationDatabase: build/Desktop_Qt_5_15_2_MSVC2019_64bit-Release/.qtc_clangd
+
+Diagnostics:
+  UnusedIncludes: None
+  MissingIncludes: None
+  Suppress:
+    - builtin_definition
+    - drv_unknown_argument

@@ -25,6 +25,14 @@ DialogProjectSettings::DialogProjectSettings(QWidget *parent) :
     connect(btnGroup1, SIGNAL(idToggled(int,bool)), this, SLOT(on_btnToggled(int,bool)));
     connect(btnGroup2, SIGNAL(idToggled(int,bool)), this, SLOT(on_btnToggled(int,bool)));
 
+    // 选择bin输出的时候显示图片地址类型
+    connect(ui->comboBox_Format, &QComboBox::currentTextChanged, [=](QString text) {
+        bool visible = text == "bin";
+        ui->lineEdit_Addr->setVisible(visible);
+        ui->label_Addr->setVisible(visible);
+    });
+    emit ui->comboBox_Format->currentTextChanged(ui->comboBox_Format->currentText());
+
 
     ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("确定"));
     ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("取消"));
@@ -78,39 +86,38 @@ void DialogProjectSettings::init(RawData::Settings settings)
     mode = settings.mode;
     ui->widget->setMode(mode);
 
-    ui->comboBox_Const->setCurrentText(settings.keywordConst);
-    ui->comboBox_PosTypedef->setCurrentText(settings.keywordImgPos);
-    ui->comboBox_SizeTypedef->setCurrentText(settings.keywordImgSize);
+    ui->lineEdit_Const->setText(settings.keywordConst);
+    ui->lineEdit_PosType->setText(settings.keywordImgPos);
+    ui->lineEdit_Addr->setText(settings.keywordImgAddr);
     ui->lineEdit_Output->setText(settings.path);
     ui->comboBox_Format->setCurrentText(settings.format);
+    ui->lineEdit_Brief->setText(settings.brief);
 }
 
 RawData::Settings DialogProjectSettings::getResult()
 {
     RawData::Settings settings;
     settings.mode = mode;
-    settings.keywordConst = ui->comboBox_Const->currentText();
-    settings.keywordImgPos = ui->comboBox_PosTypedef->currentText();
-    settings.keywordImgSize = ui->comboBox_SizeTypedef->currentText();
+    settings.keywordConst = ui->lineEdit_Const->text();
+    settings.keywordImgPos = ui->lineEdit_PosType->text();
+    settings.keywordImgSize = ui->lineEdit_PosType->text();
+    settings.keywordImgAddr = ui->lineEdit_Addr->text();
     settings.path = ui->lineEdit_Output->text();
     settings.format = ui->comboBox_Format->currentText();
+    settings.brief = ui->lineEdit_Brief->text();
     return settings;
 }
 
 QString DialogProjectSettings::getConst()
 {
-    return ui->comboBox_Const->currentText();
+    return ui->lineEdit_Const->text();
 }
 
 QString DialogProjectSettings::getPosType()
 {
-    return ui->comboBox_PosTypedef->currentText();
+    return ui->lineEdit_PosType->text();
 }
 
-QString DialogProjectSettings::getSizeType()
-{
-    return ui->comboBox_SizeTypedef->currentText();
-}
 
 QString DialogProjectSettings::getOutputPath()
 {
