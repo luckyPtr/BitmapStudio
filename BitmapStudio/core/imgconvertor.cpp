@@ -296,6 +296,7 @@ bool ImgConvertor::generateImgBin(const QString &outputPath)
         }
     }
 
+    outHeaderFile << "\n";
     foreach(auto i, dataList)
     {
         if(i.type == RawData::TypeImgGrpFolder)
@@ -304,11 +305,17 @@ bool ImgConvertor::generateImgBin(const QString &outputPath)
             quint32 addr = offsetMap[offset];
             file.seek(addr);
             outHeaderFile << QString("#define %1    0x%2\n").arg(i.fullName).arg(file.pos(), 8, 16, QChar('0'));
+            bool gotFrameSize = false;
             foreach (auto j, dataList)
             {
                 if (j.pid == i.id)
                 {
-                    file.write(imgEncoder->encode(j.image));
+                    QByteArray data = imgEncoder->encode(j.image);
+                    file.write(data);
+                    if (!gotFrameSize) {
+                        gotFrameSize = true;
+                        outHeaderFile << QString("#define %1_OFFSET    0x%2\n").arg(i.fullName).arg(data.size(), 8, 16, QChar('0'));
+                    }
                 }
             }
             offsetMap[offset] = file.pos();
@@ -448,7 +455,7 @@ bool ImgConvertor::generateTypedef(const QString &outputPath)
         "    %3 height;\n"
         "} ComImg_t;\n"
         "\n"
-        "#define END_OF_IMG ((Img_t*)0)\n"
+        "#define END_OF_IMG ((Img_t*)-1)\n"
         "\n"
         "#endif\n";
 
@@ -456,7 +463,7 @@ bool ImgConvertor::generateTypedef(const QString &outputPath)
         "#ifndef __INC_BITMAPSTUDIO_TYPEDEF_H__\n"
         "#define __INC_BITMAPSTUDIO_TYPEDEF_H__\n"
         "\n"
-        "typedef %1 %2 img_t;\n"
+        "typedef %1 %2 Img_t;\n"
         "\n"
         "typedef %1 struct\n"
         "{\n"
@@ -467,7 +474,7 @@ bool ImgConvertor::generateTypedef(const QString &outputPath)
         "    %4 height;\n"
         "} ComImg_t;\n"
         "\n"
-        "#define END_OF_IMG ((Img_t)0)\n"
+        "#define END_OF_IMG ((Img_t)-1)\n"
         "\n"
         "#endif\n";
 
