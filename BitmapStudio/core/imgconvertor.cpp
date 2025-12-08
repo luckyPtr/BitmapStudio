@@ -262,13 +262,13 @@ bool ImgConvertor::generateImgBin(const QString &outputPath)
         }
     }
 
-    QFile file(outputPath + "bm_img.bin");
+    QFile file(outputPath + "/bm_img.bin");
     if (!file.open(QIODevice::ReadWrite)) {
         return false;
     }
     file.resize(0);     // 删除原本内容
 
-    QFile headerFile(outputPath + "bm_img.h");
+    QFile headerFile(outputPath + "/bm_img.h");
     if (!headerFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
         return false;
     }
@@ -435,7 +435,7 @@ bool ImgConvertor::generateComImg(const QString &outputPath)
 
 bool ImgConvertor::generateTypedef(const QString &outputPath)
 {
-    QFile file(outputPath + "bm_typedef.h");
+    QFile file(outputPath + "/bm_typedef.h");
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         return false;
     }
