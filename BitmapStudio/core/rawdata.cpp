@@ -266,6 +266,7 @@ void RawData::createFolder(int id, QString name, QString brief)
         bi.type = type;
         bi.name = name;
         bi.brief = brief;
+        bi.offset = 0;
         dataMap.insert(bi.id, bi);
     }
 
@@ -325,6 +326,7 @@ void RawData::createBmp(int id, QString name, const QImage &img, const QString b
         bi.name = name;
         bi.image = img;
         bi.brief = brief;
+        bi.offset = 0;
         dataMap.insert(bi.id, bi);
     }
 
