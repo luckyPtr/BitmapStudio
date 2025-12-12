@@ -297,6 +297,7 @@ bool ImgConvertor::generateImgBin(const QString &outputPath)
     }
 
     outHeaderFile << "\n";
+
     foreach(auto i, dataList)
     {
         if(i.type == RawData::TypeImgGrpFolder)
