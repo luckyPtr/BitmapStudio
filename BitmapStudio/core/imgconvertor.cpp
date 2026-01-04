@@ -54,7 +54,7 @@ QString ImgConvertor::ImgFileToString(BmFile bf)
     if(bf.type == RawData::TypeImgFile)
     {
         res.append(QString::asprintf("// %dx%d\n", bf.image.width(), bf.image.height()));
-        res.append(QString("Img_t %1[] = \n{%2\n};\n").arg(fullName).arg(imgByteArrayToString(imgEncoder->encode(bf.image))));
+        res.append(QString("BMS_CONST Img_t %1[] = \n{%2\n};\n").arg(fullName).arg(imgByteArrayToString(imgEncoder->encode(bf.image))));
     }
 
     return res;
@@ -95,7 +95,7 @@ QPair<QString, int> ImgConvertor::ImgArrayToString(BmFile bf)
 
     res.append("// " + fullName + "\n");
     res.append(QString::asprintf("// %dx%d\n", imgSize.width(), imgSize.height()));
-    res.append(QString("Img_t %1[][%2] = \n{\n%3};\n").arg(fullName).arg(count).arg(imgArray));
+    res.append(QString("BMS_CONST Img_t %1[][%2] = \n{\n%3};\n").arg(fullName).arg(count).arg(imgArray));
 
 
     return QPair<QString, int>(res, count);
@@ -120,13 +120,13 @@ QString ImgConvertor::ComImgFileToString(BmFile bf)
 
     foreach(auto i, bf.comImg.items)
     {
-        array.append(QString("\t{%1, %2, %3, %4, %5},\n").arg(getBmFile(i.id).fullName).arg(i.x).arg(i.y).arg(getBmFile(i.id).image.width()).arg(getBmFile(i.id).image.height()));
+        array.append(QString("\t{BMS_CONST %1, %2, %3, %4, %5},\n").arg(getBmFile(i.id).fullName).arg(i.x).arg(i.y).arg(getBmFile(i.id).image.width()).arg(getBmFile(i.id).image.height()));
     }
-    array.append("\t{END_OF_IMG}\n");
+    array.append("\t{BMS_END_OF_IMG}\n");
 
     res.append("// " + fullName + "\n");
     res.append(QString::asprintf("// %dx%d\n", bf.comImg.size.width(), bf.comImg.size.height()));
-    res.append(QString("ComImg_t %1[] = \n{\n%2};\n").arg(fullName).arg(array));
+    res.append(QString("BMS_CONST ComImg_t %1[] = \n{\n%2};\n").arg(fullName).arg(array));
 
     return res;
 }
@@ -200,7 +200,7 @@ bool ImgConvertor::generateImgC(const QString &outputPath)
             if(getParentType(i) != RawData::TypeImgGrpFolder)
             {
                 outC << ImgFileToString(i);
-                outH << QString("extern Img_t %1[];\n").arg(i.fullName);
+                outH << QString("extern BMS_CONST Img_t %1[];\n").arg(i.fullName);
                 QCoreApplication::processEvents();
             }
         }
@@ -212,7 +212,7 @@ bool ImgConvertor::generateImgC(const QString &outputPath)
         {
             auto res = ImgArrayToString(i);
             outC << res.first;
-            outH << QString("extern Img_t %2[][%3];\n").arg(i.fullName).arg(res.second);
+            outH << QString("extern BMS_CONST Img_t %2[][%3];\n").arg(i.fullName).arg(res.second);
             QCoreApplication::processEvents();
         }
     }
@@ -445,9 +445,12 @@ bool ImgConvertor::generateTypedef(const QString &outputPath)
         "#ifndef __INC_BITMAPSTUDIO_TYPEDEF_H__\n"
         "#define __INC_BITMAPSTUDIO_TYPEDEF_H__\n"
         "\n"
-        "typedef %1 unsigned char Img_t;\n"
+        "#define BMS_CONST    %1\n"
+        "#define BMS_END_OF_IMG (0)\n"
         "\n"
-        "typedef %1 struct\n"
+        "typedef unsigned char Img_t;\n"
+        "\n"
+        "typedef struct\n"
         "{\n"
         "    Img_t *img;\n"
         "    %2 x;\n"
@@ -456,7 +459,6 @@ bool ImgConvertor::generateTypedef(const QString &outputPath)
         "    %3 height;\n"
         "} ComImg_t;\n"
         "\n"
-        "#define END_OF_IMG ((Img_t*)-1)\n"
         "\n"
         "#endif\n";
 
@@ -464,9 +466,12 @@ bool ImgConvertor::generateTypedef(const QString &outputPath)
         "#ifndef __INC_BITMAPSTUDIO_TYPEDEF_H__\n"
         "#define __INC_BITMAPSTUDIO_TYPEDEF_H__\n"
         "\n"
-        "typedef %1 %2 Img_t;\n"
+        "#define BMS_CONST    %1\n"
+        "#define BMS_END_OF_IMG (0)\n"
         "\n"
-        "typedef %1 struct\n"
+        "typedef %2 Img_t;\n"
+        "\n"
+        "typedef struct\n"
         "{\n"
         "    Img_t img;\n"
         "    %3 x;\n"
@@ -475,7 +480,6 @@ bool ImgConvertor::generateTypedef(const QString &outputPath)
         "    %4 height;\n"
         "} ComImg_t;\n"
         "\n"
-        "#define END_OF_IMG ((Img_t)-1)\n"
         "\n"
         "#endif\n";
 

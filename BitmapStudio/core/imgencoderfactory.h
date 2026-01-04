@@ -9,7 +9,7 @@ public:
     virtual QImage decode(QByteArray, QSize) = 0;   // 数组转图片
 
     ImgEncoder() {}
-    ~ImgEncoder() {}
+    virtual ~ImgEncoder() {}
 };
 
 // 逐列 逆向
