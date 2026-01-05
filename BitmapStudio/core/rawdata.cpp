@@ -72,11 +72,11 @@ QString RawData::calFullName(int id)
     {
         if(RawData::isClassImgType(dataMap[id].type))
         {
-            fullName = "IMG";
+            fullName = "BMS_IMG";
         }
         else if(RawData::isClassComImgType(dataMap[id].type))
         {
-            fullName = "CI";
+            fullName = "BMS_GRP";
         }
 
         auto appendParentName = [&](auto&& self, int id)->void {

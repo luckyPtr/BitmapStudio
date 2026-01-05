@@ -54,7 +54,7 @@ QString ImgConvertor::ImgFileToString(BmFile bf)
     if(bf.type == RawData::TypeImgFile)
     {
         res.append(QString::asprintf("// %dx%d\n", bf.image.width(), bf.image.height()));
-        res.append(QString("BMS_CONST Img_t %1[] = \n{%2\n};\n").arg(fullName).arg(imgByteArrayToString(imgEncoder->encode(bf.image))));
+        res.append(QString("BMS_CONST BmsImage_t %1[] = \n{%2\n};\n").arg(fullName).arg(imgByteArrayToString(imgEncoder->encode(bf.image))));
     }
 
     return res;
@@ -95,7 +95,7 @@ QPair<QString, int> ImgConvertor::ImgArrayToString(BmFile bf)
 
     res.append("// " + fullName + "\n");
     res.append(QString::asprintf("// %dx%d\n", imgSize.width(), imgSize.height()));
-    res.append(QString("BMS_CONST Img_t %1[][%2] = \n{\n%3};\n").arg(fullName).arg(count).arg(imgArray));
+    res.append(QString("BMS_CONST BmsImage_t %1[][%2] = \n{\n%3};\n").arg(fullName).arg(count).arg(imgArray));
 
 
     return QPair<QString, int>(res, count);
@@ -126,7 +126,7 @@ QString ImgConvertor::ComImgFileToString(BmFile bf)
 
     res.append("// " + fullName + "\n");
     res.append(QString::asprintf("// %dx%d\n", bf.comImg.size.width(), bf.comImg.size.height()));
-    res.append(QString("BMS_CONST ComImg_t %1[] = \n{\n%2};\n").arg(fullName).arg(array));
+    res.append(QString("BMS_CONST BmsSprite_t %1[] = \n{\n%2};\n").arg(fullName).arg(array));
 
     return res;
 }
@@ -175,23 +175,23 @@ quint32 ImgConvertor::getOffset(BmFile bf)
 
 bool ImgConvertor::generateImgC(const QString &outputPath)
 {
-    QFile fileC(outputPath + "/bm_img.c");
+    QFile fileC(outputPath + "/bms_image.c");
     if (!fileC.open(QIODevice::WriteOnly | QIODevice::Text)) {
         return false;
     }
     QTextStream outC(&fileC);
 
-    QFile fileH(outputPath + "/bm_img.h");
+    QFile fileH(outputPath + "/bms_image.h");
     if (!fileH.open(QIODevice::WriteOnly | QIODevice::Text)) {
         return false;
     }
     QTextStream outH(&fileH);
 
-    outC << "#include \"bm_img.h\"\n\n";
+    outC << "#include \"bms_image.h\"\n\n";
 
-    outH << "#ifndef __INC_BITMAPSTUDIO_IMG_H__\n";
-    outH << "#define __INC_BITMAPSTUDIO_IMG_H__\n";
-    outH << "#include \"bm_typedef.h\"\n\n";
+    outH << "#ifndef __INC_BMS_IMAGE_H__\n";
+    outH << "#define __INC_BMS_IMAGE_H__\n";
+    outH << "#include \"bms_typedef.h\"\n\n";
 
     foreach(auto i, dataList)
     {
@@ -200,7 +200,7 @@ bool ImgConvertor::generateImgC(const QString &outputPath)
             if(getParentType(i) != RawData::TypeImgGrpFolder)
             {
                 outC << ImgFileToString(i);
-                outH << QString("extern BMS_CONST Img_t %1[];\n").arg(i.fullName);
+                outH << QString("extern BMS_CONST BmsImage_t %1[];\n").arg(i.fullName);
                 QCoreApplication::processEvents();
             }
         }
@@ -212,7 +212,7 @@ bool ImgConvertor::generateImgC(const QString &outputPath)
         {
             auto res = ImgArrayToString(i);
             outC << res.first;
-            outH << QString("extern BMS_CONST Img_t %2[][%3];\n").arg(i.fullName).arg(res.second);
+            outH << QString("extern BMS_CONST BmsImage_t %2[][%3];\n").arg(i.fullName).arg(res.second);
             QCoreApplication::processEvents();
         }
     }
@@ -268,15 +268,15 @@ bool ImgConvertor::generateImgBin(const QString &outputPath)
     }
     file.resize(0);     // 删除原本内容
 
-    QFile headerFile(outputPath + "/bm_img.h");
+    QFile headerFile(outputPath + "/bms_image.h");
     if (!headerFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
         return false;
     }
     QTextStream outHeaderFile(&headerFile);
 
-    outHeaderFile << "#ifndef __INC_BITMAPSTUDIO_IMG_H__\n";
-    outHeaderFile << "#define __INC_BITMAPSTUDIO_IMG_H__\n";
-    outHeaderFile << "#include \"bm_typedef.h\"\n\n";
+    outHeaderFile << "#ifndef __INC_BMS_IMAGE_H__\n";
+    outHeaderFile << "#define __INC_BMS_IMAGE_H__\n";
+    outHeaderFile << "#include \"bms_typedef.h\"\n\n";
 
 
     foreach(auto i, dataList)
@@ -376,7 +376,7 @@ bool ImgConvertor::generateImgBin(const QString &outputPath)
 
 
     // 4. 24-63 brief
-    outHeaderFile << QString("#define BS_BRIEF	    \"%1\"\n").arg(settings.brief);
+    outHeaderFile << QString("#define BS_BRIEF        \"%1\"\n").arg(settings.brief);
 
     file.seek(32);
     QByteArray brief = settings.brief.toUtf8().left(32);
@@ -395,28 +395,28 @@ bool ImgConvertor::generateImgBin(const QString &outputPath)
 
 bool ImgConvertor::generateComImg(const QString &outputPath)
 {
-    QFile fileC(outputPath + "/bm_com_img.c");
+    QFile fileC(outputPath + "/bms_sprite.c");
     if (!fileC.open(QIODevice::WriteOnly | QIODevice::Text)) {
         return false;
     }
     QTextStream outC(&fileC);
 
-    QFile fileH(outputPath + "/bm_com_img.h");
+    QFile fileH(outputPath + "/bms_sprite.h");
     if (!fileH.open(QIODevice::WriteOnly | QIODevice::Text)) {
         return false;
     }
     QTextStream outH(&fileH);
 
-    outC << "#include \"bm_img.h\"\n\n";
-    outH << "#ifndef __INC_BITMAPSTUDIO_COM_IMG_H__\n#define __INC_BITMAPSTUDIO_COM_IMG_H__\n";
-    outH << "#include \"bm_typedef.h\"\n\n";
+    outC << "#include \"bms_image.h\"\n\n";
+    outH << "#ifndef __INC_BMS_SPRITE_H__\n#define __INC_BMS_SPRITE_H__\n";
+    outH << "#include \"bms_typedef.h\"\n\n";
 
     foreach(auto i, dataList)
     {
         if(i.type == RawData::TypeComImgFile)
         {
             outC << ComImgFileToString(i);
-            outH << QString("extern ComImg_t %1[];\n").arg(i.fullName);
+            outH << QString("extern BMS_CONST BmsSprite_t %1[];\n").arg(i.fullName);
             QCoreApplication::processEvents();
         }
     }
@@ -436,49 +436,49 @@ bool ImgConvertor::generateComImg(const QString &outputPath)
 
 bool ImgConvertor::generateTypedef(const QString &outputPath)
 {
-    QFile file(outputPath + "/bm_typedef.h");
+    QFile file(outputPath + "/bms_typedef.h");
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         return false;
     }
 
     const QString contentC =
-        "#ifndef __INC_BITMAPSTUDIO_TYPEDEF_H__\n"
-        "#define __INC_BITMAPSTUDIO_TYPEDEF_H__\n"
+        "#ifndef __INC_BMS_TYPEDEF_H__\n"
+        "#define __INC_BMS_TYPEDEF_H__\n"
         "\n"
-        "#define BMS_CONST    %1\n"
+        "#define BMS_CONST      %1\n"
         "#define BMS_END_OF_IMG (0)\n"
         "\n"
-        "typedef unsigned char Img_t;\n"
+        "typedef unsigned char BmsImage_t;\n"
         "\n"
         "typedef struct\n"
         "{\n"
-        "    Img_t *img;\n"
+        "    BmsImage_t *image;\n"
         "    %2 x;\n"
         "    %2 y;\n"
         "    %3 width;\n"
         "    %3 height;\n"
-        "} ComImg_t;\n"
+        "} BmsSprite_t;\n"
         "\n"
         "\n"
         "#endif\n";
 
     const QString contentBin =
-        "#ifndef __INC_BITMAPSTUDIO_TYPEDEF_H__\n"
-        "#define __INC_BITMAPSTUDIO_TYPEDEF_H__\n"
+        "#ifndef __INC_BMS_TYPEDEF_H__\n"
+        "#define __INC_BMS_TYPEDEF_H__\n"
         "\n"
-        "#define BMS_CONST    %1\n"
+        "#define BMS_CONST      %1\n"
         "#define BMS_END_OF_IMG (0)\n"
         "\n"
-        "typedef %2 Img_t;\n"
+        "typedef %2 BmsImage_t;\n"
         "\n"
         "typedef struct\n"
         "{\n"
-        "    Img_t img;\n"
+        "    BmsImage_t image;\n"
         "    %3 x;\n"
         "    %3 y;\n"
         "    %4 width;\n"
         "    %4 height;\n"
-        "} ComImg_t;\n"
+        "} BmsSprite_t;\n"
         "\n"
         "\n"
         "#endif\n";
