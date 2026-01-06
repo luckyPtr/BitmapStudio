@@ -824,8 +824,9 @@ void ProjectMng::on_ActRun_Triggered()
         ic.generateImgBin(path);
     else
         ic.generateImgC(path);
-    ic.generateComImg(path);
+    ic.generateSprite(path);
     ic.generateTypedef(path);
+    ic.generateMainHeader(path);
 
     dlgLoading->close();
     DialogNotice *dlg = new DialogNotice("字模转换完成!");
@@ -1015,5 +1016,3 @@ void ProjectMng::on_ImportImg(QModelIndex index, QString file)
         warningBox.exec();
     }
 }
-
-
