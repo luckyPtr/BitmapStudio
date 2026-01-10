@@ -1,5 +1,6 @@
 #include "dialognewproject.h"
 #include "ui_dialognewproject.h"
+#include "global.h"
 #include <QFileDialog>
 #include <QDebug>
 
@@ -24,6 +25,40 @@ DialogNewProject::DialogNewProject(QWidget *parent) :
 
     connect(btnGroup1, SIGNAL(idToggled(int,bool)), this, SLOT(on_btnToggled(int,bool)));
     connect(btnGroup2, SIGNAL(idToggled(int,bool)), this, SLOT(on_btnToggled(int,bool)));
+
+    // 使用配置文件中保存的默认尺寸
+    ui->spinBoxwidth->setValue(Global::defaultProjectWidth);
+    ui->spinBoxHeight->setValue(Global::defaultProjectHeight);
+
+    // 使用配置文件中保存的默认取模方式
+    if (Global::defaultProjectMode != -1) {
+        // 根据 mode 值设置按钮状态
+        int btnGroup1Id, btnGroup2Id;
+        switch(Global::defaultProjectMode) {
+            case ImgEncoderFactory::ZL_LSB:
+                btnGroup1Id = 0; btnGroup2Id = 0; break;
+            case ImgEncoderFactory::ZH_LSB:
+                btnGroup1Id = 0; btnGroup2Id = 1; break;
+            case ImgEncoderFactory::LH_LSB:
+                btnGroup1Id = 0; btnGroup2Id = 2; break;
+            case ImgEncoderFactory::HL_LSB:
+                btnGroup1Id = 0; btnGroup2Id = 3; break;
+            case ImgEncoderFactory::ZL_MSB:
+                btnGroup1Id = 1; btnGroup2Id = 0; break;
+            case ImgEncoderFactory::ZH_MSB:
+                btnGroup1Id = 1; btnGroup2Id = 1; break;
+            case ImgEncoderFactory::LH_MSB:
+                btnGroup1Id = 1; btnGroup2Id = 2; break;
+            case ImgEncoderFactory::HL_MSB:
+                btnGroup1Id = 1; btnGroup2Id = 3; break;
+            default:
+                btnGroup1Id = -1; btnGroup2Id = -1; break;
+        }
+        if (btnGroup1Id != -1) {
+            btnGroup1->button(btnGroup1Id)->setChecked(true);
+            btnGroup2->button(btnGroup2Id)->setChecked(true);
+        }
+    }
 }
 
 DialogNewProject::~DialogNewProject()
@@ -41,6 +76,11 @@ RawData::Settings DialogNewProject::getSettings()
     RawData::Settings settings;
     settings.size = QSize(ui->spinBoxwidth->value(), ui->spinBoxHeight->value());
     settings.mode = mode;
+
+    // 保存尺寸和取模方式到配置文件，作为下次新建的默认值
+    Global::saveDefaultProjectSize(ui->spinBoxwidth->value(), ui->spinBoxHeight->value());
+    Global::saveDefaultProjectMode(mode);
+
     return settings;
 }
 

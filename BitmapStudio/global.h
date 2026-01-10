@@ -30,7 +30,15 @@ public:
     static int exportImgColor_0;    // 导出图片的像素颜色
     static int exportImgColor_1;
 
+    // 新建项目默认尺寸
+    static int defaultProjectWidth;
+    static int defaultProjectHeight;
+    // 新建项目默认取模方式
+    static int defaultProjectMode;
+
     static void initSettings();
+    static void saveDefaultProjectSize(int width, int height);
+    static void saveDefaultProjectMode(int mode);
 private:
     static void createDefaultSettings(const QString &filePath);
     static void readSettings(const QString &filePath);
