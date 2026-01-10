@@ -92,6 +92,7 @@ void DialogProjectSettings::init(RawData::Settings settings)
     ui->lineEdit_Output->setText(settings.path);
     ui->comboBox_Format->setCurrentText(settings.format);
     ui->lineEdit_Brief->setText(settings.brief);
+    ui->checkBoxTypedef->setChecked(settings.customTypedef);
 }
 
 RawData::Settings DialogProjectSettings::getResult()
@@ -105,6 +106,7 @@ RawData::Settings DialogProjectSettings::getResult()
     settings.path = ui->lineEdit_Output->text();
     settings.format = ui->comboBox_Format->currentText();
     settings.brief = ui->lineEdit_Brief->text();
+    settings.customTypedef = ui->checkBoxTypedef->isChecked();
     return settings;
 }
 
@@ -147,4 +149,14 @@ void DialogProjectSettings::on_btnToggled(int btn, bool checked)
         break;
     }
     ui->widget->setMode(mode);
+}
+
+
+
+void DialogProjectSettings::on_checkBoxTypedef_stateChanged(int state)
+{
+    bool enable = state != Qt::Checked;
+    ui->lineEdit_Const->setEnabled(enable);
+    ui->lineEdit_PosType->setEnabled(enable);
+    ui->lineEdit_Addr->setEnabled(enable);
 }

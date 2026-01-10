@@ -98,6 +98,7 @@ public:
         QString path;
         QString format;
         QString brief;
+        bool customTypedef;     // 自定义类型文件（勾选则不生成 bms_typedef.h）
 
         Settings()
         {
@@ -110,6 +111,7 @@ public:
             keywordImgAddr = "unsigned int";
             path = nullptr;
             format = "C";
+            customTypedef = false;  // 默认生成 bms_typedef.h
         }
     };
 

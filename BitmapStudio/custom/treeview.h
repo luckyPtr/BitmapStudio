@@ -10,6 +10,7 @@ class TreeView : public QTreeView
     Q_OBJECT
 
     bool isImageFile(const QString &filePath);
+    bool isProjectFile(const QString &filePath);
 public:
     explicit TreeView(QWidget *parent = nullptr);
 

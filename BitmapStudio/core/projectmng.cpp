@@ -640,7 +640,7 @@ void ProjectMng::on_ActNewProject_Triggered()
 
 void ProjectMng::on_ActOpenProject_Triggered()
 {
-    QString aFile = QFileDialog::getOpenFileName(this, tr("打开工程"), "", tr("Bitmap Studio工程(*.bs)"));
+    QString aFile = QFileDialog::getOpenFileName(this, tr("打开工程"), "", tr("Bitmap Studio工程(*.bms *.bs)"));
     if(!aFile.isEmpty())
     {
         openProject(aFile);
@@ -825,7 +825,10 @@ void ProjectMng::on_ActRun_Triggered()
     else
         ic.generateImgC(path);
     ic.generateSprite(path);
-    ic.generateTypedef(path);
+    // 如果勾选了"自定义类型文件"，则不生成 bms_typedef.h，由用户自己生成
+    if (!settings.customTypedef) {
+        ic.generateTypedef(path);
+    }
     ic.generateMainHeader(path);
 
     dlgLoading->close();

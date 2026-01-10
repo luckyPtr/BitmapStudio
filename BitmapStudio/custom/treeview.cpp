@@ -19,6 +19,11 @@ bool TreeView::isImageFile(const QString &filePath)
     return isValid;
 }
 
+bool TreeView::isProjectFile(const QString &filePath)
+{
+    return filePath.endsWith(".bms") || filePath.endsWith(".bs");
+}
+
 TreeView::TreeView(QWidget *parent)
     : QTreeView{parent}
 {
@@ -30,7 +35,7 @@ void TreeView::dragEnterEvent(QDragEnterEvent *event)
 {
     if (event->mimeData()->hasUrls()) {
         const QList<QUrl> urls = event->mimeData()->urls();
-        if (urls.count() == 1 && urls.first().toLocalFile().endsWith(".bs")) {
+        if (urls.count() == 1 && isProjectFile(urls.first().toLocalFile())) {
             event->setDropAction(Qt::CopyAction);
             event->accept();
         }
@@ -55,7 +60,7 @@ void TreeView::dragMoveEvent(QDragMoveEvent *event)
 {
     if (event->mimeData()->hasUrls()) {
         const QList<QUrl> urls = event->mimeData()->urls();
-        if (urls.count() == 1 && urls.first().toLocalFile().endsWith(".bs")) {
+        if (urls.count() == 1 && isProjectFile(urls.first().toLocalFile())) {
             event->setDropAction(Qt::CopyAction);
             event->accept();
         }
@@ -81,7 +86,7 @@ void TreeView::dropEvent(QDropEvent *event)
 {
     if (event->mimeData()->hasUrls()) {
         const QList<QUrl> urls = event->mimeData()->urls();
-        if (urls.count() == 1 && urls.first().toLocalFile().endsWith(".bs")) {
+        if (urls.count() == 1 && isProjectFile(urls.first().toLocalFile())) {
             event->setDropAction(Qt::CopyAction);
             event->accept();
 

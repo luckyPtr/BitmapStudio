@@ -9,18 +9,19 @@ void RawData::initDatabase()
     QSqlQuery query(db);
     // 创建settings表
     query.prepare(QString("CREATE TABLE tbl_settings (\
-                  version  TEXT DEFAULT ('BitmapStudio v%1'),\
-                  depth    INTEGER,\
-                  width    INTEGER,\
-                  height   INTEGER,\
-                  mode     INTEGER,\
-                  const    TEXT,\
-                  img_pos  TEXT,\
-                  img_size TEXT,\
-                  img_addr TEXT,\
-                  path     TEXT,\
-                  format   TEXT,\
-                  brief    TEXT\
+                  version       TEXT DEFAULT ('BitmapStudio v%1'),\
+                  depth         INTEGER,\
+                  width         INTEGER,\
+                  height        INTEGER,\
+                  mode          INTEGER,\
+                  const         TEXT,\
+                  img_pos       TEXT,\
+                  img_size      TEXT,\
+                  img_addr      TEXT,\
+                  path          TEXT,\
+                  format        TEXT,\
+                  brief         TEXT,\
+                  custom_typedef INTEGER DEFAULT 0\
                   );").arg(APP_VERSION));
     query.exec();
     // 创建tbl_img
@@ -138,6 +139,7 @@ void RawData::load()
         settings.path = query.value("path").toString();
         settings.format = query.value("format").toString();
         settings.brief = query.value("brief").toString();
+        settings.customTypedef = query.value("custom_typedef").toBool();
     }
 
     query.prepare("SELECT * FROM tbl_img");
@@ -613,7 +615,7 @@ void RawData::saveSettings(Settings settings)
     this->settings = settings;
 
     QSqlQuery query(db);
-    query.prepare("UPDATE tbl_settings SET depth=:depth, width=:width, height=:height, mode=:mode, const=:const, img_pos=:img_pos, img_size=:img_size, img_addr=:img_addr, path=:path, format=:format, brief=:brief");
+    query.prepare("UPDATE tbl_settings SET depth=:depth, width=:width, height=:height, mode=:mode, const=:const, img_pos=:img_pos, img_size=:img_size, img_addr=:img_addr, path=:path, format=:format, brief=:brief, custom_typedef=:custom_typedef");
     query.bindValue(":depth", settings.depth);
     query.bindValue(":width", settings.size.width());
     query.bindValue(":height", settings.size.height());
@@ -625,6 +627,7 @@ void RawData::saveSettings(Settings settings)
     query.bindValue(":path", settings.path);
     query.bindValue(":format", settings.format);
     query.bindValue(":brief", settings.brief);
+    query.bindValue(":custom_typedef", settings.customTypedef ? 1 : 0);
     query.exec();
 }
 

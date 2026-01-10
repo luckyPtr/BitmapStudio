@@ -33,6 +33,7 @@ private:
 
 private slots:
     void on_btnToggled(int btn, bool checked);
+    void on_checkBoxTypedef_stateChanged(int state);
 };
 
 #endif // DIALOGPROJECTSETTINGS_H
