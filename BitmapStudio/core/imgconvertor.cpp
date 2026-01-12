@@ -252,7 +252,7 @@ bool ImgConvertor::generateImgBin(const QString &outputPath)
         }
     }
 
-    QFile file(outputPath + "/bm_img.bin");
+    QFile file(outputPath + "/bms.bin");
     if (!file.open(QIODevice::ReadWrite)) {
         return false;
     }
@@ -461,7 +461,7 @@ bool ImgConvertor::generateMainHeader(const QString &outputPath)
         };
 
         // 打开 bin 文件
-        QFile fileBin(outputPath + "/bm_img.bin");
+        QFile fileBin(outputPath + "/bms.bin");
         if (!fileBin.open(QIODevice::ReadWrite)) {
             return false;
         }
