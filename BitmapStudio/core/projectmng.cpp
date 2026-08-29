@@ -32,17 +32,18 @@ void ProjectMng::addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, 
         }
     }
 
-
-
-    // 按照文件夹>文件，名称字母正序进行排序
+    // 同级排序：容器（文件夹/图片组）在前、叶子在后，组内按id升序（即工程文件中的顺序）
     std::sort(imgList.begin(), imgList.end(), [](const BmFile &file1, const BmFile &file2){
-        if(file1.type > file2.type) {
-            return true;
+        bool container1 = (file1.type == RawData::TypeImgFolder ||
+                           file1.type == RawData::TypeImgGrpFolder ||
+                           file1.type == RawData::TypeComImgFolder);
+        bool container2 = (file2.type == RawData::TypeImgFolder ||
+                           file2.type == RawData::TypeImgGrpFolder ||
+                           file2.type == RawData::TypeComImgFolder);
+        if(container1 != container2) {
+            return container1;
         }
-        else if(file1.type == file2.type) {
-            return file1.name.toLower() < file2.name.toLower();
-        }
-        return false;
+        return file1.id < file2.id;
     });
 
     auto addNode = [=](auto&& self, const quint16 pid, TreeItem *parent) -> void{
@@ -193,7 +194,15 @@ void ProjectMng::openProject(QString pro)
 {
     // proList的类型从QVector更换为QList，打开三个工程崩溃的问题就没有出现
     // 但是可能并没有真正解决问题，可参考 https://zhidao.baidu.com/question/367115219524964612.html
-    projList << pro;        // 惊，还可以这样？？？
+    RawData rd(pro);
+    if (!rd.isValid())
+    {
+        // 无效工程（非JSON、损坏或旧版SQLite格式），统一提示
+        DialogNotice *dlg = new DialogNotice(tr("无法打开：不是有效的 Bitmap Studio 工程文件\n(旧版工程请使用 tools/convert_legacy.py 转换)"));
+        dlg->exec();
+        return;
+    }
+    projList << rd;
 }
 
 void ProjectMng::newProject(QString pro, RawData::Settings settings)
@@ -328,8 +337,9 @@ void ProjectMng::remove(QModelIndex &index)
     TreeItem *item = theModel->itemFromIndex(index);
     RawData *rd = item->getRawData();
     tabWidget->closeTab(item);
+    // RawData::remove已同步维护内存dataMap，不再整体load()——
+    // 重载会按文件位置重编所有内存id，导致已打开编辑器标签页持有的id错位
     rd->remove(item->getID());
-    rd->load();
 }
 
 void ProjectMng::imgFolderConvert(QModelIndex &index)

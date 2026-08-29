@@ -2,10 +2,11 @@
 #define RAWDATA_H
 #include <QString>
 #include <QList>
-#include <QtSql>
+#include <QImage>
 #include <QPixmap>
 #include <QMap>
 #include <QVector>
+#include <QHash>
 #include <QJsonObject>
 
 
@@ -15,16 +16,14 @@ struct ComImgItem
 {
     qint16 x;
     qint16 y;
-    quint16 z;
     quint16 id;
 
     ComImgItem(){}
-    ComImgItem(quint16 x, quint16 y, quint16 id) {
+    ComImgItem(qint16 x, qint16 y, quint16 id) {
         this->x = x;
         this->y = y;
         this->id = id;
     }
-
 
 };
 
@@ -60,15 +59,24 @@ struct BmFile
     QString fullName;
     QString brief;
     QImage image;
+    QByteArray png;     // PNG字节缓存：未编辑的图片落盘时原样写回，保证字节级往返稳定并跳过重编码
     ComImg comImg;
     quint32 offset;
+    bool followScreen;  // 组合图尺寸是否跟随屏幕（size 省略时的内存标记，不落盘）
 
     bool isExpand;
-    BmFile() {}
+    BmFile() { followScreen = false; }
 };
 
 
 
+/*
+ * 工程文件为单文件 JSON（.bms），格式要点：
+ * - 顶层：format("bms") / version / note / screen[w,h] / export / images / composites
+ * - 节点形状即类型：children=文件夹，frames=图片组，png=图片，items=组合图
+ * - 同级排序：容器在前、叶子在后；items 数组顺序 = 绘制顺序
+ * - 组合图成员用图片树路径引用；默认值（note/keywords/customTypedef/size）省略不写
+ */
 class RawData
 {
 public:
@@ -88,7 +96,7 @@ public:
     };
     struct Settings
     {
-        quint8 depth;           // 项目图片深度
+        quint8 depth;           // 项目图片深度（恒为1，不落盘）
         QSize size;             // 项目屏幕大小(像素)
         int mode;
         QString keywordConst;
@@ -117,16 +125,22 @@ public:
 
 private:
     QString project;        // 项目文件
-    QSqlDatabase db;        // 项目数据库
     Settings settings;
     QMap<quint16, BmFile> dataMap;
+    quint16 nextId = 1;     // 内存id分配器，加载时按树的规范顺序（容器优先的深度优先）分配
+    bool valid = true;      // 工程文件是否为有效的 bms JSON
 
-    void initDatabase();
-    void convertComImgToImage(BmFile &file);
+    QHash<QString, quint16> pathIndex;      // 图片树路径 -> id，用于解析组合图成员引用
+
+    void save();    // 序列化并原子写回JSON文件
+    void parseLevel(const QJsonArray &arr, quint16 pid, bool imgTree, const QString &parentPath);
+    QJsonArray serializeChildren(quint16 pid, bool imgTree, const QString &parentPath, QHash<quint16, QString> &idPath);
+    QString sanitizeName(const QString &name, quint16 pid, int type);
 
     int getTypeFromId(int id);
     QString calFullName(int id);
     void updateFullName();
+    static bool isContainerType(int type);
 public:
     RawData(const QString path);
     ~RawData();
@@ -135,7 +149,8 @@ public:
     QString getProject() const {return project;}
     QMap<quint16, BmFile> getDataMap() const {return dataMap;}
     BmFile getBmFile(quint16 id) const { return dataMap[id]; }
-    void load();    // 加载数据库数据
+    bool isValid() const { return valid; }
+    void load();    // 从JSON文件重新加载整个工程（删除节点后由ProjectMng调用）
     void createFolder(int id, QString name = "Untitled", QString brief = "");
     void createBmp(int id, QString name, const QImage &img, const QString brief = "");
     void createBmp(int id, QString name, QSize size, const QString brief = "");

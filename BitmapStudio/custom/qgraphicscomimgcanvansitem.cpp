@@ -2,6 +2,7 @@
 #include "qwgraphicsview.h"
 #include "global.h"
 #include <QGraphicsSceneDragDropEvent>
+#include <QMimeData>
 #include <QScrollBar>
 #include <QMenu>
 #include <QMessageBox>

@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- 工程存档改为单文件 JSON 格式，支持文本 diff，对 git 和 AI 友好
+- 旧版 SQLite 工程转换脚本 tools/convert_legacy.py
+- 组合图尺寸与屏幕一致时自动跟随屏幕尺寸
+
+### Changed
+
+- 图片及组合图顺序由工程文件中的顺序决定，不再按名称排序（同级文件夹在前）
+
+### Removed
+
+- 不再支持旧版 SQLite 工程（.bs），请使用转换脚本升级
+
 ## [0.3.0] - 2026-08-29
 
 ### Added

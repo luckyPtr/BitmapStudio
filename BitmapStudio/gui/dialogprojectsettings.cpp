@@ -46,6 +46,7 @@ DialogProjectSettings::~DialogProjectSettings()
 
 void DialogProjectSettings::init(RawData::Settings settings)
 {
+    curSettings = settings;
     switch(settings.mode)
     {
     case ImgEncoderFactory::ZH_LSB:
@@ -98,6 +99,8 @@ void DialogProjectSettings::init(RawData::Settings settings)
 RawData::Settings DialogProjectSettings::getResult()
 {
     RawData::Settings settings;
+    settings.size = curSettings.size;       // 透传屏幕尺寸（对话框不编辑，避免被默认值覆盖）
+    settings.depth = curSettings.depth;
     settings.mode = mode;
     settings.keywordConst = ui->lineEdit_Const->text();
     settings.keywordImgPos = ui->lineEdit_PosType->text();

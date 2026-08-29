@@ -1,51 +1,25 @@
 #include "rawdata.h"
 #include <QByteArray>
 #include <QImage>
+#include <QBuffer>
+#include <QFile>
+#include <QFileInfo>
+#include <QSaveFile>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonParseError>
+#include <QDebug>
 #include "global.h"
+#include "imgencoderfactory.h"
 
-void RawData::initDatabase()
+// QImage编码为PNG字节
+static QByteArray encodePngBytes(const QImage &img)
 {
-    db.transaction();
-    QSqlQuery query(db);
-    // 创建settings表
-    query.prepare(QString("CREATE TABLE tbl_settings (\
-                  version       TEXT DEFAULT ('BitmapStudio v%1'),\
-                  depth         INTEGER,\
-                  width         INTEGER,\
-                  height        INTEGER,\
-                  mode          INTEGER,\
-                  const         TEXT,\
-                  img_pos       TEXT,\
-                  img_size      TEXT,\
-                  img_addr      TEXT,\
-                  path          TEXT,\
-                  format        TEXT,\
-                  brief         TEXT,\
-                  custom_typedef INTEGER DEFAULT 0\
-                  );").arg(APP_VERSION));
-    query.exec();
-    // 创建tbl_img
-    query.prepare("CREATE TABLE tbl_img (\
-                  id      INTEGER PRIMARY KEY,\
-                  pid     INTEGER DEFAULT (0),\
-                  type    INTEGER DEFAULT (0),\
-                  name    TEXT,\
-                  brief   TEXT,\
-                  data    BLOB,\
-                  offset  INTEGER DEFAULT (0)\
-                  );");
-    query.exec();
-
-    query.prepare("INSERT INTO tbl_settings DEFAULT VALUES;");
-    //query.prepare("INSERT INTO tbl_settings (version) VALUES (:version);");
-    //query.bindValue(":version", QString("BitmapStudio v%1").arg(APP_VERSION));
-    query.exec();
-    db.commit();
-}
-
-void RawData::convertComImgToImage(BmFile &file)
-{
-    QImage img(file.comImg.size, QImage::Format_RGB888);
+    QByteArray byteArray;
+    QBuffer buffer(&byteArray);
+    buffer.open(QIODevice::WriteOnly);
+    img.save(&buffer, "PNG");
+    return byteArray;
 }
 
 int RawData::getTypeFromId(int id)
@@ -108,104 +82,389 @@ void RawData::updateFullName()
     }
 }
 
-void RawData::load()
+bool RawData::isContainerType(int type)
 {
-    // QString转QJsonObject
-    auto stringToJson = [](QString jsonString){
-        QJsonDocument jsonDocument = QJsonDocument::fromJson(jsonString.toLocal8Bit().data());
-        QJsonObject jsonObject = jsonDocument.object();
-        return jsonObject;
-    };
-
-
-    dataMap.clear();
-
-    QSqlQuery query(db);
-
-    query.prepare("SELECT * FROM tbl_settings");
-    query.exec();
-    if(query.first())
-    {
-        settings.depth = query.value("depth").toInt();
-        int width = query.value("width").toInt();
-        int height = query.value("height").toInt();
-        settings.size.setWidth(width);
-        settings.size.setHeight(height);
-        settings.mode = query.value("mode").toInt();
-        settings.keywordConst = query.value("const").toString();
-        settings.keywordImgSize = query.value("img_size").toString();
-        settings.keywordImgPos = query.value("img_pos").toString();
-        settings.keywordImgAddr = query.value("img_addr").toString();
-        settings.path = query.value("path").toString();
-        settings.format = query.value("format").toString();
-        settings.brief = query.value("brief").toString();
-        settings.customTypedef = query.value("custom_typedef").toBool();
-    }
-
-    query.prepare("SELECT * FROM tbl_img");
-    query.exec();
-    while (query.next())
-    {
-        BmFile bi;
-        bi.id = query.value("id").toInt();
-        bi.pid = query.value("pid").toInt();
-        bi.type = query.value("type").toInt();
-        bi.name = query.value("name").toString();
-        bi.brief = query.value("brief").toString();
-        bi.offset = query.value("offset").toInt();
-        if(bi.type == RawData::TypeImgFile)
-        {
-            QByteArray ba = query.value("data").toByteArray();
-            bi.image.loadFromData(ba);
-        }
-        else if(bi.type == RawData::TypeComImgFile)
-        {
-            QString s = query.value("data").toString();
-            QJsonObject jsonComImg = stringToJson(s);
-            bi.comImg.size.setWidth(jsonComImg.value("width").toInt());
-            bi.comImg.size.setHeight(jsonComImg.value("height").toInt());
-            QJsonArray array = jsonComImg.value("images").toArray();
-
-            for(auto obj : array)
-            {
-                ComImgItem item;
-                item.x = obj.toObject().value("x").toInt();
-                item.y = obj.toObject().value("y").toInt();
-                item.id = obj.toObject().value("id").toInt();
-
-                bi.comImg.items.append(item);
-            }
-        }
-        dataMap.insert(bi.id, bi);
-    }
-
-    updateFullName();
+    return type == TypeImgFolder || type == TypeImgGrpFolder || type == TypeComImgFolder;
 }
 
+// 名称规范化：去掉路径分隔符，同树同级冲突时自动加后缀
+QString RawData::sanitizeName(const QString &name, quint16 pid, int type)
+{
+    QString n = name;
+    n.replace('/', '_');
+    n.replace('\\', '_');
+    if (n.isEmpty()) n = "untitled";
+
+    QString base = n;
+    int suffix = 1;
+    while (true)
+    {
+        bool clash = false;
+        for (auto it = dataMap.constBegin(); it != dataMap.constEnd(); ++it)
+        {
+            // 仅同一棵树内的同名才算冲突（images/composites两树的根级节点互不影响）
+            if (it.value().pid == pid && it.value().name == n &&
+                RawData::isClassImgType(it.value().type) == RawData::isClassImgType(type))
+            {
+                clash = true;
+                break;
+            }
+        }
+        if (!clash) break;
+        n = base + QString("_%1").arg(suffix++);
+    }
+    return n;
+}
+
+void RawData::load()
+{
+    dataMap.clear();
+    pathIndex.clear();
+    nextId = 1;
+    valid = false;
+
+    QFile file(project);
+    if (!file.open(QIODevice::ReadOnly))
+    {
+        qWarning() << "工程文件打开失败:" << project;
+        return;
+    }
+    QJsonParseError parseErr;
+    QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &parseErr);
+    file.close();
+    if (parseErr.error != QJsonParseError::NoError || !doc.isObject())
+    {
+        qWarning() << "工程文件JSON解析失败:" << project << parseErr.errorString();
+        return;
+    }
+
+    QJsonObject root = doc.object();
+    if (root.value("format").toString() != "bms")
+    {
+        qWarning() << "不是有效的Bitmap Studio工程文件:" << project;
+        return;
+    }
+    int version = root.value("version").toInt(1);
+    if (version > 1)
+    {
+        qWarning() << "工程文件格式版本更新，按尽力而为方式解析:" << version;
+    }
+
+    settings = Settings();
+    settings.brief = root.value("note").toString();
+    QJsonArray screen = root.value("screen").toArray();
+    if (screen.size() == 2)
+    {
+        settings.size = QSize(screen.at(0).toInt(), screen.at(1).toInt());
+    }
+
+    QJsonObject exp = root.value("export").toObject();
+    // scan(ZH/ZL/HL/LH) + bitOrder(LSB/MSB) -> ImgEncoderFactory模式编号
+    int mode = ImgEncoderFactory::ZH_LSB;
+    QString scan = exp.value("scan").toString("ZH");
+    if (scan == "ZL") mode = ImgEncoderFactory::ZL_LSB;
+    else if (scan == "HL") mode = ImgEncoderFactory::HL_LSB;
+    else if (scan == "LH") mode = ImgEncoderFactory::LH_LSB;
+    if (exp.value("bitOrder").toString("LSB") == "MSB") mode += 4;
+    settings.mode = mode;
+    settings.format = exp.value("output").toString("C");
+    settings.path = exp.value("outdir").toString();
+    QJsonObject kw = exp.value("keywords").toObject();
+    if (!kw.isEmpty())
+    {
+        if (kw.contains("const")) settings.keywordConst = kw.value("const").toString();
+        if (kw.contains("pos")) settings.keywordImgPos = kw.value("pos").toString();
+        if (kw.contains("size")) settings.keywordImgSize = kw.value("size").toString();
+        if (kw.contains("addr")) settings.keywordImgAddr = kw.value("addr").toString();
+    }
+    settings.customTypedef = exp.value("customTypedef").toBool(false);
+
+    // 先解析图片树（建立路径索引），再解析组合图树（解析成员引用）
+    parseLevel(root.value("images").toArray(), 0, true, "");
+    parseLevel(root.value("composites").toArray(), 0, false, "");
+
+    updateFullName();
+    valid = true;
+}
+
+// 解析一层节点数组；同级先容器后叶子，组内保持数组顺序
+void RawData::parseLevel(const QJsonArray &arr, quint16 pid, bool imgTree, const QString &parentPath)
+{
+    auto parsePngLeaf = [&](const QJsonObject &node, quint16 leafPid, const QString &leafParentPath)
+    {
+        QString name = sanitizeName(node.value("name").toString(), leafPid, TypeImgFile);
+        if (name.isEmpty()) name = "untitled";
+        QString path = leafParentPath.isEmpty() ? name : leafParentPath + "/" + name;
+
+        quint16 id = nextId++;
+        BmFile bi;
+        bi.id = id;
+        bi.pid = leafPid;
+        bi.type = TypeImgFile;
+        bi.name = name;
+        bi.brief = node.value("note").toString();
+        QByteArray png = QByteArray::fromBase64(node.value("png").toString().toLatin1());
+        bi.png = png;       // 缓存原始字节，未编辑时落盘原样写回
+        if (!bi.image.loadFromData(png))
+        {
+            qWarning() << "图片数据解码失败:" << path;
+        }
+        dataMap.insert(id, bi);
+        pathIndex.insert(path, id);
+    };
+
+    for (int pass = 0; pass < 2; ++pass)
+    {
+        for (const QJsonValue &v : arr)
+        {
+            if (!v.isObject())
+            {
+                qWarning() << "忽略非对象节点";
+                continue;
+            }
+            QJsonObject node = v.toObject();
+            bool container = node.contains("children") || node.contains("frames");
+            if ((pass == 0) != container) continue;
+
+            if (node.contains("png"))
+            {
+                parsePngLeaf(node, pid, parentPath);
+                continue;
+            }
+
+            if (node.contains("items"))
+            {
+                // 组合图叶子
+                QString name = sanitizeName(node.value("name").toString(), pid, TypeComImgFile);
+                if (name.isEmpty()) name = "untitled";
+                quint16 id = nextId++;
+                BmFile bi;
+                bi.id = id;
+                bi.pid = pid;
+                bi.type = TypeComImgFile;
+                bi.name = name;
+                bi.brief = node.value("note").toString();
+                if (node.contains("size"))
+                {
+                    QJsonArray s = node.value("size").toArray();
+                    if (s.size() == 2) bi.comImg.size = QSize(s.at(0).toInt(), s.at(1).toInt());
+                    bi.followScreen = false;
+                }
+                else
+                {
+                    bi.comImg.size = settings.size;     // 省略size = 跟随屏幕
+                    bi.followScreen = true;
+                }
+                for (const QJsonValue &iv : node.value("items").toArray())
+                {
+                    QJsonObject io = iv.toObject();
+                    QString ref = io.value("image").toString();
+                    if (!pathIndex.contains(ref))
+                    {
+                        qWarning() << "组合图" << name << "的悬空引用已忽略:" << ref;
+                        continue;
+                    }
+                    QJsonArray pos = io.value("pos").toArray();
+                    ComImgItem item((qint16)(pos.size() >= 1 ? pos.at(0).toInt() : 0),
+                                    (qint16)(pos.size() >= 2 ? pos.at(1).toInt() : 0),
+                                    pathIndex.value(ref));
+                    bi.comImg.items.append(item);
+                }
+                dataMap.insert(id, bi);
+                continue;
+            }
+
+            int nodeType = node.contains("frames") ? TypeImgGrpFolder
+                                                   : (imgTree ? TypeImgFolder : TypeComImgFolder);
+            QString name = sanitizeName(node.value("name").toString(), pid, nodeType);
+            QString path = parentPath.isEmpty() ? name : parentPath + "/" + name;
+
+            if (node.contains("children"))
+            {
+                quint16 id = nextId++;
+                BmFile bi;
+                bi.id = id;
+                bi.pid = pid;
+                bi.type = nodeType;
+                bi.name = name;
+                bi.brief = node.value("note").toString();
+                dataMap.insert(id, bi);
+                parseLevel(node.value("children").toArray(), id, imgTree, path);
+            }
+            else if (node.contains("frames"))
+            {
+                // 图片组：只包含图片叶子，帧路径同样纳入索引供组合图引用
+                quint16 id = nextId++;
+                BmFile bi;
+                bi.id = id;
+                bi.pid = pid;
+                bi.type = TypeImgGrpFolder;
+                bi.name = name;
+                bi.brief = node.value("note").toString();
+                dataMap.insert(id, bi);
+                for (const QJsonValue &fv : node.value("frames").toArray())
+                {
+                    if (!fv.isObject() || !fv.toObject().contains("png"))
+                    {
+                        qWarning() << "图片组内忽略非图片节点:" << name;
+                        continue;
+                    }
+                    parsePngLeaf(fv.toObject(), id, path);
+                }
+            }
+            else
+            {
+                qWarning() << "无法识别的节点形状，已忽略:" << name;
+            }
+        }
+    }
+}
+
+// 序列化pid下的一层子节点（dataMap按id升序迭代，容器在前），图片树节点同时登记路径索引
+QJsonArray RawData::serializeChildren(quint16 pid, bool imgTree, const QString &parentPath, QHash<quint16, QString> &idPath)
+{
+    QVector<const BmFile *> containers, leaves;
+    for (auto it = dataMap.constBegin(); it != dataMap.constEnd(); ++it)
+    {
+        const BmFile &bf = it.value();
+        if (bf.pid != pid) continue;
+        if (imgTree ? !RawData::isClassImgType(bf.type) : !RawData::isClassComImgType(bf.type)) continue;
+        if (isContainerType(bf.type)) containers << &bf;
+        else leaves << &bf;
+    }
+
+    auto nodeBase = [](const BmFile &bf) {
+        QJsonObject o;
+        o.insert("name", bf.name);
+        if (!bf.brief.isEmpty()) o.insert("note", bf.brief);
+        return o;
+    };
+
+    QJsonArray out;
+    for (const BmFile *bf : containers)
+    {
+        QString path = parentPath.isEmpty() ? bf->name : parentPath + "/" + bf->name;
+        QJsonObject o = nodeBase(*bf);
+        if (bf->type == TypeImgGrpFolder)
+        {
+            QJsonArray frames;
+            for (auto it = dataMap.constBegin(); it != dataMap.constEnd(); ++it)
+            {
+                const BmFile &f = it.value();
+                if (f.pid != bf->id || f.type != TypeImgFile) continue;
+                QJsonObject fo = nodeBase(f);
+                fo.insert("png", QString::fromLatin1((f.png.isEmpty() ? encodePngBytes(f.image) : f.png).toBase64()));
+                frames.append(fo);
+                idPath.insert(f.id, path + "/" + f.name);
+            }
+            o.insert("frames", frames);
+        }
+        else
+        {
+            o.insert("children", serializeChildren(bf->id, imgTree, path, idPath));
+        }
+        out.append(o);
+    }
+    for (const BmFile *bf : leaves)
+    {
+        QJsonObject o = nodeBase(*bf);
+        if (bf->type == TypeImgFile)
+        {
+            o.insert("png", QString::fromLatin1((bf->png.isEmpty() ? encodePngBytes(bf->image) : bf->png).toBase64()));
+            idPath.insert(bf->id, parentPath.isEmpty() ? bf->name : parentPath + "/" + bf->name);
+        }
+        else
+        {
+            if (!bf->followScreen)
+            {
+                QJsonArray s;
+                s << bf->comImg.size.width() << bf->comImg.size.height();
+                o.insert("size", s);
+            }
+            QJsonArray items;
+            foreach (const ComImgItem &item, bf->comImg.items)
+            {
+                if (!idPath.contains(item.id)) continue;    // 悬空引用不落盘
+                QJsonObject io;
+                io.insert("image", idPath.value(item.id));
+                QJsonArray pos;
+                pos << item.x << item.y;
+                io.insert("pos", pos);
+                items.append(io);
+            }
+            o.insert("items", items);
+        }
+        out.append(o);
+    }
+    return out;
+}
+
+void RawData::save()
+{
+    QJsonObject root;
+    root.insert("format", "bms");
+    root.insert("version", 1);
+    if (!settings.brief.isEmpty()) root.insert("note", settings.brief);
+    QJsonArray screen;
+    screen << settings.size.width() << settings.size.height();
+    root.insert("screen", screen);
+
+    QJsonObject exp;
+    int mode = settings.mode;
+    if (mode < ImgEncoderFactory::ZH_LSB || mode > ImgEncoderFactory::LH_MSB) mode = ImgEncoderFactory::ZH_LSB;
+    static const char *scans[4] = {"ZH", "ZL", "HL", "LH"};
+    exp.insert("scan", scans[mode % 4]);
+    exp.insert("bitOrder", mode < 4 ? "LSB" : "MSB");
+    exp.insert("output", settings.format.isEmpty() ? "C" : settings.format);
+    if (!settings.path.isEmpty()) exp.insert("outdir", settings.path);
+    Settings def;
+    if (settings.keywordConst != def.keywordConst || settings.keywordImgPos != def.keywordImgPos ||
+        settings.keywordImgSize != def.keywordImgSize || settings.keywordImgAddr != def.keywordImgAddr)
+    {
+        // 仅当用户改过默认关键字时才落盘
+        QJsonObject kw;
+        kw.insert("const", settings.keywordConst);
+        kw.insert("pos", settings.keywordImgPos);
+        kw.insert("size", settings.keywordImgSize);
+        kw.insert("addr", settings.keywordImgAddr);
+        exp.insert("keywords", kw);
+    }
+    if (settings.customTypedef) exp.insert("customTypedef", true);
+    root.insert("export", exp);
+
+    QHash<quint16, QString> idPath;
+    root.insert("images", serializeChildren(0, true, "", idPath));
+    root.insert("composites", serializeChildren(0, false, "", idPath));
+
+    QSaveFile file(project);
+    if (!file.open(QIODevice::WriteOnly))
+    {
+        qWarning() << "工程文件写入失败:" << project;
+        return;
+    }
+    file.write(QJsonDocument(root).toJson(QJsonDocument::Indented));
+    if (!file.commit())
+    {
+        qWarning() << "工程文件写入提交失败:" << project;
+    }
+}
 
 RawData::RawData(const QString path)
 {
     project = path;
-    QFileInfo file(path);
-    bool isFile = file.isFile();
-
-    db = QSqlDatabase::addDatabase("QSQLITE", file.baseName());
-    db.setDatabaseName(path);
-    if(db.open())
+    QFileInfo info(path);
+    if (!info.isFile())
     {
-        qDebug() << "项目打开成功:" << path;
+        save();      // 新建工程：写入默认内容
     }
-    // 文件不存在则初始化文件
-    if(!isFile)
+    else
     {
-        initDatabase();
+        load();
     }
-    load();
 }
 
 RawData::~RawData()
 {
-//    db.close();
     if(!expand.isEmpty())
     expand.clear();
     qDebug() << "~RawData:" << project;
@@ -214,8 +473,7 @@ RawData::~RawData()
 void RawData::createFolder(int id, QString name, QString brief)
 {
     int type = TypeUnknow;
-    int pid = 0;
-    QSqlQuery query(db);
+    quint16 pid = 0;
 
     if(id == -3)
     {
@@ -225,114 +483,79 @@ void RawData::createFolder(int id, QString name, QString brief)
     {
         type = RawData::TypeComImgFolder;
     }
-    else
+    else if(dataMap.contains(id))
     {
-        query.prepare("SELECT pid, type FROM tbl_img WHERE id=?");
-        query.bindValue(0, id);
-        query.exec();
+        pid = dataMap[id].pid;
+        int curType = dataMap[id].type;
 
-        if(query.first())
+        // 如果选择的是文件夹，新建的文件夹在此文件夹下；如果选择的是文件，新建的文件夹在该文件所在的文件夹下
+        if(curType == RawData::TypeImgFolder || curType == RawData::TypeComImgFolder)
         {
-            pid = query.value("pid").toUInt();
-            int curType = query.value("type").toInt();
+            pid = id;
+        }
 
-            // 如果选择的是文件夹，新建的文件夹在此文件夹下；如果选择的是文件，新建的文件夹在该文件所在的文件夹下
-            if(curType == RawData::TypeImgFolder || curType == RawData::TypeComImgFolder)
-            {
-                pid = id;
-            }
-
-            if(curType == RawData::TypeImgFile || curType == RawData::TypeImgFolder)
-            {
-                type = RawData::TypeImgFolder;
-            }
-            else if(curType == RawData::TypeComImgFile || curType == RawData::TypeComImgFolder)
-            {
-                type = RawData::TypeComImgFolder;
-            }
+        if(curType == RawData::TypeImgFile || curType == RawData::TypeImgFolder)
+        {
+            type = RawData::TypeImgFolder;
+        }
+        else if(curType == RawData::TypeComImgFile || curType == RawData::TypeComImgFolder)
+        {
+            type = RawData::TypeComImgFolder;
         }
     }
 
-    if(type != RawData::TypeUnknow)
+    if(type != TypeUnknow)
     {
-        query.prepare("INSERT INTO tbl_img (name,type,pid,brief) VALUES(:name,:type,:pid,:brief)");
-        query.bindValue(":name", name);
-        query.bindValue(":type", type);
-        query.bindValue(":pid", pid);
-        query.bindValue(":brief", brief);
-        query.exec();
-
         BmFile bi;
-        bi.id = query.lastInsertId().toUInt();
+        bi.id = nextId++;
         bi.pid = pid;
         bi.type = type;
-        bi.name = name;
+        bi.name = sanitizeName(name, pid, type);
         bi.brief = brief;
         bi.offset = 0;
         dataMap.insert(bi.id, bi);
+        updateFullName();
+        save();
     }
-
-    updateFullName();
 }
 
 void RawData::createBmp(int id, QString name, const QImage &img, const QString brief)
 {
     bool isVaild = false;
-    int pid = 0;
-
-    QByteArray byteArray = QByteArray();
-    QBuffer buffer(&byteArray);
-    buffer.open(QIODevice::WriteOnly);
-    img.save(&buffer, "png");
-
-    QSqlQuery query(db);
+    quint16 pid = 0;
 
     if(id == -3)    // 如果是图片类
     {
         isVaild = true;
     }
-    else
+    else if(dataMap.contains(id))
     {
-        query.prepare("SELECT pid, type FROM tbl_img WHERE id=?");
-        query.bindValue(0, id);
-        query.exec();
+        pid = dataMap[id].pid;
+        int type = dataMap[id].type;
 
-        if(query.first())
+        if(type == RawData::TypeImgFolder ||\
+           type == RawData::TypeImgGrpFolder)
         {
-            pid = query.value("pid").toUInt();
-            int type = query.value("type").toInt();
-
-            if(type == RawData::TypeImgFolder ||\
-               type == RawData::TypeImgGrpFolder)
-            {
-                pid = id;
-            }
-            isVaild = true;
+            pid = id;
         }
+        isVaild = true;
     }
 
     if(isVaild)
     {
-        query.prepare("INSERT INTO tbl_img (name,type,pid,data,brief) VALUES(:name,:type,:pid,:data,:brief)");
-        query.bindValue(":name", name);
-        query.bindValue(":type", RawData::TypeImgFile);
-        query.bindValue(":pid", pid);
-        query.bindValue(":data", byteArray);
-        query.bindValue(":brief", brief);
-        query.exec();
-
         BmFile bi;
-        bi.id = query.lastInsertId().toUInt();
+        bi.id = nextId++;
         bi.pid = pid;
         bi.type = RawData::TypeImgFile;
-        bi.name = name;
+        bi.name = sanitizeName(name, pid, TypeImgFile);
         bi.image = img;
+        bi.png = encodePngBytes(img);
         bi.brief = brief;
         bi.offset = 0;
         dataMap.insert(bi.id, bi);
+        updateFullName();
+        save();
     }
-
-    updateFullName();
 }
 
 void RawData::createBmp(int id, QString name, QSize size, const QString brief)
@@ -345,74 +568,47 @@ void RawData::createBmp(int id, QString name, QSize size, const QString brief)
 void RawData::createComImg(int id, QString name, QSize size, const QString brief)
 {
     bool isVaild = false;
-    int pid = 0;
-    QSqlQuery query(db);
+    quint16 pid = 0;
 
     if(id == -4)
     {
         isVaild = true;
     }
-    else
+    else if(dataMap.contains(id))
     {
-        query.prepare("SELECT pid, type FROM tbl_img WHERE id=?");
-        query.bindValue(0, id);
-        query.exec();
-
-        if(query.first())
+        pid = dataMap[id].pid;
+        if(dataMap[id].type == RawData::TypeComImgFolder)
         {
-            pid = query.value("pid").toInt();
-            int type = query.value("type").toInt();
-
-            if(type == RawData::TypeComImgFolder)
-            {
-                pid = id;
-            }
-            isVaild = true;
+            pid = id;
         }
+        isVaild = true;
     }
 
     if(isVaild)
     {
-        QJsonObject ciObj;
-        ciObj.insert("width", size.width());
-        ciObj.insert("height", size.height());
-
-        query.prepare("INSERT INTO tbl_img (name,type,pid,data,brief) VALUES(:name,:type,:pid,:data,:brief)");
-        query.bindValue(":name", name);
-        query.bindValue(":type", RawData::TypeComImgFile);
-        query.bindValue(":pid", pid);
-        query.bindValue(":data", QString(QJsonDocument(ciObj).toJson()).toUtf8());
-        query.bindValue(":brief", brief);
-        query.exec();
-
         BmFile bi;
-        bi.id = query.lastInsertId().toUInt();
+        bi.id = nextId++;
         bi.pid = pid;
         bi.type = RawData::TypeComImgFile;
-        bi.name = name;
+        bi.name = sanitizeName(name, pid, TypeComImgFile);
         bi.brief = brief;
-
-        bi.image = QImage();
+        // 尺寸与屏幕一致时视为跟随屏幕（size不落盘，改屏幕尺寸时自动跟随）
+        bi.followScreen = (size == settings.size);
         bi.comImg = ComImg(size);
         dataMap.insert(bi.id, bi);
+        updateFullName();
+        save();
     }
-    updateFullName();
 }
 
 void RawData::rename(int id, QString name)
 {
-    QSqlQuery query(db);
-
-    query.prepare("UPDATE tbl_img SET name=:name WHERE id=:id");
-    query.bindValue(":name", name);
-    query.bindValue(":id", id);
-    query.exec();
-
     if(dataMap.contains(id))
     {
-        dataMap[id].name = name;
+        dataMap[id].name = sanitizeName(name, dataMap[id].pid, dataMap[id].type);
+        updateFullName();
+        save();
     }
-    updateFullName();
 }
 
 QString RawData::getName(int id)
@@ -422,23 +618,24 @@ QString RawData::getName(int id)
 
 void RawData::remove(int id)
 {
-    // 删除对应id
-    QSqlQuery query(db);
-    query.prepare("DELETE FROM tbl_img WHERE id=:id");
-    query.bindValue(":id", id);
-    query.exec();
+    if(!dataMap.contains(id)) return;
 
-    // 递归删除该id下面的子项
-    query.prepare("SELECT id FROM tbl_img WHERE pid=:pid");
-    query.bindValue(":pid", id);
-    query.exec();
-    while (query.next())
+    // 先收集子节点再递归删除，避免删除过程中迭代失效
+    QVector<quint16> children;
+    for (auto it = dataMap.constBegin(); it != dataMap.constEnd(); ++it)
     {
-        int childId = query.value("id").toInt();
-        remove(childId);
+        if(it.value().pid == id)
+        {
+            children << it.key();
+        }
     }
-
+    dataMap.remove(id);
+    foreach (quint16 child, children)
+    {
+        remove(child);
+    }
     updateFullName();
+    save();
 }
 
 void RawData::imgFolderConvert(int id)
@@ -450,16 +647,11 @@ void RawData::imgFolderConvert(int id)
         if(type == RawData::TypeImgFolder || type == RawData::TypeImgGrpFolder)
         {
             dataMap[id].type = type == RawData::TypeImgFolder ? RawData::TypeImgGrpFolder : RawData::TypeImgFolder;
-            QSqlQuery query(db);
-            query.prepare("UPDATE tbl_img SET type=:type WHERE id=:id");
-            query.bindValue(":type", dataMap[id].type);
-            query.bindValue(":id", id);
-            query.exec();
+            updateFullName();
+            save();
         }
     }
-    updateFullName();
 }
-
 
 
 
@@ -534,19 +726,8 @@ void RawData::setImage(int id, QImage image)
     if(dataMap.contains(id))
     {
         dataMap[id].image = image;
-
-        QByteArray byteArray = QByteArray();
-        QBuffer buffer(&byteArray);
-        buffer.open(QIODevice::WriteOnly);
-        image.save(&buffer, "png");
-
-        QSqlQuery query(db);
-        query.prepare("UPDATE tbl_img SET data=:data WHERE id=:id AND type=:type");
-        query.bindValue(":data", byteArray);
-        query.bindValue(":id", id);
-        query.bindValue(":type", RawData::TypeImgFile);
-        query.exec();
-        buffer.close();
+        dataMap[id].png = encodePngBytes(image);
+        save();
     }
 }
 
@@ -560,12 +741,7 @@ void RawData::setBrief(int id, QString brief)
     if(dataMap.contains(id))
     {
         dataMap[id].brief = brief;
-
-        QSqlQuery query(db);
-        query.prepare("UPDATE tbl_img SET brief=:brief WHERE id=:id");
-        query.bindValue(":brief", brief);
-        query.bindValue(":id", id);
-        query.exec();
+        save();
     }
 }
 
@@ -576,35 +752,15 @@ ComImg RawData::getComImg(int id)
 
 void RawData::setComImg(int id, ComImg ci)
 {
-    // JSON Object -> QString
-    auto jsonToString = [](QJsonObject jsonObj){
-        return QString(QJsonDocument(jsonObj).toJson());
-    };
-
     if(dataMap.contains(id))
     {
-        dataMap[id].comImg = ci;
-
-        QJsonArray imgList;
-        foreach(auto item, ci.items)
+        // 尺寸发生变化说明是显式设定，不再跟随屏幕
+        if(ci.size != dataMap[id].comImg.size)
         {
-            QJsonObject obj;
-            obj.insert("id", item.id);
-            obj.insert("x", item.x);
-            obj.insert("y", item.y);
-            imgList.append(obj);
+            dataMap[id].followScreen = false;
         }
-
-        QJsonObject ciObj;
-        ciObj.insert("width", ci.size.width());
-        ciObj.insert("height", ci.size.height());
-        ciObj.insert("images", QJsonValue(imgList));
-
-        QSqlQuery query(db);
-        query.prepare("UPDATE tbl_img SET data=:data WHERE id=:id");
-        query.bindValue(":data", jsonToString(ciObj).toUtf8());
-        query.bindValue(":id", id);
-        query.exec();
+        dataMap[id].comImg = ci;
+        save();
     }
 }
 
@@ -613,22 +769,15 @@ void RawData::setComImg(int id, ComImg ci)
 void RawData::saveSettings(Settings settings)
 {
     this->settings = settings;
-
-    QSqlQuery query(db);
-    query.prepare("UPDATE tbl_settings SET depth=:depth, width=:width, height=:height, mode=:mode, const=:const, img_pos=:img_pos, img_size=:img_size, img_addr=:img_addr, path=:path, format=:format, brief=:brief, custom_typedef=:custom_typedef");
-    query.bindValue(":depth", settings.depth);
-    query.bindValue(":width", settings.size.width());
-    query.bindValue(":height", settings.size.height());
-    query.bindValue(":mode", settings.mode);
-    query.bindValue(":const", settings.keywordConst);
-    query.bindValue(":img_pos", settings.keywordImgPos);
-    query.bindValue(":img_size", settings.keywordImgSize);
-    query.bindValue(":img_addr", settings.keywordImgAddr);
-    query.bindValue(":path", settings.path);
-    query.bindValue(":format", settings.format);
-    query.bindValue(":brief", settings.brief);
-    query.bindValue(":custom_typedef", settings.customTypedef ? 1 : 0);
-    query.exec();
+    // 跟随屏幕的组合图同步到新屏幕尺寸
+    for (auto it = dataMap.begin(); it != dataMap.end(); ++it)
+    {
+        if (it.value().type == TypeComImgFile && it.value().followScreen)
+        {
+            it.value().comImg.size = settings.size;
+        }
+    }
+    save();
 }
 
 QSize RawData::getSize()

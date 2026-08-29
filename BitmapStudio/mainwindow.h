@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QtSql>
 #include <QStandardItem>
 #include <QVector>
 #include <core/projectmng.h>

@@ -1,4 +1,6 @@
 #include "imgconvertor.h"
+#include <QCoreApplication>
+#include <QFile>
 #include <QPoint>
 #include <QRgb>
 #include <QDebug>
@@ -15,9 +17,8 @@ ImgConvertor::ImgConvertor(QVector<BmFile> dataMap, RawData::Settings settings)
     this->dataList = dataMap;
     this->settings = settings;
     imgEncoder = ImgEncoderFactory::create(settings.mode);
-    std::sort(dataList.begin(), dataList.end(), [=](BmFile a, BmFile b){
-        return a.fullName.toLower() < b.fullName.toLower();
-    });
+
+    // 顺序由工程文件决定（dataMap按id升序 = 加载时的树规范顺序），不再按名称排序
 
     foreach (auto i, dataList)
     {

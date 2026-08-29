@@ -2,7 +2,6 @@
 #define PROJECTMNG_H
 
 #include <QWidget>
-#include <QtSql>
 #include <QStandardItem>
 #include <QTreeView>
 #include <QVector>

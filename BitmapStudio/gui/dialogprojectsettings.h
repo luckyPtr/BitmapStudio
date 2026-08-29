@@ -16,6 +16,7 @@ class DialogProjectSettings : public QDialog
     QButtonGroup *btnGroup1;
     QButtonGroup *btnGroup2;
     int mode = 0;       // 取模方式
+    RawData::Settings curSettings;  // init传入的工程设置（对话框不编辑屏幕尺寸，getResult时透传）
 public:
     explicit DialogProjectSettings(QWidget *parent = nullptr);
     ~DialogProjectSettings();
