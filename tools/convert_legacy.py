@@ -10,7 +10,8 @@ Bitmap Studio 旧版工程转换脚本：SQLite(.bs / 旧.bms) -> JSON(.bms)
     python convert_legacy.py <旧工程路径.bs|.bms> [-o 输出路径.bms]
 
 规则：
-    - 文件夹/图片/组合图按原有树结构转为嵌套 JSON（同级容器在前）
+    - 文件夹/图片/组合图按原有树结构转为嵌套 JSON，同级顺序复刻旧版显示顺序
+      （文件夹在前，同类型按名称字母序），与用户在旧版中看到的排列一致
     - 组合图成员由数字 id 改为树路径引用，悬空引用会被丢弃并告警
     - 同树同级重名、含"/"的名称自动规范化（加后缀/替换字符）并告警
     - 组合图尺寸与屏幕一致时省略 size（跟随屏幕）
@@ -67,12 +68,12 @@ class Converter:
         return result
 
     def children_of(self, pid, tree):
-        """指定父节点的同树子节点，容器在前、组内保持原相对顺序。"""
+        """指定父节点的同树子节点。复刻旧版程序的显示顺序，保证转换后排列
+        与用户在旧版中看到的一致：类型降序（组合图文件夹>图片组>图片文件夹>组合图>图片），
+        同类型按名称不区分大小写的字母序。"""
         kids = [r for r in self.rows.values() if r["pid"] == pid and class_of(r) == tree]
-        kids.sort(key=lambda r: r["id"])
-        containers = [r for r in kids if r["type"] in (2, 3, 4)]
-        leaves = [r for r in kids if r["type"] in (0, 1)]
-        return containers + leaves
+        kids.sort(key=lambda r: (-r["type"], r["name"].lower()))
+        return kids
 
     def png_node(self, row, parent_path):
         node = {"name": row["name"]}
