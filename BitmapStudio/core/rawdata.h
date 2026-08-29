@@ -53,7 +53,6 @@ struct BmFile
 {
     quint32 id;
     quint32 pid;
-    quint8 isFolder;    // 0-文件 1-文件夹 2-图片组文件夹
     int type;
     QString name;
     QString fullName;
@@ -61,7 +60,6 @@ struct BmFile
     QImage image;
     QByteArray png;     // PNG字节缓存：未编辑的图片落盘时原样写回，保证字节级往返稳定并跳过重编码
     ComImg comImg;
-    quint32 offset;
     bool followScreen;  // 组合图尺寸是否跟随屏幕（size 省略时的内存标记，不落盘）
 
     bool isExpand;
@@ -96,7 +94,6 @@ public:
     };
     struct Settings
     {
-        quint8 depth;           // 项目图片深度（恒为1，不落盘）
         QSize size;             // 项目屏幕大小(像素)
         int mode;
         QString keywordConst;
@@ -110,7 +107,6 @@ public:
 
         Settings()
         {
-            depth = 1;
             size = QSize(128, 64);
             mode = 0;
             keywordConst = "const";

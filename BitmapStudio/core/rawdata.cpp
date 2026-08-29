@@ -401,6 +401,13 @@ QJsonArray RawData::serializeChildren(quint16 pid, bool imgTree, const QString &
 
 void RawData::save()
 {
+    if (!valid)
+    {
+        // 无效工程（解析失败/旧格式）一律拒绝写回，防止覆盖原文件
+        qWarning() << "工程文件无效，拒绝写回:" << project;
+        return;
+    }
+
     QJsonObject root;
     root.insert("format", "bms");
     root.insert("version", 1);
@@ -512,7 +519,6 @@ void RawData::createFolder(int id, QString name, QString brief)
         bi.type = type;
         bi.name = sanitizeName(name, pid, type);
         bi.brief = brief;
-        bi.offset = 0;
         dataMap.insert(bi.id, bi);
         updateFullName();
         save();
@@ -551,7 +557,6 @@ void RawData::createBmp(int id, QString name, const QImage &img, const QString b
         bi.image = img;
         bi.png = encodePngBytes(img);
         bi.brief = brief;
-        bi.offset = 0;
         dataMap.insert(bi.id, bi);
         updateFullName();
         save();

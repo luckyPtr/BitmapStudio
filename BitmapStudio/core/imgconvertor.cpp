@@ -154,34 +154,6 @@ int ImgConvertor::getParentType(BmFile bf)
     return bf.type;
 }
 
-quint32 ImgConvertor::getOffset(BmFile bf)
-{
-    QSet<int> visited;
-
-    while (1)
-    {
-        // 防止无限循环
-        if (visited.contains(bf.id)) {
-            // 检测到循环引用，返回错误值或抛出异常
-            return 0; // 或者其他合适的默认值
-        }
-        visited.insert(bf.id);
-
-        if (bf.pid == 0)
-        {
-            return bf.offset;
-        }
-
-        // 检查父节点是否存在
-        if (!dataMap.contains(bf.pid)) {
-            // 父节点不存在，返回错误值
-            return 0; // 或者其他合适的默认值
-        }
-
-        bf = dataMap[bf.pid];
-    }
-}
-
 
 
 bool ImgConvertor::generateImgC(const QString &outputPath)
@@ -242,16 +214,8 @@ bool ImgConvertor::generateImgC(const QString &outputPath)
 
 bool ImgConvertor::generateImgBin(const QString &outputPath)
 {
-    QMap<quint32, quint32> offsetMap;
-
-    foreach (auto i, dataList)
-    {
-        quint32 offset = getOffset(i);
-        if (!offsetMap.contains(offset))
-        {
-            offsetMap[offset] = offset + 64;
-        }
-    }
+    // bin布局：前64字节为文件头，图片数据按顺序追加（单游标）
+    quint32 cursor = 64;
 
     QFile file(outputPath + "/bms.bin");
     if (!file.open(QIODevice::ReadWrite)) {
@@ -276,12 +240,11 @@ bool ImgConvertor::generateImgBin(const QString &outputPath)
         {
             if(getParentType(i) != RawData::TypeImgGrpFolder)
             {
-                quint32 offset = getOffset(i);
-                quint32 addr = offsetMap[offset];
+                quint32 addr = cursor;
                 outHeaderFile << QString("#define %1    0x%2\n").arg(i.fullName).arg(addr, 8, 16, QChar('0'));
                 file.seek(addr);
                 file.write(imgEncoder->encode(i.image));
-                offsetMap[offset] = file.pos();
+                cursor = file.pos();
                 QCoreApplication::processEvents();
             }
         }
@@ -293,9 +256,7 @@ bool ImgConvertor::generateImgBin(const QString &outputPath)
     {
         if(i.type == RawData::TypeImgGrpFolder)
         {
-            quint32 offset = getOffset(i);
-            quint32 addr = offsetMap[offset];
-            file.seek(addr);
+            file.seek(cursor);
             outHeaderFile << QString("#define %1    0x%2\n").arg(i.fullName).arg(file.pos(), 8, 16, QChar('0'));
             bool gotFrameSize = false;
             foreach (auto j, dataList)
@@ -310,7 +271,7 @@ bool ImgConvertor::generateImgBin(const QString &outputPath)
                     }
                 }
             }
-            offsetMap[offset] = file.pos();
+            cursor = file.pos();
             QCoreApplication::processEvents();
         }
     }

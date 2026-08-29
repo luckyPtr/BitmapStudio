@@ -20,7 +20,6 @@ private:
     QPair<QString, int> ImgArrayToString(BmFile bf);
     QString ComImgFileToString(BmFile bf);
     int getParentType(BmFile bf);
-    quint32 getOffset(BmFile bf);
 public:
     ImgConvertor(QVector<BmFile> dataMap, RawData::Settings settings);
     ~ImgConvertor();

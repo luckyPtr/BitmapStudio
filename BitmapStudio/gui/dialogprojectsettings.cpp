@@ -100,11 +100,9 @@ RawData::Settings DialogProjectSettings::getResult()
 {
     RawData::Settings settings;
     settings.size = curSettings.size;       // 透传屏幕尺寸（对话框不编辑，避免被默认值覆盖）
-    settings.depth = curSettings.depth;
     settings.mode = mode;
     settings.keywordConst = ui->lineEdit_Const->text();
     settings.keywordImgPos = ui->lineEdit_PosType->text();
-    settings.keywordImgSize = ui->lineEdit_PosType->text();
     settings.keywordImgAddr = ui->lineEdit_Addr->text();
     settings.path = ui->lineEdit_Output->text();
     settings.format = ui->comboBox_Format->currentText();

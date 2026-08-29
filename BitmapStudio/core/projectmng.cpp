@@ -3,6 +3,7 @@
 #include <QInputDialog>
 #include <QMenu>
 #include <QMessageBox>
+#include <QFileInfo>
 #include <gui/dialognewimgfile.h>
 #include <QFileDialog>
 #include <gui/dialognewfolder.h>
@@ -207,6 +208,14 @@ void ProjectMng::openProject(QString pro)
 
 void ProjectMng::newProject(QString pro, RawData::Settings settings)
 {
+    // 防止在已有工程文件（含旧版SQLite工程）路径上新建导致原文件被覆盖
+    QFileInfo info(pro);
+    if (info.isFile())
+    {
+        DialogNotice *dlg = new DialogNotice(tr("工程文件已存在，请直接打开或更换名称/路径"));
+        dlg->exec();
+        return;
+    }
     RawData newProject(pro);
     newProject.saveSettings(settings);
     projList << newProject;
