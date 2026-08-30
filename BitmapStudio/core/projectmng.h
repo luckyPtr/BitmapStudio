@@ -49,6 +49,7 @@ private:
     void saveExpand();
     void restoreExpand();
     void initActions();
+    void warnSaveFailed(bool saved);    // 落盘失败时统一弹窗（编辑仅存在于内存，需立即告知用户）
 
 public:
     explicit ProjectMng(QWidget *parent = nullptr);

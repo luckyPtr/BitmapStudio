@@ -182,7 +182,11 @@ int init(const QStringList &rawArgs)
     st.format = format;
     st.path = outdir;
     st.brief = note;
-    rd.saveSettings(st);
+    if (!rd.saveSettings(st))
+    {
+        err("写入工程文件失败: " + file + "（目录只读或磁盘错误）");
+        return 1;
+    }
 
     out(QString("已创建工程: %1  屏幕 %2x%3  取模 %4 %5  输出 %6")
         .arg(QFileInfo(file).absoluteFilePath())
@@ -507,7 +511,12 @@ int rename(const QStringList &rawArgs)
     quint16 id = 0;
     if (!resolve(rd, args.at(1), &id)) { delete rd; return 1; }
 
-    rd->rename(id, args.at(2));   // 同名/非法字符会被自动规范化
+    if (!rd->rename(id, args.at(2)))   // 同名/非法字符会被自动规范化
+    {
+        err("写入工程文件失败: " + args.at(0));
+        delete rd;
+        return 1;
+    }
     out(QString("已重命名为: %1（组合图引用已自动更新）").arg(rd->getBmFile(id).name));
     delete rd;
     return 0;
@@ -535,7 +544,7 @@ int move(const QStringList &rawArgs)
 
     if (!rd->move(id, destId))
     {
-        err("移动失败：目标必须是同树的文件夹，且不能移动到自身子树下（图片组内只接受图片）");
+        err("移动失败：目标必须是同树的文件夹，且不能移动到自身子树下（图片组内只接受图片）；或写入工程文件失败");
         delete rd;
         return 1;
     }
@@ -589,7 +598,12 @@ int del(const QStringList &rawArgs)
         }
     }
 
-    rd->remove(id);
+    if (!rd->remove(id))
+    {
+        err("写入工程文件失败: " + args.at(0));
+        delete rd;
+        return 1;
+    }
     out(QString("已删除 /%1").arg(normPath(args.at(1))));
     delete rd;
     return 0;
@@ -631,6 +645,7 @@ int add(const QStringList &rawArgs)
         parentId = pid;
     }
 
+    bool saved = false;
     if (kind == "img")
     {
         if (pngFile.isEmpty())
@@ -646,16 +661,16 @@ int add(const QStringList &rawArgs)
             delete rd;
             return 1;
         }
-        rd->createBmp(parentId, name, img, note);
+        saved = rd->createBmp(parentId, name, img, note);
     }
     else if (kind == "folder")
     {
-        rd->createFolder(parentId, name, note);
+        saved = rd->createFolder(parentId, name, note);
     }
     else if (kind == "group")
     {
-        rd->createFolder(parentId, name, note);
-        rd->imgFolderConvert(rd->getDataMap().lastKey());   // 新建的文件夹转为图片组
+        saved = rd->createFolder(parentId, name, note) &&
+                rd->imgFolderConvert(rd->getDataMap().lastKey());   // 新建的文件夹转为图片组
     }
     else if (kind == "composite")
     {
@@ -665,11 +680,18 @@ int add(const QStringList &rawArgs)
             QStringList wh = sizeStr.split('x', QString::SkipEmptyParts);
             if (wh.size() == 2) size = QSize(wh.at(0).toInt(), wh.at(1).toInt());
         }
-        rd->createComImg(parentId, name, size, note);
+        saved = rd->createComImg(parentId, name, size, note);
     }
     else
     {
         err("未知的 --kind: " + kind + "（可选 img|folder|group|composite）");
+        delete rd;
+        return 1;
+    }
+
+    if (!saved)
+    {
+        err("写入工程文件失败: " + args.at(0));
         delete rd;
         return 1;
     }
@@ -720,7 +742,12 @@ int itemAdd(const QStringList &rawArgs)
 
     ComImg ci = rd->getComImg(compId);
     ci.items.append(ComImgItem((qint16)args.at(3).toInt(), (qint16)args.at(4).toInt(), imgId));
-    rd->setComImg(compId, ci);
+    if (!rd->setComImg(compId, ci))
+    {
+        err("写入工程文件失败: " + args.at(0));
+        delete rd;
+        return 1;
+    }
 
     out(QString("已添加成员 %1 @(%2,%3)，组合图 %4 现有 %5 个成员")
         .arg(normPath(args.at(2)), args.at(3), args.at(4), normPath(args.at(1)))
@@ -762,7 +789,12 @@ int itemRm(const QStringList &rawArgs)
     QHash<quint16, QString> idPath = buildIdPath(rd->getDataMap());
     QString removedPath = idPath.value(ci.items.at(idx).id);
     ci.items.removeAt(idx);
-    rd->setComImg(compId, ci);
+    if (!rd->setComImg(compId, ci))
+    {
+        err("写入工程文件失败: " + args.at(0));
+        delete rd;
+        return 1;
+    }
     out(QString("已移除成员 #%1（%2），剩余 %3 个").arg(idx).arg(removedPath).arg(ci.items.size()));
     delete rd;
     return 0;

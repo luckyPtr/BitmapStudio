@@ -200,9 +200,14 @@ void ProjectMng::openProject(QString pro)
     RawData rd(pro);
     if (!rd.isValid())
     {
-        // 无效工程（非JSON、损坏或旧版SQLite格式），统一提示
-        DialogNotice *dlg = new DialogNotice(tr("无法打开：不是有效的 Bitmap Studio 工程文件\n(旧版工程请使用 tools/convert_legacy.py 转换)"));
-        dlg->exec();
+        // 无效工程（非JSON、损坏或旧版SQLite格式），统一提示；
+        // 用模态错误框而非toast：这类错误阻止后续操作，需要用户明确知晓
+        QMessageBox errBox;
+        errBox.setIcon(QMessageBox::Critical);
+        errBox.setWindowTitle(tr("无法打开"));
+        errBox.setText(tr("%1 不是有效的 Bitmap Studio 工程文件\n(旧版工程请使用 tools/convert_legacy.py 转换)").arg(QFileInfo(pro).fileName()));
+        errBox.addButton(QObject::tr("确定"), QMessageBox::AcceptRole);
+        errBox.exec();
         return;
     }
     projList << rd;
@@ -214,14 +219,17 @@ void ProjectMng::newProject(QString pro, RawData::Settings settings)
     QFileInfo info(pro);
     if (info.isFile())
     {
-        DialogNotice *dlg = new DialogNotice(tr("工程文件已存在，请直接打开或更换名称/路径"));
-        dlg->exec();
+        QMessageBox warnBox;
+        warnBox.setIcon(QMessageBox::Warning);
+        warnBox.setWindowTitle(tr("无法新建"));
+        warnBox.setText(tr("工程文件已存在，请直接打开或更换名称/路径"));
+        warnBox.addButton(QObject::tr("确定"), QMessageBox::AcceptRole);
+        warnBox.exec();
         return;
     }
     RawData newProject(pro);
-    newProject.saveSettings(settings);
-    projList << newProject;
-}
+    warnSaveFailed(newProject.saveSettings(settings));
+    projList << newProject;}
 
 void ProjectMng::closeProjcet(QModelIndex &index)
 {
@@ -286,11 +294,25 @@ void ProjectMng::setTabWidget(CustomTabWidget *tabWidget)
 
 
 
+void ProjectMng::warnSaveFailed(bool saved)
+{
+    if (!saved)
+    {
+        // 模态错误框而非toast：保存失败意味着编辑可能丢失，需用户手动确认
+        QMessageBox errBox;
+        errBox.setIcon(QMessageBox::Critical);
+        errBox.setWindowTitle(tr("保存失败"));
+        errBox.setText(tr("保存工程文件失败（磁盘已满/文件被占用/目录只读），当前编辑仅存在于内存中，请检查后重试"));
+        errBox.addButton(QObject::tr("确定"), QMessageBox::AcceptRole);
+        errBox.exec();
+    }
+}
+
 void ProjectMng::createFolder(QModelIndex index, QString name, QString brief)
 {
     TreeItem *item = theModel->itemFromIndex(index);
     RawData *rd = item->getRawData();
-    rd->createFolder(item->getID(), name, brief);
+    warnSaveFailed(rd->createFolder(item->getID(), name, brief));
 }
 
 void ProjectMng::createImage(QModelIndex &index, QString name, QSize size, QString brief)
@@ -305,13 +327,13 @@ void ProjectMng::createImage(QModelIndex &index, QString name, QSize size, QStri
         type == RawData::TypeImgGrpFolder ||\
         type == RawData::TypeImgFile)
     {
-        rd->createBmp(id, name, size, brief);
+        warnSaveFailed(rd->createBmp(id, name, size, brief));
     }
     else if(type == RawData::TypeClassComImg ||\
             type == RawData::TypeComImgFolder ||\
             type == RawData::TypeComImgFolder)
     {
-        rd->createComImg(id, name, size);
+        warnSaveFailed(rd->createComImg(id, name, size));
     }
 }
 
@@ -319,21 +341,21 @@ void ProjectMng::createImage(QModelIndex &index, QString name, QImage &img, QStr
 {
     TreeItem *item = theModel->itemFromIndex(index);
     RawData *rd = item->getRawData();
-    rd->createBmp(item->getID(), name, img, brief);
+    warnSaveFailed(rd->createBmp(item->getID(), name, img, brief));
 }
 
 void ProjectMng::createComImg(QModelIndex &index, QString name, QSize size, QString brief)
 {
     TreeItem *item = theModel->itemFromIndex(index);
     RawData *rd = item->getRawData();
-    rd->createComImg(item->getID(), name, size, brief);
+    warnSaveFailed(rd->createComImg(item->getID(), name, size, brief));
 }
 
 void ProjectMng::rename(QModelIndex &index, QString name)
 {
     TreeItem *item = theModel->itemFromIndex(index);
     RawData *rd = item->getRawData();
-    rd->rename(item->getID(), name);
+    warnSaveFailed(rd->rename(item->getID(), name));
 }
 
 QString ProjectMng::getName(QModelIndex &index)
@@ -350,14 +372,14 @@ void ProjectMng::remove(QModelIndex &index)
     tabWidget->closeTab(item);
     // RawData::remove已同步维护内存dataMap，不再整体load()——
     // 重载会按文件位置重编所有内存id，导致已打开编辑器标签页持有的id错位
-    rd->remove(item->getID());
+    warnSaveFailed(rd->remove(item->getID()));
 }
 
 void ProjectMng::imgFolderConvert(QModelIndex &index)
 {
     TreeItem *item = theModel->itemFromIndex(index);
     RawData *rd = item->getRawData();
-    rd->imgFolderConvert(item->getID());
+    warnSaveFailed(rd->imgFolderConvert(item->getID()));
 }
 
 QImage ProjectMng::getImage(QModelIndex index)
@@ -371,7 +393,7 @@ void ProjectMng::setImage(QModelIndex index, QImage &image)
 {
     TreeItem *item = theModel->itemFromIndex(index);
     RawData *rd = item->getRawData();
-    rd->setImage(item->getID(), image);
+    warnSaveFailed(rd->setImage(item->getID(), image));
 }
 
 ComImg ProjectMng::getComImg(QModelIndex index)
@@ -385,7 +407,7 @@ void ProjectMng::setComImg(QModelIndex index, ComImg &comImg)
 {
     TreeItem *item = theModel->itemFromIndex(index);
     RawData *rd = item->getRawData();
-    rd->setComImg(item->getID(), comImg);
+    warnSaveFailed(rd->setComImg(item->getID(), comImg));
 }
 
 QString ProjectMng::getBrief(QModelIndex index)
@@ -399,7 +421,7 @@ void ProjectMng::setBrief(QModelIndex index, QString brief)
 {
     TreeItem *item = theModel->itemFromIndex(index);
     RawData *rd = item->getRawData();
-    rd->setBrief(item->getID(), brief);
+    warnSaveFailed(rd->setBrief(item->getID(), brief));
 }
 
 QModelIndex ProjectMng::getModelIndex(QString project, int id)
@@ -814,7 +836,7 @@ void ProjectMng::on_ActSettings_Triggered()
     dlgSettings->init(item->getRawData()->getSettings());
     if(dlgSettings->exec() == QDialog::Accepted)
     {
-        item->getRawData()->saveSettings(dlgSettings->getResult());
+        warnSaveFailed(item->getRawData()->saveSettings(dlgSettings->getResult()));
     }
     delete dlgSettings;
 }

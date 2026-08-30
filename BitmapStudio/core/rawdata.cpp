@@ -22,24 +22,6 @@ static QByteArray encodePngBytes(const QImage &img)
     return byteArray;
 }
 
-int RawData::getTypeFromId(int id)
-{
-    switch(id)
-    {
-    case -1:
-        return RawData::TypeProject;
-    case -2:
-        return RawData::TypeClassSettings;
-    case -3:
-        return RawData::TypeClassImg;
-    case -4:
-        return RawData::TypeClassComImg;
-    default:
-        return getDataMap()[id].type;
-        break;
-    }
-}
-
 QString RawData::calFullName(int id)
 {
     QString fullName;
@@ -139,8 +121,7 @@ bool RawData::move(quint16 id, quint16 newPid)
 
     dataMap[id].pid = newPid;
     updateFullName();
-    save();     // 引用在保存时按新树重新生成路径，自动级联
-    return true;
+    return save();   // 引用在保存时按新树重新生成路径，自动级联
 }
 
 // 名称规范化：去掉路径分隔符，同树同级冲突时自动加后缀。
@@ -492,13 +473,13 @@ QJsonArray RawData::serializeChildren(quint16 pid, bool imgTree, const QString &
     return out;
 }
 
-void RawData::save()
+bool RawData::save()
 {
     if (!valid)
     {
         // 无效工程（解析失败/旧格式）一律拒绝写回，防止覆盖原文件
         qWarning() << "工程文件无效，拒绝写回:" << project;
-        return;
+        return false;
     }
 
     QJsonObject root;
@@ -540,13 +521,15 @@ void RawData::save()
     if (!file.open(QIODevice::WriteOnly))
     {
         qWarning() << "工程文件写入失败:" << project;
-        return;
+        return false;
     }
     file.write(QJsonDocument(root).toJson(QJsonDocument::Indented));
     if (!file.commit())
     {
         qWarning() << "工程文件写入提交失败:" << project;
+        return false;
     }
+    return true;
 }
 
 RawData::RawData(const QString path)
@@ -565,12 +548,10 @@ RawData::RawData(const QString path)
 
 RawData::~RawData()
 {
-    if(!expand.isEmpty())
-    expand.clear();
     qDebug() << "~RawData:" << project;
 }
 
-void RawData::createFolder(int id, QString name, QString brief)
+bool RawData::createFolder(int id, QString name, QString brief)
 {
     int type = TypeUnknow;
     quint16 pid = 0;
@@ -614,11 +595,12 @@ void RawData::createFolder(int id, QString name, QString brief)
         bi.brief = brief;
         dataMap.insert(bi.id, bi);
         updateFullName();
-        save();
+        return save();
     }
+    return false;
 }
 
-void RawData::createBmp(int id, QString name, const QImage &img, const QString brief)
+bool RawData::createBmp(int id, QString name, const QImage &img, const QString brief)
 {
     bool isVaild = false;
     quint16 pid = 0;
@@ -652,18 +634,19 @@ void RawData::createBmp(int id, QString name, const QImage &img, const QString b
         bi.brief = brief;
         dataMap.insert(bi.id, bi);
         updateFullName();
-        save();
+        return save();
     }
+    return false;
 }
 
-void RawData::createBmp(int id, QString name, QSize size, const QString brief)
+bool RawData::createBmp(int id, QString name, QSize size, const QString brief)
 {
     QImage image(size, QImage::Format_RGBA8888);
     image.fill(Qt::white);
-    createBmp(id, name, image, brief);
+    return createBmp(id, name, image, brief);
 }
 
-void RawData::createComImg(int id, QString name, QSize size, const QString brief)
+bool RawData::createComImg(int id, QString name, QSize size, const QString brief)
 {
     bool isVaild = false;
     quint16 pid = 0;
@@ -695,18 +678,20 @@ void RawData::createComImg(int id, QString name, QSize size, const QString brief
         bi.comImg = ComImg(size);
         dataMap.insert(bi.id, bi);
         updateFullName();
-        save();
+        return save();
     }
+    return false;
 }
 
-void RawData::rename(int id, QString name)
+bool RawData::rename(int id, QString name)
 {
     if(dataMap.contains(id))
     {
         dataMap[id].name = sanitizeName(name, dataMap[id].pid, dataMap[id].type);
         updateFullName();
-        save();
+        return save();
     }
+    return false;
 }
 
 QString RawData::getName(int id)
@@ -714,29 +699,33 @@ QString RawData::getName(int id)
     return dataMap[id].name;
 }
 
-void RawData::remove(int id)
+bool RawData::remove(int id)
 {
-    if(!dataMap.contains(id)) return;
+    if(!dataMap.contains(id)) return false;
 
-    // 先收集子节点再递归删除，避免删除过程中迭代失效
-    QVector<quint16> children;
-    for (auto it = dataMap.constBegin(); it != dataMap.constEnd(); ++it)
+    // 迭代收集整棵子树后一次性删除：避免递归remove在每个子孙节点上
+    // 都执行一次全表fullName重算+全文件序列化写盘（删除大文件夹呈平方级开销）
+    QVector<quint16> subtree;
+    QVector<quint16> stack;
+    stack << id;
+    while (!stack.isEmpty())
     {
-        if(it.value().pid == id)
+        quint16 cur = stack.takeLast();
+        subtree << cur;
+        for (auto it = dataMap.constBegin(); it != dataMap.constEnd(); ++it)
         {
-            children << it.key();
+            if (it.value().pid == cur) stack << it.key();
         }
     }
-    dataMap.remove(id);
-    foreach (quint16 child, children)
+    foreach (quint16 sid, subtree)
     {
-        remove(child);
+        dataMap.remove(sid);
     }
     updateFullName();
-    save();
+    return save();
 }
 
-void RawData::imgFolderConvert(int id)
+bool RawData::imgFolderConvert(int id)
 {
     if(dataMap.contains(id))
     {
@@ -746,9 +735,10 @@ void RawData::imgFolderConvert(int id)
         {
             dataMap[id].type = type == RawData::TypeImgFolder ? RawData::TypeImgGrpFolder : RawData::TypeImgFolder;
             updateFullName();
-            save();
+            return save();
         }
     }
+    return false;
 }
 
 
@@ -819,14 +809,15 @@ QImage RawData::getExportImage(int id)
     return image;
 }
 
-void RawData::setImage(int id, QImage image)
+bool RawData::setImage(int id, QImage image)
 {
     if(dataMap.contains(id))
     {
         dataMap[id].image = image;
         dataMap[id].png = encodePngBytes(image);
-        save();
+        return save();
     }
+    return false;
 }
 
 QString RawData::getBrief(int id)
@@ -834,13 +825,14 @@ QString RawData::getBrief(int id)
     return dataMap[id].brief;
 }
 
-void RawData::setBrief(int id, QString brief)
+bool RawData::setBrief(int id, QString brief)
 {
     if(dataMap.contains(id))
     {
         dataMap[id].brief = brief;
-        save();
+        return save();
     }
+    return false;
 }
 
 ComImg RawData::getComImg(int id)
@@ -848,7 +840,7 @@ ComImg RawData::getComImg(int id)
     return dataMap[id].comImg;
 }
 
-void RawData::setComImg(int id, ComImg ci)
+bool RawData::setComImg(int id, ComImg ci)
 {
     if(dataMap.contains(id))
     {
@@ -858,13 +850,14 @@ void RawData::setComImg(int id, ComImg ci)
             dataMap[id].followScreen = false;
         }
         dataMap[id].comImg = ci;
-        save();
+        return save();
     }
+    return false;
 }
 
 
 
-void RawData::saveSettings(Settings settings)
+bool RawData::saveSettings(Settings settings)
 {
     this->settings = settings;
     // 跟随屏幕的组合图同步到新屏幕尺寸
@@ -875,7 +868,7 @@ void RawData::saveSettings(Settings settings)
             it.value().comImg.size = settings.size;
         }
     }
-    save();
+    return save();
 }
 
 QSize RawData::getSize()
