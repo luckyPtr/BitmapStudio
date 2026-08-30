@@ -154,7 +154,7 @@ QString RawData::sanitizeName(const QString &name, quint16 pid, int type, bool r
     }
     if (report && n != name)
     {
-        addWarning(QString("节点名称已规范化: \"%1\" -> \"%2\"（同级重名或含非法字符）").arg(name, n));
+        addWarning(QString("Node name normalized: \"%1\" -> \"%2\" (duplicate sibling name or invalid characters)").arg(name, n));
     }
     return n;
 }
@@ -177,7 +177,7 @@ void RawData::load()
     QFile file(project);
     if (!file.open(QIODevice::ReadOnly))
     {
-        addWarning(QString("工程文件打开失败: %1").arg(project));
+        addWarning(QString("Failed to open project file: %1").arg(project));
         return;
     }
     QJsonParseError parseErr;
@@ -185,20 +185,20 @@ void RawData::load()
     file.close();
     if (parseErr.error != QJsonParseError::NoError || !doc.isObject())
     {
-        addWarning(QString("工程文件JSON解析失败: %1 (%2)").arg(project).arg(parseErr.errorString()));
+        addWarning(QString("Failed to parse project JSON: %1 (%2)").arg(project).arg(parseErr.errorString()));
         return;
     }
 
     QJsonObject root = doc.object();
     if (root.value("format").toString() != "bms")
     {
-        addWarning(QString("不是有效的Bitmap Studio工程文件: %1").arg(project));
+        addWarning(QString("Not a valid Bitmap Studio project file: %1").arg(project));
         return;
     }
     int version = root.value("version").toInt(1);
     if (version > 1)
     {
-        addWarning(QString("工程文件格式版本更新(%1)，按尽力而为方式解析").arg(version));
+        addWarning(QString("Project file format version is newer (%1); parsing best-effort").arg(version));
     }
 
     settings = Settings();
@@ -258,7 +258,7 @@ void RawData::parseLevel(const QJsonArray &arr, quint16 pid, bool imgTree, const
         bi.png = png;       // 缓存原始字节，未编辑时落盘原样写回
         if (!bi.image.loadFromData(png))
         {
-            addWarning(QString("图片数据解码失败: %1").arg(path));
+            addWarning(QString("Failed to decode image data: %1").arg(path));
         }
         dataMap.insert(id, bi);
         pathIndex.insert(path, id);
@@ -270,7 +270,7 @@ void RawData::parseLevel(const QJsonArray &arr, quint16 pid, bool imgTree, const
         {
             if (!v.isObject())
             {
-                addWarning("忽略非对象节点");
+                addWarning("Ignoring non-object node");
                 continue;
             }
             QJsonObject node = v.toObject();
@@ -282,7 +282,7 @@ void RawData::parseLevel(const QJsonArray &arr, quint16 pid, bool imgTree, const
                 if (!imgTree)
                 {
                     // 图片节点只能存在于images树；留在组合图树会在保存时被静默丢弃
-                    addWarning(QString("图片节点出现在组合图树中，已忽略: %1").arg(node.value("name").toString()));
+                    addWarning(QString("Image node found in composite tree, ignored: %1").arg(node.value("name").toString()));
                     continue;
                 }
                 parsePngLeaf(node, pid, parentPath);
@@ -293,7 +293,7 @@ void RawData::parseLevel(const QJsonArray &arr, quint16 pid, bool imgTree, const
             {
                 if (imgTree)
                 {
-                    addWarning(QString("组合图节点出现在图片树中，已忽略: %1").arg(node.value("name").toString()));
+                    addWarning(QString("Composite node found in image tree, ignored: %1").arg(node.value("name").toString()));
                     continue;
                 }
                 // 组合图叶子
@@ -324,7 +324,7 @@ void RawData::parseLevel(const QJsonArray &arr, quint16 pid, bool imgTree, const
                     QString ref = io.value("image").toString();
                     if (!pathIndex.contains(ref))
                     {
-                        addWarning(QString("组合图 %1 的悬空引用已忽略: %2").arg(name).arg(ref));
+                        addWarning(QString("Dangling reference in composite %1 ignored: %2").arg(name).arg(ref));
                         continue;
                     }
                     QJsonArray pos = io.value("pos").toArray();
@@ -341,7 +341,7 @@ void RawData::parseLevel(const QJsonArray &arr, quint16 pid, bool imgTree, const
             if (node.contains("frames") && !imgTree)
             {
                 // 图片组只能存在于images树
-                addWarning(QString("图片组节点出现在组合图树中，已忽略: %1").arg(node.value("name").toString()));
+                addWarning(QString("Image group node found in composite tree, ignored: %1").arg(node.value("name").toString()));
                 continue;
             }
 
@@ -380,7 +380,7 @@ void RawData::parseLevel(const QJsonArray &arr, quint16 pid, bool imgTree, const
                 {
                     if (!fv.isObject() || !fv.toObject().contains("png"))
                     {
-                        addWarning(QString("图片组 %1 内忽略非图片节点").arg(name));
+                        addWarning(QString("Ignoring non-image node inside image group %1").arg(name));
                         continue;
                     }
                     parsePngLeaf(fv.toObject(), id, path);
@@ -388,7 +388,7 @@ void RawData::parseLevel(const QJsonArray &arr, quint16 pid, bool imgTree, const
             }
             else
             {
-                addWarning(QString("无法识别的节点形状，已忽略: %1").arg(name));
+                addWarning(QString("Unrecognized node shape, ignored: %1").arg(name));
             }
         }
     }

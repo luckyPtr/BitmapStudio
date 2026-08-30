@@ -63,7 +63,7 @@ static RawData *openProject(const QString &file, int *exitCode)
     RawData *rd = new RawData(file);
     if (!rd->isValid())
     {
-        err(QString("无法加载工程: %1（文件损坏或为旧版SQLite格式，旧版请用 tools/convert_legacy.py 转换）").arg(file));
+        err(QString("Failed to load project: %1 (file corrupted or legacy SQLite format; convert it with tools/convert_legacy.py first)").arg(file));
         *exitCode = 2;
         delete rd;
         return nullptr;
@@ -78,12 +78,12 @@ static bool resolve(const RawData *rd, const QString &path, quint16 *id)
     RawData::PathResolve r = rd->resolvePath(p, id);
     if (r == RawData::PathNotFound)
     {
-        err(QString("路径不存在: /%1").arg(p));
+        err(QString("Path not found: /%1").arg(p));
         return false;
     }
     if (r == RawData::PathAmbiguous)
     {
-        err(QString("路径 /%1 在图片树和组合图树中都存在，无法区分，请先重命名其一").arg(p));
+        err(QString("Path /%1 exists in both the image tree and the composite tree; rename one of them first").arg(p));
         return false;
     }
     return true;
@@ -93,12 +93,12 @@ static QString kindLabel(int type)
 {
     switch (type)
     {
-    case RawData::TypeImgFile:      return "图片";
-    case RawData::TypeComImgFile:   return "组合图";
-    case RawData::TypeImgFolder:    return "文件夹";
-    case RawData::TypeImgGrpFolder: return "图片组";
-    case RawData::TypeComImgFolder: return "文件夹";
-    default:                        return "未知";
+    case RawData::TypeImgFile:      return "image";
+    case RawData::TypeComImgFile:   return "composite";
+    case RawData::TypeImgFolder:    return "folder";
+    case RawData::TypeImgGrpFolder: return "image group";
+    case RawData::TypeComImgFolder: return "folder";
+    default:                        return "unknown";
     }
 }
 
@@ -129,8 +129,8 @@ int init(const QStringList &rawArgs)
     QStringList args = rawArgs;
     if (args.isEmpty())
     {
-        err("用法: bms-cli init <新工程.bms> [--screen 宽x高] [--scan ZH|ZL|HL|LH] [--bit MSB|LSB]\n"
-            "                       [--format C|bin] [--outdir 目录] [--note 备注]");
+        err("Usage: bms-cli init <new_project.bms> [--screen WxH] [--scan ZH|ZL|HL|LH] [--bit MSB|LSB]\n"
+            "                       [--format C|bin] [--outdir dir] [--note text]");
         return 1;
     }
     QString screenStr = takeOpt(args, "--screen", "128x64");
@@ -142,23 +142,23 @@ int init(const QStringList &rawArgs)
 
     if (scan != "ZH" && scan != "ZL" && scan != "HL" && scan != "LH")
     {
-        err("无效的 --scan: " + scan + "（可选 ZH|ZL|HL|LH）");
+        err("Invalid --scan: " + scan + " (expected ZH|ZL|HL|LH)");
         return 1;
     }
     if (bit != "MSB" && bit != "LSB")
     {
-        err("无效的 --bit: " + bit + "（可选 MSB|LSB）");
+        err("Invalid --bit: " + bit + " (expected MSB|LSB)");
         return 1;
     }
     if (format != "C" && format != "bin")
     {
-        err("无效的 --format: " + format + "（可选 C|bin）");
+        err("Invalid --format: " + format + " (expected C|bin)");
         return 1;
     }
     QStringList wh = screenStr.split('x');
     if (wh.size() != 2 || wh.at(0).toInt() <= 0 || wh.at(1).toInt() <= 0)
     {
-        err("无效的 --screen: " + screenStr + "（格式如 128x64）");
+        err("Invalid --screen: " + screenStr + " (expected e.g. 128x64)");
         return 1;
     }
     QSize screen(wh.at(0).toInt(), wh.at(1).toInt());
@@ -166,14 +166,14 @@ int init(const QStringList &rawArgs)
     QString file = args.at(0);
     if (QFileInfo(file).isFile())
     {
-        err("工程文件已存在: " + file + "（请直接打开或更换路径）");
+        err("Project file already exists: " + file);
         return 1;
     }
 
     RawData rd(file);       // 文件不存在 -> 写入默认JSON
     if (!rd.isValid())
     {
-        err("工程初始化失败: " + file);
+        err("Failed to initialize project: " + file);
         return 1;
     }
     RawData::Settings st = rd.getSettings();
@@ -184,11 +184,11 @@ int init(const QStringList &rawArgs)
     st.brief = note;
     if (!rd.saveSettings(st))
     {
-        err("写入工程文件失败: " + file + "（目录只读或磁盘错误）");
+        err("Failed to write project file: " + file + " (directory read-only or disk error)");
         return 1;
     }
 
-    out(QString("已创建工程: %1  屏幕 %2x%3  取模 %4 %5  输出 %6")
+    out(QString("Project created: %1  screen %2x%3  scan %4 %5  output %6")
         .arg(QFileInfo(file).absoluteFilePath())
         .arg(screen.width()).arg(screen.height())
         .arg(scan).arg(bit).arg(format));
@@ -203,7 +203,7 @@ int check(const QStringList &rawArgs)
     bool asJson = hasOpt(args, "--json");
     if (args.isEmpty())
     {
-        err("用法: bms-cli check <工程.bms> [--json]");
+        err("Usage: bms-cli check <project.bms> [--json]");
         return 1;
     }
     RawData rd(args.at(0));
@@ -223,7 +223,7 @@ int check(const QStringList &rawArgs)
 
     if (!rd.isValid())
     {
-        foreach (const QString &w, warnings) err("错误: " + w);
+        foreach (const QString &w, warnings) err("Error: " + w);
         return 2;
     }
     if (warnings.isEmpty())
@@ -233,9 +233,9 @@ int check(const QStringList &rawArgs)
     }
     foreach (const QString &w, warnings)
     {
-        out("警告: " + w);
+        out("Warning: " + w);
     }
-    out(QString("共 %1 项警告（悬空引用等异常项已在加载时按规则处理，保存后将固化）").arg(warnings.size()));
+    out(QString("%1 warning(s) (dangling refs and similar issues were auto-handled on load per project rules; they will be persisted on save)").arg(warnings.size()));
     return 1;
 }
 
@@ -321,7 +321,7 @@ int info(const QStringList &rawArgs)
     QStringList args = rawArgs;
     if (args.isEmpty())
     {
-        err("用法: bms-cli info <工程.bms> [--json]");
+        err("Usage: bms-cli info <project.bms> [--json]");
         return 1;
     }
     bool asJson = hasOpt(args, "--json");
@@ -350,9 +350,9 @@ int info(const QStringList &rawArgs)
     }
     else
     {
-        out(QString("屏幕: %1x%2    取模: %3 %4    输出: %5")
+        out(QString("Screen: %1x%2    Scan: %3 %4    Output: %5")
             .arg(st.size.width()).arg(st.size.height()).arg(scan, bitOrder, st.format));
-        if (!st.brief.isEmpty()) out("备注: " + st.brief);
+        if (!st.brief.isEmpty()) out("Note: " + st.brief);
 
         // 按树打印（缩进体现层级）
         QMap<quint16, BmFile> m = rd->getDataMap();
@@ -365,16 +365,16 @@ int info(const QStringList &rawArgs)
                 if (bf.type == RawData::TypeImgFile)
                     line += QString("  %1x%2").arg(bf.image.width()).arg(bf.image.height());
                 else if (bf.type == RawData::TypeComImgFile)
-                    line += QString("  %1x%2 (%3个成员)").arg(bf.comImg.size.width()).arg(bf.comImg.size.height()).arg(bf.comImg.items.size());
+                    line += QString("  %1x%2 (%3 member(s))").arg(bf.comImg.size.width()).arg(bf.comImg.size.height()).arg(bf.comImg.items.size());
                 if (!bf.brief.isEmpty()) line += "  \"" + bf.brief + "\"";
                 out(line);
                 if (bf.type == RawData::TypeImgFolder || bf.type == RawData::TypeComImgFolder || bf.type == RawData::TypeImgGrpFolder)
                     self(self, bf.id, depth + 1, imgTree);
             }
         };
-        out("图片:");
+        out("Images:");
         printLevel(printLevel, 0, 1, true);
-        out("组合图:");
+        out("Composites:");
         printLevel(printLevel, 0, 1, false);
     }
     delete rd;
@@ -388,7 +388,7 @@ int render(const QStringList &rawArgs)
     QStringList args = rawArgs;
     if (args.size() < 2)
     {
-        err("用法: bms-cli render <工程.bms> <路径> [-o 输出.png] [-s 放大倍数] [--ascii]");
+        err("Usage: bms-cli render <project.bms> <path> [-o output.png] [-s scale] [--ascii]");
         return 1;
     }
     QString outFile = takeOpt(args, "-o");
@@ -406,7 +406,7 @@ int render(const QStringList &rawArgs)
     QImage img = rd->getImage(id);    // 组合图自动按成员合成（绘制序/跟随屏幕/裁剪语义一致）
     if (img.isNull())
     {
-        err("渲染结果为空图像");
+        err("Rendered image is empty");
         delete rd;
         return 1;
     }
@@ -430,11 +430,11 @@ int render(const QStringList &rawArgs)
         QImage big = img.scaled(img.width() * s, img.height() * s, Qt::IgnoreAspectRatio, Qt::FastTransformation);
         if (!big.save(outFile, "PNG"))
         {
-            err("图片保存失败: " + outFile);
+            err("Failed to save image: " + outFile);
             delete rd;
             return 1;
         }
-        out("已保存: " + QFileInfo(outFile).absoluteFilePath());
+        out("Saved: " + QFileInfo(outFile).absoluteFilePath());
     }
     delete rd;
     return 0;
@@ -447,7 +447,7 @@ int exportCmd(const QStringList &rawArgs)
     QStringList args = rawArgs;
     if (args.isEmpty())
     {
-        err("用法: bms-cli export <工程.bms> [-o 目录] [--json]");
+        err("Usage: bms-cli export <project.bms> [-o dir] [--json]");
         return 1;
     }
     QString outdir = takeOpt(args, "-o");
@@ -488,7 +488,7 @@ int exportCmd(const QStringList &rawArgs)
     }
     if (!ok)
     {
-        err("导出未全部成功，请检查输出目录权限");
+        err("Export did not fully succeed; check output directory permissions");
         return 1;
     }
     return 0;
@@ -501,7 +501,7 @@ int rename(const QStringList &rawArgs)
     QStringList args = rawArgs;
     if (args.size() < 3)
     {
-        err("用法: bms-cli rename <工程.bms> <路径> <新名称>");
+        err("Usage: bms-cli rename <project.bms> <path> <new name>");
         return 1;
     }
     int code = 0;
@@ -513,11 +513,11 @@ int rename(const QStringList &rawArgs)
 
     if (!rd->rename(id, args.at(2)))   // 同名/非法字符会被自动规范化
     {
-        err("写入工程文件失败: " + args.at(0));
+        err("Failed to write project file: " + args.at(0));
         delete rd;
         return 1;
     }
-    out(QString("已重命名为: %1（组合图引用已自动更新）").arg(rd->getBmFile(id).name));
+    out(QString("Renamed to: %1 (composite refs updated automatically)").arg(rd->getBmFile(id).name));
     delete rd;
     return 0;
 }
@@ -529,7 +529,7 @@ int move(const QStringList &rawArgs)
     QStringList args = rawArgs;
     if (args.size() < 3)
     {
-        err("用法: bms-cli move <工程.bms> <路径> <目标文件夹|/>");
+        err("Usage: bms-cli move <project.bms> <path> <target folder|/>");
         return 1;
     }
     int code = 0;
@@ -544,11 +544,11 @@ int move(const QStringList &rawArgs)
 
     if (!rd->move(id, destId))
     {
-        err("移动失败：目标必须是同树的文件夹，且不能移动到自身子树下（图片组内只接受图片）；或写入工程文件失败");
+        err("Move failed: target must be a folder in the same tree, the node must not be moved into its own subtree (image groups only accept images); or writing the project file failed");
         delete rd;
         return 1;
     }
-    out(QString("已移动 %1 -> %2（组合图引用已自动更新）").arg(normPath(args.at(1)), dest.isEmpty() ? "/" : "/" + dest));
+    out(QString("Moved %1 -> %2 (composite refs updated automatically)").arg(normPath(args.at(1)), dest.isEmpty() ? "/" : "/" + dest));
     delete rd;
     return 0;
 }
@@ -560,7 +560,7 @@ int del(const QStringList &rawArgs)
     QStringList args = rawArgs;
     if (args.size() < 2)
     {
-        err("用法: bms-cli delete <工程.bms> <路径>");
+        err("Usage: bms-cli delete <project.bms> <path>");
         return 1;
     }
     int code = 0;
@@ -593,18 +593,18 @@ int del(const QStringList &rawArgs)
         {
             if (subtree.contains(it.id))
             {
-                out(QString("警告: 组合图 %1 将丢失成员 %2").arg(bf.name).arg(rd->getBmFile(it.id).name));
+                out(QString("Warning: composite %1 will lose member %2").arg(bf.name).arg(rd->getBmFile(it.id).name));
             }
         }
     }
 
     if (!rd->remove(id))
     {
-        err("写入工程文件失败: " + args.at(0));
+        err("Failed to write project file: " + args.at(0));
         delete rd;
         return 1;
     }
-    out(QString("已删除 /%1").arg(normPath(args.at(1))));
+    out(QString("Deleted /%1").arg(normPath(args.at(1))));
     delete rd;
     return 0;
 }
@@ -616,8 +616,8 @@ int add(const QStringList &rawArgs)
     QStringList args = rawArgs;
     if (args.size() < 3)
     {
-        err(QString("用法: bms-cli add <工程.bms> <父路径|/> <名称> [--kind img|folder|group|composite]\n")
-            + "                 [--png 图片.png] [--size 宽x高] [--note 备注]");
+        err(QString("Usage: bms-cli add <project.bms> <parent|/> <name> [--kind img|folder|group|composite]\n")
+            + "                 [--png image.png] [--size WxH] [--note text]");
         return 1;
     }
     QString kind = takeOpt(args, "--kind", "img");
@@ -650,14 +650,14 @@ int add(const QStringList &rawArgs)
     {
         if (pngFile.isEmpty())
         {
-            err("添加图片需要 --png 指定图片文件");
+            err("Adding an image requires --png <image file>");
             delete rd;
             return 1;
         }
         QImage img(pngFile);
         if (img.isNull())
         {
-            err("无法加载图片文件: " + pngFile);
+            err("Failed to load image file: " + pngFile);
             delete rd;
             return 1;
         }
@@ -684,14 +684,14 @@ int add(const QStringList &rawArgs)
     }
     else
     {
-        err("未知的 --kind: " + kind + "（可选 img|folder|group|composite）");
+        err("Unknown --kind: " + kind + " (expected img|folder|group|composite)");
         delete rd;
         return 1;
     }
 
     if (!saved)
     {
-        err("写入工程文件失败: " + args.at(0));
+        err("Failed to write project file: " + args.at(0));
         delete rd;
         return 1;
     }
@@ -700,10 +700,10 @@ int add(const QStringList &rawArgs)
     quint16 newId = rd->getDataMap().lastKey();
     BmFile bf = rd->getBmFile(newId);
     QString actualPath = parent.isEmpty() ? bf.name : parent + "/" + bf.name;
-    out(QString("已添加 [%1] /%2").arg(kindLabel(bf.type), actualPath));
+    out(QString("Added [%1] /%2").arg(kindLabel(bf.type), actualPath));
     if (bf.name != name)
     {
-        out(QString("注意: 名称已规范化为 %1（原名与同级冲突或含非法字符）").arg(bf.name));
+        out(QString("Note: name normalized to %1 (original clashed with a sibling or contained invalid characters)").arg(bf.name));
     }
     delete rd;
     return 0;
@@ -716,7 +716,7 @@ int itemAdd(const QStringList &rawArgs)
     QStringList args = rawArgs;
     if (args.size() < 5)
     {
-        err("用法: bms-cli item-add <工程.bms> <组合图路径> <图片路径> <x> <y>");
+        err("Usage: bms-cli item-add <project.bms> <composite path> <image path> <x> <y>");
         return 1;
     }
     int code = 0;
@@ -729,13 +729,13 @@ int itemAdd(const QStringList &rawArgs)
 
     if (rd->getBmFile(compId).type != RawData::TypeComImgFile)
     {
-        err("目标不是组合图: /" + normPath(args.at(1)));
+        err("Target is not a composite: /" + normPath(args.at(1)));
         delete rd;
         return 1;
     }
     if (rd->getBmFile(imgId).type != RawData::TypeImgFile)
     {
-        err("成员必须是图片（不支持组合图嵌套）: /" + normPath(args.at(2)));
+        err("Member must be an image (nested composites are not supported): /" + normPath(args.at(2)));
         delete rd;
         return 1;
     }
@@ -744,12 +744,12 @@ int itemAdd(const QStringList &rawArgs)
     ci.items.append(ComImgItem((qint16)args.at(3).toInt(), (qint16)args.at(4).toInt(), imgId));
     if (!rd->setComImg(compId, ci))
     {
-        err("写入工程文件失败: " + args.at(0));
+        err("Failed to write project file: " + args.at(0));
         delete rd;
         return 1;
     }
 
-    out(QString("已添加成员 %1 @(%2,%3)，组合图 %4 现有 %5 个成员")
+    out(QString("Added member %1 @(%2,%3); composite %4 now has %5 member(s)")
         .arg(normPath(args.at(2)), args.at(3), args.at(4), normPath(args.at(1)))
         .arg(ci.items.size()));
     delete rd;
@@ -761,7 +761,7 @@ int itemRm(const QStringList &rawArgs)
     QStringList args = rawArgs;
     if (args.size() < 3)
     {
-        err("用法: bms-cli item-rm <工程.bms> <组合图路径> <序号>");
+        err("Usage: bms-cli item-rm <project.bms> <composite path> <index>");
         return 1;
     }
     int code = 0;
@@ -772,7 +772,7 @@ int itemRm(const QStringList &rawArgs)
     if (!resolve(rd, args.at(1), &compId)) { delete rd; return 1; }
     if (rd->getBmFile(compId).type != RawData::TypeComImgFile)
     {
-        err("目标不是组合图: /" + normPath(args.at(1)));
+        err("Target is not a composite: /" + normPath(args.at(1)));
         delete rd;
         return 1;
     }
@@ -781,7 +781,7 @@ int itemRm(const QStringList &rawArgs)
     int idx = args.at(2).toInt();
     if (idx < 0 || idx >= ci.items.size())
     {
-        err(QString("序号越界: %1（组合图现有 %2 个成员，序号从0起）").arg(idx).arg(ci.items.size()));
+        err(QString("Index out of range: %1 (composite has %2 members, 0-based)").arg(idx).arg(ci.items.size()));
         delete rd;
         return 1;
     }
@@ -791,11 +791,11 @@ int itemRm(const QStringList &rawArgs)
     ci.items.removeAt(idx);
     if (!rd->setComImg(compId, ci))
     {
-        err("写入工程文件失败: " + args.at(0));
+        err("Failed to write project file: " + args.at(0));
         delete rd;
         return 1;
     }
-    out(QString("已移除成员 #%1（%2），剩余 %3 个").arg(idx).arg(removedPath).arg(ci.items.size()));
+    out(QString("Removed member #%1 (%2); %3 remaining").arg(idx).arg(removedPath).arg(ci.items.size()));
     delete rd;
     return 0;
 }
