@@ -57,3 +57,48 @@ build-BmpManager-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug/
 
 # ZCode workspace
 .zcode/
+
+# Qt Creator / qmake build products (merged from the former BitmapStudio/.gitignore)
+*~
+*.obj
+*.orig
+*.rej
+*_pch.h.cpp
+*_resource.rc
+.#*
+*.*#
+core
+!core/
+tags
+.DS_Store
+.directory
+*.debug
+*.app
+Thumbs.db
+*.res
+*.rc
+*.flc
+.*.swp
+*.Debug
+*.Release
+*.pyc
+*.exe
+build/
+.vscode/
+.zed/
+.cache/
+
+# Visual Studio generated files
+*.ib_pdb_index
+*.idb
+*.ilk
+*.pdb
+*.sln
+*.suo
+*.vcproj
+*vcproj.*.*.user
+*.ncb
+*.sdf
+*.opensdf
+*.vcxproj
+*vcxproj.*

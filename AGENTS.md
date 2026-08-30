@@ -4,7 +4,7 @@ Guidance for ZCode agents working in this repository.
 
 ## Repository Layout
 
-The Git repo root holds docs only (`README.md`, `CHANGELOG.md`, `Docs/`, `README/`, `LICENSE`). The actual Qt project lives one level down in `BitmapStudio/` (`BitmapStudio.pro` + sources). All build/edit work happens in that subdirectory.
+The Git repo root holds the Qt project directly (`BitmapStudio.pro` + sources in `core/`, `gui/`, `custom/`, `cli/`) alongside docs (`README.md`, `CHANGELOG.md`, `Docs/`, `README/`, `LICENSE`). All build/edit work happens at the repo root.
 
 Branches: `dev-0.3` is the active development branch; `main` is the release branch (PR target).
 
@@ -14,14 +14,14 @@ Bitmap Studio is a Qt 5.15.2 (QtWidgets, C++17, MSVC 2019 64-bit) desktop tool f
 
 ## Build
 
-Run from `BitmapStudio/` (paths to Qt and MSVC are hardcoded in these scripts):
+Run from the repo root (Qt and MSVC paths are hardcoded in these scripts):
 
 ```bash
 .vscode/build.bat        # Release build (GUI + bms-cli.exe CLI)
 .vscode/build_run.bat    # Build + windeployqt + run exe
 ```
 
-Build directory: `BitmapStudio/build/Desktop_Qt_5_15_2_MSVC2019_64bit-Release`. Qt kit: `C:\Dev\Kits\Qt\5.15.2\msvc2019_64`, jom from QtCreator tools. There are no automated tests or linters — verify changes by compiling.
+Build directories (out-of-source, as siblings of the repo dir): `<repo-parent>/BitmapStudio-Desktop_Qt_5_15_2_MSVC2019_64bit-Release` (GUI) and `<repo-parent>/BitmapStudio-cli-Release` (CLI). Keep build dirs outside the source tree — qmake miscomputes relative dependency paths for in-source build dirs (paths climb past the drive root, which jom cannot resolve), and it does not normalize `\..\` segments in the `.pro` path. Qt kit: `C:\Dev\Kits\Qt\5.15.2\msvc2019_64`, jom from QtCreator tools. There are no automated tests or linters — verify changes by compiling.
 
 ## CLI companion (`bms-cli.exe`, console app)
 
@@ -33,7 +33,7 @@ Build directory: `BitmapStudio/build/Desktop_Qt_5_15_2_MSVC2019_64bit-Release`. 
 - Internal node type enum (`RawData`): `TypeImgFile=0`, `TypeComImgFile=1`, `TypeImgFolder=2`, `TypeImgGrpFolder=3`, `TypeComImgFolder=4`; virtual tree ids: -1=project, -3=image class root, -4=composite class root.
 - `gui/` — 13 Qt Designer dialogs plus `FormPixelEditor` (pixel-level editor, QGraphicsView) and `FormComImgEditor` (composite/sprite editor).
 - `custom/` — reusable widgets: TreeModel/TreeItem, CustomTabWidget, QGraphicsCanvasItem, TreeItemDelegate, etc.
-- Repo files at `BitmapStudio/` root: `main.cpp`, `mainwindow`, `singleapplication` (single-instance enforcement), `global`.
+- Project root files: `main.cpp`, `mainwindow`, `singleapplication` (single-instance enforcement), `global`.
 
 Tree node types (`RawData` enum): `TypeImgFile`/`TypeComImgFile` (leaves), `TypeImgFolder`/`TypeComImgFolder`, `TypeImgGrpFolder` (generates offset addresses), `TypeProject` (root).
 
