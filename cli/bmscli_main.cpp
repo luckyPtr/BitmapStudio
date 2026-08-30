@@ -19,6 +19,8 @@ static void printUsage()
         "  info    <project.bms> [--json]                  Show tree structure and export settings\n"
         "  render  <project.bms> <path> [-o output.png] [-s scale] [--ascii]\n"
         "                                                  Render image/composite to PNG (nearest-neighbor upscale)\n"
+        "  compose <project.bms> <json-file|json> [-o output.png] [-s scale] [--ascii]\n"
+        "                                                  Render a composite that does not exist in the project (demo/testing)\n"
         "  export  <project.bms> [-o dir] [--json]         Export bitmaps per project settings (--json lists artifacts with sha256)\n"
         "  rename  <project.bms> <path> <new name>         Rename node (composite refs cascade automatically)\n"
         "  move    <project.bms> <path> <target folder|/>  Move node (refs cascade automatically)\n"
@@ -60,6 +62,7 @@ int main(int argc, char *argv[])
     if (cmd == "check")   return BmsCli::check(rest);
     if (cmd == "info")    return BmsCli::info(rest);
     if (cmd == "render")  return BmsCli::render(rest);
+    if (cmd == "compose") return BmsCli::compose(rest);
     if (cmd == "export")  return BmsCli::exportCmd(rest);
     if (cmd == "rename")  return BmsCli::rename(rest);
     if (cmd == "move")    return BmsCli::move(rest);

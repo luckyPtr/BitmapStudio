@@ -383,6 +383,37 @@ int info(const QStringList &rawArgs)
 
 // ---------- render ----------
 
+// render/compose 共用的输出：--ascii 打印文本视图；非ascii模式（或指定了-o）时近邻放大保存PNG，
+// 保存名缺省用 defaultName（ascii且未指定-o时只打印不保存）
+static int writeRenderOutput(const QImage &img, QString outFile, const QString &defaultName, int scale, bool ascii)
+{
+    if (ascii)
+    {
+        for (int y = 0; y < img.height(); ++y)
+        {
+            QString line;
+            for (int x = 0; x < img.width(); ++x)
+                line += qGray(img.pixel(x, y)) < 128 ? '#' : '.';
+            out(line);
+        }
+    }
+
+    if (!ascii || !outFile.isEmpty())
+    {
+        if (outFile.isEmpty())
+            outFile = defaultName;
+        int s = qMax(1, scale);
+        QImage big = img.scaled(img.width() * s, img.height() * s, Qt::IgnoreAspectRatio, Qt::FastTransformation);
+        if (!big.save(outFile, "PNG"))
+        {
+            err("Failed to save image: " + outFile);
+            return 1;
+        }
+        out("Saved: " + QFileInfo(outFile).absoluteFilePath());
+    }
+    return 0;
+}
+
 int render(const QStringList &rawArgs)
 {
     QStringList args = rawArgs;
@@ -411,33 +442,139 @@ int render(const QStringList &rawArgs)
         return 1;
     }
 
-    if (ascii)
+    int rc = writeRenderOutput(img, outFile, rd->getBmFile(id).name + ".png", scaleStr.toInt(), ascii);
+    delete rd;
+    return rc;
+}
+
+// ---------- compose（渲染工程中不存在的组合图：演示/测试用） ----------
+
+// 解析组合图描述JSON，与.bms里组合图节点同构：
+// {"size":[W,H]可选（省略=跟随屏幕）, "items":[{"image":"路径","pos":[x,y]可选}...]}
+// items顺序=绘制顺序；成员按图片树路径解析，必须是图片叶子（不支持组合图嵌套，与item-add一致）。
+// 失败时已输出错误并返回false。
+static bool parseComposeJson(const QString &text, RawData *rd, ComImg *ci)
+{
+    QJsonParseError parseErr;
+    QJsonDocument doc = QJsonDocument::fromJson(text.toUtf8(), &parseErr);
+    if (!doc.isObject())
     {
-        for (int y = 0; y < img.height(); ++y)
+        err("Invalid composite JSON: " + QString(parseErr.error != QJsonParseError::NoError ? parseErr.errorString().toUtf8() : "top level must be an object"));
+        return false;
+    }
+    QJsonObject o = doc.object();
+
+    if (o.contains("size"))
+    {
+        QJsonArray s = o.value("size").toArray();
+        if (s.size() != 2 || s.at(0).toInt() <= 0 || s.at(1).toInt() <= 0)
         {
-            QString line;
-            for (int x = 0; x < img.width(); ++x)
-                line += qGray(img.pixel(x, y)) < 128 ? '#' : '.';
-            out(line);
+            err("Invalid \"size\": expected [width, height]");
+            return false;
         }
+        ci->size = QSize(s.at(0).toInt(), s.at(1).toInt());
+    }
+    else
+    {
+        ci->size = rd->getSettings().size;      // 省略size = 跟随屏幕（与工程语义一致）
     }
 
-    if (!ascii || !outFile.isEmpty())
+    if (!o.contains("items") || !o.value("items").isArray())
     {
-        if (outFile.isEmpty())
-            outFile = rd->getBmFile(id).name + ".png";
-        int s = qMax(1, scaleStr.toInt());
-        QImage big = img.scaled(img.width() * s, img.height() * s, Qt::IgnoreAspectRatio, Qt::FastTransformation);
-        if (!big.save(outFile, "PNG"))
+        err("Missing \"items\" array");
+        return false;
+    }
+    foreach (const QJsonValue &v, o.value("items").toArray())
+    {
+        QJsonObject io = v.toObject();
+        QString ref = io.value("image").toString();
+        QJsonArray pos = io.value("pos").toArray();
+        if (ref.isEmpty())
         {
-            err("Failed to save image: " + outFile);
+            err("Item is missing \"image\" path");
+            return false;
+        }
+        quint16 imgId = 0;
+        RawData::PathResolve r = rd->resolvePath(normPath(ref), &imgId);
+        if (r == RawData::PathNotFound)
+        {
+            err("Member image not found: /" + normPath(ref));
+            return false;
+        }
+        if (r == RawData::PathAmbiguous)
+        {
+            err("Path /" + normPath(ref) + " exists in both the image tree and the composite tree; rename one of them first");
+            return false;
+        }
+        if (rd->getBmFile(imgId).type != RawData::TypeImgFile)
+        {
+            err("Member must be an image (nested composites are not supported): /" + normPath(ref));
+            return false;
+        }
+        ci->items.append(ComImgItem((qint16)(pos.size() >= 1 ? pos.at(0).toInt() : 0),
+                                    (qint16)(pos.size() >= 2 ? pos.at(1).toInt() : 0),
+                                    imgId));
+    }
+    if (ci->items.isEmpty())
+    {
+        err("\"items\" is empty");
+        return false;
+    }
+    return true;
+}
+
+int compose(const QStringList &rawArgs)
+{
+    QStringList args = rawArgs;
+    if (args.size() < 2)
+    {
+        err("Usage: bms-cli compose <project.bms> <json-file|json> [-o output.png] [-s scale] [--ascii]\n"
+            "       json example: {\"size\":[128,64],\"items\":[{\"image\":\"icons/logo\",\"pos\":[0,0]}]}  (\"size\" omitted = follow screen)");
+        return 1;
+    }
+    QString outFile = takeOpt(args, "-o");
+    QString scaleStr = takeOpt(args, "-s", "1");
+    bool ascii = hasOpt(args, "--ascii");
+
+    int code = 0;
+    RawData *rd = openProject(args.at(0), &code);
+    if (!rd) return code;
+
+    // 输入判别：存在的文件路径读文件内容，否则视为JSON字符串（以'{'开头，无歧义）
+    QString text;
+    if (QFileInfo(args.at(1)).isFile())
+    {
+        QFile fh(args.at(1));
+        if (!fh.open(QIODevice::ReadOnly))
+        {
+            err("Failed to read JSON file: " + args.at(1));
             delete rd;
             return 1;
         }
-        out("Saved: " + QFileInfo(outFile).absoluteFilePath());
+        text = QString::fromUtf8(fh.readAll());
     }
+    else if (args.at(1).trimmed().startsWith('{'))
+    {
+        text = args.at(1);
+    }
+    else
+    {
+        err("Input is neither an existing file nor a JSON string: " + args.at(1));
+        delete rd;
+        return 1;
+    }
+
+    ComImg ci;
+    if (!parseComposeJson(text, rd, &ci))
+    {
+        delete rd;
+        return 1;
+    }
+
+    QImage img = rd->renderComImg(ci);      // 合成语义与GUI导出路径一致；此命令绝不修改工程文件
     delete rd;
-    return 0;
+
+    return writeRenderOutput(img, outFile, "compose.png", scaleStr.toInt(), ascii);
 }
 
 // ---------- export ----------

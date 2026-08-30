@@ -163,6 +163,7 @@ public:
     bool remove(int id);
     bool imgFolderConvert(int id);
     QImage getImage(int id);
+    QImage renderComImg(const ComImg &ci);  // 离屏合成给定组合图内容（不涉及工程节点变更/落盘），语义与getImage组合图分支一致
     QImage getExportImage(int id);
     bool setImage(int id, QImage image);
     QString getBrief(int id);

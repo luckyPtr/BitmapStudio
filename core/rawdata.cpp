@@ -743,32 +743,36 @@ bool RawData::imgFolderConvert(int id)
 
 
 
+// 将img2合并到img1，img2的位置在x,y（越界部分裁剪；起点钳制到画布内，绘制结果与逐像素实现一致）
+static void mergeImage(QImage &img1, const QImage &img2, int x, int y)
+{
+    int sx = qMax(0, x);
+    int sy = qMax(0, y);
+    for(int i = sx; i < img1.width() && i < x + img2.width(); i++)
+    {
+        for(int j = sy; j < img1.height() && j < y + img2.height(); j++)
+        {
+            img1.setPixelColor(i, j, img2.pixelColor(i-x, j-y));
+        }
+    }
+}
+
+QImage RawData::renderComImg(const ComImg &ci)
+{
+    QImage image(ci.size, QImage::Format_RGB888);
+    image.fill(Qt::white);
+    foreach(auto item, ci.items)
+    {
+        if(dataMap.contains(item.id))
+        {
+            mergeImage(image, dataMap[item.id].image, item.x, item.y);
+        }
+    }
+    return image;
+}
+
 QImage RawData::getImage(int id)
 {
-    // 将img2合并到img1，img2的位置在x,y
-    auto merge = [](QImage &img1, QImage &img2, int x, int y) ->void {
-        for(int i = x; i < img1.width() && i < x + img2.width(); i++)
-        {
-            for(int j = y; j < img1.height() && j < y + img2.height(); j++)
-            {
-                img1.setPixelColor(i, j, img2.pixelColor(i-x, j-y));
-            }
-        }
-    };
-
-    auto comImgToImage = [=](){
-        QImage image(dataMap[id].comImg.size, QImage::Format_RGB888);
-        image.fill(Qt::white);
-        foreach(auto item, dataMap[id].comImg.items)
-        {
-            if(dataMap.contains(item.id))
-            {
-                merge(image, dataMap[item.id].image, item.x, item.y);
-            }
-        }
-        return image;
-    };
-
     if(dataMap.contains(id))
     {
         if(dataMap[id].type == RawData::TypeImgFile)
@@ -777,7 +781,7 @@ QImage RawData::getImage(int id)
         }
         else if(dataMap[id].type == RawData::TypeComImgFile)
         {
-            return comImgToImage();
+            return renderComImg(dataMap[id].comImg);
         }
     }
     return QImage();
