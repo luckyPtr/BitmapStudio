@@ -449,46 +449,38 @@ int render(const QStringList &rawArgs)
 
 // ---------- compose（渲染工程中不存在的组合图：演示/测试用） ----------
 
-// 解析组合图描述JSON，与.bms里组合图节点同构：
-// {"size":[W,H]可选（省略=跟随屏幕）, "items":[{"image":"路径","pos":[x,y]可选}...]}
-// items顺序=绘制顺序；成员按图片树路径解析，必须是图片叶子（不支持组合图嵌套，与item-add一致）。
-// 失败时已输出错误并返回false。
-static bool parseComposeJson(const QString &text, RawData *rd, ComImg *ci)
+// 读取 [x, y] 形式的点；格式错误时输出错误并返回false
+static bool readPoint2(const QJsonValue &v, qint16 *x, qint16 *y, const QString &field)
 {
-    QJsonParseError parseErr;
-    QJsonDocument doc = QJsonDocument::fromJson(text.toUtf8(), &parseErr);
-    if (!doc.isObject())
+    QJsonArray a = v.toArray();
+    if (a.size() != 2)
     {
-        err("Invalid composite JSON: " + QString(parseErr.error != QJsonParseError::NoError ? parseErr.errorString().toUtf8() : "top level must be an object"));
+        err("Invalid \"" + field + "\": expected [x, y]");
         return false;
     }
-    QJsonObject o = doc.object();
+    *x = (qint16)a.at(0).toInt();
+    *y = (qint16)a.at(1).toInt();
+    return true;
+}
 
-    if (o.contains("size"))
-    {
-        QJsonArray s = o.value("size").toArray();
-        if (s.size() != 2 || s.at(0).toInt() <= 0 || s.at(1).toInt() <= 0)
-        {
-            err("Invalid \"size\": expected [width, height]");
-            return false;
-        }
-        ci->size = QSize(s.at(0).toInt(), s.at(1).toInt());
-    }
-    else
-    {
-        ci->size = rd->getSettings().size;      // 省略size = 跟随屏幕（与工程语义一致）
-    }
+// 读取可选前景色 "color":"black"(默认)|"white"
+static bool readColor(const QJsonObject &io, bool *white)
+{
+    QString c = io.value("color").toString("black");
+    if (c == "black") { *white = false; return true; }
+    if (c == "white") { *white = true; return true; }
+    err("Invalid \"color\": " + c + " (expected black|white)");
+    return false;
+}
 
-    if (!o.contains("items") || !o.value("items").isArray())
+// 解析单个绘制项（type: image默认/line/fillrect/invertrect/points）；失败时已输出错误并返回false
+static bool parseDrawItem(const QJsonObject &io, RawData *rd, ComDrawItem *di)
+{
+    QString type = io.value("type").toString("image");
+
+    if (type == "image")
     {
-        err("Missing \"items\" array");
-        return false;
-    }
-    foreach (const QJsonValue &v, o.value("items").toArray())
-    {
-        QJsonObject io = v.toObject();
         QString ref = io.value("image").toString();
-        QJsonArray pos = io.value("pos").toArray();
         if (ref.isEmpty())
         {
             err("Item is missing \"image\" path");
@@ -511,11 +503,106 @@ static bool parseComposeJson(const QString &text, RawData *rd, ComImg *ci)
             err("Member must be an image (nested composites are not supported): /" + normPath(ref));
             return false;
         }
-        ci->items.append(ComImgItem((qint16)(pos.size() >= 1 ? pos.at(0).toInt() : 0),
-                                    (qint16)(pos.size() >= 2 ? pos.at(1).toInt() : 0),
-                                    imgId));
+        *di = ComDrawItem::imageItem(0, 0, imgId);
+        return !io.contains("pos") || readPoint2(io.value("pos"), &di->x, &di->y, "pos");
     }
-    if (ci->items.isEmpty())
+
+    if (type == "line")
+    {
+        di->kind = ComDrawItem::Line;
+        if (!io.contains("pos")) { err("Item type \"line\" requires \"pos\" [x1, y1]"); return false; }
+        if (!readPoint2(io.value("pos"), &di->x, &di->y, "pos")) return false;
+        if (!io.contains("end")) { err("Item type \"line\" requires \"end\" [x2, y2]"); return false; }
+        if (!readPoint2(io.value("end"), &di->x2, &di->y2, "end")) return false;
+        return readColor(io, &di->white);
+    }
+
+    if (type == "fillrect" || type == "invertrect")
+    {
+        di->kind = (type == "fillrect") ? ComDrawItem::FillRect : ComDrawItem::InvertRect;
+        if (!io.contains("pos")) { err("Item type \"" + type + "\" requires \"pos\" [x, y]"); return false; }
+        if (!readPoint2(io.value("pos"), &di->x, &di->y, "pos")) return false;
+        if (!io.contains("size")) { err("Item type \"" + type + "\" requires \"size\" [width, height]"); return false; }
+        QJsonArray s = io.value("size").toArray();
+        if (s.size() != 2 || s.at(0).toInt() < 0 || s.at(1).toInt() < 0)
+        {
+            err("Invalid \"size\": expected [width, height] (>= 0)");
+            return false;
+        }
+        di->w = (qint16)s.at(0).toInt();
+        di->h = (qint16)s.at(1).toInt();
+        if (type == "fillrect") return readColor(io, &di->white);
+        return true;
+    }
+
+    if (type == "points")
+    {
+        di->kind = ComDrawItem::Points;
+        if (!io.contains("points") || !io.value("points").isArray())
+        {
+            err("Item type \"points\" requires \"points\" array, e.g. [[10,10],[20,20]]");
+            return false;
+        }
+        QJsonArray pts = io.value("points").toArray();
+        if (pts.isEmpty())
+        {
+            err("\"points\" is empty");
+            return false;
+        }
+        foreach (const QJsonValue &pv, pts)
+        {
+            qint16 px, py;
+            if (!readPoint2(pv, &px, &py, "points entry")) return false;
+            di->pts.append(QPoint(px, py));
+        }
+        return readColor(io, &di->white);
+    }
+
+    err("Unknown item type: " + type + " (expected image, line, fillrect, invertrect, points)");
+    return false;
+}
+
+// 解析组合图描述JSON，与.bms里组合图节点同构，items支持图片与绘图原语混排：
+// {"size":[W,H]可选（省略=跟随屏幕）, "items":[{"image":"路径","pos":[x,y]} | {"type":"line",...} | ...]}
+// 失败时已输出错误并返回false。
+static bool parseComposeJson(const QString &text, RawData *rd, QSize *size, QVector<ComDrawItem> *items)
+{
+    QJsonParseError parseErr;
+    QJsonDocument doc = QJsonDocument::fromJson(text.toUtf8(), &parseErr);
+    if (!doc.isObject())
+    {
+        err("Invalid composite JSON: " + QString(parseErr.error != QJsonParseError::NoError ? parseErr.errorString().toUtf8() : "top level must be an object"));
+        return false;
+    }
+    QJsonObject o = doc.object();
+
+    if (o.contains("size"))
+    {
+        QJsonArray s = o.value("size").toArray();
+        if (s.size() != 2 || s.at(0).toInt() <= 0 || s.at(1).toInt() <= 0)
+        {
+            err("Invalid \"size\": expected [width, height]");
+            return false;
+        }
+        *size = QSize(s.at(0).toInt(), s.at(1).toInt());
+    }
+    else
+    {
+        *size = rd->getSettings().size;     // 省略size = 跟随屏幕（与工程语义一致）
+    }
+
+    if (!o.contains("items") || !o.value("items").isArray())
+    {
+        err("Missing \"items\" array");
+        return false;
+    }
+    foreach (const QJsonValue &v, o.value("items").toArray())
+    {
+        ComDrawItem di;
+        if (!parseDrawItem(v.toObject(), rd, &di)) return false;
+        items->append(di);
+    }
+    if (items->isEmpty())
     {
         err("\"items\" is empty");
         return false;
@@ -529,7 +616,8 @@ int compose(const QStringList &rawArgs)
     if (args.size() < 2)
     {
         err("Usage: bms-cli compose <project.bms> <json-file|json> [-o output.png] [-s scale] [--ascii]\n"
-            "       json example: {\"size\":[128,64],\"items\":[{\"image\":\"icons/logo\",\"pos\":[0,0]}]}  (\"size\" omitted = follow screen)");
+            "       json example: {\"size\":[128,64],\"items\":[{\"image\":\"icons/logo\",\"pos\":[0,0]}]}  (\"size\" omitted = follow screen)\n"
+            "       item types: image (default) / line (pos+end) / fillrect, invertrect (pos+size) / points (points array); optional \"color\":\"black\"|\"white\"");
         return 1;
     }
     QString outFile = takeOpt(args, "-o");
@@ -564,14 +652,15 @@ int compose(const QStringList &rawArgs)
         return 1;
     }
 
-    ComImg ci;
-    if (!parseComposeJson(text, rd, &ci))
+    QSize size;
+    QVector<ComDrawItem> drawItems;
+    if (!parseComposeJson(text, rd, &size, &drawItems))
     {
         delete rd;
         return 1;
     }
 
-    QImage img = rd->renderComImg(ci);      // 合成语义与GUI导出路径一致；此命令绝不修改工程文件
+    QImage img = rd->renderCompose(size, drawItems);        // 合成语义与GUI导出路径一致；此命令绝不修改工程文件
     delete rd;
 
     return writeRenderOutput(img, outFile, "compose.png", scaleStr.toInt(), ascii);

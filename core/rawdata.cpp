@@ -9,6 +9,7 @@
 #include <QJsonArray>
 #include <QJsonParseError>
 #include <QDebug>
+#include <QPainter>
 #include "global.h"
 #include "imgencoderfactory.h"
 
@@ -757,15 +758,48 @@ static void mergeImage(QImage &img1, const QImage &img2, int x, int y)
     }
 }
 
-QImage RawData::renderComImg(const ComImg &ci)
+// 离屏合成：白底RGB888画布，图片与绘图原语按items顺序混排绘制（图片粘贴与GUI导出路径语义一致）；
+// 不涉及工程节点变更。图片成员id不存在时跳过（与getImage行为一致）
+QImage RawData::renderCompose(QSize size, const QVector<ComDrawItem> &items)
 {
-    QImage image(ci.size, QImage::Format_RGB888);
+    QImage image(size, QImage::Format_RGB888);
     image.fill(Qt::white);
-    foreach(auto item, ci.items)
+    QPainter p(&image);
+    foreach (const ComDrawItem &it, items)
     {
-        if(dataMap.contains(item.id))
+        switch (it.kind)
         {
-            mergeImage(image, dataMap[item.id].image, item.x, item.y);
+        case ComDrawItem::Image:
+            if (dataMap.contains(it.id))
+            {
+                mergeImage(image, dataMap[it.id].image, it.x, it.y);
+            }
+            break;
+        case ComDrawItem::Line:
+            p.setPen(it.white ? Qt::white : Qt::black);
+            p.drawLine(it.x, it.y, it.x2, it.y2);
+            break;
+        case ComDrawItem::FillRect:
+            p.fillRect(it.x, it.y, it.w, it.h, it.white ? Qt::white : Qt::black);
+            break;
+        case ComDrawItem::InvertRect:
+        {
+            QRect r = QRect(it.x, it.y, it.w, it.h).intersected(image.rect());
+            if (!r.isEmpty())
+            {
+                QImage region = image.copy(r);
+                region.invertPixels(QImage::InvertRgb);
+                p.drawImage(r.topLeft(), region);
+            }
+            break;
+        }
+        case ComDrawItem::Points:
+            p.setPen(it.white ? Qt::white : Qt::black);
+            foreach (const QPoint &pt, it.pts)
+            {
+                p.drawPoint(pt);
+            }
+            break;
         }
     }
     return image;
@@ -781,7 +815,12 @@ QImage RawData::getImage(int id)
         }
         else if(dataMap[id].type == RawData::TypeComImgFile)
         {
-            return renderComImg(dataMap[id].comImg);
+            QVector<ComDrawItem> items;
+            foreach(auto item, dataMap[id].comImg.items)
+            {
+                items.append(ComDrawItem::imageItem(item.x, item.y, item.id));
+            }
+            return renderCompose(dataMap[id].comImg.size, items);
         }
     }
     return QImage();

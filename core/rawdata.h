@@ -7,6 +7,7 @@
 #include <QMap>
 #include <QVector>
 #include <QHash>
+#include <QPoint>
 #include <QJsonObject>
 
 
@@ -36,6 +37,30 @@ struct ComImg
     {
         this->size = size;
         items.clear();
+    }
+};
+
+// 离屏合成（renderCompose）用的绘制项：图片或绘图原语。仅用于预览/演示合成，不落盘
+struct ComDrawItem
+{
+    enum Kind { Image, Line, FillRect, InvertRect, Points };
+    Kind kind;
+    qint16 x, y;        // Image: 粘贴位置; Line: 起点; Rect: 左上角
+    qint16 x2, y2;      // Line: 终点
+    qint16 w, h;        // Rect: 宽高
+    quint16 id;         // Image: 成员图片id
+    bool white;         // Line/FillRect/Points 前景色: false=黑(点亮) true=白
+    QVector<QPoint> pts;    // Points: 点集
+
+    ComDrawItem() : kind(Image), x(0), y(0), x2(0), y2(0), w(0), h(0), id(0), white(false) {}
+    static ComDrawItem imageItem(qint16 x, qint16 y, quint16 id)
+    {
+        ComDrawItem d;
+        d.kind = Image;
+        d.x = x;
+        d.y = y;
+        d.id = id;
+        return d;
     }
 };
 
@@ -163,7 +188,7 @@ public:
     bool remove(int id);
     bool imgFolderConvert(int id);
     QImage getImage(int id);
-    QImage renderComImg(const ComImg &ci);  // 离屏合成给定组合图内容（不涉及工程节点变更/落盘），语义与getImage组合图分支一致
+    QImage renderCompose(QSize size, const QVector<ComDrawItem> &items);    // 离屏合成（图片+绘图原语按items顺序混排），不涉及工程节点变更/落盘
     QImage getExportImage(int id);
     bool setImage(int id, QImage image);
     QString getBrief(int id);

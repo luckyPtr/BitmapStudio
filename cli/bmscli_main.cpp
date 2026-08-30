@@ -21,6 +21,7 @@ static void printUsage()
         "                                                  Render image/composite to PNG (nearest-neighbor upscale)\n"
         "  compose <project.bms> <json-file|json> [-o output.png] [-s scale] [--ascii]\n"
         "                                                  Render a composite that does not exist in the project (demo/testing)\n"
+        "                                                  item types: image (default) / line (pos+end) / fillrect, invertrect (pos+size) / points (points array)\n"
         "  export  <project.bms> [-o dir] [--json]         Export bitmaps per project settings (--json lists artifacts with sha256)\n"
         "  rename  <project.bms> <path> <new name>         Rename node (composite refs cascade automatically)\n"
         "  move    <project.bms> <path> <target folder|/>  Move node (refs cascade automatically)\n"
