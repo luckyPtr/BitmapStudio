@@ -87,3 +87,9 @@
 
 ![一键生成](Docs/Images/generate.gif)
 
+## 📄 许可证
+
+本项目采用 [GPL-3.0](./LICENSE) 许可证。
+
+**输出例外条款**：使用 Bitmap Studio 生成的全部输出文件（包括但不限于 `bms_image.c/.h`、`bms_sprite.c/.h`、`bms.bin`、`bms.h`、`bms_typedef.h` 及 `.bms` 工程文件）属于使用者自己的作品，**不受 GNU GPL 约束**，可任意使用、修改和商用，无需开源。
+

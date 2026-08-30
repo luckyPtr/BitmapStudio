@@ -17,11 +17,15 @@ Bitmap Studio is a Qt 5.15.2 (QtWidgets, C++17, MSVC 2019 64-bit) desktop tool f
 Run from `BitmapStudio/` (paths to Qt and MSVC are hardcoded in these scripts):
 
 ```bash
-.vscode/build.bat        # Release build
+.vscode/build.bat        # Release build (GUI + bms-cli.exe CLI)
 .vscode/build_run.bat    # Build + windeployqt + run exe
 ```
 
 Build directory: `BitmapStudio/build/Desktop_Qt_5_15_2_MSVC2019_64bit-Release`. Qt kit: `C:\Dev\Kits\Qt\5.15.2\msvc2019_64`, jom from QtCreator tools. There are no automated tests or linters — verify changes by compiling.
+
+## CLI companion (`bms-cli.exe`, console app)
+
+`cli/cli.pro` builds a widget-free console target sharing `core/core.pri` (projectmng lives in `gui/gui.pri` because it is a QWidget — do not add QWidget-dependent code to core/). Output goes to the GUI's shared release dir. Commands: `init / check [--json] / info --json / render [-o][-s][--ascii] / export [-o][--json sha256 manifest] / rename / move / delete / add / item-add / item-rm`. Exit codes: 0 ok, 1 failure (or check findings), 2 invalid project file. Conventions for AI/automation: low-risk edits (reorder, notes, settings) go directly into the JSON followed by `bms-cli check`; path-changing operations (rename/move/delete/add) use the CLI so composite references cascade automatically. Note Git Bash rewrites leading-`/` arguments (set `MSYS_NO_PATHCONV=1`); paths also work without the leading slash. A **user-facing** skill ships at `tools/skill/bms/` — it is a distribution asset (users copy it into their own firmware projects to guide AI agents), not a skill for developing this repo; keep it in sync whenever the CLI surface or format rules change.
 
 ## Architecture (MVC + Qt signals/slots)
 

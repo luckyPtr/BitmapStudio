@@ -1,4 +1,5 @@
 SOURCES += \
+    $$PWD/../core/projectmng.cpp \
     $$PWD/dialogabout.cpp \
     $$PWD/dialogimporthex.cpp \
     $$PWD/dialogimportimg.cpp \
@@ -15,6 +16,7 @@ SOURCES += \
     $$PWD/formpixeleditor.cpp
 
 HEADERS += \
+    $$PWD/../core/projectmng.h \
     $$PWD/dialogabout.h \
     $$PWD/dialogimporthex.h \
     $$PWD/dialogimportimg.h \

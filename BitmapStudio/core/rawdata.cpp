@@ -55,11 +55,14 @@ QString RawData::calFullName(int id)
         }
 
         auto appendParentName = [&](auto&& self, int id)->void {
-            if(dataMap[id].pid != 0)
+            quint16 p = dataMap[id].pid;
+            if(p != 0)
             {
-                self(self, dataMap[id].pid);
+                self(self, p);
             }
-            if(dataMap[dataMap[id].pid].type == RawData::TypeImgGrpFolder)
+            // pid==0 是虚拟根，dataMap 中没有对应节点；非const的operator[]会把
+            // 默认节点插入key=0，其type未初始化，恰好为图片类型时会导致建树无限递归
+            if(p != 0 && dataMap[p].type == RawData::TypeImgGrpFolder)
             {
                 fullName.append("[" + dataMap[id].name + "]");
             }
@@ -87,8 +90,63 @@ bool RawData::isContainerType(int type)
     return type == TypeImgFolder || type == TypeImgGrpFolder || type == TypeComImgFolder;
 }
 
-// 名称规范化：去掉路径分隔符，同树同级冲突时自动加后缀
-QString RawData::sanitizeName(const QString &name, quint16 pid, int type)
+RawData::PathResolve RawData::resolvePath(const QString &path, quint16 *id) const
+{
+    bool inImg = pathIndex.contains(path);
+    bool inCom = comPathIndex.contains(path);
+    if (inImg && inCom) return PathAmbiguous;
+    if (!inImg && !inCom) return PathNotFound;
+    if (id) *id = inImg ? pathIndex.value(path) : comPathIndex.value(path);
+    return PathOk;
+}
+
+QStringList RawData::takeLoadWarnings()
+{
+    QStringList warnings = loadWarnings;
+    loadWarnings.clear();
+    return warnings;
+}
+
+bool RawData::move(quint16 id, quint16 newPid)
+{
+    if (!dataMap.contains(id)) return false;
+    if (newPid != 0 && !dataMap.contains(newPid)) return false;
+
+    if (newPid != 0)
+    {
+        int type = dataMap[id].type;
+        int ptype = dataMap[newPid].type;
+        // 目标必须是同树的文件夹；图片组只接受图片叶子
+        if (isClassImgType(type))
+        {
+            if (ptype == TypeImgGrpFolder && type != TypeImgFile) return false;
+            if (ptype != TypeImgFolder && ptype != TypeImgGrpFolder) return false;
+        }
+        else if (isClassComImgType(type))
+        {
+            if (ptype != TypeComImgFolder) return false;
+        }
+        else return false;
+
+        // 不能移动到自身或自己的子孙下面
+        quint16 p = newPid;
+        while (p != 0)
+        {
+            if (p == id) return false;
+            p = dataMap[p].pid;
+        }
+    }
+
+    dataMap[id].pid = newPid;
+    updateFullName();
+    save();     // 引用在保存时按新树重新生成路径，自动级联
+    return true;
+}
+
+// 名称规范化：去掉路径分隔符，同树同级冲突时自动加后缀。
+// report=true（加载路径）时对任何改名发出警告，让check能把静默规范化变成显式问题；
+// 变更方法（createX/rename）不report——它们会把实际名称回显给调用方
+QString RawData::sanitizeName(const QString &name, quint16 pid, int type, bool report)
 {
     QString n = name;
     n.replace('/', '_');
@@ -113,20 +171,32 @@ QString RawData::sanitizeName(const QString &name, quint16 pid, int type)
         if (!clash) break;
         n = base + QString("_%1").arg(suffix++);
     }
+    if (report && n != name)
+    {
+        addWarning(QString("节点名称已规范化: \"%1\" -> \"%2\"（同级重名或含非法字符）").arg(name, n));
+    }
     return n;
+}
+
+void RawData::addWarning(const QString &msg)
+{
+    loadWarnings.append(msg);
+    qWarning().noquote() << msg;
 }
 
 void RawData::load()
 {
     dataMap.clear();
     pathIndex.clear();
+    comPathIndex.clear();
+    loadWarnings.clear();
     nextId = 1;
     valid = false;
 
     QFile file(project);
     if (!file.open(QIODevice::ReadOnly))
     {
-        qWarning() << "工程文件打开失败:" << project;
+        addWarning(QString("工程文件打开失败: %1").arg(project));
         return;
     }
     QJsonParseError parseErr;
@@ -134,20 +204,20 @@ void RawData::load()
     file.close();
     if (parseErr.error != QJsonParseError::NoError || !doc.isObject())
     {
-        qWarning() << "工程文件JSON解析失败:" << project << parseErr.errorString();
+        addWarning(QString("工程文件JSON解析失败: %1 (%2)").arg(project).arg(parseErr.errorString()));
         return;
     }
 
     QJsonObject root = doc.object();
     if (root.value("format").toString() != "bms")
     {
-        qWarning() << "不是有效的Bitmap Studio工程文件:" << project;
+        addWarning(QString("不是有效的Bitmap Studio工程文件: %1").arg(project));
         return;
     }
     int version = root.value("version").toInt(1);
     if (version > 1)
     {
-        qWarning() << "工程文件格式版本更新，按尽力而为方式解析:" << version;
+        addWarning(QString("工程文件格式版本更新(%1)，按尽力而为方式解析").arg(version));
     }
 
     settings = Settings();
@@ -192,7 +262,7 @@ void RawData::parseLevel(const QJsonArray &arr, quint16 pid, bool imgTree, const
 {
     auto parsePngLeaf = [&](const QJsonObject &node, quint16 leafPid, const QString &leafParentPath)
     {
-        QString name = sanitizeName(node.value("name").toString(), leafPid, TypeImgFile);
+        QString name = sanitizeName(node.value("name").toString(), leafPid, TypeImgFile, true);
         if (name.isEmpty()) name = "untitled";
         QString path = leafParentPath.isEmpty() ? name : leafParentPath + "/" + name;
 
@@ -207,7 +277,7 @@ void RawData::parseLevel(const QJsonArray &arr, quint16 pid, bool imgTree, const
         bi.png = png;       // 缓存原始字节，未编辑时落盘原样写回
         if (!bi.image.loadFromData(png))
         {
-            qWarning() << "图片数据解码失败:" << path;
+            addWarning(QString("图片数据解码失败: %1").arg(path));
         }
         dataMap.insert(id, bi);
         pathIndex.insert(path, id);
@@ -219,7 +289,7 @@ void RawData::parseLevel(const QJsonArray &arr, quint16 pid, bool imgTree, const
         {
             if (!v.isObject())
             {
-                qWarning() << "忽略非对象节点";
+                addWarning("忽略非对象节点");
                 continue;
             }
             QJsonObject node = v.toObject();
@@ -228,15 +298,27 @@ void RawData::parseLevel(const QJsonArray &arr, quint16 pid, bool imgTree, const
 
             if (node.contains("png"))
             {
+                if (!imgTree)
+                {
+                    // 图片节点只能存在于images树；留在组合图树会在保存时被静默丢弃
+                    addWarning(QString("图片节点出现在组合图树中，已忽略: %1").arg(node.value("name").toString()));
+                    continue;
+                }
                 parsePngLeaf(node, pid, parentPath);
                 continue;
             }
 
             if (node.contains("items"))
             {
+                if (imgTree)
+                {
+                    addWarning(QString("组合图节点出现在图片树中，已忽略: %1").arg(node.value("name").toString()));
+                    continue;
+                }
                 // 组合图叶子
-                QString name = sanitizeName(node.value("name").toString(), pid, TypeComImgFile);
+                QString name = sanitizeName(node.value("name").toString(), pid, TypeComImgFile, true);
                 if (name.isEmpty()) name = "untitled";
+                QString path = parentPath.isEmpty() ? name : parentPath + "/" + name;
                 quint16 id = nextId++;
                 BmFile bi;
                 bi.id = id;
@@ -261,7 +343,7 @@ void RawData::parseLevel(const QJsonArray &arr, quint16 pid, bool imgTree, const
                     QString ref = io.value("image").toString();
                     if (!pathIndex.contains(ref))
                     {
-                        qWarning() << "组合图" << name << "的悬空引用已忽略:" << ref;
+                        addWarning(QString("组合图 %1 的悬空引用已忽略: %2").arg(name).arg(ref));
                         continue;
                     }
                     QJsonArray pos = io.value("pos").toArray();
@@ -271,12 +353,20 @@ void RawData::parseLevel(const QJsonArray &arr, quint16 pid, bool imgTree, const
                     bi.comImg.items.append(item);
                 }
                 dataMap.insert(id, bi);
+                comPathIndex.insert(path, id);    // CLI寻址用
+                continue;
+            }
+
+            if (node.contains("frames") && !imgTree)
+            {
+                // 图片组只能存在于images树
+                addWarning(QString("图片组节点出现在组合图树中，已忽略: %1").arg(node.value("name").toString()));
                 continue;
             }
 
             int nodeType = node.contains("frames") ? TypeImgGrpFolder
                                                    : (imgTree ? TypeImgFolder : TypeComImgFolder);
-            QString name = sanitizeName(node.value("name").toString(), pid, nodeType);
+            QString name = sanitizeName(node.value("name").toString(), pid, nodeType, true);
             QString path = parentPath.isEmpty() ? name : parentPath + "/" + name;
 
             if (node.contains("children"))
@@ -289,6 +379,8 @@ void RawData::parseLevel(const QJsonArray &arr, quint16 pid, bool imgTree, const
                 bi.name = name;
                 bi.brief = node.value("note").toString();
                 dataMap.insert(id, bi);
+                if (imgTree) pathIndex.insert(path, id);
+                else comPathIndex.insert(path, id);      // CLI寻址用
                 parseLevel(node.value("children").toArray(), id, imgTree, path);
             }
             else if (node.contains("frames"))
@@ -302,11 +394,12 @@ void RawData::parseLevel(const QJsonArray &arr, quint16 pid, bool imgTree, const
                 bi.name = name;
                 bi.brief = node.value("note").toString();
                 dataMap.insert(id, bi);
+                pathIndex.insert(path, id);
                 for (const QJsonValue &fv : node.value("frames").toArray())
                 {
                     if (!fv.isObject() || !fv.toObject().contains("png"))
                     {
-                        qWarning() << "图片组内忽略非图片节点:" << name;
+                        addWarning(QString("图片组 %1 内忽略非图片节点").arg(name));
                         continue;
                     }
                     parsePngLeaf(fv.toObject(), id, path);
@@ -314,7 +407,7 @@ void RawData::parseLevel(const QJsonArray &arr, quint16 pid, bool imgTree, const
             }
             else
             {
-                qWarning() << "无法识别的节点形状，已忽略:" << name;
+                addWarning(QString("无法识别的节点形状，已忽略: %1").arg(name));
             }
         }
     }

@@ -126,12 +126,15 @@ private:
     quint16 nextId = 1;     // 内存id分配器，加载时按树的规范顺序（容器优先的深度优先）分配
     bool valid = true;      // 工程文件是否为有效的 bms JSON
 
-    QHash<QString, quint16> pathIndex;      // 图片树路径 -> id，用于解析组合图成员引用
+    QHash<QString, quint16> pathIndex;      // 图片树路径 -> id（含文件夹，供组合图引用解析与CLI寻址）
+    QHash<QString, quint16> comPathIndex;   // 组合图树路径 -> id（仅供CLI寻址）
+    QStringList loadWarnings;               // 加载过程中的警告（悬空引用/自动改名等），供check命令收集
 
     void save();    // 序列化并原子写回JSON文件
     void parseLevel(const QJsonArray &arr, quint16 pid, bool imgTree, const QString &parentPath);
     QJsonArray serializeChildren(quint16 pid, bool imgTree, const QString &parentPath, QHash<quint16, QString> &idPath);
-    QString sanitizeName(const QString &name, quint16 pid, int type);
+    QString sanitizeName(const QString &name, quint16 pid, int type, bool report = false);
+    void addWarning(const QString &msg);    // qWarning的同时收集进loadWarnings
 
     int getTypeFromId(int id);
     QString calFullName(int id);
@@ -147,6 +150,14 @@ public:
     BmFile getBmFile(quint16 id) const { return dataMap[id]; }
     bool isValid() const { return valid; }
     void load();    // 从JSON文件重新加载整个工程（删除节点后由ProjectMng调用）
+
+    // 路径寻址（供CLI）：路径在两棵树中都存在时返回PathAmbiguous。
+    // 注意：索引只在加载后有效，任何变更操作后需重新load才能继续寻址。
+    enum PathResolve { PathNotFound, PathOk, PathAmbiguous };
+    PathResolve resolvePath(const QString &path, quint16 *id = nullptr) const;
+
+    QStringList takeLoadWarnings();     // 取走并清空加载警告
+    bool move(quint16 id, quint16 newPid);  // 移动节点（引用在保存时按新树自动级联）
     void createFolder(int id, QString name = "Untitled", QString brief = "");
     void createBmp(int id, QString name, const QImage &img, const QString brief = "");
     void createBmp(int id, QString name, QSize size, const QString brief = "");
@@ -172,7 +183,7 @@ public:
     static bool isClassImgType(int type) { return type == TypeImgFolder || type == TypeImgGrpFolder || type == TypeImgFile; }
     static bool isClassComImgType(int type) { return type == TypeComImgFolder || type == TypeComImgFile; }
 
-    Settings getSettings() { return settings; }
+    Settings getSettings() const { return settings; }
     void saveSettings(Settings settings);
     QSize getSize();
     bool haveSubFolder(int id); // 是否还有子文件夹

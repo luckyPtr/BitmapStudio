@@ -11,6 +11,7 @@
 #include <gui/dialogimporthex.h>
 #include <gui/dialogimportimg.h>
 #include <core/imgconvertor.h>
+#include "core/exportrunner.h"
 #include <QApplication>
 #include <QClipboard>
 #include <QMouseEvent>
@@ -27,7 +28,8 @@ void ProjectMng::addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, 
     QMap<quint16, BmFile> dataMap = rd->getDataMap();
     foreach(const auto &key, dataMap.keys())
     {
-        if(filter(dataMap.value(key).type))
+        // id=0 是虚拟根；防御异常产生的幽灵节点(key=0)进入建树递归导致栈溢出
+        if(dataMap.value(key).id != 0 && filter(dataMap.value(key).type))
         {
             imgList << dataMap.value(key);
         }
@@ -822,36 +824,11 @@ void ProjectMng::on_ActRun_Triggered()
     DialogLoading *dlgLoading = new DialogLoading;
     dlgLoading->show();
 
-    QString file_img_c;
-
     TreeItem *item = theModel->itemFromIndex(currentIndex);
-    RawData::Settings settings = item->getRawData()->getSettings();
-    ImgConvertor ic(item->getRawData()->getDataMap().values().toVector(), settings);
-
-    QFileInfo fileInfo(item->getRawData()->getProject());
-    QString path = fileInfo.path() + "/" + settings.path;  // 输出目录;
-
-    if(!settings.path.isEmpty())
-    {
-        if(!QDir(path).exists())
-        {
-            QDir().mkdir(path);
-        }
-    }
-
-    if (settings.format == "bin")
-        ic.generateImgBin(path);
-    else
-        ic.generateImgC(path);
-    ic.generateSprite(path);
-    // 如果勾选了"自定义类型文件"，则不生成 bms_typedef.h，由用户自己生成
-    if (!settings.customTypedef) {
-        ic.generateTypedef(path);
-    }
-    ic.generateMainHeader(path);
+    bool ok = ExportRunner::run(*item->getRawData());
 
     dlgLoading->close();
-    DialogNotice *dlg = new DialogNotice("字模转换完成!");
+    DialogNotice *dlg = new DialogNotice(ok ? "字模转换完成!" : "字模转换失败，请检查输出目录权限");
     dlg->exec();
 }
 
