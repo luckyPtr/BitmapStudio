@@ -17,7 +17,7 @@ static void printUsage()
         "  check   <project.bms> [--json]                  Validate project (dangling refs/bad data/auto-renames)\n"
         "                                                  Exit codes: 0 clean, 1 issues, 2 invalid project\n"
         "  info    <project.bms> [--json]                  Show tree structure and export settings\n"
-        "  render  <project.bms> <path> [-o output.png] [-s scale] [--ascii]\n"
+        "  render  <project.bms> <path> [-o output.png] [-s scale] [--ascii] [--invert]\n"
         "                                                  Render image/composite to PNG (nearest-neighbor upscale)\n"
         "  compose <project.bms> <json-file|json> [-o output.png] [-s scale] [--ascii]\n"
         "                                                  Render a composite that does not exist in the project (demo/testing)\n"

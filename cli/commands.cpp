@@ -425,6 +425,7 @@ int render(const QStringList &rawArgs)
     QString outFile = takeOpt(args, "-o");
     QString scaleStr = takeOpt(args, "-s", "1");
     bool ascii = hasOpt(args, "--ascii");
+    bool invert = hasOpt(args, "--invert");
 
     int code = 0;
     QString file = args.at(0);
@@ -440,6 +441,11 @@ int render(const QStringList &rawArgs)
         err("Rendered image is empty");
         delete rd;
         return 1;
+    }
+
+    if (invert)
+    {
+        img.invertPixels(QImage::InvertRgb);    // 反色预览，与invertrect同语义（通道取反）
     }
 
     int rc = writeRenderOutput(img, outFile, rd->getBmFile(id).name + ".png", scaleStr.toInt(), ascii);
