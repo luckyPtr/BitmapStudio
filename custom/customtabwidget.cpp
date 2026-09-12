@@ -269,6 +269,34 @@ void CustomTabWidget::setSaveStatus(int index, bool unsaved)
 
 }
 
+// 树内拖动会按规范顺序重编全部内存id，标签页以(工程路径,id)标识编辑对象，需同步换新id；
+// 组合图编辑器内部comImg.items还持有成员图片id，不换的话保存时会写成悬空引用而丢成员
+void CustomTabWidget::remapIds(const QString &project, const QHash<quint16, quint16> &idMap)
+{
+    if (idMap.isEmpty())
+        return;
+
+    for (int i = 0; i < count(); i++)
+    {
+        CustomTab *widget = static_cast<CustomTab *>(this->widget(i));
+        if (widget->getProject() != project || !idMap.contains(widget->getId()))
+            continue;
+
+        widget->setId(idMap.value(widget->getId()));
+
+        if (FormComImgEditor *editor = qobject_cast<FormComImgEditor *>(widget))
+        {
+            if (editor->comImgCanvansItem)
+            {
+                ComImg comImg = editor->comImgCanvansItem->getComImg();
+                for (ComImgItem &item : comImg.items)
+                    item.id = idMap.value(item.id, item.id);
+                editor->comImgCanvansItem->setComImg(comImg);
+            }
+        }
+    }
+}
+
 void CustomTabWidget::on_Changed(QString project, int id, bool unsaved)
 {
     for(int i = 0; i < count(); i++)

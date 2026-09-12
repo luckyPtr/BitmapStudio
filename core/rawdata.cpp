@@ -90,7 +90,7 @@ QStringList RawData::takeLoadWarnings()
     return warnings;
 }
 
-bool RawData::move(quint16 id, quint16 newPid)
+bool RawData::canMove(quint16 id, quint16 newPid) const
 {
     if (!dataMap.contains(id)) return false;
     if (newPid != 0 && !dataMap.contains(newPid)) return false;
@@ -120,9 +120,109 @@ bool RawData::move(quint16 id, quint16 newPid)
         }
     }
 
+    // 目标层级不得已有同名节点：组合图按路径引用，同级重名会让引用解析产生歧义
+    //（同名重排自身排除，同树校验与sanitizeName一致）
+    if (isSiblingNameClash(dataMap[id].name, newPid, dataMap[id].type, id)) return false;
+
+    return true;
+}
+
+// pid下一层同树子节点的显示顺序（容器在前、叶子在后，组内按id升序即当前文件顺序）
+QVector<quint16> RawData::childOrder(quint16 pid, int forType) const
+{
+    bool imgTree = isClassImgType(forType);
+    QVector<quint16> containers, leaves;
+    for (auto it = dataMap.constBegin(); it != dataMap.constEnd(); ++it)
+    {
+        const BmFile &bf = it.value();
+        if (bf.pid != pid) continue;
+        if (imgTree ? !isClassImgType(bf.type) : !isClassComImgType(bf.type)) continue;
+        (isContainerType(bf.type) ? containers : leaves) << it.key();
+    }
+    return containers + leaves;
+}
+
+// 收集pid下一层的规范顺序（容器在前、叶子在后，组内按id升序即当前显示顺序），
+// 并递归子级追加到order；movedId所在层级先把它从原位取出插到pos
+//（pos为移除源后的插入下标，<0表示追加到末尾），再稳定重分区维持容器在前
+void RawData::collectLevel(quint16 pid, bool imgTree, quint16 movedId, int pos, QVector<quint16> &order) const
+{
+    QVector<quint16> level = childOrder(pid, imgTree ? TypeImgFolder : TypeComImgFolder);
+
+    if (level.contains(movedId))
+    {
+        level.removeAt(level.indexOf(movedId));
+        int p = pos < 0 ? level.size() : pos;
+        level.insert(qBound(0, p, level.size()), movedId);
+
+        QVector<quint16> c2, l2;
+        foreach (quint16 oid, level)
+            (isContainerType(dataMap[oid].type) ? c2 : l2) << oid;
+        level = c2 + l2;
+    }
+
+    foreach (quint16 oid, level)
+    {
+        order << oid;
+        collectLevel(oid, imgTree, movedId, pos, order);
+    }
+}
+
+bool RawData::move(quint16 id, quint16 newPid, int pos, QHash<quint16, quint16> *remap)
+{
+    if (!canMove(id, newPid)) return false;
+
     dataMap[id].pid = newPid;
+
+    // 同级顺序完全由内存id顺序体现（序列化按id升序、容器在前），
+    // 因此移动后按规范DFS序重编全部id，使文件顺序=显示顺序=想要的顺序
+    QVector<quint16> order;
+    collectLevel(0, true, id, pos, order);      // 图片树在前
+    collectLevel(0, false, id, pos, order);     // 组合图树在后
+
+    if (order.size() == dataMap.size())         // 防御：出现孤儿/环时退回仅改父节点的旧行为
+    {
+        QHash<quint16, quint16> oldToNew;
+        for (int i = 0; i < order.size(); ++i)
+            oldToNew.insert(order[i], i + 1);
+
+        QMap<quint16, BmFile> newMap;
+        foreach (quint16 oldId, order)
+        {
+            BmFile bf = dataMap[oldId];
+            bf.id = oldToNew.value(oldId);
+            bf.pid = bf.pid == 0 ? 0 : oldToNew.value(bf.pid);
+            // 组合图成员引用的图片id同步重映射
+            for (auto &item : bf.comImg.items)
+                item.id = oldToNew.value(item.id, item.id);
+            newMap.insert(bf.id, bf);
+        }
+        dataMap = newMap;
+
+        for (quint16 &eid : expand)
+            eid = oldToNew.value(eid, eid);
+        nextId = order.size() + 1;
+        if (remap)
+            *remap = oldToNew;
+    }
+
     updateFullName();
     return save();   // 引用在保存时按新树重新生成路径，自动级联
+}
+
+// 同树同级同名判定：仅同一棵树（images/composites两树根级互不影响）的同名才算冲突。
+// 组合图按路径引用节点，同级重名会让路径解析产生歧义，必须杜绝
+bool RawData::isSiblingNameClash(const QString &name, quint16 pid, int type, quint16 excludeId) const
+{
+    for (auto it = dataMap.constBegin(); it != dataMap.constEnd(); ++it)
+    {
+        if (it.key() == excludeId) continue;
+        const BmFile &bf = it.value();
+        if (bf.pid == pid && bf.name == name &&
+            RawData::isClassImgType(bf.type) == RawData::isClassImgType(type))
+            return true;
+    }
+    return false;
 }
 
 // 名称规范化：去掉路径分隔符，同树同级冲突时自动加后缀。
@@ -137,22 +237,9 @@ QString RawData::sanitizeName(const QString &name, quint16 pid, int type, bool r
 
     QString base = n;
     int suffix = 1;
-    while (true)
-    {
-        bool clash = false;
-        for (auto it = dataMap.constBegin(); it != dataMap.constEnd(); ++it)
-        {
-            // 仅同一棵树内的同名才算冲突（images/composites两树的根级节点互不影响）
-            if (it.value().pid == pid && it.value().name == n &&
-                RawData::isClassImgType(it.value().type) == RawData::isClassImgType(type))
-            {
-                clash = true;
-                break;
-            }
-        }
-        if (!clash) break;
+    while (isSiblingNameClash(n, pid, type))
         n = base + QString("_%1").arg(suffix++);
-    }
+
     if (report && n != name)
     {
         addWarning(QString("Node name normalized: \"%1\" -> \"%2\" (duplicate sibling name or invalid characters)").arg(name, n));

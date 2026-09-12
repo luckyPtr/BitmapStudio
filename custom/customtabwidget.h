@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QWidget>
 #include <QMenu>
+#include <QHash>
 #include "custom/treeitem.h"
 #include <QPoint>
 
@@ -52,6 +53,7 @@ public:
     void removeAll();
     void removeOtherTabs(int index);
     void setSaveStatus(int index, bool unsaved);
+    void remapIds(const QString &project, const QHash<quint16, quint16> &idMap); // 节点重排重编id后修正标签页持有的id
 signals:
     void updateSize(QSize);
     void updateSaveStatus(bool, bool);  // save和saveAll的状态

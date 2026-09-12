@@ -7,6 +7,11 @@
 - 工程存档改为单文件 JSON 格式，支持文本 diff，对 git 和 AI 友好
 - 旧版 SQLite 工程转换脚本 tools/convert_legacy.py
 - 新增命令行工具 bms-cli
+- 文件树支持拖拽节点
+
+### Changed
+
+- bms-cli move 移动节点后该节点排在目标层级末尾（原实现按内部id序插入）
 
 ### Removed
 

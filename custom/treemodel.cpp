@@ -28,7 +28,21 @@ TreeItem *TreeModel::itemFromIndex(const QModelIndex &index) const
 Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
 {
     Qt::ItemFlags flag = QAbstractItemModel::flags(index);
-    return flag | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;				//允许Model拖动，这个很重要
+    // 项目/类别根等虚拟节点不可拖动；所有节点保持可放置（具体落点合法性由TreeView按类型判定）
+    TreeItem *item = itemFromIndex(index);
+    int type = item->getType();
+    if (type == RawData::TypeImgFile || type == RawData::TypeComImgFile ||
+        type == RawData::TypeImgFolder || type == RawData::TypeImgGrpFolder || type == RawData::TypeComImgFolder)
+    {
+        flag |= Qt::ItemIsDragEnabled;
+    }
+    return flag | Qt::ItemIsDropEnabled;				//允许Model拖动，这个很重要
+}
+
+Qt::DropActions TreeModel::supportedDropActions() const
+{
+    // 基类默认只支持CopyAction，会禁掉树内节点的Move拖放
+    return Qt::CopyAction | Qt::MoveAction;
 }
 
 QMimeData *TreeModel::mimeData(const QModelIndexList &indexes) const
@@ -41,6 +55,7 @@ QMimeData *TreeModel::mimeData(const QModelIndexList &indexes) const
         TreeItem *item = itemFromIndex(index);
         int id = data(index, RoleID).toInt();
         mimeD->setData("bm/id", QByteArray::number(id));							//将自己需要的数据 存入到MimeData中
+        mimeD->setData("bm/proj", item->getRawData()->getProject().toUtf8());	//工程路径用于恢复源节点（多工程打开时id不唯一）
         if(item->getType() == RawData::TypeImgFile)
         {
             mimeD->setData("bm/type", "image");
@@ -50,6 +65,26 @@ QMimeData *TreeModel::mimeData(const QModelIndexList &indexes) const
         mimeD->setData("bm/id", "NULL");
 
     return mimeD;
+}
+
+// 递归查找工程+id对应的节点索引
+QModelIndex TreeModel::findIndex(const QString &project, int id) const
+{
+    auto find = [&](auto&& self, const QModelIndex &parentIndex) -> QModelIndex {
+        for(int i = 0; i < rowCount(parentIndex); i++)
+        {
+            QModelIndex idx = index(i, 0, parentIndex);
+            TreeItem *item = itemFromIndex(idx);
+            if(item->getID() == id && item->getRawData()->getProject() == project)
+                return idx;
+            QModelIndex ret = self(self, idx);
+            if(ret.isValid())
+                return ret;
+        }
+        return QModelIndex();
+    };
+
+    return find(find, QModelIndex());
 }
 
 

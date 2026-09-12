@@ -153,6 +153,7 @@ private:
 
     bool save();       // 序列化并原子写回JSON文件；失败（无效工程/打不开/提交失败）返回false
     void parseLevel(const QJsonArray &arr, quint16 pid, bool imgTree, const QString &parentPath);
+    void collectLevel(quint16 pid, bool imgTree, quint16 movedId, int pos, QVector<quint16> &order) const; // 按规范顺序收集DFS序（移动重编id用）
     QJsonArray serializeChildren(quint16 pid, bool imgTree, const QString &parentPath, QHash<quint16, QString> &idPath);
     QString sanitizeName(const QString &name, quint16 pid, int type, bool report = false);
     void addWarning(const QString &msg);    // qWarning的同时收集进loadWarnings
@@ -178,7 +179,16 @@ public:
 
     QStringList takeLoadWarnings();     // 取走并清空加载警告
     // 变更方法返回值 = 是否已成功落盘（false表示编辑仅存在于内存，需提示用户）
-    bool move(quint16 id, quint16 newPid);  // 移动节点（引用在保存时按新树自动级联）
+    bool canMove(quint16 id, quint16 newPid) const; // 移动校验：类型/所在树匹配、不得移入自身子树、目标层级不得同名
+    // 同树同级是否已存在同名节点（excludeId排除自身，供移动判断；两棵树的根级互不算冲突）
+    bool isSiblingNameClash(const QString &name, quint16 pid, int type, quint16 excludeId = 0) const;
+    // pid下一层同树子节点的显示顺序（容器在前、叶子在后，组内按id升序）；
+    // forType传移动节点自身的type以选择所在树（根级pid=0同时挂两棵树），供CLI计算--before/--after插入位置
+    QVector<quint16> childOrder(quint16 pid, int forType) const;
+    // 移动节点（引用在保存时按新树自动级联）。pos为插入到目标层级显示序列中的下标
+    // （该序列已移除源节点，-1=追加到末尾）。移动会按规范顺序重编全部内存id
+    // （与load()一致），remap带回旧id->新id映射，调用方需用它修正持有的id（如已打开的编辑器）
+    bool move(quint16 id, quint16 newPid, int pos = -1, QHash<quint16, quint16> *remap = nullptr);
     bool createFolder(int id, QString name = "Untitled", QString brief = "");
     bool createBmp(int id, QString name, const QImage &img, const QString brief = "");
     bool createBmp(int id, QString name, QSize size, const QString brief = "");

@@ -19,6 +19,7 @@
 #include "gui/dialogloading.h"
 #include "gui/dialognewproject.h"
 #include "custom/customtab.h"
+#include "custom/treeview.h"
 
 void ProjectMng::addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, bool (*filter)(int))
 {
@@ -242,6 +243,13 @@ void ProjectMng::initModel()
 {
     // TODO: 一次读取数据库，提高速度
     saveExpand();
+    rebuildModel();
+}
+
+// 仅重建模型不重新采集展开状态。on_MoveNode专用：move内部已把expand的id
+// 重映射到新id，若此时再按旧模型采集，恢复时会对应到错误的节点
+void ProjectMng::rebuildModel()
+{
     theModel->beginReset(); // 需要使用beginReset和endReset通知treeview刷新
     theModel->clear();
     for(int i = 0; i < projList.size(); i++)
@@ -284,6 +292,12 @@ void ProjectMng::blindTreeView(QTreeView *treeView)
     treeView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(treeView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(on_CustomContextMenu(QPoint)));
     connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(on_Clicked_Triggered(QModelIndex)));
+
+    // 树内拖动节点（改顺序/改父级）
+    if(TreeView *tv = qobject_cast<TreeView *>(treeView))
+    {
+        connect(tv, SIGNAL(moveNode(QModelIndex,QModelIndex,int)), this, SLOT(on_MoveNode(QModelIndex,QModelIndex,int)));
+    }
 }
 
 void ProjectMng::setTabWidget(CustomTabWidget *tabWidget)
@@ -1035,5 +1049,60 @@ void ProjectMng::on_ImportImg(QModelIndex index, QString file)
         warningBox.addButton(QObject::tr("确定"), QMessageBox::AcceptRole);
 
         warningBox.exec();
+    }
+}
+
+// 树内拖动节点：row为目标层级“移除源后”的插入下标（-1=追加到末尾），由TreeView换算
+void ProjectMng::on_MoveNode(QModelIndex sourceIndex, QModelIndex parentIndex, int row)
+{
+    TreeItem *srcItem = theModel->itemFromIndex(sourceIndex);
+    TreeItem *tgtItem = theModel->itemFromIndex(parentIndex);
+    RawData *rd = srcItem->getRawData();
+
+    // 目标父节点：类别根（图片/组合图）=虚拟根，文件夹=该文件夹
+    quint16 newPid = 0;
+    int ptype = tgtItem->getType();
+    if (ptype == RawData::TypeImgFolder || ptype == RawData::TypeImgGrpFolder || ptype == RawData::TypeComImgFolder)
+    {
+        newPid = tgtItem->getID();
+    }
+    else if (ptype != RawData::TypeClassImg && ptype != RawData::TypeClassComImg)
+    {
+        return;
+    }
+
+    quint16 oldId = srcItem->getID();
+
+    // 目标层级已有同名节点：拒绝并明确告知（组合图按路径引用，同级重名会产生歧义）
+    if (rd->isSiblingNameClash(rd->getName(oldId), newPid, srcItem->getType(), oldId))
+    {
+        QMessageBox warnBox;
+        warnBox.setIcon(QMessageBox::Warning);
+        warnBox.setWindowTitle(tr("无法移动"));
+        warnBox.setText(tr("目标位置已存在同名节点“%1”\n请先重命名后再移动").arg(srcItem->getText()));
+        warnBox.addButton(QObject::tr("确定"), QMessageBox::AcceptRole);
+        warnBox.exec();
+        return;
+    }
+
+    if (!rd->canMove(oldId, newPid))
+        return;
+
+    // move()会重编全部id并按此刻的id重映射expand，所以必须先用旧id采集当前展开状态；
+    // 否则上次模型重建之后才展开的文件夹会在重建后丢失展开状态（自动收起）
+    saveExpand();
+
+    // move会按规范顺序重编全部内存id，已打开编辑器标签页持有的id需同步重映射，否则保存会写错节点
+    QHash<quint16, quint16> remap;
+    warnSaveFailed(rd->move(oldId, newPid, row, &remap));
+    tabWidget->remapIds(rd->getProject(), remap);
+    rebuildModel();     // expand的id已在move内重映射到新id，不能再走initModel的saveExpand二次采集
+
+    // 展开目标位置并选中移动后的节点
+    QModelIndex newIndex = getModelIndex(rd->getProject(), remap.value(oldId, oldId));
+    if (newIndex.isValid())
+    {
+        treeView->expand(newIndex.parent());
+        treeView->setCurrentIndex(newIndex);
     }
 }

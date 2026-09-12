@@ -56,7 +56,8 @@ public:
     void openProject(QString pro);
     void newProject(QString pro, RawData::Settings settings);
     void closeProjcet(QModelIndex &index);
-    void initModel();   // 根据数据库重新初始化模型
+    void initModel();   // 根据数据库重新初始化模型（先采集当前展开状态）
+    void rebuildModel();    // 仅重建模型；调用方需保证expand中的id已与模型一致（如move已重映射）
     TreeModel* model() { return theModel; }
     void blindTreeView(QTreeView *treeView);
     void setTabWidget(CustomTabWidget *tabWidget);
@@ -102,6 +103,7 @@ public slots:
     void on_ActCopyName_Triggeded();
     void on_OpenProjectUrl(QString);
     void on_ImportImg(QModelIndex, QString);
+    void on_MoveNode(QModelIndex sourceIndex, QModelIndex parentIndex, int row);    // 树内拖动节点
 
 signals:
     void updateSelectProject(QString);

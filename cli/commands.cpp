@@ -759,11 +759,22 @@ int rename(const QStringList &rawArgs)
 int move(const QStringList &rawArgs)
 {
     QStringList args = rawArgs;
+    QString usage = QString("Usage: bms-cli move <project.bms> <path> <target folder|/> [--before <child name>|--after <child name>]\n")
+            + "                 Default appends to the end of the target; --before/--after name an existing\n"
+            + "                 child of the target to insert relative to.";
+    QString beforeName = takeOpt(args, "--before");
+    QString afterName = takeOpt(args, "--after");
     if (args.size() < 3)
     {
-        err("Usage: bms-cli move <project.bms> <path> <target folder|/>");
+        err(usage);
         return 1;
     }
+    if (!beforeName.isEmpty() && !afterName.isEmpty())
+    {
+        err("Error: --before and --after are mutually exclusive");
+        return 1;
+    }
+
     int code = 0;
     RawData *rd = openProject(args.at(0), &code);
     if (!rd) return code;
@@ -774,13 +785,45 @@ int move(const QStringList &rawArgs)
     QString dest = normPath(args.at(2));
     if (!dest.isEmpty() && !resolve(rd, dest, &destId)) { delete rd; return 1; }
 
-    if (!rd->move(id, destId))
+    // 把--before/--after换算成插入下标：pos为目标层级“移除源节点后”序列中的位置，
+    // 换算与GUI拖拽（TreeView::resolveDropTarget）一致
+    int pos = -1;
+    QString anchorName = beforeName.isEmpty() ? afterName : beforeName;
+    if (!anchorName.isEmpty())
+    {
+        QVector<quint16> order = rd->childOrder(destId, rd->getBmFile(id).type);
+        int anchor = -1, srcRow = -1;
+        for (int i = 0; i < order.size(); i++)
+        {
+            if (rd->getBmFile(order.at(i)).name == anchorName) anchor = i;
+            if (order.at(i) == id) srcRow = i;
+        }
+        if (anchor < 0)
+        {
+            err(QString("Error: the target folder has no child named \"%1\"").arg(anchorName));
+            delete rd;
+            return 1;
+        }
+        pos = beforeName.isEmpty() ? anchor + 1 : anchor;
+        if (srcRow >= 0 && srcRow < pos) pos--;
+    }
+
+    // 同级重名单独报错：组合图按路径引用节点，重名会让引用解析产生歧义
+    if (rd->isSiblingNameClash(rd->getName(id), destId, rd->getBmFile(id).type, id))
+    {
+        err(QString("Move failed: the target folder already contains a node named \"%1\" in the same tree; rename one of them first").arg(rd->getName(id)));
+        delete rd;
+        return 1;
+    }
+
+    if (!rd->move(id, destId, pos))
     {
         err("Move failed: target must be a folder in the same tree, the node must not be moved into its own subtree (image groups only accept images); or writing the project file failed");
         delete rd;
         return 1;
     }
-    out(QString("Moved %1 -> %2 (composite refs updated automatically)").arg(normPath(args.at(1)), dest.isEmpty() ? "/" : "/" + dest));
+    QString posNote = pos < 0 ? QString() : QString(" (%1 %2)").arg(afterName.isEmpty() ? "before" : "after").arg(anchorName);
+    out(QString("Moved %1 -> %2%3 (composite refs updated automatically)").arg(normPath(args.at(1)), dest.isEmpty() ? "/" : "/" + dest, posNote));
     delete rd;
     return 0;
 }

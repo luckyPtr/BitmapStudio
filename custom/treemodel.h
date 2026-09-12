@@ -33,7 +33,9 @@ public:
 
 
     TreeItem *itemFromIndex(const QModelIndex &index) const;
+    QModelIndex findIndex(const QString &project, int id) const;    // 按工程路径+id查找节点索引（拖拽时从mimeData恢复源节点）
     Qt::ItemFlags flags(const QModelIndex &index) const override;
+    Qt::DropActions supportedDropActions() const override;
     QMimeData *mimeData(const QModelIndexList &indexes) const override;
 //    QStringList mimeTypes() const override;
 private:
