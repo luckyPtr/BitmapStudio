@@ -1,6 +1,7 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 #include <QString>
+#include <QRect>
 
 
 
@@ -39,6 +40,10 @@ public:
     static void initSettings();
     static void saveDefaultProjectSize(int width, int height);
     static void saveDefaultProjectMode(int mode);
+
+    // 窗口布局（正常状态几何 + 最大化标志）持久化；readWindowLayout 无有效记录时返回 false
+    static bool readWindowLayout(QRect &geometry, bool &maximized);
+    static void saveWindowLayout(const QRect &geometry, bool maximized);
 private:
     static void createDefaultSettings(const QString &filePath);
     static void readSettings(const QString &filePath);

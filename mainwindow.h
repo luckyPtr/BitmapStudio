@@ -20,6 +20,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+protected:
+    void closeEvent(QCloseEvent *event) override;
 
 private slots:
 
@@ -72,6 +74,8 @@ private:
     void init();
     void initStatusBar();   // 初始化
     void initAction();
+    void applyDefaultWindowLayout();
+    void restoreWindowLayout();
 
     QModelIndex editedIndex;
     QImage imagePreview;

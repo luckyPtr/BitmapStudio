@@ -98,3 +98,34 @@ void Global::saveDefaultProjectMode(int mode)
     // 更新静态变量
     defaultProjectMode = mode;
 }
+
+bool Global::readWindowLayout(QRect &geometry, bool &maximized)
+{
+    QSettings settings(QCoreApplication::applicationDirPath() + "/config.ini", QSettings::IniFormat);
+
+    settings.beginGroup("Window");
+    const int x = settings.value("x", 0).toInt();
+    const int y = settings.value("y", 0).toInt();
+    const int width = settings.value("width", 0).toInt();
+    const int height = settings.value("height", 0).toInt();
+    maximized = settings.value("maximized", false).toBool();
+    settings.endGroup();
+
+    if (width <= 0 || height <= 0)
+        return false;
+    geometry = QRect(x, y, width, height);
+    return true;
+}
+
+void Global::saveWindowLayout(const QRect &geometry, bool maximized)
+{
+    QSettings settings(QCoreApplication::applicationDirPath() + "/config.ini", QSettings::IniFormat);
+
+    settings.beginGroup("Window");
+    settings.setValue("x", geometry.x());
+    settings.setValue("y", geometry.y());
+    settings.setValue("width", geometry.width());
+    settings.setValue("height", geometry.height());
+    settings.setValue("maximized", maximized);
+    settings.endGroup();
+}

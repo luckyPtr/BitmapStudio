@@ -20,6 +20,8 @@
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QClipboard>
+#include <QScreen>
+#include <QCloseEvent>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -27,6 +29,10 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    applyDefaultWindowLayout();
+    restoreWindowLayout();
+
     init();
 
     connect(QApplication::instance(), SIGNAL(importFile(QString)), SLOT(on_ImportFile(QString)));
@@ -35,6 +41,44 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    // 关闭时保存窗口布局（正常状态几何 + 最大化标志），下次启动恢复；
+    // 最大化时 geometry() 是全屏尺寸，normalGeometry() 才是还原后的正常几何
+    const QRect normalGeo = isMaximized() ? normalGeometry() : geometry();
+    Global::saveWindowLayout(normalGeo, isMaximized());
+    QMainWindow::closeEvent(event);
+}
+
+// 初始尺寸随屏幕自适应（逻辑像素，高DPI下随缩放因子放大），并居中显示
+void MainWindow::applyDefaultWindowLayout()
+{
+    const QRect availableRect = QGuiApplication::primaryScreen()->availableGeometry();
+    resize(availableRect.width() * 3 / 5, availableRect.height() * 3 / 5);
+    move(availableRect.center() - rect().center());
+}
+
+// 恢复上次关闭时的窗口布局；无记录或位置已不在可见屏幕内（如显示器被拔掉）时保持默认布局
+void MainWindow::restoreWindowLayout()
+{
+    QRect savedGeometry;
+    bool maximized = false;
+    if (!Global::readWindowLayout(savedGeometry, maximized)) {
+        return;
+    }
+
+    for (QScreen *screen : QGuiApplication::screens()) {
+        if (screen->availableGeometry().contains(savedGeometry.center())) {
+            setGeometry(savedGeometry);
+            if (maximized) {
+                setWindowState(windowState() | Qt::WindowMaximized);
+            }
+            return;
+        }
+    }
+    // 位置不在可见屏幕内（如显示器被拔掉）：保持默认布局
 }
 
 

@@ -6,6 +6,12 @@
 
 int main(int argc, char *argv[])
 {
+    // 高DPI（4K）屏幕缩放支持，必须在 QApplication 构造之前设置
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
+                Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+
     SingleApplication a(argc, argv);
 
     QTranslator translator;
