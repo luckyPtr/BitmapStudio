@@ -247,6 +247,20 @@ QString RawData::sanitizeName(const QString &name, quint16 pid, int type, bool r
     return n;
 }
 
+// 节点名称合法性：仅ASCII字母/数字/下划线。名称用于拼接导出的C数组名
+// （IMG_/GRP_固定前缀+路径段），数字开头因有前缀而合法；中文/空格/连字符会导致生成的C无法编译。
+bool RawData::isValidNodeName(const QString &name)
+{
+    if (name.isEmpty()) return false;
+    for (const QChar &c : name)
+    {
+        const char ch = c.toLatin1();
+        const bool ok = (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_';
+        if (!ok) return false;
+    }
+    return true;
+}
+
 void RawData::addWarning(const QString &msg)
 {
     loadWarnings.append(msg);
@@ -323,6 +337,14 @@ void RawData::load()
     parseLevel(root.value("composites").toArray(), 0, false, "");
 
     updateFullName();
+
+    // 存量名称的导出安全性检查：非法字符会让check显式暴露（不阻断加载/保存）
+    for (auto it = dataMap.constBegin(); it != dataMap.constEnd(); ++it)
+    {
+        if (!isValidNodeName(it.value().name))
+            addWarning(QString("Node name is not export-safe (only letters/digits/underscore allowed): \"%1\"").arg(it.value().name));
+    }
+
     valid = true;
 }
 

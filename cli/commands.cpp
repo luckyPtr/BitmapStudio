@@ -827,6 +827,12 @@ int rename(const QStringList &rawArgs)
         err("Usage: bms-cli rename <project.bms> <path> <new name>");
         return 1;
     }
+    // 名称拼接导出的C数组名（IMG_/GRP_前缀+路径段），仅允许字母/数字/下划线
+    if (!RawData::isValidNodeName(args.at(2)))
+    {
+        err(QString("Invalid name: \"%1\" (only letters/digits/underscore allowed; it becomes the C export array name)").arg(args.at(2)));
+        return 1;
+    }
     int code = 0;
     RawData *rd = openProject(args.at(0), &code);
     if (!rd) return code;
@@ -834,7 +840,7 @@ int rename(const QStringList &rawArgs)
     quint16 id = 0;
     if (!resolve(rd, args.at(1), &id)) { delete rd; return 1; }
 
-    if (!rd->rename(id, args.at(2)))   // 同名/非法字符会被自动规范化
+    if (!rd->rename(id, args.at(2)))   // 同级重名会被自动加后缀规范化
     {
         err("Failed to write project file: " + args.at(0));
         delete rd;
@@ -1035,6 +1041,14 @@ int add(const QStringList &rawArgs)
 
     QString parent = normPath(args.at(1));
     QString name = args.at(2);
+
+    // 名称拼接导出的C数组名（IMG_/GRP_前缀+路径段），仅允许字母/数字/下划线
+    if (!RawData::isValidNodeName(name))
+    {
+        err(QString("Invalid name: \"%1\" (only letters/digits/underscore allowed; it becomes the C export array name)").arg(name));
+        delete rd;
+        return 1;
+    }
 
     // 父节点：根用类别哨兵（-3图片树 -4组合图树），否则解析路径
     int parentId;

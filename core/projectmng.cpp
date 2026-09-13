@@ -782,6 +782,12 @@ void ProjectMng::on_ActRename_Triggered()
     QString name = QInputDialog::getText(this, tr("重命名"), tr("名称"));
     if(!name.isEmpty())
     {
+        // 名称用于拼接导出的C数组名，仅允许字母/数字/下划线
+        if (!RawData::isValidNodeName(name))
+        {
+            QMessageBox::warning(this, tr("重命名"), tr("名称仅允许字母、数字、下划线（导出C数组名的需要）"));
+            return;
+        }
         rename(currentIndex, name);
     }
 }
