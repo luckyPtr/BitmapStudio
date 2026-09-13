@@ -13,7 +13,9 @@ namespace BmsCli
     int render(const QStringList &args);
     int compose(const QStringList &args);   // 渲染工程中不存在的组合图（JSON文件或字符串描述），不修改工程文件
     int exportCmd(const QStringList &args);
+    int exportSet(const QStringList &args);  // 修改导出设置（screen/scan/bit/format/outdir/note），仅提供的选项变更
     int rename(const QStringList &args);
+    int note(const QStringList &args);      // 设置/清空节点备注（--clear清空）
     int move(const QStringList &args);
     int del(const QStringList &args);
     int add(const QStringList &args);

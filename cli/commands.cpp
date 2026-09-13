@@ -726,6 +726,97 @@ int exportCmd(const QStringList &rawArgs)
     return 0;
 }
 
+// ---------- export-set ----------
+
+int exportSet(const QStringList &rawArgs)
+{
+    QStringList args = rawArgs;
+    if (args.isEmpty())
+    {
+        err("Usage: bms-cli export-set <project.bms> [--screen WxH] [--scan ZH|ZL|HL|LH] [--bit MSB|LSB]\n"
+            "                        [--format C|bin] [--outdir dir] [--note \"text\"]\n"
+            "       Update export settings; only provided options change (current: bms-cli info); --note \"\" clears the note");
+        return 1;
+    }
+    const bool hasScreen = args.contains("--screen");
+    const bool hasScan = args.contains("--scan");
+    const bool hasBit = args.contains("--bit");
+    const bool hasFormat = args.contains("--format");
+    const bool hasOutdir = args.contains("--outdir");
+    const bool hasNote = args.contains("--note");
+    QString screenStr = takeOpt(args, "--screen");
+    QString scan = takeOpt(args, "--scan");
+    QString bit = takeOpt(args, "--bit");
+    QString format = takeOpt(args, "--format");
+    QString outdir = takeOpt(args, "--outdir");
+    QString note = takeOpt(args, "--note");
+
+    if (!hasScreen && !hasScan && !hasBit && !hasFormat && !hasOutdir && !hasNote)
+    {
+        err("No options given: nothing to change (see usage above)");
+        return 1;
+    }
+
+    QSize screen;
+    if (hasScreen)
+    {
+        QStringList wh = screenStr.split('x');
+        if (wh.size() != 2 || wh.at(0).toInt() <= 0 || wh.at(1).toInt() <= 0)
+        {
+            err("Invalid --screen: " + screenStr + " (expected e.g. 128x64)");
+            return 1;
+        }
+        screen = QSize(wh.at(0).toInt(), wh.at(1).toInt());
+    }
+    if (hasScan && scan != "ZH" && scan != "ZL" && scan != "HL" && scan != "LH")
+    {
+        err("Invalid --scan: " + scan + " (expected ZH|ZL|HL|LH)");
+        return 1;
+    }
+    if (hasBit && bit != "MSB" && bit != "LSB")
+    {
+        err("Invalid --bit: " + bit + " (expected MSB|LSB)");
+        return 1;
+    }
+    if (hasFormat && format != "C" && format != "bin")
+    {
+        err("Invalid --format: " + format + " (expected C|bin)");
+        return 1;
+    }
+
+    int code = 0;
+    RawData *rd = openProject(args.at(0), &code);
+    if (!rd) return code;
+
+    RawData::Settings st = rd->getSettings();
+    if (hasScreen) st.size = screen;
+    if (hasScan || hasBit)
+    {
+        // 只提供其一时沿用当前值（mode低2位=扫描方向，最高位=位序）
+        static const char *trav[] = {"ZH", "ZL", "HL", "LH"};
+        st.mode = scanBitToMode(hasScan ? scan : trav[st.mode % 4],
+                                hasBit ? bit : (st.mode >= 4 ? "MSB" : "LSB"));
+    }
+    if (hasFormat) st.format = format;
+    if (hasOutdir) st.path = outdir;
+    if (hasNote) st.brief = note;   // --note "" 即清空（空brief保存时省略note字段）
+
+    if (!rd->saveSettings(st))
+    {
+        err("Failed to write project file: " + args.at(0) + " (directory read-only or disk error)");
+        delete rd;
+        return 1;
+    }
+    static const char *trav[] = {"ZH", "ZL", "HL", "LH"};
+    out(QString("Export settings saved: %1  screen %2x%3  scan %4 %5  output %6  outdir \"%7\"")
+        .arg(QFileInfo(args.at(0)).absoluteFilePath())
+        .arg(st.size.width()).arg(st.size.height())
+        .arg(trav[st.mode % 4]).arg(st.mode >= 4 ? "MSB" : "LSB")
+        .arg(st.format).arg(st.path.isEmpty() ? QString("(project dir)") : st.path));
+    delete rd;
+    return 0;
+}
+
 // ---------- rename ----------
 
 int rename(const QStringList &rawArgs)
@@ -750,6 +841,44 @@ int rename(const QStringList &rawArgs)
         return 1;
     }
     out(QString("Renamed to: %1 (composite refs updated automatically)").arg(rd->getBmFile(id).name));
+    delete rd;
+    return 0;
+}
+
+// ---------- note ----------
+
+int note(const QStringList &rawArgs)
+{
+    QStringList args = rawArgs;
+    if (args.size() < 3)
+    {
+        err("Usage: bms-cli note <project.bms> <path> <\"text\">\n"
+            "       Set a node's note (image/folder/group/composite); \"\" (empty) clears it");
+        return 1;
+    }
+    if (args.size() > 3)
+    {
+        err("Note text must be a single argument: quote it if it contains spaces (\"multi word\")");
+        return 1;
+    }
+    int code = 0;
+    RawData *rd = openProject(args.at(0), &code);
+    if (!rd) return code;
+
+    quint16 id = 0;
+    if (!resolve(rd, args.at(1), &id)) { delete rd; return 1; }
+
+    // 空文本即清空（空brief保存时省略note字段），与JSON语义一致
+    const QString text = args.at(2);
+
+    if (!rd->setBrief(id, text))
+    {
+        err("Failed to write project file: " + args.at(0));
+        delete rd;
+        return 1;
+    }
+    out(text.isEmpty() ? QString("Note cleared for: %1").arg(rd->getBmFile(id).name)
+                       : QString("Note set for: %1 -> %2").arg(rd->getBmFile(id).name, text));
     delete rd;
     return 0;
 }
