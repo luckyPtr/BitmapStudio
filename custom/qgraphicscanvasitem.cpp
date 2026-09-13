@@ -434,6 +434,7 @@ void QGraphicsCanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
 
     // 绘制网格
     QPen pen(Global::gridColor);
+    pen.setWidth(0);    // 化妆品笔，恒为1物理像素宽，DPI缩放下粗细均匀
     painter->setPen(pen);
     for(int x = 0; x < image.width(); x++)
     {
@@ -518,6 +519,14 @@ void QGraphicsCanvasItem::setImage(QImage &image)
 QImage QGraphicsCanvasItem::getImage()
 {
     return image;
+}
+
+// 像素格子大小（Global::pixelSize）改变后刷新
+void QGraphicsCanvasItem::refreshPixelSize()
+{
+    prepareGeometryChange();
+    view->scene()->setSceneRect(QRectF(0, 0, image.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, image.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
+    update();
 }
 
 

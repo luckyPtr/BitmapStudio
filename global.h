@@ -40,6 +40,7 @@ public:
     static void initSettings();
     static void saveDefaultProjectSize(int width, int height);
     static void saveDefaultProjectMode(int mode);
+    static void savePixelSize(int size);
 
     // 窗口布局（正常状态几何 + 最大化标志）持久化；readWindowLayout 无有效记录时返回 false
     static bool readWindowLayout(QRect &geometry, bool &maximized);

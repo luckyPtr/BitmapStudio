@@ -20,7 +20,7 @@ void QGraphicsScaleItem::drawScale(QPainter *painter)
 {
     // 绘制轮廓和背景
     QPen pen;
-    pen.setWidth(1);
+    pen.setWidth(0);    // 化妆品笔，刻度线/轮廓恒为1物理像素宽
     pen.setColor(QColor(142, 156, 175));
     pen.setJoinStyle(Qt::RoundJoin);
     painter->setPen(pen);
@@ -108,6 +108,7 @@ void QGraphicsScaleItem::drawAuxiliaryLines(QPainter *painter)
     QColor guidesColor(Global::guidesColor);
     QColor selectedGuidesColor(Global::selectedGuidesColor);
     QPen pen(guidesColor);
+    pen.setWidth(0);    // 化妆品笔，辅助线恒为1物理像素宽
     painter->setPen(pen);
 
 
@@ -544,4 +545,11 @@ void QGraphicsScaleItem::on_DeleteGuide()
     int guideIndex = getNearGuide(mousePos.toPoint());
     if (guideIndex != -1)
         auxiliaryLines.removeAt(guideIndex);
+}
+
+// 像素格子大小（Global::pixelSize）改变后刷新，刻度在 paint 中按新值绘制
+void QGraphicsScaleItem::refreshPixelSize()
+{
+    prepareGeometryChange();
+    update();
 }

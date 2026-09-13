@@ -46,6 +46,7 @@ public:
     ~QGraphicsScaleItem();
     QRectF boundingRect() const Q_DECL_OVERRIDE;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) Q_DECL_OVERRIDE;
+    void refreshPixelSize();    // 像素格子大小改变后重绘标尺刻度
     //QPainterPath shape() const Q_DECL_OVERRIDE;
 protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event) override;

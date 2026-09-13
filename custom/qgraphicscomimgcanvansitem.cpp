@@ -137,6 +137,7 @@ void QGraphicsComImgCanvansItem::paintGrid(QPainter *painter)
 {
     // 网格
     QPen pen(Global::gridColor);
+    pen.setWidth(0);    // 化妆品笔，恒为1物理像素宽，DPI缩放下粗细均匀
     painter->setPen(pen);
     for(int x = 0; x < comImg.size.width(); x++)
     {
@@ -418,6 +419,14 @@ void QGraphicsComImgCanvansItem::setRawData(RawData *rd)
 {
     this->rd = rd;
     view->viewport()->update();
+}
+
+// 像素格子大小（Global::pixelSize）改变后刷新
+void QGraphicsComImgCanvansItem::refreshPixelSize()
+{
+    prepareGeometryChange();
+    view->scene()->setSceneRect(QRectF(0, 0, comImg.size.width() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset, comImg.size.height() * Global::pixelSize + Global::scaleWidth + Global::scaleOffset));
+    update();
 }
 
 void QGraphicsComImgCanvansItem::resize(QSize size)

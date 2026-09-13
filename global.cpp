@@ -53,6 +53,7 @@ void Global::createDefaultSettings(const QString &filePath)
     settings.setValue("default_project_width", defaultProjectWidth);
     settings.setValue("default_project_height", defaultProjectHeight);
     settings.setValue("default_project_mode", defaultProjectMode);
+    settings.setValue("pixel_size", pixelSize);
     settings.endGroup();
 }
 
@@ -68,6 +69,7 @@ void Global::readSettings(const QString &filePath)
     defaultProjectWidth = settings.value("default_project_width", defaultProjectWidth).toInt();
     defaultProjectHeight = settings.value("default_project_height", defaultProjectHeight).toInt();
     defaultProjectMode = settings.value("default_project_mode", defaultProjectMode).toInt();
+    pixelSize = qBound(4, settings.value("pixel_size", pixelSize).toInt(), 64);
     settings.endGroup();
 }
 
@@ -97,6 +99,19 @@ void Global::saveDefaultProjectMode(int mode)
 
     // 更新静态变量
     defaultProjectMode = mode;
+}
+
+void Global::savePixelSize(int size)
+{
+    QString iniFilePath = QCoreApplication::applicationDirPath() + "/config.ini";
+    QSettings settings(iniFilePath, QSettings::IniFormat);
+
+    settings.beginGroup("General");
+    settings.setValue("pixel_size", size);
+    settings.endGroup();
+
+    // 更新静态变量
+    pixelSize = size;
 }
 
 bool Global::readWindowLayout(QRect &geometry, bool &maximized)

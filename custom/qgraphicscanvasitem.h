@@ -80,6 +80,7 @@ public:
     void setImage(QImage &image);
     QImage getImage();
     void resize(QSize size);
+    void refreshPixelSize();    // 像素格子大小改变后重设场景矩形并重绘
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

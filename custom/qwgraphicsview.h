@@ -16,6 +16,7 @@ protected:
     void wheelEvent(QWheelEvent *);
 public:
     QWGraphicsView(QWidget *parent = nullptr);
+    void zoomPixelSize(int notches);    // 调整像素格子大小（Ctrl+滚轮与临时F8/F7快捷键共用）
 signals:
     void mouseMovePoint(QPoint point);
     void mousePress(QPoint point);
