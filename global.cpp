@@ -144,3 +144,22 @@ void Global::saveWindowLayout(const QRect &geometry, bool maximized)
     settings.setValue("maximized", maximized);
     settings.endGroup();
 }
+
+bool Global::readSearchBarVisible()
+{
+    QSettings settings(QCoreApplication::applicationDirPath() + "/config.ini", QSettings::IniFormat);
+
+    settings.beginGroup("SearchBar");
+    const bool visible = settings.value("visible", true).toBool();
+    settings.endGroup();
+    return visible;
+}
+
+void Global::saveSearchBarVisible(bool visible)
+{
+    QSettings settings(QCoreApplication::applicationDirPath() + "/config.ini", QSettings::IniFormat);
+
+    settings.beginGroup("SearchBar");
+    settings.setValue("visible", visible);
+    settings.endGroup();
+}

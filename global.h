@@ -45,6 +45,10 @@ public:
     // 窗口布局（正常状态几何 + 最大化标志）持久化；readWindowLayout 无有效记录时返回 false
     static bool readWindowLayout(QRect &geometry, bool &maximized);
     static void saveWindowLayout(const QRect &geometry, bool maximized);
+
+    // 搜索栏显示状态持久化；无记录时默认显示
+    static bool readSearchBarVisible();
+    static void saveSearchBarVisible(bool visible);
 private:
     static void createDefaultSettings(const QString &filePath);
     static void readSettings(const QString &filePath);

@@ -22,6 +22,7 @@
 #include <QClipboard>
 #include <QScreen>
 #include <QCloseEvent>
+#include <QKeyEvent>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -91,7 +92,12 @@ void MainWindow::init()
     ui->treeViewProject->setItemDelegate(treeItemDelegate);
     pm.blindTreeView(ui->treeViewProject);
     pm.setTabWidget(ui->tabWidget);
-    ui->lineEditSearch->setVisible(false);
+    ui->lineEditSearch->addAction(QIcon(":/Image/TreeIco/Search.svg"), QLineEdit::LeadingPosition);
+    ui->lineEditSearch->installEventFilter(this);
+
+    // 恢复上次的搜索栏显示状态（视图菜单/Ctrl+F 可切换）
+    ui->actSearchBar->setChecked(Global::readSearchBarVisible());
+    ui->lineEditSearch->setVisible(ui->actSearchBar->isChecked());
 
     Global::initSettings();
 }
@@ -127,6 +133,7 @@ void MainWindow::initAction()
     connect(ui->actSaveAll, SIGNAL(triggered()), ui->tabWidget, SLOT(on_ActSaveAll_Triggered()));
     connect(ui->treeViewProject, SIGNAL(openProject(QString)), &pm, SLOT(on_OpenProjectUrl(QString)));
     connect(ui->treeViewProject, SIGNAL(importImageFile(QModelIndex,QString)), &pm, SLOT(on_ImportImg(QModelIndex,QString)));
+    connect(ui->lineEditSearch, SIGNAL(textChanged(QString)), &pm, SLOT(on_SearchTextChanged(QString)));
 }
 
 
@@ -250,6 +257,36 @@ void MainWindow::on_actEditMode_triggered(bool checked)
     emit editModeChanged();
     // DialogNotice *dlg = new DialogNotice(checked ? tr("像素编辑模式") : tr("普通模式"));
     // dlg->exec();
+}
+
+// 搜索栏显示/隐藏（视图菜单勾选 或 Ctrl+F）；隐藏时清空关键字，避免树停留在不可见的过滤状态
+void MainWindow::on_actSearchBar_triggered(bool checked)
+{
+    if (!checked)
+    {
+        ui->lineEditSearch->clear();
+    }
+    ui->lineEditSearch->setVisible(checked);
+    if (checked)
+    {
+        ui->lineEditSearch->setFocus();
+        ui->lineEditSearch->selectAll();
+    }
+    Global::saveSearchBarVisible(checked);
+}
+
+// 搜索框内按 Esc：隐藏搜索栏（经由动作切换，保持菜单勾选状态同步）
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == ui->lineEditSearch && event->type() == QEvent::KeyPress)
+    {
+        if (static_cast<QKeyEvent *>(event)->key() == Qt::Key_Escape)
+        {
+            ui->actSearchBar->trigger();
+            return true;
+        }
+    }
+    return QMainWindow::eventFilter(watched, event);
 }
 
 

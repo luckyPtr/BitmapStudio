@@ -100,6 +100,12 @@ void ProjectMng::setExpandNode(QModelIndex root)
 
 void ProjectMng::saveExpand()
 {
+    // 搜索过滤生效期间的展开是临时的（自动展开命中路径），不采集进工程数据；
+    // 清除搜索后按进入搜索前的快照还原
+    if (searchActive)
+    {
+        return;
+    }
     for(int i = 0; i < theModel->rowCount(treeView->rootIndex()); i++)
     {
         QModelIndex root = theModel->index(i, 0, treeView->rootIndex());
@@ -115,6 +121,97 @@ void ProjectMng::restoreExpand()
     {
         QModelIndex root = theModel->index(i, 0, treeView->rootIndex());
         setExpandNode(root);
+    }
+}
+
+// 搜索栏文本变化：实时过滤文件树（名称/备注包含文本的图片，文件夹命中则显示其中全部文件）
+void ProjectMng::on_SearchTextChanged(QString text)
+{
+    if (text == searchText)
+    {
+        return;
+    }
+    if (!text.isEmpty() && searchText.isEmpty())
+    {
+        saveExpand();   // 进入搜索前快照当前展开状态，清除搜索后可还原
+    }
+    searchText = text;
+    applySearchFilter();
+}
+
+// 名称或备注包含搜索文本即命中；工程/类别根等虚拟节点不参与匹配
+bool ProjectMng::matchSearch(TreeItem *item)
+{
+    int type = item->getType();
+    if (type != RawData::TypeImgFile && type != RawData::TypeComImgFile &&
+        type != RawData::TypeImgFolder && type != RawData::TypeImgGrpFolder &&
+        type != RawData::TypeComImgFolder)
+    {
+        return false;
+    }
+    return item->getText().contains(searchText, Qt::CaseInsensitive) ||
+           item->getNotes().contains(searchText, Qt::CaseInsensitive);
+}
+
+void ProjectMng::applySearchFilter()
+{
+    if (searchText.isEmpty())
+    {
+        if (!searchActive)
+        {
+            return;
+        }
+        searchActive = false;
+        // 全部取消隐藏，并还原进入搜索前的展开状态
+        for (int i = 0; i < theModel->rowCount(QModelIndex()); i++)
+        {
+            searchShowSubtree(theModel->index(i, 0, QModelIndex()), false);
+        }
+        treeView->collapseAll();
+        restoreExpand();
+        return;
+    }
+    searchActive = true;
+    for (int i = 0; i < theModel->rowCount(QModelIndex()); i++)
+    {
+        searchShowNode(theModel->index(i, 0, QModelIndex()));
+    }
+}
+
+// 递归过滤：返回该节点子树是否存在可见（命中）内容
+bool ProjectMng::searchShowNode(const QModelIndex &index)
+{
+    TreeItem *item = theModel->itemFromIndex(index);
+    if (matchSearch(item))
+    {
+        // 节点自身命中（文件夹命中时其下所有文件一并显示）
+        searchShowSubtree(index, true);
+        return true;
+    }
+    bool hasVisible = false;
+    for (int i = 0; i < theModel->rowCount(index); i++)
+    {
+        hasVisible |= searchShowNode(theModel->index(i, 0, index));
+    }
+    treeView->setRowHidden(index.row(), index.parent(), !hasVisible);
+    if (hasVisible)
+    {
+        treeView->expand(index);    // 自动展开命中项所在的路径
+    }
+    return hasVisible;
+}
+
+// 显示index整棵子树；expand=true时同时展开所有节点
+void ProjectMng::searchShowSubtree(const QModelIndex &index, bool expand)
+{
+    treeView->setRowHidden(index.row(), index.parent(), false);
+    if (expand)
+    {
+        treeView->expand(index);
+    }
+    for (int i = 0; i < theModel->rowCount(index); i++)
+    {
+        searchShowSubtree(theModel->index(i, 0, index), expand);
     }
 }
 
@@ -283,6 +380,11 @@ void ProjectMng::rebuildModel()
     }
     theModel->endReset();
     restoreExpand();
+    // 增删改/重命名/拖动等操作会重建模型，模型reset也会清掉视图的隐藏标记，需重新应用过滤
+    if (searchActive)
+    {
+        applySearchFilter();
+    }
 }
 
 void ProjectMng::blindTreeView(QTreeView *treeView)

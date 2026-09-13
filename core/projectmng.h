@@ -51,6 +51,13 @@ private:
     void initActions();
     void warnSaveFailed(bool saved);    // 落盘失败时统一弹窗（编辑仅存在于内存，需立即告知用户）
 
+    QString searchText;     // 搜索栏过滤文本（空=不过滤）
+    bool searchActive = false;  // 过滤生效中（搜索期间的展开是临时的，不采集进工程数据）
+    bool matchSearch(TreeItem *item);   // 节点名称或备注是否包含搜索文本
+    void applySearchFilter();   // 应用/清除过滤（视图层setRowHidden，不改模型）
+    bool searchShowNode(const QModelIndex &index);  // 递归过滤：返回该节点子树是否存在命中内容
+    void searchShowSubtree(const QModelIndex &index, bool expand);  // 显示整棵子树，expand=true时同时展开（文件夹命中时显示所有文件）
+
 public:
     explicit ProjectMng(QWidget *parent = nullptr);
     void openProject(QString pro);
@@ -104,6 +111,7 @@ public slots:
     void on_OpenProjectUrl(QString);
     void on_ImportImg(QModelIndex, QString);
     void on_MoveNode(QModelIndex sourceIndex, QModelIndex parentIndex, int row);    // 树内拖动节点
+    void on_SearchTextChanged(QString text);    // 搜索栏文本变化，实时过滤文件树
 
 signals:
     void updateSelectProject(QString);

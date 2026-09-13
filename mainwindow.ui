@@ -149,6 +149,12 @@ QTabBar::tab:selected
     <addaction name="actSave"/>
     <addaction name="actSaveAll"/>
    </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>视图</string>
+    </property>
+    <addaction name="actSearchBar"/>
+   </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
      <string>运行</string>
@@ -162,6 +168,7 @@ QTabBar::tab:selected
     <addaction name="actAbout"/>
    </widget>
    <addaction name="menu"/>
+   <addaction name="menuView"/>
    <addaction name="menu_2"/>
    <addaction name="menu_3"/>
   </widget>
@@ -505,6 +512,21 @@ QTabBar::tab:selected
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+S</string>
+   </property>
+  </action>
+  <action name="actSearchBar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Img.qrc">
+     <normaloff>:/Image/TreeIco/Search.svg</normaloff>:/Image/TreeIco/Search.svg</iconset>
+   </property>
+   <property name="text">
+    <string>搜索栏</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
    </property>
   </action>
  </widget>

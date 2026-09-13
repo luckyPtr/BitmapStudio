@@ -22,6 +22,7 @@ public:
 
 protected:
     void closeEvent(QCloseEvent *event) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 private slots:
 
@@ -30,6 +31,8 @@ private slots:
     void on_SaveImage(QImage image);
 
     void on_actEditMode_triggered(bool checked);
+
+    void on_actSearchBar_triggered(bool checked);
 
     void on_treeViewProject_doubleClicked(const QModelIndex &index);
 
