@@ -849,7 +849,7 @@ int rename(const QStringList &rawArgs)
         err("Usage: bms-cli rename <project.bms> <path> <new name>");
         return 1;
     }
-    // 名称拼接导出的C数组名（IMG_/GRP_前缀+路径段），仅允许字母/数字/下划线
+    // 名称拼接导出的C数组名（IMG_/CMP_前缀+路径段），仅允许字母/数字/下划线
     if (!RawData::isValidNodeName(args.at(2)))
     {
         err(QString("Invalid name: \"%1\" (only letters/digits/underscore allowed; it becomes the C export array name)").arg(args.at(2)));
@@ -1064,7 +1064,7 @@ int add(const QStringList &rawArgs)
     QString parent = normPath(args.at(1));
     QString name = args.at(2);
 
-    // 名称拼接导出的C数组名（IMG_/GRP_前缀+路径段），仅允许字母/数字/下划线
+    // 名称拼接导出的C数组名（IMG_/CMP_前缀+路径段），仅允许字母/数字/下划线
     if (!RawData::isValidNodeName(name))
     {
         err(QString("Invalid name: \"%1\" (only letters/digits/underscore allowed; it becomes the C export array name)").arg(name));

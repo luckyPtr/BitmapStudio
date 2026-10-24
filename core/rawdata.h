@@ -158,7 +158,7 @@ private:
     QString sanitizeName(const QString &name, quint16 pid, int type, bool report = false);
     void addWarning(const QString &msg);    // qWarning的同时收集进loadWarnings
 public:
-    static bool isValidNodeName(const QString &name);   // 仅ASCII字母/数字/下划线：节点名拼接导出C数组名（IMG_/GRP_前缀+路径段）
+    static bool isValidNodeName(const QString &name);   // 仅ASCII字母/数字/下划线：节点名拼接导出C数组名（IMG_/CMP_前缀+路径段）
 
     QString calFullName(int id);
     void updateFullName();

@@ -248,7 +248,7 @@ QString RawData::sanitizeName(const QString &name, quint16 pid, int type, bool r
 }
 
 // 节点名称合法性：仅ASCII字母/数字/下划线。名称用于拼接导出的C数组名
-// （IMG_/GRP_固定前缀+路径段），数字开头因有前缀而合法；中文/空格/连字符会导致生成的C无法编译。
+// （IMG_/CMP_固定前缀+路径段），数字开头因有前缀而合法；中文/空格/连字符会导致生成的C无法编译。
 bool RawData::isValidNodeName(const QString &name)
 {
     if (name.isEmpty()) return false;

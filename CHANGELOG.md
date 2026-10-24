@@ -15,6 +15,7 @@
 ### Changed
 
 - 导出文件 `bms_sprite.c/.h` 更名为 `bms_image_item.c/.h`，组合图成员类型 `BmsSprite_t` 更名为 `BmsImageItem_t`；引用旧文件名或旧类型的固件代码与构建脚本需同步更新
+- 组合图导出数组前缀更名为 `CMP_`
 - UI 字体精简，修改全局字体
 
 ### Removed
