@@ -1,12 +1,13 @@
 # Changelog
 
-## [Unreleased]
+## [0.4.0] - 2026-10-24
 
 ### Added
 
 - 工程存档改为单文件 JSON 格式，支持文本 diff，对 git 和 AI 友好
-- 旧版 SQLite 工程转换脚本 tools/convert_legacy.py
 - 新增命令行工具 bms-cli
+- 添加SKILL(tools/skill/bms/)
+- 旧版 SQLite 工程转换脚本 tools/convert_legacy.py
 - 文件树支持拖拽节点
 - 窗口布局（尺寸/位置/最大化状态）保存到 config.ini，下次启动恢复上次布局
 - 编辑页支持 Ctrl+滚轮 缩放像素格子
