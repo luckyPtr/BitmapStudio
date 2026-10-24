@@ -34,7 +34,7 @@ QString RawData::calFullName(int id)
         }
         else if(RawData::isClassComImgType(dataMap[id].type))
         {
-            fullName = "GRP";
+            fullName = "CMP";
         }
 
         auto appendParentName = [&](auto&& self, int id)->void {
@@ -310,6 +310,14 @@ void RawData::load()
     {
         settings.size = QSize(screen.at(0).toInt(), screen.at(1).toInt());
     }
+    if (screen.size() != 2)
+    {
+        addWarning("Invalid screen (expected [width,height]); fallback to default 128x64");
+    }
+    else if (screen.at(0).toInt() <= 0 || screen.at(1).toInt() <= 0)
+    {
+        addWarning(QString("Invalid screen [%1,%2] (must be positive)").arg(screen.at(0).toInt()).arg(screen.at(1).toInt()));
+    }
 
     QJsonObject exp = root.value("export").toObject();
     // scan(ZH/ZL/HL/LH) + bitOrder(LSB/MSB) -> ImgEncoderFactory模式编号
@@ -322,6 +330,25 @@ void RawData::load()
     settings.mode = mode;
     settings.format = exp.value("output").toString("C");
     settings.path = exp.value("outdir").toString();
+    // export 枚举校验：非法值加载时静默回退默认，这里告警供 check 发现（直改 JSON 的常见笔误）
+    if (exp.contains("scan"))
+    {
+        const QString s = exp.value("scan").toString();
+        if (s != "ZH" && s != "ZL" && s != "HL" && s != "LH")
+            addWarning(QString("Invalid export.scan \"%1\" (expected ZH|ZL|HL|LH); fallback to ZH").arg(s));
+    }
+    if (exp.contains("bitOrder"))
+    {
+        const QString b = exp.value("bitOrder").toString();
+        if (b != "MSB" && b != "LSB")
+            addWarning(QString("Invalid export.bitOrder \"%1\" (expected MSB|LSB); fallback to LSB").arg(b));
+    }
+    if (exp.contains("output"))
+    {
+        const QString o = exp.value("output").toString();
+        if (o != "C" && o != "bin")
+            addWarning(QString("Invalid export.output \"%1\" (expected C|bin); treated as C").arg(o));
+    }
     QJsonObject kw = exp.value("keywords").toObject();
     if (!kw.isEmpty())
     {
