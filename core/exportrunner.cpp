@@ -35,9 +35,9 @@ bool run(const RawData &rd, const QString &outdirOverride, QStringList *generate
         if (generated) *generated << QFileInfo(QDir(path), "bms_image.c").absoluteFilePath()
                                   << QFileInfo(QDir(path), "bms_image.h").absoluteFilePath();
     }
-    ok &= ic.generateSprite(path);
-    if (generated) *generated << QFileInfo(QDir(path), "bms_sprite.c").absoluteFilePath()
-                              << QFileInfo(QDir(path), "bms_sprite.h").absoluteFilePath();
+    ok &= ic.generateImageItem(path);
+    if (generated) *generated << QFileInfo(QDir(path), "bms_image_item.c").absoluteFilePath()
+                              << QFileInfo(QDir(path), "bms_image_item.h").absoluteFilePath();
     if (!settings.customTypedef)
     {
         ok &= ic.generateTypedef(path);

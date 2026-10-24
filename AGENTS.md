@@ -31,7 +31,7 @@ Build directories (out-of-source, as siblings of the repo dir): `<repo-parent>/B
 
 - `core/` — data & logic layer. `RawData`: JSON project store — loads/saves the whole `.bms` file (nested tree; node kind determined by shape: `children`=folder, `frames`=image group, `png`=image, `items`=composite); in-memory ids/pids are assigned at load (containers-first DFS) so dataMap order equals file order. `BmFile` is any tree node. `ProjectMng`: tree controller bridging data and UI across multiple projects. `ImgEncoderFactory`: strategy pattern with 8 bitmap encode modes (ZH/ZL/HL/LH traversal × LSB/MSB bit order; ZH=逐行, ZL=逐列, HL=行列, LH=列行; enum values 0-7 = ZH_LSB…LH_MSB). `ImgConvertor`: export to C/bin/H with configurable keywords.
 - Internal node type enum (`RawData`): `TypeImgFile=0`, `TypeComImgFile=1`, `TypeImgFolder=2`, `TypeImgGrpFolder=3`, `TypeComImgFolder=4`; virtual tree ids: -1=project, -3=image class root, -4=composite class root.
-- `gui/` — 13 Qt Designer dialogs plus `FormPixelEditor` (pixel-level editor, QGraphicsView) and `FormComImgEditor` (composite/sprite editor).
+- `gui/` — 13 Qt Designer dialogs plus `FormPixelEditor` (pixel-level editor, QGraphicsView) and `FormComImgEditor` (composite image editor).
 - `custom/` — reusable widgets: TreeModel/TreeItem, CustomTabWidget, QGraphicsCanvasItem, TreeItemDelegate, etc.
 - Project root files: `main.cpp`, `mainwindow`, `singleapplication` (single-instance enforcement), `global`.
 

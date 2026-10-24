@@ -26,7 +26,7 @@ public:
 
     bool generateImgC(const QString &outputPath);
     bool generateImgBin(const QString &outputPath);     // 生成图片字模Bin文件
-    bool generateSprite(const QString &outputPath);
+    bool generateImageItem(const QString &outputPath);
     bool generateTypedef(const QString &outputPath);
     bool generateMainHeader(const QString &outputPath); // 生成统一入口头文件 bms.h
     QString generateDeclareH();

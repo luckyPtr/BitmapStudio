@@ -119,14 +119,9 @@ QString ImgConvertor::ComImgFileToString(BmFile bf)
         return BmFile();
     };
 
-    // bin格式下，数组元素中的image字段不需要BMS_CONST修饰（因为image是地址值类型）
-    // C格式下，需要BMS_CONST修饰（因为image是指针类型）
-    QString imagePrefix = (settings.format == "bin") ? "" : "BMS_CONST ";
-
     foreach(auto i, bf.comImg.items)
     {
-        array.append(QString("\t{%1%2, %3, %4, %5, %6},\n")
-                     .arg(imagePrefix)
+        array.append(QString("\t{%1, %2, %3, %4, %5},\n")
                      .arg(getBmFile(i.id).fullName)
                      .arg(i.x)
                      .arg(i.y)
@@ -137,7 +132,7 @@ QString ImgConvertor::ComImgFileToString(BmFile bf)
 
     res.append("// " + fullName + "\n");
     res.append(QString::asprintf("// %dx%d\n", bf.comImg.size.width(), bf.comImg.size.height()));
-    res.append(QString("BMS_CONST BmsSprite_t %1[] = \n{\n%2};\n").arg(fullName).arg(array));
+    res.append(QString("BMS_CONST BmsImageItem_t %1[] = \n{\n%2};\n").arg(fullName).arg(array));
 
     return res;
 }
@@ -287,22 +282,22 @@ bool ImgConvertor::generateImgBin(const QString &outputPath)
     return file.error() == QFile::NoError && headerFile.error() == QFile::NoError;
 }
 
-bool ImgConvertor::generateSprite(const QString &outputPath)
+bool ImgConvertor::generateImageItem(const QString &outputPath)
 {
-    QFile fileC(outputPath + "/bms_sprite.c");
+    QFile fileC(outputPath + "/bms_image_item.c");
     if (!fileC.open(QIODevice::WriteOnly | QIODevice::Text)) {
         return false;
     }
     QTextStream outC(&fileC);
 
-    QFile fileH(outputPath + "/bms_sprite.h");
+    QFile fileH(outputPath + "/bms_image_item.h");
     if (!fileH.open(QIODevice::WriteOnly | QIODevice::Text)) {
         return false;
     }
     QTextStream outH(&fileH);
 
     outC << "#include \"bms_image.h\"\n\n";
-    outH << "#ifndef __INC_BMS_SPRITE_H__\n#define __INC_BMS_SPRITE_H__\n";
+    outH << "#ifndef __INC_BMS_IMAGE_ITEM_H__\n#define __INC_BMS_IMAGE_ITEM_H__\n";
     outH << "#include \"bms_typedef.h\"\n\n";
 
     foreach(auto i, dataList)
@@ -310,7 +305,7 @@ bool ImgConvertor::generateSprite(const QString &outputPath)
         if(i.type == RawData::TypeComImgFile)
         {
             outC << ComImgFileToString(i);
-            outH << QString("extern BMS_CONST BmsSprite_t %1[];\n").arg(i.fullName);
+            outH << QString("extern BMS_CONST BmsImageItem_t %1[];\n").arg(i.fullName);
             QCoreApplication::processEvents();
         }
     }
@@ -346,12 +341,12 @@ bool ImgConvertor::generateTypedef(const QString &outputPath)
         "\n"
         "typedef struct\n"
         "{\n"
-        "    BmsImage_t *image;\n"
+        "    BmsImage_t BMS_CONST *image;\n"
         "    %2 x;\n"
         "    %2 y;\n"
         "    %3 width;\n"
         "    %3 height;\n"
-        "} BmsSprite_t;\n"
+        "} BmsImageItem_t;\n"
         "\n"
         "\n"
         "#endif\n";
@@ -372,7 +367,7 @@ bool ImgConvertor::generateTypedef(const QString &outputPath)
         "    %3 y;\n"
         "    %4 width;\n"
         "    %4 height;\n"
-        "} BmsSprite_t;\n"
+        "} BmsImageItem_t;\n"
         "\n"
         "\n"
         "#endif\n";
@@ -484,7 +479,7 @@ bool ImgConvertor::generateMainHeader(const QString &outputPath)
         outH << "\n";
         outH << "#include \"bms_typedef.h\"\n";
         outH << "#include \"bms_image.h\"\n";
-        outH << "#include \"bms_sprite.h\"\n";
+        outH << "#include \"bms_image_item.h\"\n";
         outH << "\n";
 
         // 写入校验宏定义到 bms.h
@@ -526,7 +521,7 @@ bool ImgConvertor::generateMainHeader(const QString &outputPath)
         outH << "\n";
         outH << "#include \"bms_typedef.h\"\n";
         outH << "#include \"bms_image.h\"\n";
-        outH << "#include \"bms_sprite.h\"\n";
+        outH << "#include \"bms_image_item.h\"\n";
         outH << "\n";
 
         // 写入 bin 文件头格式地址宏定义（供用户参考 bin 文件格式）
