@@ -30,7 +30,8 @@ DialogNewProject::DialogNewProject(QWidget *parent) :
     ui->spinBoxwidth->setValue(Global::defaultProjectWidth);
     ui->spinBoxHeight->setValue(Global::defaultProjectHeight);
 
-    // 使用配置文件中保存的默认取模方式
+    // 使用配置文件中保存的默认取模方式；无配置时默认 ZH_LSB
+    mode = ImgEncoderFactory::ZH_LSB;
     if (Global::defaultProjectMode != -1) {
         // 根据 mode 值设置按钮状态
         int btnGroup1Id, btnGroup2Id;
@@ -58,6 +59,9 @@ DialogNewProject::DialogNewProject(QWidget *parent) :
             btnGroup1->button(btnGroup1Id)->setChecked(true);
             btnGroup2->button(btnGroup2Id)->setChecked(true);
         }
+    } else {
+        btnGroup1->button(0)->setChecked(true);   // LSB
+        btnGroup2->button(1)->setChecked(true);   // 逐行(ZH)
     }
 }
 
@@ -138,4 +142,3 @@ void DialogNewProject::updateBtnStatus()
     ui->btnOK1->setEnabled(!ui->lineEditProjectPath->text().isEmpty() && !ui->lineEditProjectName->text().isEmpty());
     ui->btnOK2->setEnabled(btnGroup1->checkedId() != -1 && btnGroup2->checkedId() != -1);
 }
-
