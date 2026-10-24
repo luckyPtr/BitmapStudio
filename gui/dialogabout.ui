@@ -26,10 +26,7 @@
       <widget class="QLabel" name="labelProject">
        <property name="font">
         <font>
-         <family>微软雅黑</family>
          <pointsize>14</pointsize>
-         <italic>false</italic>
-         <bold>false</bold>
         </font>
        </property>
        <property name="text">
@@ -41,11 +38,6 @@
       <layout class="QGridLayout" name="gridLayout" columnstretch="0">
        <item row="2" column="0">
         <widget class="QLabel" name="labelBuildTime">
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei</family>
-          </font>
-         </property>
          <property name="text">
           <string>TextLabel</string>
          </property>
@@ -53,11 +45,6 @@
        </item>
        <item row="0" column="0">
         <widget class="QLabel" name="labelVersion">
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei</family>
-          </font>
-         </property>
          <property name="text">
           <string>TextLabel</string>
          </property>

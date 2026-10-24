@@ -48,11 +48,6 @@
            <height>0</height>
           </size>
          </property>
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei</family>
-          </font>
-         </property>
          <property name="text">
           <string>名称</string>
          </property>
@@ -63,11 +58,6 @@
        </item>
        <item>
         <widget class="QLineEdit" name="lineEditName">
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei</family>
-          </font>
-         </property>
         </widget>
        </item>
       </layout>
@@ -83,11 +73,6 @@
              <width>40</width>
              <height>0</height>
             </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Microsoft YaHei</family>
-            </font>
            </property>
            <property name="text">
             <string>备注</string>
@@ -114,11 +99,6 @@
        </item>
        <item>
         <widget class="QTextEdit" name="textEditBrief">
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei</family>
-          </font>
-         </property>
         </widget>
        </item>
       </layout>
@@ -132,11 +112,6 @@
            <width>40</width>
            <height>0</height>
           </size>
-         </property>
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei</family>
-          </font>
          </property>
          <property name="text">
           <string>取色阈值</string>
@@ -164,11 +139,6 @@
        </item>
        <item>
         <widget class="QLabel" name="labelGrayscaleValue">
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei</family>
-          </font>
-         </property>
          <property name="text">
           <string>128</string>
          </property>
@@ -195,11 +165,6 @@
      </item>
      <item>
       <widget class="QPushButton" name="btnOK">
-       <property name="font">
-        <font>
-         <family>Microsoft YaHei</family>
-        </font>
-       </property>
        <property name="text">
         <string>确定</string>
        </property>
@@ -207,11 +172,6 @@
      </item>
      <item>
       <widget class="QPushButton" name="btnCancel">
-       <property name="font">
-        <font>
-         <family>Microsoft YaHei</family>
-        </font>
-       </property>
        <property name="text">
         <string>取消</string>
        </property>

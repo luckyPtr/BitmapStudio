@@ -10,11 +10,6 @@
     <height>316</height>
    </rect>
   </property>
-  <property name="font">
-   <font>
-    <family>Microsoft YaHei</family>
-   </font>
-  </property>
   <property name="windowTitle">
    <string>新建项目</string>
   </property>
@@ -33,11 +28,6 @@
    </property>
    <item row="0" column="0">
     <widget class="QStackedWidget" name="stackedWidget">
-     <property name="font">
-      <font>
-       <family>Microsoft YaHei</family>
-      </font>
-     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -73,8 +63,6 @@
          </property>
          <property name="font">
           <font>
-           <family>Microsoft YaHei</family>
-           <pointsize>11</pointsize>
            <bold>true</bold>
           </font>
          </property>
@@ -93,11 +81,6 @@
              <height>0</height>
             </size>
            </property>
-           <property name="font">
-            <font>
-             <family>Microsoft YaHei</family>
-            </font>
-           </property>
            <property name="text">
             <string>项目名称：</string>
            </property>
@@ -105,11 +88,6 @@
          </item>
          <item>
           <widget class="QLineEdit" name="lineEditProjectName">
-           <property name="font">
-            <font>
-             <family>Microsoft YaHei</family>
-            </font>
-           </property>
           </widget>
          </item>
         </layout>
@@ -124,11 +102,6 @@
              <height>0</height>
             </size>
            </property>
-           <property name="font">
-            <font>
-             <family>Microsoft YaHei</family>
-            </font>
-           </property>
            <property name="text">
             <string>项目路径：</string>
            </property>
@@ -136,11 +109,6 @@
          </item>
          <item>
           <widget class="QLineEdit" name="lineEditProjectPath">
-           <property name="font">
-            <font>
-             <family>Microsoft YaHei</family>
-            </font>
-           </property>
            <property name="readOnly">
             <bool>true</bool>
            </property>
@@ -148,11 +116,6 @@
          </item>
          <item>
           <widget class="QPushButton" name="btnBrowse">
-           <property name="font">
-            <font>
-             <family>Microsoft YaHei</family>
-            </font>
-           </property>
            <property name="text">
             <string>浏览...</string>
            </property>
@@ -180,11 +143,6 @@
            <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="font">
-            <font>
-             <family>Microsoft YaHei</family>
-            </font>
-           </property>
            <property name="text">
             <string>下一步 &gt;</string>
            </property>
@@ -192,11 +150,6 @@
          </item>
          <item>
           <widget class="QPushButton" name="btnCancel1">
-           <property name="font">
-            <font>
-             <family>Microsoft YaHei</family>
-            </font>
-           </property>
            <property name="text">
             <string>取消</string>
            </property>
@@ -212,8 +165,6 @@
         <widget class="QLabel" name="label_7">
          <property name="font">
           <font>
-           <family>Microsoft YaHei</family>
-           <pointsize>11</pointsize>
            <bold>true</bold>
           </font>
          </property>
@@ -233,8 +184,6 @@
         <widget class="QLabel" name="label_4">
          <property name="font">
           <font>
-           <family>Microsoft YaHei</family>
-           <pointsize>11</pointsize>
            <bold>true</bold>
           </font>
          </property>
@@ -262,11 +211,6 @@
                <height>16777215</height>
               </size>
              </property>
-             <property name="font">
-              <font>
-               <family>Microsoft YaHei</family>
-              </font>
-             </property>
              <property name="text">
               <string>取模走向：</string>
              </property>
@@ -274,11 +218,6 @@
            </item>
            <item>
             <widget class="QRadioButton" name="radioButton_LSB">
-             <property name="font">
-              <font>
-               <family>Microsoft YaHei</family>
-              </font>
-             </property>
              <property name="text">
               <string>逆向(LSB)</string>
              </property>
@@ -286,11 +225,6 @@
            </item>
            <item>
             <widget class="QRadioButton" name="radioButton_MSB">
-             <property name="font">
-              <font>
-               <family>Microsoft YaHei</family>
-              </font>
-             </property>
              <property name="text">
               <string>顺向(MSB)</string>
              </property>
@@ -308,11 +242,6 @@
                <height>16777215</height>
               </size>
              </property>
-             <property name="font">
-              <font>
-               <family>Microsoft YaHei</family>
-              </font>
-             </property>
              <property name="text">
               <string>取模方式：</string>
              </property>
@@ -320,11 +249,6 @@
            </item>
            <item>
             <widget class="QRadioButton" name="radioButton_ZL">
-             <property name="font">
-              <font>
-               <family>Microsoft YaHei</family>
-              </font>
-             </property>
              <property name="text">
               <string>逐列</string>
              </property>
@@ -332,11 +256,6 @@
            </item>
            <item>
             <widget class="QRadioButton" name="radioButton_ZH">
-             <property name="font">
-              <font>
-               <family>Microsoft YaHei</family>
-              </font>
-             </property>
              <property name="text">
               <string>逐行</string>
              </property>
@@ -344,11 +263,6 @@
            </item>
            <item>
             <widget class="QRadioButton" name="radioButton_LH">
-             <property name="font">
-              <font>
-               <family>Microsoft YaHei</family>
-              </font>
-             </property>
              <property name="text">
               <string>列行</string>
              </property>
@@ -356,11 +270,6 @@
            </item>
            <item>
             <widget class="QRadioButton" name="radioButton_HL">
-             <property name="font">
-              <font>
-               <family>Microsoft YaHei</family>
-              </font>
-             </property>
              <property name="text">
               <string>行列</string>
              </property>
@@ -438,11 +347,6 @@
          </item>
          <item>
           <widget class="QUnitSpinBox" name="spinBoxwidth">
-           <property name="font">
-            <font>
-             <family>Microsoft YaHei</family>
-            </font>
-           </property>
            <property name="minimum">
             <number>1</number>
            </property>
@@ -488,11 +392,6 @@
          </item>
          <item>
           <widget class="QUnitSpinBox" name="spinBoxHeight">
-           <property name="font">
-            <font>
-             <family>Microsoft YaHei</family>
-            </font>
-           </property>
            <property name="minimum">
             <number>1</number>
            </property>
@@ -520,11 +419,6 @@
          </item>
          <item>
           <widget class="QPushButton" name="btnLastStep">
-           <property name="font">
-            <font>
-             <family>Microsoft YaHei</family>
-            </font>
-           </property>
            <property name="text">
             <string>&lt; 上一步</string>
            </property>
@@ -535,11 +429,6 @@
            <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="font">
-            <font>
-             <family>Microsoft YaHei</family>
-            </font>
-           </property>
            <property name="text">
             <string>确定</string>
            </property>
@@ -547,11 +436,6 @@
          </item>
          <item>
           <widget class="QPushButton" name="btnCancel2">
-           <property name="font">
-            <font>
-             <family>Microsoft YaHei</family>
-            </font>
-           </property>
            <property name="text">
             <string>取消</string>
            </property>

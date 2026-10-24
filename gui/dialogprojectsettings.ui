@@ -28,12 +28,6 @@
        <height>16</height>
       </size>
      </property>
-     <property name="font">
-      <font>
-       <family>Microsoft YaHei</family>
-       <pointsize>11</pointsize>
-      </font>
-     </property>
      <property name="text">
       <string>项目信息</string>
      </property>
@@ -77,11 +71,6 @@
            <height>16777215</height>
           </size>
          </property>
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei</family>
-          </font>
-         </property>
          <property name="text">
           <string>取模走向：</string>
          </property>
@@ -89,11 +78,6 @@
        </item>
        <item>
         <widget class="QRadioButton" name="radioButton_LSB">
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei</family>
-          </font>
-         </property>
          <property name="text">
           <string>逆向(LSB)</string>
          </property>
@@ -101,11 +85,6 @@
        </item>
        <item>
         <widget class="QRadioButton" name="radioButton_MSB">
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei</family>
-          </font>
-         </property>
          <property name="text">
           <string>顺向(MSB)</string>
          </property>
@@ -123,11 +102,6 @@
            <height>0</height>
           </size>
          </property>
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei</family>
-          </font>
-         </property>
          <property name="text">
           <string>取模方式：</string>
          </property>
@@ -135,11 +109,6 @@
        </item>
        <item>
         <widget class="QRadioButton" name="radioButton_ZL">
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei</family>
-          </font>
-         </property>
          <property name="text">
           <string>逐列</string>
          </property>
@@ -150,11 +119,6 @@
        </item>
        <item>
         <widget class="QRadioButton" name="radioButton_ZH">
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei</family>
-          </font>
-         </property>
          <property name="text">
           <string>逐行</string>
          </property>
@@ -162,11 +126,6 @@
        </item>
        <item>
         <widget class="QRadioButton" name="radioButton_LH">
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei</family>
-          </font>
-         </property>
          <property name="text">
           <string>列行</string>
          </property>
@@ -174,11 +133,6 @@
        </item>
        <item>
         <widget class="QRadioButton" name="radioButton_HL">
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei</family>
-          </font>
-         </property>
          <property name="text">
           <string>行列</string>
          </property>
@@ -221,11 +175,6 @@
          <height>0</height>
         </size>
        </property>
-       <property name="font">
-        <font>
-         <family>Microsoft YaHei</family>
-        </font>
-       </property>
        <property name="text">
         <string>描述：</string>
        </property>
@@ -235,11 +184,6 @@
       <widget class="QLineEdit" name="lineEdit_Brief">
        <property name="enabled">
         <bool>true</bool>
-       </property>
-       <property name="font">
-        <font>
-         <family>Microsoft YaHei</family>
-        </font>
        </property>
       </widget>
      </item>
@@ -258,13 +202,6 @@
        <width>16777215</width>
        <height>16</height>
       </size>
-     </property>
-     <property name="font">
-      <font>
-       <family>Microsoft YaHei UI</family>
-       <pointsize>11</pointsize>
-       <bold>false</bold>
-      </font>
      </property>
      <property name="text">
       <string>取模设置</string>
@@ -308,13 +245,6 @@
          <height>16</height>
         </size>
        </property>
-       <property name="font">
-        <font>
-         <family>Microsoft YaHei</family>
-         <pointsize>11</pointsize>
-         <bold>false</bold>
-        </font>
-       </property>
        <property name="text">
         <string>类型定义</string>
        </property>
@@ -335,11 +265,6 @@
      </item>
      <item>
       <widget class="QCheckBox" name="checkBoxTypedef">
-       <property name="font">
-        <font>
-         <family>Microsoft YaHei</family>
-        </font>
-       </property>
        <property name="toolTip">
         <string>不自动生成bms_typedef.h文件</string>
        </property>
@@ -363,13 +288,6 @@
        <width>16777215</width>
        <height>16</height>
       </size>
-     </property>
-     <property name="font">
-      <font>
-       <family>Microsoft YaHei</family>
-       <pointsize>11</pointsize>
-       <bold>false</bold>
-      </font>
      </property>
      <property name="text">
       <string>输出</string>
@@ -411,11 +329,6 @@
          <height>16777215</height>
         </size>
        </property>
-       <property name="font">
-        <font>
-         <family>Microsoft YaHei</family>
-        </font>
-       </property>
        <property name="text">
         <string>位置/尺寸：</string>
        </property>
@@ -423,11 +336,6 @@
      </item>
      <item>
       <widget class="QLineEdit" name="lineEdit_PosType">
-       <property name="font">
-        <font>
-         <family>Microsoft YaHei</family>
-        </font>
-       </property>
       </widget>
      </item>
     </layout>
@@ -442,11 +350,6 @@
          <height>0</height>
         </size>
        </property>
-       <property name="font">
-        <font>
-         <family>Microsoft YaHei</family>
-        </font>
-       </property>
        <property name="text">
         <string>图片地址：</string>
        </property>
@@ -456,11 +359,6 @@
       <widget class="QLineEdit" name="lineEdit_Addr">
        <property name="enabled">
         <bool>true</bool>
-       </property>
-       <property name="font">
-        <font>
-         <family>Microsoft YaHei</family>
-        </font>
        </property>
       </widget>
      </item>
@@ -482,11 +380,6 @@
          <height>16777215</height>
         </size>
        </property>
-       <property name="font">
-        <font>
-         <family>Microsoft YaHei</family>
-        </font>
-       </property>
        <property name="text">
         <string>路径：</string>
        </property>
@@ -494,11 +387,6 @@
      </item>
      <item>
       <widget class="QLineEdit" name="lineEdit_Output">
-       <property name="font">
-        <font>
-         <family>Microsoft YaHei</family>
-        </font>
-       </property>
        <property name="placeholderText">
         <string>./</string>
        </property>
@@ -522,11 +410,6 @@
          <height>16777215</height>
         </size>
        </property>
-       <property name="font">
-        <font>
-         <family>Microsoft YaHei</family>
-        </font>
-       </property>
        <property name="text">
         <string>格式：</string>
        </property>
@@ -534,11 +417,6 @@
      </item>
      <item>
       <widget class="QComboBox" name="comboBox_Format">
-       <property name="font">
-        <font>
-         <family>Microsoft YaHei</family>
-        </font>
-       </property>
        <property name="currentText">
         <string>c</string>
        </property>
@@ -572,11 +450,6 @@
          <height>16777215</height>
         </size>
        </property>
-       <property name="font">
-        <font>
-         <family>Microsoft YaHei</family>
-        </font>
-       </property>
        <property name="text">
         <string>常量修饰词：</string>
        </property>
@@ -584,11 +457,6 @@
      </item>
      <item>
       <widget class="QLineEdit" name="lineEdit_Const">
-       <property name="font">
-        <font>
-         <family>Microsoft YaHei</family>
-        </font>
-       </property>
       </widget>
      </item>
     </layout>

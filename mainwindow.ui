@@ -10,11 +10,6 @@
     <height>579</height>
    </rect>
   </property>
-  <property name="font">
-   <font>
-    <family>Microsoft YaHei</family>
-   </font>
-  </property>
   <property name="acceptDrops">
    <bool>false</bool>
   </property>
@@ -174,12 +169,6 @@ QTabBar::tab:selected
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dockProject">
-   <property name="font">
-    <font>
-     <family>Microsoft YaHei</family>
-     <pointsize>10</pointsize>
-    </font>
-   </property>
    <property name="styleSheet">
     <string notr="true">QDockWidget::title
 {
@@ -272,9 +261,7 @@ QTabBar::tab:selected
        <widget class="TreeView" name="treeViewProject">
         <property name="font">
          <font>
-          <family>微软雅黑</family>
           <pointsize>12</pointsize>
-          <underline>false</underline>
          </font>
         </property>
         <property name="cursor" stdset="0">

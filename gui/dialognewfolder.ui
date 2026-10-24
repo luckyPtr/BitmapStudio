@@ -16,12 +16,6 @@
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <widget class="QLabel" name="label">
-     <property name="font">
-      <font>
-       <family>Microsoft YaHei</family>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
      <property name="text">
       <string>名称</string>
      </property>
@@ -29,24 +23,12 @@
    </item>
    <item row="0" column="1">
     <widget class="QLineEdit" name="lineEditName">
-     <property name="font">
-      <font>
-       <family>Microsoft YaHei</family>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
     </widget>
    </item>
    <item row="1" column="0">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QLabel" name="label_2">
-       <property name="font">
-        <font>
-         <family>Microsoft YaHei</family>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
        <property name="text">
         <string>描述</string>
        </property>
@@ -69,12 +51,6 @@
    </item>
    <item row="1" column="1">
     <widget class="QTextEdit" name="textEditBrief">
-     <property name="font">
-      <font>
-       <family>Microsoft YaHei</family>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
      <property name="placeholderText">
       <string>添加文件夹描述...</string>
      </property>
@@ -100,11 +76,6 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
        <property name="text">
         <string>确定</string>
        </property>
@@ -112,11 +83,6 @@
      </item>
      <item>
       <widget class="QPushButton" name="btnCancel">
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
        <property name="text">
         <string>取消</string>
        </property>

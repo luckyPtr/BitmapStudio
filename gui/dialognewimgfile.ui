@@ -19,12 +19,6 @@
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <widget class="QLabel" name="label">
-     <property name="font">
-      <font>
-       <family>Microsoft YaHei UI</family>
-       <pointsize>11</pointsize>
-      </font>
-     </property>
      <property name="text">
       <string>宽度</string>
      </property>
@@ -32,12 +26,6 @@
    </item>
    <item row="0" column="1">
     <widget class="QUnitSpinBox" name="spinBoxWidth">
-     <property name="font">
-      <font>
-       <family>Microsoft YaHei UI</family>
-       <pointsize>11</pointsize>
-      </font>
-     </property>
      <property name="minimum">
       <number>1</number>
      </property>
@@ -48,12 +36,6 @@
    </item>
    <item row="0" column="2">
     <widget class="QLabel" name="label_2">
-     <property name="font">
-      <font>
-       <family>Microsoft YaHei UI</family>
-       <pointsize>11</pointsize>
-      </font>
-     </property>
      <property name="text">
       <string>高度</string>
      </property>
@@ -64,12 +46,6 @@
    </item>
    <item row="0" column="3">
     <widget class="QUnitSpinBox" name="spinBoxHeight">
-     <property name="font">
-      <font>
-       <family>Microsoft YaHei UI</family>
-       <pointsize>11</pointsize>
-      </font>
-     </property>
      <property name="buttonSymbols">
       <enum>QAbstractSpinBox::UpDownArrows</enum>
      </property>
@@ -86,12 +62,6 @@
    </item>
    <item row="1" column="0">
     <widget class="QLabel" name="label_3">
-     <property name="font">
-      <font>
-       <family>Microsoft YaHei UI</family>
-       <pointsize>11</pointsize>
-      </font>
-     </property>
      <property name="text">
       <string>名称</string>
      </property>
@@ -101,13 +71,6 @@
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QLabel" name="label_4">
-       <property name="font">
-        <font>
-         <family>Microsoft YaHei UI</family>
-         <pointsize>11</pointsize>
-         <bold>false</bold>
-        </font>
-       </property>
        <property name="text">
         <string>描述</string>
        </property>
@@ -130,13 +93,6 @@
    </item>
    <item row="2" column="1" colspan="3">
     <widget class="QTextEdit" name="textEdit">
-     <property name="font">
-      <font>
-       <family>微软雅黑</family>
-       <pointsize>11</pointsize>
-       <underline>false</underline>
-      </font>
-     </property>
      <property name="acceptRichText">
       <bool>false</bool>
      </property>
@@ -147,12 +103,6 @@
    </item>
    <item row="1" column="1" colspan="3">
     <widget class="QLineEdit" name="lineEditImgFileName">
-     <property name="font">
-      <font>
-       <family>Microsoft YaHei UI</family>
-       <pointsize>11</pointsize>
-      </font>
-     </property>
      <property name="inputMethodHints">
       <set>Qt::ImhNone</set>
      </property>
@@ -184,12 +134,6 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="font">
-        <font>
-         <family>Arial</family>
-         <pointsize>11</pointsize>
-        </font>
-       </property>
        <property name="text">
         <string>确定</string>
        </property>
@@ -197,12 +141,6 @@
      </item>
      <item>
       <widget class="QPushButton" name="btnCancel">
-       <property name="font">
-        <font>
-         <family>Arial</family>
-         <pointsize>11</pointsize>
-        </font>
-       </property>
        <property name="text">
         <string>取消</string>
        </property>

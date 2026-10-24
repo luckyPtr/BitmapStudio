@@ -42,12 +42,6 @@
          <height>16777215</height>
         </size>
        </property>
-       <property name="font">
-        <font>
-         <family>Microsoft YaHei</family>
-         <pointsize>11</pointsize>
-        </font>
-       </property>
        <property name="layoutDirection">
         <enum>Qt::LeftToRight</enum>
        </property>
@@ -66,12 +60,6 @@
          <width>64</width>
          <height>0</height>
         </size>
-       </property>
-       <property name="font">
-        <font>
-         <family>Microsoft YaHei</family>
-         <pointsize>11</pointsize>
-        </font>
        </property>
        <property name="maximum">
         <number>2048</number>
@@ -105,12 +93,6 @@
          <height>0</height>
         </size>
        </property>
-       <property name="font">
-        <font>
-         <family>Microsoft YaHei</family>
-         <pointsize>11</pointsize>
-        </font>
-       </property>
        <property name="text">
         <string>Y:</string>
        </property>
@@ -127,12 +109,6 @@
          <height>0</height>
         </size>
        </property>
-       <property name="font">
-        <font>
-         <family>Microsoft YaHei</family>
-         <pointsize>11</pointsize>
-        </font>
-       </property>
        <property name="maximum">
         <number>2048</number>
        </property>
@@ -142,12 +118,6 @@
    </item>
    <item row="2" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="font">
-      <font>
-       <family>Microsoft YaHei</family>
-       <pointsize>11</pointsize>
-      </font>
-     </property>
      <property name="layoutDirection">
       <enum>Qt::LeftToRight</enum>
      </property>

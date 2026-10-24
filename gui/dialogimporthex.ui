@@ -41,7 +41,6 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>11</pointsize>
          <bold>true</bold>
         </font>
        </property>
@@ -82,11 +81,6 @@
          </item>
          <item>
           <widget class="QRadioButton" name="radioButton_LSB">
-           <property name="font">
-            <font>
-             <family>Microsoft YaHei</family>
-            </font>
-           </property>
            <property name="text">
             <string>逆向(LSB)</string>
            </property>
@@ -94,11 +88,6 @@
          </item>
          <item>
           <widget class="QRadioButton" name="radioButton_MSB">
-           <property name="font">
-            <font>
-             <family>Microsoft YaHei</family>
-            </font>
-           </property>
            <property name="text">
             <string>顺向(MSB)</string>
            </property>
@@ -123,11 +112,6 @@
          </item>
          <item>
           <widget class="QRadioButton" name="radioButton_ZL">
-           <property name="font">
-            <font>
-             <family>Microsoft YaHei</family>
-            </font>
-           </property>
            <property name="text">
             <string>逐列</string>
            </property>
@@ -138,11 +122,6 @@
          </item>
          <item>
           <widget class="QRadioButton" name="radioButton_ZH">
-           <property name="font">
-            <font>
-             <family>Microsoft YaHei</family>
-            </font>
-           </property>
            <property name="text">
             <string>逐行</string>
            </property>
@@ -150,11 +129,6 @@
          </item>
          <item>
           <widget class="QRadioButton" name="radioButton_LH">
-           <property name="font">
-            <font>
-             <family>Microsoft YaHei</family>
-            </font>
-           </property>
            <property name="text">
             <string>列行</string>
            </property>
@@ -162,11 +136,6 @@
          </item>
          <item>
           <widget class="QRadioButton" name="radioButton_HL">
-           <property name="font">
-            <font>
-             <family>Microsoft YaHei</family>
-            </font>
-           </property>
            <property name="text">
             <string>行列</string>
            </property>
@@ -235,7 +204,6 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>11</pointsize>
          <bold>true</bold>
         </font>
        </property>
@@ -270,11 +238,6 @@
            <height>16777215</height>
           </size>
          </property>
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei</family>
-          </font>
-         </property>
          <property name="text">
           <string>名称：</string>
          </property>
@@ -282,11 +245,6 @@
        </item>
        <item>
         <widget class="QLineEdit" name="lineEditName">
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei</family>
-          </font>
-         </property>
         </widget>
        </item>
        <item>
@@ -302,11 +260,6 @@
            <width>0</width>
            <height>0</height>
           </size>
-         </property>
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei</family>
-          </font>
          </property>
          <property name="toolTip">
           <string>添加备注</string>
@@ -361,11 +314,6 @@
            <height>50</height>
           </size>
          </property>
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei</family>
-          </font>
-         </property>
         </widget>
        </item>
       </layout>
@@ -387,11 +335,6 @@
        </item>
        <item>
         <widget class="QUnitSpinBox" name="spinBoxWidth">
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei</family>
-          </font>
-         </property>
          <property name="maximum">
           <number>1024</number>
          </property>
@@ -411,11 +354,6 @@
            <height>16777215</height>
           </size>
          </property>
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei</family>
-          </font>
-         </property>
          <property name="text">
           <string>高度：</string>
          </property>
@@ -423,11 +361,6 @@
        </item>
        <item>
         <widget class="QUnitSpinBox" name="spinBoxHeight">
-         <property name="font">
-          <font>
-           <family>Microsoft YaHei</family>
-          </font>
-         </property>
          <property name="maximum">
           <number>1024</number>
          </property>
@@ -468,11 +401,6 @@
    </item>
    <item row="1" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="font">
-      <font>
-       <family>Microsoft YaHei</family>
-      </font>
-     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>

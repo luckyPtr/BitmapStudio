@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "singleapplication.h"
 #include <QApplication>
+#include <QFont>
 #include <QLocale>
 #include <QTranslator>
 
@@ -13,6 +14,8 @@ int main(int argc, char *argv[])
                 Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 
     SingleApplication a(argc, argv);
+
+    a.setFont(QFont("Microsoft YaHei", 9));
 
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
