@@ -1,0 +1,120 @@
+#ifndef PROJECTMNG_H
+#define PROJECTMNG_H
+
+#include <QWidget>
+#include <QStandardItem>
+#include <QTreeView>
+#include <QVector>
+#include <QSet>
+#include <core/rawdata.h>
+#include <custom/treemodel.h>
+#include <custom/treeitem.h>
+#include <custom/customtabwidget.h>
+
+
+class ProjectMng : public QWidget
+{
+    Q_OBJECT
+private:
+    QList<RawData> projList;
+    TreeModel *theModel;
+    QTreeView *treeView;
+    QModelIndex currentIndex;
+    CustomTabWidget *tabWidget;
+
+    QAction *actNewProject;
+    QAction *actOpenProject;
+    QAction *actNewImgFile;
+    QAction *actNewComImgFile;
+    QAction *actNewFolder;
+    QAction *actImportFromImg;
+    QAction *actImportFromHex;
+    QAction *actReplaceFromImg;
+    QAction *actReplaceFromHex;
+    QAction *actExportImg;
+    QAction *actCopyImg;
+    QAction *actCopyName;
+    QAction *actOpen;
+    QAction *actCloseProject;
+    QAction *actDelete;
+    QAction *actImgGrpFolder; // 普通文件夹和图片组文件夹互相转换
+    QAction *actRename;
+    QAction *actProperties;
+    QAction *actSettings;
+    QAction *actRun;
+
+    void addDataNodes(RawData *rd, const quint16 pid, TreeItem *parent, bool(*filter)(int));
+    void getExpandNode(QModelIndex root);      // 保存展开的节点
+    void setExpandNode(QModelIndex root);   // 恢复展开的节点
+    void saveExpand();
+    void restoreExpand();
+    void initActions();
+    void warnSaveFailed(bool saved);    // 落盘失败时统一弹窗（编辑仅存在于内存，需立即告知用户）
+
+    QString searchText;     // 搜索栏过滤文本（空=不过滤）
+    bool searchActive = false;  // 过滤生效中（搜索期间的展开是临时的，不采集进工程数据）
+    bool matchSearch(TreeItem *item);   // 节点名称或备注是否包含搜索文本
+    void applySearchFilter();   // 应用/清除过滤（视图层setRowHidden，不改模型）
+    bool searchShowNode(const QModelIndex &index);  // 递归过滤：返回该节点子树是否存在命中内容
+    void searchShowSubtree(const QModelIndex &index, bool expand);  // 显示整棵子树，expand=true时同时展开（文件夹命中时显示所有文件）
+
+public:
+    explicit ProjectMng(QWidget *parent = nullptr);
+    void openProject(QString pro);
+    void newProject(QString pro, RawData::Settings settings);
+    void closeProjcet(QModelIndex &index);
+    void initModel();   // 根据数据库重新初始化模型（先采集当前展开状态）
+    void rebuildModel();    // 仅重建模型；调用方需保证expand中的id已与模型一致（如move已重映射）
+    TreeModel* model() { return theModel; }
+    void blindTreeView(QTreeView *treeView);
+    void setTabWidget(CustomTabWidget *tabWidget);
+    void createFolder(QModelIndex index, QString name, QString brief = ""); // 新建文件夹
+    void createImage(QModelIndex &index, QString name, QSize size, QString brief = "");
+    void createImage(QModelIndex &index, QString name, QImage &img, QString brief = "");
+    void createComImg(QModelIndex &index, QString name, QSize size, QString brief = "");
+    void rename(QModelIndex &index, QString name);
+    QString getName(QModelIndex &index);
+    void remove(QModelIndex &index);
+    void imgFolderConvert(QModelIndex &index);
+    QImage getImage(QModelIndex index);
+    void setImage(QModelIndex index, QImage &image);
+    ComImg getComImg(QModelIndex index);
+    void setComImg(QModelIndex index, ComImg &comImg);
+    QString getBrief(QModelIndex index);
+    void setBrief(QModelIndex index, QString brief);
+    QModelIndex getModelIndex(QString project, int id);   // 从项目名称和id获取ModelIndex
+
+
+public slots:
+    void on_Clicked_Triggered(QModelIndex index);
+    void on_CustomContextMenu(QPoint point);
+    void on_ActNewProject_Triggered();
+    void on_ActOpenProject_Triggered();
+    void on_ActOpen_Triggered();
+    void on_ActCloseProject_Triggered();
+    void on_ActDelete_Triggered();
+    void on_ActRename_Triggered();
+    void on_ActProperties_Triggered();
+    void on_ActNewImg_Triggered();
+    void on_ActNewComImg_Triggered();
+    void on_ActNewFolder_Triggered();
+    void on_ActImgGrpFolder_Triggered();
+    void on_ActSettings_Triggered();
+    void on_ActRun_Triggered();
+    void on_ActImportFromImg_Triggered();
+    void on_ActImportFromHex_Triggered();
+    void on_ActReplaceFromImg_Triggered();
+    void on_ActReplaceFromHex_Triggered();
+    void on_ActExportImg_Triggered();
+    void on_ActCopyImg_Triggered();
+    void on_ActCopyName_Triggeded();
+    void on_OpenProjectUrl(QString);
+    void on_ImportImg(QModelIndex, QString);
+    void on_MoveNode(QModelIndex sourceIndex, QModelIndex parentIndex, int row);    // 树内拖动节点
+    void on_SearchTextChanged(QString text);    // 搜索栏文本变化，实时过滤文件树
+
+signals:
+    void updateSelectProject(QString);
+};
+
+#endif // PROJECTMNG_H

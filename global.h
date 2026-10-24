@@ -1,0 +1,57 @@
+#ifndef GLOBAL_H
+#define GLOBAL_H
+#include <QString>
+#include <QRect>
+
+
+
+class Global
+{
+public:
+    Global();
+
+    // 像素编辑器相关
+#define AUX_LINE_SCALE      true   // 拖动辅助线时是否显示辅助线刻度
+#define ITEM_INFO_FOLLOW    true   // 组合图元素信息显示方块跟随鼠标
+    static int pixelSize;          // 像素编辑窗口一个像素的大小
+    static int scaleWidth;         // 标尺宽度
+    static int scaleOffset;        // 标尺上0点起始位置的偏移
+    static int guidesColor;         // 参考线颜色
+    static int selectedGuidesColor; // 选择的参考线颜色
+    static int backgroundColorLeftTop;      // 背景色-左上角
+    static int backgroundColorRightBottom;  // 背景色-右下角
+    static int pixelColor_0;       // 像素编辑像素值为0的颜色
+    static int pixelColor_1;
+    static int gridColor;          // 像素编辑器网格颜色
+    static int itemBoundColor;      // 未选择的组合图边框颜色
+    static int selectedItemBoundColor;  // 选择的组合图边框颜色
+    static int selectionBoxColor;       // 选择框颜色
+    static bool editMode;           // 编辑模式
+
+    static int exportImgColor_0;    // 导出图片的像素颜色
+    static int exportImgColor_1;
+
+    // 新建项目默认尺寸
+    static int defaultProjectWidth;
+    static int defaultProjectHeight;
+    // 新建项目默认取模方式
+    static int defaultProjectMode;
+
+    static void initSettings();
+    static void saveDefaultProjectSize(int width, int height);
+    static void saveDefaultProjectMode(int mode);
+    static void savePixelSize(int size);
+
+    // 窗口布局（正常状态几何 + 最大化标志）持久化；readWindowLayout 无有效记录时返回 false
+    static bool readWindowLayout(QRect &geometry, bool &maximized);
+    static void saveWindowLayout(const QRect &geometry, bool maximized);
+
+    // 搜索栏显示状态持久化；无记录时默认显示
+    static bool readSearchBarVisible();
+    static void saveSearchBarVisible(bool visible);
+private:
+    static void createDefaultSettings(const QString &filePath);
+    static void readSettings(const QString &filePath);
+};
+
+#endif // GLOBAL_H
