@@ -418,7 +418,7 @@ void ProjectMng::warnSaveFailed(bool saved)
         QMessageBox errBox;
         errBox.setIcon(QMessageBox::Critical);
         errBox.setWindowTitle(tr("保存失败"));
-        errBox.setText(tr("保存工程文件失败（磁盘已满/文件被占用/目录只读），当前编辑仅存在于内存中，请检查后重试"));
+        errBox.setText(tr("保存工程文件失败：文件可能被其他程序（如文本编辑器）锁定，或磁盘已满/目录只读。当前编辑仅存在于内存中，请处理后重试"));
         errBox.addButton(QObject::tr("确定"), QMessageBox::AcceptRole);
         errBox.exec();
     }

@@ -627,19 +627,36 @@ bool RawData::save()
     root.insert("images", serializeChildren(0, true, "", idPath));
     root.insert("composites", serializeChildren(0, false, "", idPath));
 
+    const QByteArray bytes = QJsonDocument(root).toJson(QJsonDocument::Indented);
+
+    // 首选原子写盘（临时文件+重命名替换）。Windows下若原文件被文本编辑器等程序占用
+    // （其打开方式不含共享删除），重命名替换会被系统拒绝，此时降级为一次性直写
     QSaveFile file(project);
-    if (!file.open(QIODevice::WriteOnly))
+    if (file.open(QIODevice::WriteOnly))
     {
-        qWarning() << "工程文件写入失败:" << project;
-        return false;
+        file.write(bytes);
+        if (file.commit())
+        {
+            return true;
+        }
     }
-    file.write(QJsonDocument(root).toJson(QJsonDocument::Indented));
-    if (!file.commit())
+    qWarning() << "原子写盘失败，尝试直接写入:" << project << file.errorString();
+
+    // 降级直写：占用方通常允许共享写。此路径无原子性，写入窗口内异常退出可能损坏文件
+    QFile direct(project);
+    if (direct.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
-        qWarning() << "工程文件写入提交失败:" << project;
-        return false;
+        qint64 written = direct.write(bytes);
+        direct.flush();
+        direct.close();
+        if (written == bytes.size())
+        {
+            qWarning() << "工程文件已通过非原子方式写入:" << project;
+            return true;
+        }
     }
-    return true;
+    qWarning() << "工程文件写入失败:" << project << direct.errorString();
+    return false;
 }
 
 RawData::RawData(const QString path)
