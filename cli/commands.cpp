@@ -60,6 +60,12 @@ static bool hasOpt(QStringList &args, const QString &flag)
 
 static RawData *openProject(const QString &file, int *exitCode)
 {
+    if (!QFileInfo(file).isFile())
+    {
+        err(QString("Project file not found: %1").arg(file));
+        *exitCode = 2;
+        return nullptr;
+    }
     RawData *rd = new RawData(file);
     if (!rd->isValid())
     {
@@ -135,7 +141,7 @@ int init(const QStringList &rawArgs)
     }
     QString screenStr = takeOpt(args, "--screen", "128x64");
     QString scan = takeOpt(args, "--scan", "ZH");
-    QString bit = takeOpt(args, "--bit", "MSB");
+    QString bit = takeOpt(args, "--bit", "LSB");
     QString format = takeOpt(args, "--format", "C");
     QString outdir = takeOpt(args, "--outdir");
     QString note = takeOpt(args, "--note");
@@ -205,6 +211,22 @@ int check(const QStringList &rawArgs)
     {
         err("Usage: bms-cli check <project.bms> [--json]");
         return 1;
+    }
+    if (!QFileInfo(args.at(0)).isFile())
+    {
+        const QString nf = QString("Project file not found: %1").arg(args.at(0));
+        if (asJson)
+        {
+            QJsonObject doc;
+            doc.insert("valid", false);
+            QJsonArray arr;
+            arr.append(nf);
+            doc.insert("warnings", arr);
+            out(QString::fromUtf8(QJsonDocument(doc).toJson(QJsonDocument::Compact)));
+            return 2;
+        }
+        err(nf);
+        return 2;
     }
     RawData rd(args.at(0));
     QStringList warnings = rd.takeLoadWarnings();
